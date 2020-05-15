@@ -1,8 +1,8 @@
 {
   "ExpandedNodes": [
     "",
-    "\\LaunchBox"
+    "\\Framework"
   ],
-  "SelectedNode": "\\LaunchBox\\LaunchBox.cpp",
+  "SelectedNode": "\\CMakeLists.txt",
   "PreviewInSolutionExplorer": false
 }

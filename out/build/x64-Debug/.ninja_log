@@ -1,3 +1,6 @@
 # ninja log v5
 0	334	611266561	LaunchBox/CMakeFiles/LaunchBox.dir/LaunchBox.cpp.obj	dd685f2c2f633a70
 334	679	611266561	LaunchBox/LaunchBox.exe	41845c1975cc4361
+0	9	0	clean	b049eaf95b698d8c
+0	692	611270646	Framework/CMakeFiles/helloworld.dir/main.cpp.obj	a089410073a69b14
+692	1030	611270646	Framework/helloworld.exe	f320600f1f63cbf7

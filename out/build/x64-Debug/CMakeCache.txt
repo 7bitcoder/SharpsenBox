@@ -196,6 +196,18 @@ LaunchBox_BINARY_DIR:STATIC=C:/Users/Sylwek/Desktop/LaunchBox/LaunchBox/out/buil
 //Value Computed by CMake
 LaunchBox_SOURCE_DIR:STATIC=C:/Users/Sylwek/Desktop/LaunchBox/LaunchBox
 
+//The directory containing a CMake configuration file for Qt5Core.
+Qt5Core_DIR:PATH=D:/DevelPrograms/Qt/5.14.2/msvc2017/lib/cmake/Qt5Core
+
+//The directory containing a CMake configuration file for Qt5Gui.
+Qt5Gui_DIR:PATH=D:/DevelPrograms/Qt/5.14.2/msvc2017/lib/cmake/Qt5Gui
+
+//The directory containing a CMake configuration file for Qt5Widgets.
+Qt5Widgets_DIR:PATH=D:/DevelPrograms/Qt/5.14.2/msvc2017/lib/cmake/Qt5Widgets
+
+//The directory containing a CMake configuration file for Qt5.
+Qt5_DIR:PATH=Qt5_DIR-NOTFOUND
+
 
 ########################
 # INTERNAL cache entries

@@ -1,5 +1,5 @@
 C:/Users/Sylwek/Desktop/LaunchBox/LaunchBox/out/build/x64-Debug/CMakeFiles/edit_cache.dir
 C:/Users/Sylwek/Desktop/LaunchBox/LaunchBox/out/build/x64-Debug/CMakeFiles/rebuild_cache.dir
-C:/Users/Sylwek/Desktop/LaunchBox/LaunchBox/out/build/x64-Debug/LaunchBox/CMakeFiles/LaunchBox.dir
-C:/Users/Sylwek/Desktop/LaunchBox/LaunchBox/out/build/x64-Debug/LaunchBox/CMakeFiles/edit_cache.dir
-C:/Users/Sylwek/Desktop/LaunchBox/LaunchBox/out/build/x64-Debug/LaunchBox/CMakeFiles/rebuild_cache.dir
+C:/Users/Sylwek/Desktop/LaunchBox/LaunchBox/out/build/x64-Debug/Framework/CMakeFiles/helloworld.dir
+C:/Users/Sylwek/Desktop/LaunchBox/LaunchBox/out/build/x64-Debug/Framework/CMakeFiles/edit_cache.dir
+C:/Users/Sylwek/Desktop/LaunchBox/LaunchBox/out/build/x64-Debug/Framework/CMakeFiles/rebuild_cache.dir
