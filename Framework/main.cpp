@@ -1,19 +1,21 @@
-#include <QApplication>
-#include <QQmlApplicationEngine>
-#include <QtQuick>
-#include "backend.h"
+#include <QGuiApplication>
+#include <QQmlEngine>
+#include <QQmlFileSelector>
+#include <QQuickView>
 
 
 int main(int argc, char** argv) {
+	QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+	QCoreApplication::setOrganizationName("QtExamples");
+
 	QGuiApplication app(argc, argv);
 
-	QQmlApplicationEngine engine;
-	QQmlContext* rootContext = engine.rootContext();
-	rootContext->setContextProperty("WINDOW_WIDTH", 640);
-	rootContext->setContextProperty("WINDOW_HEIGHT", 360);
-
-
-	engine.load(QStringLiteral("LaunchBox.qml"));
-
+	QQuickView view;
+	view.connect(view.engine(), &QQmlEngine::quit, &app, &QCoreApplication::quit);
+	view.setSource(QUrl("qrc:\\LaunchBox.qml"));
+	if (view.status() == QQuickView::Error)
+		return -1;
+	view.setResizeMode(QQuickView::SizeRootObjectToView);
+	view.show();
 	return app.exec();
 }
