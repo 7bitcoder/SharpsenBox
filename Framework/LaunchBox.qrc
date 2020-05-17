@@ -1,0 +1,12 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="/">
+    <file>LaunchBox.qml</file>
+    <file>content/images/paper-edge-left.png</file>
+	<file>content/images/paper-edge-right.png</file>
+	<file>content/images/paper-grip.png</file>
+    <file>content/Button.qml</file>
+    <file>content/Display.qml</file>
+    <file>content/NumberPad.qml</file>
+    <file>content/calculator.js</file>
+</qresource>
+</RCC>
