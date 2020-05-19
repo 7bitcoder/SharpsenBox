@@ -1,31 +1,45 @@
-import QtQuick 2.0
+import QtQuick 2.12
+import QtQuick.Controls 2.14
+import QtQuick.Window 2.14
 
-Item {
+Window   {
+    id: window
+    visible: true
+    width: 1200
+    height: 500
+    color: "#202020"
+    flags: Qt.Window | Qt.FramelessWindowHint | Qt.WindowMinimizeButtonHint | Qt.WindowMaximizeButtonHint
 
-    width: 300;
-    height: 200;
+    MouseArea {
+        anchors.fill: parent
+        property point lastMousePos: Qt.point(0, 0)
+        onPressed: { lastMousePos = Qt.point(mouseX, mouseY); }
+        onMouseXChanged: window.x += (mouseX - lastMousePos.x)
+        onMouseYChanged: window.y += (mouseY - lastMousePos.y)
+    }
 
-    Rectangle{
-        x:100;
-        y: 50;
-        height: 100;
-        width: height*2;
-        color: "blue";
-        TextInput {
-            id: elem
-            text: qsTr("Hello Nygger");
-            font.family: "Arial";
-            font.pixelSize: 50;
+    TopBar {
+        anchors{
+            top: parent.top
+            left: parent.left
+            right: parent.right
         }
 
-    }
-    Rectangle{
-        x:100;
-        y: 100;
-        z: -1;
-        height: 100;
-        width: elem.width;
-        color: "green";
+        height: 25
+        color: "black"
+        smooth: true
+
     }
 
+    CustomButton {
+       id: button
+       x: 45
+       y: 359
+    }
 }
+
+/*##^##
+Designer {
+    D{i:0;3d-active-scene:-1}
+}
+##^##*/

@@ -1,6 +1,8 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource prefix="/">
     <file>LaunchBox.qml</file>
+	<file>CustomButton.qml</file>
+	<file>TopBar.qml</file>
     <file>content/images/paper-edge-left.png</file>
 	<file>content/images/paper-edge-right.png</file>
 	<file>content/images/paper-grip.png</file>

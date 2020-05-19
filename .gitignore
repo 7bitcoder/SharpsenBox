@@ -1,4 +1,6 @@
-﻿out/
+﻿
+out/
 deployLauncher.bat
 Framework/fonts
 Framework/imports
+gitGui.bat
