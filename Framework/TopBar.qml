@@ -1,4 +1,4 @@
-import QtQuick 2.12
+import QtQuick 2.14
 import QtQuick.Window 2.14
 
 Rectangle {
@@ -111,7 +111,7 @@ Rectangle {
         MouseArea {
            anchors.fill: parent
            hoverEnabled: true;
-           onEntered: parent.color = "red"
+           onEntered: parent.color = "tomato"
            onExited: parent.color = "transparent"
            onClicked: Qt.quit()
         }
@@ -179,7 +179,7 @@ Rectangle {
            id: maximalizator
            anchors.fill: parent
            hoverEnabled: true;
-           onEntered: maximalize.color = "blue"
+           onEntered: maximalize.color = "skyblue"
            onExited: maximalize.color = bar.color
            onClicked: {
                window.maximalized = !window.maximalized
@@ -215,12 +215,17 @@ Rectangle {
         MouseArea {
            anchors.fill: parent
            hoverEnabled: true;
-           onEntered: parent.color = "blue"
+           onEntered: parent.color = "skyblue"
            onExited: parent.color = "transparent"
+           onPressed: parent.opacity = 0.6
+           onReleased: parent.opacity = 1
            onClicked: window.showMinimized()
         }
         Behavior on color {
             ColorAnimation { duration: 200 }
+        }
+        Behavior on opacity {
+            opa { duration: 100 }
         }
     }
 }
