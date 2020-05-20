@@ -9,13 +9,17 @@ Window   {
     height: 500
     color: "#202020"
     flags: Qt.Window | Qt.FramelessWindowHint | Qt.WindowMinimizeButtonHint | Qt.WindowMaximizeButtonHint
+    minimumWidth: 300
+    minimumHeight: 200
+    property bool maximalized: false
+    property point startMousePos
+    property point startWindowPos
+    property size startWindowSize
 
-    MouseArea {
-        anchors.fill: parent
-        property point lastMousePos: Qt.point(0, 0)
-        onPressed: { lastMousePos = Qt.point(mouseX, mouseY); }
-        onMouseXChanged: window.x += (mouseX - lastMousePos.x)
-        onMouseYChanged: window.y += (mouseY - lastMousePos.y)
+    function absoluteMousePos(mouseArea) {
+        var windowAbs = mouseArea.mapToItem(null, mouseArea.mouseX, mouseArea.mouseY)
+        return Qt.point(windowAbs.x + window.x,
+                        windowAbs.y + window.y)
     }
 
     TopBar {
@@ -28,13 +32,15 @@ Window   {
         height: 25
         color: "black"
         smooth: true
-
     }
-
     CustomButton {
        id: button
        x: 45
        y: 359
+    }
+    ResizingFrames {
+        anchors.fill: parent
+        size: 3
     }
 }
 

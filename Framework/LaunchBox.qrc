@@ -3,6 +3,7 @@
     <file>LaunchBox.qml</file>
 	<file>CustomButton.qml</file>
 	<file>TopBar.qml</file>
+	<file>ResizingFrames.qml</file>
     <file>content/images/paper-edge-left.png</file>
 	<file>content/images/paper-edge-right.png</file>
 	<file>content/images/paper-grip.png</file>
