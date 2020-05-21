@@ -23,6 +23,7 @@ Window   {
     }
 
     TopBar {
+        id: topBar
         anchors{
             top: parent.top
             left: parent.left
@@ -33,11 +34,13 @@ Window   {
         color: "black"
         smooth: true
     }
+
     CustomButton {
        id: button
        x: 45
        y: 359
     }
+
     ResizingFrames {
         anchors.fill: parent
         size: 3

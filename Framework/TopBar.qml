@@ -114,11 +114,15 @@ Rectangle {
            onEntered: parent.color = "tomato"
            onExited: parent.color = "transparent"
            onClicked: Qt.quit()
+           onPressed: parent.opacity = 0.6
+           onReleased: parent.opacity = 1
         }
         Behavior on color {
             ColorAnimation { duration: 200 }
         }
-
+        Behavior on opacity {
+            OpacityAnimator { duration: 100 }
+        }
     }
 
     Rectangle {
@@ -133,7 +137,7 @@ Rectangle {
         width: 35
         Rectangle {
             id: max;
-            visible: !parent.maximalized
+            visible: !window.maximalized
             anchors {
                 fill: parent
                 margins: 7
@@ -144,6 +148,7 @@ Rectangle {
                 width: 1
             }
         }
+
         Rectangle {
             id: min;
             visible: window.maximalized
@@ -154,7 +159,7 @@ Rectangle {
                 topMargin: 9
                 bottomMargin: 7
             }
-            color: maximalize.color
+            color: "transparent"
             border{
                 color: "white"
                 width: 1
@@ -162,25 +167,37 @@ Rectangle {
             Rectangle {
                 visible: window.maximalized
                 anchors {
-                    fill: parent
-                    leftMargin: -2
-                    rightMargin: 2
-                    topMargin: 2
-                    bottomMargin: -2
+                    top: parent.top
+                    right: parent.right
+                    topMargin: -3
+                    rightMargin: -3
                 }
-                color: maximalize.color
-                border{
-                    color: "white"
-                    width: 1
+                color: "white"
+                height: 1
+                width: parent.width
+            }
+            Rectangle {
+                visible: window.maximalized
+                anchors {
+                    top: parent.top
+                    right: parent.right
+                    topMargin: -3
+                    rightMargin: -3
                 }
+                color: "white"
+                height: parent.height
+                width: 1
             }
         }
+
         MouseArea {
            id: maximalizator
            anchors.fill: parent
            hoverEnabled: true;
            onEntered: maximalize.color = "skyblue"
            onExited: maximalize.color = bar.color
+           onPressed: parent.opacity = 0.6
+           onReleased: parent.opacity = 1
            onClicked: {
                window.maximalized = !window.maximalized
                if(window.maximalized){
@@ -193,6 +210,9 @@ Rectangle {
         }
         Behavior on color {
             ColorAnimation { duration: 200 }
+        }
+        Behavior on opacity {
+            OpacityAnimator { duration: 100 }
         }
     }
 
@@ -225,7 +245,7 @@ Rectangle {
             ColorAnimation { duration: 200 }
         }
         Behavior on opacity {
-            opa { duration: 100 }
+            OpacityAnimator { duration: 100 }
         }
     }
 }
