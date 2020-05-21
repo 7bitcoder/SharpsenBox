@@ -3,10 +3,6 @@ import QtQuick.Window 2.14
 
 Rectangle {
     id: bar
-    property int savedWidth: window.width
-    property int savedHeigh: window.height
-    property int savedX: window.x
-    property int savedY: window.y
     MouseArea {
         id: moveBarArea
         anchors{
@@ -15,7 +11,6 @@ Rectangle {
             left: parent.left
             bottom: parent.bottom
         }
-        property point lastMousePos: Qt.point(0, 0)
         function maximalizeFunc(protect) {
             window.maximalized = !window.maximalized
             if(protect === true) {
@@ -38,11 +33,12 @@ Rectangle {
             property point abs
             interval: 1; running: false; repeat: false
             onTriggered: {
-                protect = false
-                if(len > 0) {
+                protect = false //normal protect
+                if(len > 0) { //scale protect
                     var xcoord = Math.floor(abs.x - (moveBarArea.width*len))
                     startWindowPos = Qt.point(xcoord, ycoord)
                     startWindowSize = Qt.size(window.width, window.height)
+                    startMousePos = abs
                     window.x = xcoord
                     window.y = ycoord
                 }
@@ -77,7 +73,6 @@ Rectangle {
                     moveProtector.ycoord = abs.y - mouseY
                     moveProtector.protect = true
                     moveProtector.start()
-                    startMousePos = abs
                 }
             }
         }

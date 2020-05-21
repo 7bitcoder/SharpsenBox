@@ -4,9 +4,6 @@ Item {
     id: frame
     property Item content
     property int size
-    property var topBorder: resizeTop.bottom
-    property var leftBorder: resizeTopLeft.right
-    property var rightBorder: resizeTopRight.left
     MouseArea {
         enabled: !window.maximalized
         id: resizeTopRight
@@ -16,7 +13,6 @@ Item {
         }
         height: size
         width: size
-        property point lastMousePos: Qt.point(0, 0)
         hoverEnabled: true
         onHoveredChanged: cursorShape = (!window.maximalized && (containsMouse || pressed) ?  Qt.SizeBDiagCursor :  Qt.ArrowCursor)
         onPressed: {
@@ -50,7 +46,6 @@ Item {
         }
         height: size
         width: size
-        property point lastMousePos: Qt.point(0, 0)
         hoverEnabled: true
         onHoveredChanged: cursorShape = (!window.maximalized && (containsMouse || pressed) ?  Qt.SizeFDiagCursor :  Qt.ArrowCursor)
         onPressed: {
@@ -84,7 +79,6 @@ Item {
             right: resizeTopRight.left
             left: resizeTopLeft.right
         }
-        property point lastMousePos: Qt.point(0, 0)
         height: size
         hoverEnabled: true
         onHoveredChanged: cursorShape = (!window.maximalized && (containsMouse || pressed) ?  Qt.SizeVerCursor :  Qt.ArrowCursor)
@@ -105,13 +99,13 @@ Item {
 
     MouseArea {
         id: resizeLeft
+        enabled: !window.maximalized
         anchors{
             top: resizeTopLeft.bottom
             left: parent.left
             bottom: resizeBottomLeft.top
         }
         width: size
-        property point lastMousePos: Qt.point(0, 0)
         hoverEnabled: true
         onHoveredChanged: cursorShape = (!window.maximalized && (containsMouse || pressed) ?  Qt.SizeHorCursor :  Qt.ArrowCursor)
         onPressed: {
@@ -131,13 +125,13 @@ Item {
 
     MouseArea {
         id: resizeBottomLeft
+        enabled: !window.maximalized
         anchors{
             bottom: parent.bottom
             left: parent.left
         }
         height: size
         width: size
-        property point lastMousePos: Qt.point(0, 0)
         hoverEnabled: true
         onHoveredChanged: cursorShape = (!window.maximalized && (containsMouse || pressed) ?  Qt.SizeBDiagCursor :  Qt.ArrowCursor)
         onPressed: {
@@ -164,12 +158,12 @@ Item {
 
     MouseArea {
         id: resizeBottom
+        enabled: !window.maximalized
         anchors{
             left: resizeBottomLeft.right
             bottom: parent.bottom
             right: resizeBottomRight.left
         }
-        property point lastMousePos: Qt.point(0, 0)
         height: size
         hoverEnabled: true
         onHoveredChanged: cursorShape = (!window.maximalized && (containsMouse || pressed) ?  Qt.SizeVerCursor :  Qt.ArrowCursor)
@@ -188,13 +182,13 @@ Item {
 
     MouseArea {
         id: resizeBottomRight
+        enabled: !window.maximalized
         anchors{
             bottom: parent.bottom
             right: parent.right
         }
         height: size
         width: size
-        property point lastMousePos: Qt.point(0, 0)
         hoverEnabled: true
         onHoveredChanged: cursorShape = (!window.maximalized && (containsMouse || pressed) ?  Qt.SizeFDiagCursor :  Qt.ArrowCursor)
         onPressed: {
@@ -219,13 +213,13 @@ Item {
 
     MouseArea {
         id: resizeRight
+        enabled: !window.maximalized
         anchors{
             top: resizeTopRight.bottom
             right: parent.right
             bottom: resizeBottomRight.top
         }
         width: size
-        property point lastMousePos: Qt.point(0, 0)
         hoverEnabled: true
         onHoveredChanged: cursorShape = (!window.maximalized && (containsMouse || pressed) ?  Qt.SizeHorCursor :  Qt.ArrowCursor)
         onPressed: {
