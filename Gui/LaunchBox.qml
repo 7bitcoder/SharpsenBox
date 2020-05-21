@@ -1,6 +1,7 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
 import QtQuick.Window 2.14
+import QtWebEngine 1.0
 
 Window   {
     id: window
@@ -34,6 +35,32 @@ Window   {
         height: 25
         color: "black"
         smooth: true
+    }
+
+    Rectangle {
+        id:addressBar
+        color: "#303030"
+        anchors{
+            top: topBar.bottom
+            left: parent.left
+            right: parent.right
+        }
+        height: 20
+
+        Rectangle {
+            anchors {
+                fill: parent
+                leftMargin: 15
+                rightMargin: 15
+            }
+            radius: 10
+            TextInput {
+                color: "#151515";
+                font.pixelSize: 15;
+                width: parent.width-30
+                anchors.centerIn: parent
+            }
+        }
     }
 
     CustomButton {

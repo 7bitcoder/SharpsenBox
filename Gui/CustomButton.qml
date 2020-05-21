@@ -18,6 +18,7 @@ Rectangle {
             onClicked: {
                 parent.pressed = !parent.pressed
                 parent.color = parent.pressed ? "white" :  "#DDDDDD"
+                _Button.buttonClicked("ads")
             }
             onEntered: {
                 parent.color = parent.pressed ? parent.color : "#DDDDDD"
