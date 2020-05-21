@@ -9,13 +9,15 @@ namespace bc {
 		/*
 		Backend class - registers all objects that will be exported to qml
 		*/
-		explicit Backend(QQmlApplicationEngine& parent) : engine(parent) {}
+		explicit Backend(QQmlApplicationEngine& eng) { engine = &eng; }
 		~Backend();
+
 		void init();
+		static QQmlApplicationEngine* engine;
 	private:
-		QQmlApplicationEngine& engine;
 		void registerObjects();
 		void registerObject(std::string name, QObject* object);
+
 		std::vector<QObject*> objects_;
 	};
 }

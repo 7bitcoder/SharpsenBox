@@ -7,6 +7,8 @@
 #define ZIP(TYPE) #TYPE, new TYPE()
 
 namespace bc {
+	QQmlApplicationEngine* Backend::engine = nullptr;
+
 	void Backend::init() {
 		registerObjects();
 	}
@@ -17,7 +19,7 @@ namespace bc {
 
 	void Backend::registerObject(std::string name, QObject* object) {
 		objects_.push_back(object);
-		engine.rootContext()->setContextProperty(name.insert(0, "_").c_str(), objects_.back());
+		engine->rootContext()->setContextProperty(name.insert(0, "_").c_str(), objects_.back());
 	}
 	Backend::~Backend() {
 		for (auto ptr : objects_)
