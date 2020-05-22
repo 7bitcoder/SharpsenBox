@@ -2,6 +2,9 @@
 add_library(Button STATIC
     Button.cpp)
 
+target_include_directories(Button PUBLIC
+"../AppBackend")
+
 qt5_use_modules(Button 
     Quick 
     Core 

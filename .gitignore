@@ -1,6 +1,9 @@
 ﻿
-out/
-deployLauncher.bat
-Framework/fonts
-Framework/imports
+DesktopAplication/out/
+DesktopAplication/deployLauncher.bat
+DesktopAplication/gitGui.bat
+DesktopAplication/.vs
+ServerCode/bin
+ServerCode/obj
+ServerCode/.vs
 gitGui.bat
