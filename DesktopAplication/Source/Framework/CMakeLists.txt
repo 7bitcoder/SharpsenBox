@@ -6,8 +6,8 @@ qt5_add_resources(
 add_executable(LaunchBox
     main.cpp
     ${RESOURCES})
-
-if(WIN32 AND NOT (CMAKE_BUILD_TYPE STREQUAL "Debug"))
+    message(${WIN} AND ${RELEASE} asfa ${64BIT})
+if(WIN AND RELEASE)
     set_target_properties(LaunchBox PROPERTIES WIN32_EXECUTABLE TRUE)
 endif()
 

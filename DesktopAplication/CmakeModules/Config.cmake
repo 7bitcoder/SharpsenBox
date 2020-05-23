@@ -1,0 +1,36 @@
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin )
+set( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin )
+set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib )
+
+option(AUTO_QT_LIBS "Runs Qt ulility program to automaticly add qt/qml libraries to bin folder" OFF)
+
+#set basic platrofm variables
+if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+    set(64BIT 1)
+	set (CMAKE_PREFIX_PATH $ENV{Qt64Bit} )
+elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
+    set(32BIT 1)
+	set (CMAKE_PREFIX_PATH $ENV{Qt32Bit} )
+endif()
+
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+	set(DEBUG 1)
+	set(type debug)
+else()
+	set(RELEASE 1)
+	set(type release)
+endif()
+
+if(${CMAKE_SYSTEM_NAME} STREQUAL Windows)
+	set(WIN 1)
+	set(platform win)
+elseif(${CMAKE_SYSTEM_NAME} STREQUAL  Linux)
+	set(LINUX 1)
+	set(platform linux)
+else()
+	set(MAC 1)
+	set(platform mac)
+endif()
