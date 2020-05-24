@@ -10,15 +10,6 @@ project ("LaunchBox")
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/CmakeModules")
 include(Config)
 
-if(AUTO_QT_LIBS)
-	add_custom_target(deploy ALL
-		WORKING_DIRECTORY ${CMAKE_PREFIX_PATH}/../../../bin 
-		COMMAND ${platform}deployqt --qmldir ${CMAKE_SOURCE_DIR}/Gui --${type} --quick ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
-		COMMENT "========= Deploying Aplication =========" 
-		USES_TERMINAL)
-		add_dependencies(deploy LaunchBox)
-endif()
-
 find_package(Qt5 REQUIRED COMPONENTS 
 	Core 
 	Widgets 

@@ -72,11 +72,5 @@
         }
       ]
     }
-  ],
-  "environments": [
-    {
-      "Qt32Bit": "C:\\QtTools\\5.14.2\\msvc2017\\lib\\cmake\\Qt5",
-      "Qt64Bit": "C:\\QtTools\\5.14.2\\msvc2017_64\\lib\\cmake\\Qt5"
-    }
   ]
 }

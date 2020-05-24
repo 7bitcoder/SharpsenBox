@@ -7,14 +7,34 @@ set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib )
 
 option(AUTO_QT_LIBS "Runs Qt ulility program to automaticly add qt/qml libraries to bin folder" OFF)
 
-#set basic platrofm variables
+# set basic platrofm variables
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
     set(64BIT 1)
-	set (CMAKE_PREFIX_PATH $ENV{Qt64Bit} )
+	set(QtLib ${Qt64Bit})
 elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
     set(32BIT 1)
-	set (CMAKE_PREFIX_PATH $ENV{Qt32Bit} )
+	set(QtLib ${Qt32Bit})
 endif()
+
+# set Qt library path
+# read from file Qt paths
+# filename: QtPaths.json
+# format:
+# {
+#	"Qt32Bit": "C:\\QtTools\\5.14.2\\msvc2017",
+#   "Qt64Bit": "C:\\QtTools\\5.14.2\\msvc2017_64"
+# }
+file(READ QtPaths.json stream)
+if(64BIT)
+	string(REGEX MATCH "(\"Qt64Bit\"):.?\"([^\"]*)\".?\n"  QtLib ${stream})
+else()
+	string(REGEX MATCH "(\"Qt32Bit\"):.?\"([^\"]*)\".?\n"  QtLib ${stream})
+endif()
+
+set(QtLib ${CMAKE_MATCH_2})
+set (CMAKE_PREFIX_PATH ${QtLib}/lib/cmake/Qt5 )
+message("Qt library path: ${QtLib}")
+
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 	set(DEBUG 1)
@@ -33,4 +53,13 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL  Linux)
 else()
 	set(MAC 1)
 	set(platform mac)
+endif()
+
+if(AUTO_QT_LIBS)
+	add_custom_target(deploy ALL
+		WORKING_DIRECTORY ${QtLib}/bin 
+		COMMAND ${platform}deployqt --qmldir ${CMAKE_SOURCE_DIR}/Gui --${type} --quick ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+		COMMENT "========= Deploying Aplication =========" 
+		USES_TERMINAL)
+		add_dependencies(deploy LaunchBox)
 endif()

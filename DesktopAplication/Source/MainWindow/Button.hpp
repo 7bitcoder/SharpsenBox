@@ -18,5 +18,6 @@ namespace bc {
 		void buttonClicked(const QString& in);
 	private:
 		QObject* textArea;
+		int value = 0;
 	};
 }

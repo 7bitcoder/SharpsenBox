@@ -55,6 +55,8 @@ Window   {
             }
             radius: 10
             TextInput {
+                id: textInput
+                text: "asd"
                 color: "#151515";
                 font.pixelSize: 15;
                 width: parent.width-30
