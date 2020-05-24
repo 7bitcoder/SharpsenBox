@@ -56,7 +56,7 @@ Window   {
             radius: 10
             TextInput {
                 id: textInput
-                text: "asd"
+                text: _Button.sayHello()
                 color: "#151515";
                 font.pixelSize: 15;
                 width: parent.width-30

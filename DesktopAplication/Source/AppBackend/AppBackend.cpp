@@ -5,6 +5,7 @@
 #include "Button.hpp"
 
 #define ZIP(TYPE) #TYPE, new TYPE()
+#define REGISTER(CLASS) qmlRegisterType<CLASS>("_"#CLASS, 1, 0, "_"#CLASS); registerObject(ZIP(CLASS))
 
 namespace bc {
 	QQmlApplicationEngine* Backend::engine = nullptr;
@@ -14,7 +15,8 @@ namespace bc {
 	}
 
 	void Backend::registerObjects() {
-		registerObject(ZIP(Button));
+		REGISTER(Button);
+		//registerObject(ZIP(Button));
 	}
 
 	void Backend::registerObject(std::string name, QObject* object) {
