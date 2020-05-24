@@ -18,7 +18,7 @@ namespace bc {
 		// (QML doesn't support returning values via the parameter list.)
 		void buttonClicked(const QString& in);
 	private:
-		QObject* textArea;
+		QString string = "hello nygger";
 		int value = 0;
 	};
 }

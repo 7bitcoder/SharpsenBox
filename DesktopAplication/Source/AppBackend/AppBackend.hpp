@@ -17,8 +17,7 @@ namespace bc {
 	private:
 		void registerObjects();
 
-		template<class T>
-		void registerObject();
+		void registerObject(std::string name, QObject* object);
 
 		std::vector<QObject*> objects_;
 	};

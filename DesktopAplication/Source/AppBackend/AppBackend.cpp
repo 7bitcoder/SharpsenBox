@@ -4,8 +4,7 @@
 #include "AppBackend.hpp"
 #include "Button.hpp"
 
-#define NAME(TYPE) #TYPE
-#define REGISTER(CLASS) qmlRegisterType<CLASS>("_"#CLASS, 1, 0, "_"#CLASS); registerObject(ZIP(CLASS))
+#define ZIP(TYPE) #TYPE, new TYPE
 
 namespace bc {
 	QQmlApplicationEngine* Backend::engine = nullptr;
@@ -15,18 +14,14 @@ namespace bc {
 	}
 
 	void Backend::registerObjects() {
-		registerObject<Button>();
-		//registerObject(ZIP(Button));
-
+		// ZIP macro changes [Class] to ["Class", new Class]
+		registerObject(ZIP(Button));
 	}
 
-	template<class T>
-	void Backend::registerObject() {
-		objects_.push_back(new T);
-		std::string name(NAME(T));
+	void Backend::registerObject(std::string name, QObject* object) {
+		objects_.push_back(object);
 		name.insert(0, "_");
 		auto cStr = name.c_str();
-		qmlRegisterType<T>(cStr, 1, 0, cStr);
 		engine->rootContext()->setContextProperty(cStr, objects_.back());
 	}
 

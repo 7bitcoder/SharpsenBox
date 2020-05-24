@@ -2,7 +2,7 @@ import QtQuick 2.14
 import QtQuick.Controls 2.14
 import QtQuick.Window 2.14
 import QtWebEngine 1.0
-import _Button 1.0
+
 Window   {
     id: window
     visible: true
