@@ -3,6 +3,7 @@ DesktopAplication/out/
 DesktopAplication/deployLauncher.bat
 DesktopAplication/gitGui.bat
 DesktopAplication/.vs
+DesktopAplication/QtPaths.json
 ServerCode/bin
 ServerCode/obj
 ServerCode/.vs
