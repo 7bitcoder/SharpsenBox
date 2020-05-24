@@ -6,8 +6,8 @@
 namespace bc {
 	class Button : public QObject {
 		Q_OBJECT
-
 	public:
+		Q_INVOKABLE QString launch(const QString& program);
 		// QObjects are expected to support a parent/child hierarchy.  I've modified
 		// the constructor to match the standard.
 		Button();
