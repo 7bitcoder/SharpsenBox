@@ -23,7 +23,7 @@ endif()
 # {
 #	"Qt32Bit": "C:\\QtTools\\5.14.2\\msvc2017",
 #   "Qt64Bit": "C:\\QtTools\\5.14.2\\msvc2017_64"
-# }
+# } -> see QtPathsExample.json
 file(READ QtPaths.json stream)
 if(64BIT)
 	string(REGEX MATCH "(\"Qt64Bit\"):.?\"([^\"]*)\".?\n"  QtLib ${stream})
