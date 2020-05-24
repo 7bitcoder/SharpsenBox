@@ -16,7 +16,9 @@ namespace bc {
 		static QQmlApplicationEngine* engine;
 	private:
 		void registerObjects();
-		void registerObject(std::string name, QObject* object);
+
+		template<class T>
+		void registerObject();
 
 		std::vector<QObject*> objects_;
 	};
