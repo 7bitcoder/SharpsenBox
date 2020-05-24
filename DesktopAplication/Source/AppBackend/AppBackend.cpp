@@ -4,7 +4,7 @@
 #include "AppBackend.hpp"
 #include "Button.hpp"
 
-#define ZIP(TYPE) #TYPE, new TYPE()
+#define NAME(TYPE) #TYPE
 
 namespace bc {
 	QQmlApplicationEngine* Backend::engine = nullptr;
@@ -14,14 +14,20 @@ namespace bc {
 	}
 
 	void Backend::registerObjects() {
-		registerObject(ZIP(Button));
+		registerObject<Button>();
+
 	}
 
-	void Backend::registerObject(std::string name, QObject* object) {
-		objects_.push_back(object);
-
-		engine->rootContext()->setContextProperty(name.insert(0, "_").c_str(), objects_.back());
+	template<class T>
+	void Backend::registerObject() {
+		objects_.push_back(new T);
+		std::string name(NAME(T));
+		name.insert(0, "_");
+		auto cStr = name.c_str();
+		qmlRegisterType<T>(cStr, 1, 0, cStr);
+		engine->rootContext()->setContextProperty(cStr, objects_.back());
 	}
+
 	Backend::~Backend() {
 		for (auto ptr : objects_)
 			delete ptr;
