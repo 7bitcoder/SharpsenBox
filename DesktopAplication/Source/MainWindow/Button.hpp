@@ -9,7 +9,7 @@ namespace bc {
 	public:
 		//Q_INVOKABLE QString launch(const QString& program);
 		Q_INVOKABLE QString sayHello() const;
-		Q_PROPERTY(QString text MEMBER string READ sayHello NOTIFY textChanged)
+		Q_PROPERTY(QString text MEMBER string READ sayHello NOTIFY textChanged);
 		// QObjects are expected to support a parent/child hierarchy.  I've modified
 		// the constructor to match the standard.
 		Button();

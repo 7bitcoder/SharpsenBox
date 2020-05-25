@@ -4,10 +4,9 @@
 #include "AppBackend.hpp"
 
 namespace bc {
-	Button::Button() {
-		}
+	Button::Button() {}
 	QString Button::sayHello() const { return string; }
-	void Button::buttonClicked(const QString& in) { 
+	void Button::buttonClicked(const QString& in) {
 		string = std::to_string(++value).c_str();
 		textChanged();
 	}

@@ -4,5 +4,9 @@
 	<file>CustomButton.qml</file>
 	<file>TopBar.qml</file>
 	<file>ResizingFrames.qml</file>
+	<file>LeftBar.qml</file>
+	<file>content/person.png</file>
+	<file>content/cog.png</file>
+	<file>content/house.png</file>
 </qresource>
 </RCC>
