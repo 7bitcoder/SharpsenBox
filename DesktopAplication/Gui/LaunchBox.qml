@@ -46,7 +46,7 @@ Window {
             left: parent.left
             bottom: bottomBar.top
         }
-        width: 200
+        width: 180
     }
 
     Item {
@@ -91,6 +91,16 @@ Window {
                 leftMargin: 30
             }
         }
+        LoadingBar {
+            visible: true
+            anchors {
+                verticalCenter: parent.verticalCenter
+                left: button.right
+                leftMargin: 30
+                right: parent.right
+                rightMargin: 30
+            }
+        }
     }
 
     ResizingFrames {
@@ -98,10 +108,3 @@ Window {
         size: 3
     }
 }
-
-/*##^##
-Designer {
-    D{i:0;3d-active-scene:-1}
-}
-##^##*/
-
