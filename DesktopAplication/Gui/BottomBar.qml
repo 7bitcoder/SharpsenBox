@@ -3,7 +3,7 @@ import QtQuick 2.12
 //import QtWinExtras 1.1
 Rectangle {
     id: bottomBar
-    color: "#252525"
+    color: "#292929"
     height: len
     property int checking: 0
     property int downloading: 1
@@ -64,7 +64,7 @@ Rectangle {
         }
         visible: true
         property int minLen: 6
-        color: "#252525"
+        color: "grey"
         Rectangle {
             id: minimalizedPrBar
             anchors {
@@ -129,24 +129,24 @@ Rectangle {
     //         paused: state === pause
     //     }
     // }
-    //Timer {
-    //    id: prog
-    //    interval: 50
-    //    onTriggered: {
-    //        progress = ((progress + 1) % 101)
-    //        //winPRogress.setBalue(progress)
-    //    }
-    //    repeat: true
-    //    running: true
-    //}
-    //Timer {
-    //    interval: 5000
-    //    onTriggered: {
-    //        bottomBar.state = ((bottomBar.state + 1) % 7)
-    //    }
-    //    repeat: true
-    //    running: true
-    //}
+    Timer {
+        id: prog
+        interval: 50
+        onTriggered: {
+            progress = ((progress + 1) % 101)
+            //winPRogress.setBalue(progress)
+        }
+        repeat: true
+        running: true
+    }
+    Timer {
+        interval: 5000
+        onTriggered: {
+            bottomBar.state = ((bottomBar.state + 1) % 7)
+        }
+        repeat: true
+        running: true
+    }
     Item {
         id: controls
         property int size: 30

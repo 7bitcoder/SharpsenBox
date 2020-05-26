@@ -11,7 +11,7 @@ Window {
     color: "#202020"
     flags: Qt.Window | Qt.FramelessWindowHint | Qt.WindowMinimizeButtonHint
            | Qt.WindowMaximizeButtonHint
-    minimumWidth: 600
+    minimumWidth: 800
     minimumHeight: 600
     // for window movement
     property bool maximalized: false

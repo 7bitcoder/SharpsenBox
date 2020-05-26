@@ -1,6 +1,7 @@
 import QtQuick 2.12
 
 Rectangle {
+    id: gameChoser
     property int size
     property int sylioId: 0
     property int restId: 1
@@ -11,6 +12,11 @@ Rectangle {
         rest.selected = false
         sylio.selected = false
     }
+    property color normal: "#808080"
+    property real clicked: 0.3
+    property real hovered: 1
+    property real timeHover: 200
+    property real timeClicked: 80
 
     Rectangle {
         id: sylio
@@ -22,9 +28,14 @@ Rectangle {
         }
         width: parent.size
         color: selected ? window.color : "transparent"
+        onSelectedChanged: {
+            if (selected)
+                sylioText.color = "white"
+            else
+                sylioText.color = gameChoser.normal
+        }
         Text {
             id: sylioText
-            opacity: 0.6
             anchors.centerIn: parent
             text: "Sylio"
             font.family: "Arial"
@@ -32,7 +43,12 @@ Rectangle {
             color: "white"
             Behavior on opacity {
                 OpacityAnimator {
-                    duration: 100
+                    duration: gameChoser.timeClicked
+                }
+            }
+            Behavior on color {
+                ColorAnimation {
+                    duration: gameChoser.timeHover
                 }
             }
         }
@@ -43,10 +59,13 @@ Rectangle {
                 resetAll(sylioId)
                 parent.selected = true
             }
-            onEntered: sylioText.opacity = 1
-            onExited: sylioText.opacity = 0.6
-            onPressed: sylioText.opacity = 0.6
-            onReleased: sylioText.opacity = 1
+            onEntered: sylioText.color = "white"
+            onExited: {
+                if (!sylio.selected)
+                    sylioText.color = gameChoser.normal
+            }
+            // onPressed: sylioText.opacity = gameChoser.clicked
+            // onReleased: sylioText.opacity = gameChoser.hovered
         }
     }
     Rectangle {
@@ -59,17 +78,28 @@ Rectangle {
         }
         width: parent.size
         color: selected ? window.color : "transparent"
+        onSelectedChanged: {
+            if (selected)
+                restText.color = "white"
+            else
+                restText.color = gameChoser.normal
+        }
+
         Text {
             id: restText
             anchors.centerIn: parent
             text: "Rest"
             font.family: "Arial"
             font.pointSize: 25
-            color: "white"
-            opacity: 0.6
+            color: gameChoser.normal
             Behavior on opacity {
                 OpacityAnimator {
-                    duration: 100
+                    duration: gameChoser.timeClicked
+                }
+            }
+            Behavior on color {
+                ColorAnimation {
+                    duration: gameChoser.timeHover
                 }
             }
         }
@@ -80,10 +110,13 @@ Rectangle {
                 resetAll(restId)
                 parent.selected = true
             }
-            onEntered: restText.opacity = 1
-            onExited: restText.opacity = 0.6
-            onPressed: restText.opacity = 0.6
-            onReleased: restText.opacity = 1
+            onEntered: restText.color = "white"
+            onExited: {
+                if (!rest.selected)
+                    restText.color = gameChoser.normal
+            }
+            // onPressed: restText.opacity = gameChoser.clicked
+            // onReleased: restText.opacity = gameChoser.hovered
         }
     }
 }
