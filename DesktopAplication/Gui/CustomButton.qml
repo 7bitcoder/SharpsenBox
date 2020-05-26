@@ -8,7 +8,7 @@ Rectangle {
         id: buttonPLay
         property bool pressed: false
         anchors.centerIn: parent
-        text: "PLAY"
+        text: "Install"
         font.family: "Arial"
         font.pointSize: 25
         color: "#AAAAAA"
@@ -17,8 +17,12 @@ Rectangle {
             anchors.fill: parent
             onClicked: {
                 parent.pressed = !parent.pressed
-                parent.color = parent.pressed ? "white" :  "#DDDDDD"
-                _Button.buttonClicked("ads")
+                parent.color = parent.pressed ? "white" : "#DDDDDD"
+                //_Button.buttonClicked("ads")
+                if (window.tmp !== 0)
+                    window.tmp = 0
+                else
+                    window.tmp = 1
             }
             onEntered: {
                 parent.color = parent.pressed ? parent.color : "#DDDDDD"
@@ -28,7 +32,9 @@ Rectangle {
             }
         }
         Behavior on color {
-            ColorAnimation { duration: 100 }
+            ColorAnimation {
+                duration: 100
+            }
         }
     }
 }

@@ -19,6 +19,8 @@ Window {
     property point startWindowPos
     property size startWindowSize
 
+    property int tmp: 1
+
     function absoluteMousePos(mouseArea) {
         var windowAbs = mouseArea.mapToItem(null, mouseArea.mouseX,
                                             mouseArea.mouseY)
@@ -44,19 +46,9 @@ Window {
         anchors {
             top: topBar.bottom
             left: parent.left
-            bottom: bottomBar.top
+            bottom: parent.bottom
         }
         width: 180
-    }
-
-    Item {
-        id: rightBar
-        anchors {
-            top: topBar.bottom
-            right: parent.right
-            bottom: bottomBar.top
-        }
-        width: 50
     }
 
     Item {
@@ -64,84 +56,43 @@ Window {
         anchors {
             top: topBar.bottom
             left: leftBar.right
-            right: rightBar.left
-            bottom: bottomBar.top
+            right: parent.right
+            bottom: parent.bottom
         }
+
+        GameChoser {
+            id: gameChoser
+            anchors {
+                top: parent.top
+                left: parent.left
+                right: parent.right
+            }
+            height: 70
+            color: "#292929"
+            size: 150
+        }
+
         AnimatedImage {
             anchors.centerIn: parent
             source: "content/sea.gif"
         }
+
+        CustomButton {
+            id: button
+            anchors.left: parent.left
+            anchors.top: gameChoser.bottom
+        }
     }
 
-    Rectangle {
+    BottomBar {
         id: bottomBar
-        color: "#252525"
+        len: 55
+        visible: true
+        progress: 50
         anchors {
             left: parent.left
             bottom: parent.bottom
             right: parent.right
-        }
-        height: 80
-
-        property int checking: 0
-        property int downing: 1
-        property int installing: 2
-        property int pause: 3
-        property int error: 4
-        property int stopped: 5
-        property int completed: 6
-
-        property int state: completed
-
-        onStateChanged: {
-            if (state === checking) {
-                loadBar.barColor = "white"
-                loadBar.vis = true
-                loadBar.animation = true
-                //loadBar.progress = 100
-            } else if (state === downing) {
-                loadBar.barColor = "orange"
-                loadBar.vis = false
-                loadBar.animation = false
-            } else if (state === installing) {
-                loadBar.vis = true
-                loadBar.animation = true
-                loadBar.barColor = "orange"
-            } else if (state === pause) {
-                loadBar.animation = false
-                loadBar.barColor = "yellow"
-            } else if (state === error) {
-                loadBar.animation = false
-                loadBar.barColor = "red"
-            } else if (state === completed) {
-                loadBar.animation = false
-                loadBar.vis = false
-                loadBar.barColor = "green"
-            }
-        }
-
-        CustomButton {
-            id: button
-            anchors {
-                verticalCenter: parent.verticalCenter
-                left: parent.left
-                leftMargin: 30
-            }
-        }
-        LoadingBar {
-            id: loadBar
-            visible: true
-            progress: 1
-            barColor: "green"
-            animation: false
-            vis: false
-            anchors {
-                verticalCenter: parent.verticalCenter
-                left: button.right
-                leftMargin: 10
-                right: parent.right
-                rightMargin: 30
-            }
         }
     }
 
