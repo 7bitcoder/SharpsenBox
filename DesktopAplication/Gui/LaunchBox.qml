@@ -69,7 +69,6 @@ Window {
         }
         AnimatedImage {
             anchors.centerIn: parent
-            id: animation
             source: "content/sea.gif"
         }
     }
@@ -83,6 +82,44 @@ Window {
             right: parent.right
         }
         height: 80
+
+        property int checking: 0
+        property int downing: 1
+        property int installing: 2
+        property int pause: 3
+        property int error: 4
+        property int stopped: 5
+        property int completed: 6
+
+        property int state: completed
+
+        onStateChanged: {
+            if (state === checking) {
+                loadBar.barColor = "white"
+                loadBar.vis = true
+                loadBar.animation = true
+                //loadBar.progress = 100
+            } else if (state === downing) {
+                loadBar.barColor = "orange"
+                loadBar.vis = false
+                loadBar.animation = false
+            } else if (state === installing) {
+                loadBar.vis = true
+                loadBar.animation = true
+                loadBar.barColor = "orange"
+            } else if (state === pause) {
+                loadBar.animation = false
+                loadBar.barColor = "yellow"
+            } else if (state === error) {
+                loadBar.animation = false
+                loadBar.barColor = "red"
+            } else if (state === completed) {
+                loadBar.animation = false
+                loadBar.vis = false
+                loadBar.barColor = "green"
+            }
+        }
+
         CustomButton {
             id: button
             anchors {
@@ -92,7 +129,12 @@ Window {
             }
         }
         LoadingBar {
+            id: loadBar
             visible: true
+            progress: 1
+            barColor: "green"
+            animation: false
+            vis: false
             anchors {
                 verticalCenter: parent.verticalCenter
                 left: button.right

@@ -3,11 +3,13 @@
     <file>LaunchBox.qml</file>
 	<file>CustomButton.qml</file>
 	<file>TopBar.qml</file>
+	<file>LoadingBar.qml</file>
 	<file>ResizingFrames.qml</file>
 	<file>LeftBar.qml</file>
 	<file>content/person.png</file>
 	<file>content/cog.png</file>
 	<file>content/house.png</file>
 	<file>content/sea.gif</file>
+	<file>content/loader.png</file>
 </qresource>
 </RCC>

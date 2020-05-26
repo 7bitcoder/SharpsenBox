@@ -1,35 +1,51 @@
 import QtQuick 2.12
+import QtWinExtras 1.1
 
 Rectangle {
     id: loadingBar
     color: "red"
-    //states
-    property int downloading: 1
-    property int installing: 2
-    property int pause: 3
-    property int error: 4
-    property int stopped: 5
 
-    property int state: error
-    property real progress: 60
-    property color barColor: "green"
-    onStateChanged: {
-        if (state === downloading) {
-            barColor = "orange"
-            loader.visible = true
-            loader.stop = false
-        } else if (state === installing) {
-            loader.visible = true
-            loader.stop = false
-            barColor = "green"
-        } else if (state === pause) {
-            loader.stop = true
-        } else if (state === error) {
-            loader.stop = true
-            barColor = "red"
-        }
+    //bottomBar.states
+    property int progress
+    property color barColor
+    property bool animation
+    property bool vis
+    onAnimationChanged: {
+        if (animation)
+            anim.start()
+        else
+            anim.stop()
     }
 
+    TaskbarButton {
+        id: winPRogress
+        progress {
+            visible: true
+            value: loadingBar.progress
+            minimum: 0
+            maximum: 100
+            paused: bottomBar.state === bottomBar.pause
+        }
+    }
+    Timer {
+        id: prog
+        interval: 50
+        onTriggered: {
+            progress = ((progress + 1) % 101)
+            //winPRogress.setBalue(progress)
+        }
+        repeat: true
+        running: true
+    }
+
+    Timer {
+        interval: 5000
+        onTriggered: {
+            bottomBar.state = ((bottomBar.state + 1) % 7)
+        }
+        repeat: true
+        running: true
+    }
     Rectangle {
         anchors {
             left: parent.left
@@ -65,13 +81,15 @@ Rectangle {
                 width: parent.width * 2
                 horizontalTileMode: BorderImage.Repeat
                 opacity: 0.5
-                property bool stop: false
+                visible: loadingBar.vis
+
                 NumberAnimation on x {
+                    id: anim
                     from: outter.x - loader.sourceSize.width
                     to: outter.x
                     duration: 2000
                     loops: Animation.Infinite
-                    paused: visible && !stop
+                    running: true
                 }
             }
         }
