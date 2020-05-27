@@ -3,7 +3,11 @@
     <file>LaunchBox.qml</file>
 	<file>CustomButton.qml</file>
 	<file>TopBar.qml</file>
+	<file>Home.qml</file>
+	<file>Settings.qml</file>
 	<file>GameChoser.qml</file>
+	<file>Sylio.qml</file>
+	<file>Rest.qml</file>
 	<file>BottomBar.qml</file>
 	<file>ResizingFrames.qml</file>
 	<file>LeftBar.qml</file>
@@ -12,6 +16,7 @@
 	<file>content/house.png</file>
 	<file>content/sea.gif</file>
 	<file>content/loader.png</file>
+	<file>content/startVideo.jpg</file>
 	<file>content/plain-square.png</file>
 	<file>content/pause-button.png</file>
 	<file>content/play-button.png</file>

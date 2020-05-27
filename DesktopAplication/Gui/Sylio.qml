@@ -75,7 +75,7 @@ Item {
             Video {
                 id: video
                 anchors.fill: parent
-                source: "content/videoplayback.mp4"
+                source: "./content/videoplayback.mp4"
                 visible: !parent.toggle
                 focus: true
                 onScaleChanged: console.log(scale)
