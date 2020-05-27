@@ -46,12 +46,6 @@ Item {
     //    visible: true
     //    url: "https://www.youtube.com/embed/T5zxTI1gxOQ?autoplay=0&fs=0&iv_load_policy=3&showinfo=0&rel=0&cc_load_policy=0"
     //}
-    MediaPlayer {
-        id: mediaplayer
-        source: "content/videoplayback.mp4"
-        autoPlay: false
-        muted: true
-    }
     Item {
         id: holder
         property bool toggle: true
@@ -66,11 +60,17 @@ Item {
             bottom: parent.bottom
             bottomMargin: 65
         }
-        VideoOutput {
-            id: image
+        Video {
+            id: video
             anchors.fill: parent
+            source: "content/videoplayback.mp4"
             visible: !parent.toggle
-            source: mediaplayer
+            focus: true
+            Keys.onSpacePressed: video.playbackState
+                                 == MediaPlayer.PlayingState ? video.pause(
+                                                                   ) : video.play()
+            Keys.onLeftPressed: video.seek(video.position - 5000)
+            Keys.onRightPressed: video.seek(video.position + 5000)
         }
         Image {
             anchors.centerIn: parent
@@ -85,7 +85,7 @@ Item {
             onClicked: {
                 if (parent.toggle)
                     parent.toggle = false
-                parent.pause ? mediaplayer.pause() : mediaplayer.play()
+                parent.pause ? video.pause() : video.play()
                 parent.pause = !parent.pause
             }
         }
