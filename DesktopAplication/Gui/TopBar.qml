@@ -2,6 +2,7 @@ import QtQuick 2.14
 import QtQuick.Window 2.14
 
 Rectangle {
+    //black movable bar
     id: bar
     MouseArea {
         id: moveBarArea

@@ -11,7 +11,7 @@ Window {
     color: "#202020"
     flags: Qt.Window | Qt.FramelessWindowHint | Qt.WindowMinimizeButtonHint
            | Qt.WindowMaximizeButtonHint
-    minimumWidth: 800
+    minimumWidth: 1000
     minimumHeight: 600
     // for window movement
     property bool maximalized: false
@@ -51,37 +51,15 @@ Window {
         width: 180
     }
 
-    Item {
-        id: content
+    Loader {
+        id: contentLoader
         anchors {
             top: topBar.bottom
             left: leftBar.right
             right: parent.right
             bottom: parent.bottom
         }
-
-        GameChoser {
-            id: gameChoser
-            anchors {
-                top: parent.top
-                left: parent.left
-                right: parent.right
-            }
-            height: 70
-            color: "#292929"
-            size: 150
-        }
-
-        AnimatedImage {
-            anchors.centerIn: parent
-            source: "content/sea.gif"
-        }
-
-        CustomButton {
-            id: button
-            anchors.left: parent.left
-            anchors.top: gameChoser.bottom
-        }
+        source: "Home.qml"
     }
 
     BottomBar {

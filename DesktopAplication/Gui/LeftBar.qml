@@ -16,7 +16,7 @@ Rectangle {
         property int account_: 3
         // actual state
         property int state: home_
-        // buttons opacity
+        // buttons opacity/timers
         property real normal: 0.6
         property real clicked: 0.4
         property real hovered: 1
@@ -28,11 +28,13 @@ Rectangle {
             switch (state) {
             case home_:
                 //load new stage
+                contentLoader.source = "Home.qml"
                 settings.loc = false
                 account.loc = false
                 break
             case settings_:
                 //load new stage
+                contentLoader.source = "Settings.qml"
                 home.loc = false
                 account.loc = false
                 break

@@ -3,15 +3,17 @@ import QtQuick 2.12
 Rectangle {
     id: gameChoser
     property int size
+    // game state id
     property int sylioId: 0
     property int restId: 1
-
+    //state
     property int globSelected: sylioId
     function resetAll(id) {
         globSelected = id
         rest.selected = false
         sylio.selected = false
     }
+    //buttons settings/color/opavity etc
     property color normal: "#808080"
     property real clicked: 0.3
     property real hovered: 1
@@ -29,9 +31,10 @@ Rectangle {
         width: parent.size
         color: selected ? window.color : "transparent"
         onSelectedChanged: {
-            if (selected)
+            if (selected) {
                 sylioText.color = "white"
-            else
+                gameChoserLoader.source = "Sylio.qml"
+            } else
                 sylioText.color = gameChoser.normal
         }
         Text {
@@ -79,9 +82,10 @@ Rectangle {
         width: parent.size
         color: selected ? window.color : "transparent"
         onSelectedChanged: {
-            if (selected)
+            if (selected) {
                 restText.color = "white"
-            else
+                gameChoserLoader.source = "Rest.qml"
+            } else
                 restText.color = gameChoser.normal
         }
 

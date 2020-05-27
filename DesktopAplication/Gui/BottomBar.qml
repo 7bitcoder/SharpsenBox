@@ -4,7 +4,12 @@ import QtQuick 2.12
 Rectangle {
     id: bottomBar
     color: "#292929"
+
+    //max height
+    property int len
     height: len
+
+    //states of instatation
     property int checking: 0
     property int downloading: 1
     property int installing: 2
@@ -13,84 +18,8 @@ Rectangle {
     property int stopped: 5
     property int completed: 6
 
+    //stete
     property int state: downloading
-
-    property int progress
-    property color barColor: "green"
-
-    property string statusInfo: "Downloading: 2GB (500MB/s)"
-    property string percentage: qsTr(progress + "%")
-
-    property int len
-
-    property int hidden: 0
-    property int showed: 1
-    property int minimalized: 2
-
-    property int visibleState: window.tmp
-
-    Behavior on height {
-        NumberAnimation {
-            duration: 200
-            easing.type: Easing.InOutQuad
-            onRunningChanged: {
-                if (!running
-                        && bottomBar.visibleState === bottomBar.minimalized)
-                    minimalizedBar.height = 10
-            }
-        }
-    }
-
-    onVisibleStateChanged: {
-        if (visibleState === minimalized) {
-            bottomBar.height = 0
-        } else if (visibleState === showed) {
-            if (minimalizedBar.height > 0)
-                minimalizedBar.height = 0
-            else
-                bottomBar.height = bottomBar.len
-        } else {
-            bottomBar.height = 0
-            minimalizedBar.height = 0
-        }
-    }
-
-    Rectangle {
-        id: minimalizedBar
-        anchors {
-            left: bottomBar.left
-            right: bottomBar.right
-            bottom: bottomBar.bottom
-        }
-        visible: true
-        property int minLen: 6
-        color: "grey"
-        Rectangle {
-            id: minimalizedPrBar
-            anchors {
-                top: parent.top
-                left: parent.left
-                bottom: parent.bottom
-            }
-            color: bottomBar.barColor
-            width: (bottomBar.progress / 100) * parent.width
-        }
-        MouseArea {
-            anchors.fill: parent
-            onClicked: bottomBar.visibleState = bottomBar.showed
-        }
-
-        Behavior on height {
-            NumberAnimation {
-                duration: 100
-                onRunningChanged: {
-                    if (running === false
-                            && bottomBar.visibleState === bottomBar.showed)
-                        bottomBar.height = bottomBar.len
-                }
-            }
-        }
-    }
 
     onStateChanged: {
         if (state === checking) {
@@ -119,16 +48,49 @@ Rectangle {
         }
     }
 
-    // TaskbarButton {
-    //     id: winPRogress
-    //     progress {
-    //         visible: true
-    //         value: progress
-    //         minimum: 0
-    //         maximum: 100
-    //         paused: state === pause
-    //     }
-    // }
+    //porgress property
+    property int progress
+    property color barColor: "green"
+
+    //progress settings
+    property string statusInfo: "Downloading: 2GB (500MB/s)"
+    property string percentage: qsTr(progress + "%")
+
+    //bar states
+    property int hidden: 0
+    property int showed: 1
+    property int minimalized: 2
+
+    property int visibleState: window.tmp
+
+    //hiding showing animation
+    Behavior on height {
+        NumberAnimation {
+            duration: 200
+            easing.type: Easing.InOutQuad
+            onRunningChanged: {
+                if (!running
+                        && bottomBar.visibleState === bottomBar.minimalized)
+                    minimalizedBar.height = 10
+            }
+        }
+    }
+
+    onVisibleStateChanged: {
+        if (visibleState === minimalized) {
+            bottomBar.height = 0
+        } else if (visibleState === showed) {
+            if (minimalizedBar.height > 0)
+                minimalizedBar.height = 0
+            else
+                bottomBar.height = bottomBar.len
+        } else {
+            bottomBar.height = 0
+            minimalizedBar.height = 0
+        }
+    }
+
+    //tmp timers for test purposes
     Timer {
         id: prog
         interval: 50
@@ -147,6 +109,56 @@ Rectangle {
         repeat: true
         running: true
     }
+
+    //minimalized bar
+    Rectangle {
+        id: minimalizedBar
+        anchors {
+            left: bottomBar.left
+            right: bottomBar.right
+            bottom: bottomBar.bottom
+        }
+        visible: true
+        property int minLen: 6
+        color: "grey"
+        Rectangle {
+            id: minimalizedPrBar
+            anchors {
+                top: parent.top
+                left: parent.left
+                bottom: parent.bottom
+            }
+            color: bottomBar.barColor
+            width: (bottomBar.progress / 100) * parent.width
+        }
+        //normal mouse area
+        MouseArea {
+            anchors.fill: parent
+            onClicked: bottomBar.visibleState = bottomBar.showed
+        }
+
+        Behavior on height {
+            NumberAnimation {
+                duration: 100
+                onRunningChanged: {
+                    if (running === false
+                            && bottomBar.visibleState === bottomBar.showed)
+                        bottomBar.height = bottomBar.len
+                }
+            }
+        }
+    }
+
+    // TaskbarButton {
+    //     id: winPRogress
+    //     progress {
+    //         visible: true
+    //         value: progress
+    //         minimum: 0
+    //         maximum: 100
+    //         paused: state === pause
+    //     }
+    // }
     Item {
         id: controls
         property int size: 30
@@ -240,65 +252,58 @@ Rectangle {
 
     Rectangle {
         id: loadingBar
-        color: "red"
         anchors {
             left: controls.right
             leftMargin: 20
             rightMargin: 20
             right: parent.right
             top: parent.top
-            topMargin: 20
+            topMargin: 10
         }
-
+        height: 10
+        color: "grey"
+        border {
+            color: "black"
+            width: 0
+        }
+        smooth: true
         Rectangle {
+            id: outter
             anchors {
+                top: parent.top
                 left: parent.left
-                right: parent.right
-                verticalCenter: parent.verticalCenter
+                bottom: parent.bottom
+                margins: parent.border.width
             }
-            height: 10
-            color: "grey"
-            border {
-                color: "black"
-                width: 0
-            }
-            smooth: true
-            Rectangle {
-                id: outter
-                anchors {
-                    top: parent.top
-                    left: parent.left
-                    bottom: parent.bottom
-                    margins: parent.border.width
-                }
-                clip: true
-                color: bottomBar.barColor
-                property int max: parent.width - 2 * parent.border.width
-                width: (bottomBar.progress / 100) * max
-                radius: parent.radius
-                BorderImage {
-                    id: loader
-                    source: "content/loader.png"
-                    x: parent.x
-                    y: parent.y
-                    height: parent.height
-                    width: parent.width * 2
-                    horizontalTileMode: BorderImage.Repeat
-                    opacity: 0.5
-                    visible: true
+            clip: true
+            color: bottomBar.barColor
+            property int max: parent.width - 2 * parent.border.width
+            width: (bottomBar.progress / 100) * max
+            radius: parent.radius
+            BorderImage {
+                id: loader
+                source: "content/loader.png"
+                x: parent.x
+                y: parent.y
+                height: parent.height
+                width: parent.width * 2
+                horizontalTileMode: BorderImage.Repeat
+                opacity: 0.5
+                visible: true
 
-                    NumberAnimation on x {
-                        id: anim
-                        from: outter.x - loader.sourceSize.width
-                        to: outter.x
-                        duration: 2000
-                        loops: Animation.Infinite
-                        running: true
-                    }
+                NumberAnimation on x {
+                    id: anim
+                    from: outter.x - loader.sourceSize.width
+                    to: outter.x
+                    duration: 2000
+                    loops: Animation.Infinite
+                    running: true
                 }
             }
         }
     }
+
+    //status text
     Text {
         id: status
         anchors {
@@ -323,6 +328,7 @@ Rectangle {
         color: "white"
         text: percentage
     }
+    //minimalize mouse area
     MouseArea {
         anchors {
             top: parent.top
