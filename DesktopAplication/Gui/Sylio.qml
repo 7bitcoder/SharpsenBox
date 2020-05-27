@@ -9,7 +9,7 @@ Item {
         anchors {
             right: parent.right
             rightMargin: 40
-            verticalCenter: image.verticalCenter
+            verticalCenter: holder.verticalCenter
         }
         width: 200
         wrapMode: Text.WordWrap
@@ -17,6 +17,7 @@ Item {
         font.family: "Arial"
         font.pointSize: 15
     }
+
     // Video {
     //     transformOrigin: Item.TopLeft
     //     source: "content/sylioPresentation.avi"
@@ -25,8 +26,36 @@ Item {
     //     autoLoad: true
     //     loops: Animation.Infinite
     // }
-    WebEngineView {
-        id: image
+    //WebEngineView {
+    //    id: image
+    //    anchors {
+    //        left: parent.left
+    //        top: parent.top
+    //        leftMargin: 30
+    //        topMargin: 100
+    //        right: description.left
+    //        rightMargin: 30
+    //        bottom: parent.bottom
+    //        bottomMargin: 65
+    //    }
+    //    settings.javascriptCanAccessClipboard: true
+    //    settings.javascriptCanOpenWindows: true
+    //    settings.javascriptEnabled: true
+    //    settings.pluginsEnabled: true
+    //    settings.autoLoadImages: true
+    //    visible: true
+    //    url: "https://www.youtube.com/embed/T5zxTI1gxOQ?autoplay=0&fs=0&iv_load_policy=3&showinfo=0&rel=0&cc_load_policy=0"
+    //}
+    MediaPlayer {
+        id: mediaplayer
+        source: "content/videoplayback.mp4"
+        autoPlay: false
+        muted: true
+    }
+    Item {
+        id: holder
+        property bool toggle: true
+        property bool pause: false
         anchors {
             left: parent.left
             top: parent.top
@@ -37,13 +66,29 @@ Item {
             bottom: parent.bottom
             bottomMargin: 65
         }
-        settings.javascriptCanAccessClipboard: true
-        settings.javascriptCanOpenWindows: true
-        settings.javascriptEnabled: true
-        settings.pluginsEnabled: true
-        settings.autoLoadImages: true
-        visible: true
-        url: "https://www.youtube.com/embed/T5zxTI1gxOQ?autoplay=0&fs=0&iv_load_policy=3&showinfo=0&rel=0&cc_load_policy=0"
+        VideoOutput {
+            id: image
+            anchors.fill: parent
+            visible: !parent.toggle
+            source: mediaplayer
+        }
+        Image {
+            anchors.centerIn: parent
+            scale: Math.min(parent.width / sourceSize.width,
+                            parent.height / sourceSize.height)
+            visible: parent.toggle
+            source: "content/startVideo.jpg"
+        }
+        MouseArea {
+            id: playArea
+            anchors.fill: parent
+            onClicked: {
+                if (parent.toggle)
+                    parent.toggle = false
+                parent.pause ? mediaplayer.pause() : mediaplayer.play()
+                parent.pause = !parent.pause
+            }
+        }
     }
 
     CustomButton {
