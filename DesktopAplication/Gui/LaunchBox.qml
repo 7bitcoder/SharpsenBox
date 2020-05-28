@@ -9,8 +9,8 @@ ApplicationWindow {
     width: 1000
     height: 500
     color: "#202020"
-    // flags: Qt.Window | Qt.FramelessWindowHint | Qt.WindowMinimizeButtonHint
-    //        | Qt.WindowMaximizeButtonHint
+    flags: Qt.Window | Qt.FramelessWindowHint | Qt.WindowMinimizeButtonHint
+           | Qt.WindowMaximizeButtonHint
     minimumWidth: 1000
     minimumHeight: 600
     // for window movement
