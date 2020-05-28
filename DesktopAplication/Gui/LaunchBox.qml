@@ -40,26 +40,16 @@ Window {
         smooth: true
     }
 
-    LeftBar {
-        color: "#101010"
-        id: leftBar
-        anchors {
-            top: topBar.bottom
-            left: parent.left
-            bottom: parent.bottom
-        }
-        width: 180
-    }
-
     Loader {
         id: contentLoader
         anchors {
             top: topBar.bottom
-            left: leftBar.right
+            left: parent.left
             right: parent.right
             bottom: parent.bottom
         }
-        source: "Home.qml"
+        property bool sw: false
+        source: sw ? "Aplication.qml" : "MainChecker.qml"
     }
 
     BottomBar {
@@ -77,5 +67,11 @@ Window {
     ResizingFrames {
         anchors.fill: parent
         size: 3
+    }
+    Timer {
+        running: true
+        interval: 1000
+        onTriggered: contentLoader.sw = true
+        Component.onCompleted: start()
     }
 }

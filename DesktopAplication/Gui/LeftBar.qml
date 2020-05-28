@@ -78,7 +78,7 @@ Rectangle {
                 anchors {
                     verticalCenter: parent.verticalCenter
                     left: homeImage.right
-                    leftMargin: 8
+                    leftMargin: 20
                 }
                 text: qsTr("Home")
                 font.pointSize: 15
@@ -133,8 +133,8 @@ Rectangle {
                 top: home.bottom
                 left: parent.left
                 right: parent.right
+                topMargin: 30
             }
-            anchors.topMargin: 7
             id: account
             height: accountImage.height
             property real op: accessButtons.normal
@@ -162,7 +162,7 @@ Rectangle {
                 anchors {
                     verticalCenter: parent.verticalCenter
                     left: accountImage.right
-                    leftMargin: 8
+                    leftMargin: 20
                 }
                 text: qsTr("Account")
                 font.pointSize: 15
@@ -215,8 +215,8 @@ Rectangle {
                 top: account.bottom
                 left: parent.left
                 right: parent.right
+                topMargin: 30
             }
-            anchors.topMargin: 7
             id: settings
             height: settingsImage.height
             property real op: accessButtons.normal
@@ -243,7 +243,7 @@ Rectangle {
                 anchors {
                     verticalCenter: parent.verticalCenter
                     left: settingsImage.right
-                    leftMargin: 8
+                    leftMargin: 20
                 }
                 text: qsTr("Settings")
                 font.pointSize: 15

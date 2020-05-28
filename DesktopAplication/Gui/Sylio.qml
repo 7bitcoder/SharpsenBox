@@ -18,34 +18,65 @@ Item {
         font.pointSize: 15
     }
 
-    // Video {
-    //     transformOrigin: Item.TopLeft
-    //     source: "content/sylioPresentation.avi"
-    //     visible: true
-    //     autoPlay: true
-    //     autoLoad: true
-    //     loops: Animation.Infinite
-    // }
-    //WebEngineView {
-    //    id: image
-    //    anchors {
-    //        left: parent.left
-    //        top: parent.top
-    //        leftMargin: 30
-    //        topMargin: 100
-    //        right: description.left
-    //        rightMargin: 30
-    //        bottom: parent.bottom
-    //        bottomMargin: 65
-    //    }
-    //    settings.javascriptCanAccessClipboard: true
-    //    settings.javascriptCanOpenWindows: true
-    //    settings.javascriptEnabled: true
-    //    settings.pluginsEnabled: true
-    //    settings.autoLoadImages: true
-    //    visible: true
-    //    url: "https://www.youtube.com/embed/T5zxTI1gxOQ?autoplay=0&fs=0&iv_load_policy=3&showinfo=0&rel=0&cc_load_policy=0"
-    //}
+    Text {
+        id: gameInfo
+        text: "Platform:\tWindows/Linux\nSize:\t200MB"
+        anchors {
+            left: description.left
+            top: parent.top
+            topMargin: 15
+        }
+        width: 200
+        color: "white"
+        font.family: "Arial"
+        font.pointSize: 12
+    }
+
+    Rectangle {
+        anchors {
+            left: parent.left
+            top: parent.top
+            topMargin: 0
+            leftMargin: 20
+        }
+        id: button
+        width: 120
+        height: 80
+        color: "transparent"
+        Text {
+            id: buttonPLay
+            property bool pressed: false
+            anchors.centerIn: parent
+            text: "Install"
+            font.family: "Arial"
+            font.pointSize: 25
+            color: "#AAAAAA"
+            MouseArea {
+                hoverEnabled: true
+                anchors.fill: parent
+                onClicked: {
+                    parent.pressed = !parent.pressed
+                    parent.color = parent.pressed ? "white" : "#DDDDDD"
+                    //_Button.buttonClicked("ads")
+                    if (window.tmp !== 0)
+                        window.tmp = 0
+                    else
+                        window.tmp = 1
+                }
+                onEntered: {
+                    parent.color = parent.pressed ? parent.color : "#DDDDDD"
+                }
+                onExited: {
+                    parent.color = parent.pressed ? parent.color : "#AAAAAA"
+                }
+            }
+            Behavior on color {
+                ColorAnimation {
+                    duration: 100
+                }
+            }
+        }
+    }
     Item {
         id: holder
 
@@ -65,8 +96,7 @@ Item {
             WebEngineView {
                 id: webView
                 anchors.fill: parent
-                property string vId: "T5zxTI1gxOQ"
-                url: "https://www.youtube.com/embed/" + vId + "?fs=0"
+                url: "https://www.youtube.com/embed/T5zxTI1gxOQ?&autohide=1&showinfo=0&amp;fs=0&amp;showinfo=0"
             }
         }
         //Rectangle {
@@ -224,11 +254,5 @@ Item {
         //        }
         //    }
         //}
-    }
-
-    CustomButton {
-        id: button
-        anchors.left: parent.left
-        anchors.top: parent.top
     }
 }
