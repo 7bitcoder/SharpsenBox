@@ -60,165 +60,170 @@ Item {
             bottomMargin: 65
         }
         Rectangle {
-            id: ram
             color: "black"
-            property bool toggle: true
-            property bool pause: true
-            onPauseChanged: pause ? video.pause() : video.play()
-
-            anchors.centerIn: parent
-            property real scal: Math.min(parent.width / 1280,
-                                         parent.height / 720)
-            width: 1280 * scal
-            height: 720 * scal
-            clip: true
-            Video {
-                id: video
+            anchors.fill: parent
+            WebEngineView {
+                id: webView
                 anchors.fill: parent
-                source: "./content/videoplayback.mp4"
-                visible: !parent.toggle
-                focus: true
-                onScaleChanged: console.log(scale)
-            }
-            Image {
-                id: imag
-                anchors.fill: parent
-                visible: parent.toggle
-                source: "content/startVideo.jpg"
-            }
-            MouseArea {
-                id: playArea
-                anchors.fill: parent
-                hoverEnabled: true
-                onClicked: {
-                    if (parent.toggle)
-                        parent.toggle = false
-                    parent.pause = !parent.pause
-                }
-                onEntered: videoBar.show = true
-                onExited: videoBar.show = false
-            }
-
-            Item {
-                id: goPause
-                anchors {
-                    bottom: parent.bottom
-                    left: parent.left
-                    leftMargin: 10
-                    bottomMargin: 3
-                }
-                property int size: 25
-                width: size
-                height: size
-                property color col: "#CCCCCC"
-                property real opac: videoBar.show ? 1 : 0
-                Image {
-                    anchors.fill: parent
-                    source: "content/play-button.png"
-                    visible: ram.pause
-                    opacity: parent.opac
-                    Behavior on opacity {
-                        OpacityAnimator {
-                            duration: 200
-                        }
-                    }
-                }
-                Image {
-                    anchors.fill: parent
-                    source: "content/pause-button.png"
-                    visible: !ram.pause
-                    opacity: parent.opac
-                    Behavior on opacity {
-                        OpacityAnimator {
-                            duration: 200
-                        }
-                    }
-                }
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: {
-                        if (ram.toggle)
-                            ram.toggle = false
-                        ram.pause = !ram.pause
-                    }
-                    onEntered: {
-                        goPause.col = "white"
-                        videoBar.show = true
-                    }
-                    onExited: goPause.col = "#CCCCCC"
-                    // onPressed: goPause.opac = 0.6
-                    // onReleased: goPause.opac = 1
-                }
-            }
-
-            Text {
-                id: videoInfo
-                anchors {
-                    bottom: parent.bottom
-                    left: goPause.right
-                    leftMargin: 10
-                }
-                height: 20
-                width: 60
-                opacity: goPause.opac
-
-                //duration
-                property int secDur: video.duration / 1000
-                property int minDur: secDur / 60
-                property int modDur: secDur % 60
-                property string dur: qsTr(minDur + ":" + (modDur < 10 ? "0" : "") + modDur)
-                //actual
-                property int secAct: video.position / 1000
-                property int minAct: secAct / 60
-                property int modAct: secAct % 60
-                property string act: qsTr(minAct + ":" + (modAct < 10 ? "0" : "") + modAct)
-                text: act + "/" + dur
-                font.family: "Arial"
-                font.pointSize: 10
-                color: "white"
-                Behavior on opacity {
-                    OpacityAnimator {
-                        duration: 200
-                    }
-                }
-            }
-
-            Rectangle {
-                id: videoBar
-                property bool show: false
-                property int len: 25
-                color: "grey"
-                visible: true
-                anchors {
-                    bottom: parent.bottom
-                    right: parent.right
-                    left: videoInfo.right
-                    leftMargin: 5
-                }
-                height: videoBar.show ? 8 : 0
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: {
-                        var seekDur = mouseX / parent.width * video.duration
-                        video.seek(seekDur)
-                    }
-                }
-                Rectangle {
-                    color: "red"
-                    anchors {
-                        left: parent.left
-                        top: parent.top
-                        bottom: parent.bottom
-                    }
-                    width: (video.position / video.duration) * parent.width
-                }
-                Behavior on height {
-                    NumberAnimation {
-                        duration: 200
-                    }
-                }
+                property string vId: "T5zxTI1gxOQ"
+                url: "https://www.youtube.com/embed/" + vId + "?fs=0"
             }
         }
+        //Rectangle {
+        //    id: ram
+        //    color: "black"
+        //    property bool toggle: true
+        //    property bool pause: true
+        //    onPauseChanged: pause ? video.pause() : video.play()
+        //    anchors.centerIn: parent
+        //    property real scal: Math.min(parent.width / 1280,
+        //                                 parent.height / 720)
+        //    width: 1280 * scal
+        //    height: 720 * scal
+        //    clip: true
+        //    Video {
+        //        id: video
+        //        anchors.fill: parent
+        //        source: "content/sylioPresentation.mp4"
+        //        visible: !parent.toggle
+        //        focus: true
+        //        onScaleChanged: console.log(scale)
+        //    }
+        //    Image {
+        //        id: imag
+        //        anchors.fill: parent
+        //        visible: parent.toggle
+        //        source: "content/startVideo.jpg"
+        //    }
+        //    MouseArea {
+        //        id: playArea
+        //        anchors.fill: parent
+        //        hoverEnabled: true
+        //        onClicked: {
+        //            if (parent.toggle)
+        //                parent.toggle = false
+        //            parent.pause = !parent.pause
+        //        }
+        //        onEntered: videoBar.show = true
+        //        onExited: videoBar.show = false
+        //    }
+        //    Item {
+        //        id: goPause
+        //        anchors {
+        //            bottom: parent.bottom
+        //            left: parent.left
+        //            leftMargin: 10
+        //            bottomMargin: 3
+        //        }
+        //        property int size: 25
+        //        width: size
+        //        height: size
+        //        property color col: "#CCCCCC"
+        //        property real opac: videoBar.show ? 1 : 0
+        //        Image {
+        //            anchors.fill: parent
+        //            source: "content/play-button.png"
+        //            visible: ram.pause
+        //            opacity: parent.opac
+        //            Behavior on opacity {
+        //                OpacityAnimator {
+        //                    duration: 200
+        //                }
+        //            }
+        //        }
+        //        Image {
+        //            anchors.fill: parent
+        //            source: "content/pause-button.png"
+        //            visible: !ram.pause
+        //            opacity: parent.opac
+        //            Behavior on opacity {
+        //                OpacityAnimator {
+        //                    duration: 200
+        //                }
+        //            }
+        //        }
+        //        MouseArea {
+        //            anchors.fill: parent
+        //            onClicked: {
+        //                if (ram.toggle)
+        //                    ram.toggle = false
+        //                ram.pause = !ram.pause
+        //            }
+        //            onEntered: {
+        //                goPause.col = "white"
+        //                videoBar.show = true
+        //            }
+        //            onExited: goPause.col = "#CCCCCC"
+        //            // onPressed: goPause.opac = 0.6
+        //            // onReleased: goPause.opac = 1
+        //        }
+        //    }
+        //    Text {
+        //        id: videoInfo
+        //        anchors {
+        //            bottom: parent.bottom
+        //            left: goPause.right
+        //            leftMargin: 10
+        //        }
+        //        height: 20
+        //        width: 60
+        //        opacity: goPause.opac
+        //        //duration
+        //        property int secDur: video.duration / 1000
+        //        property int minDur: secDur / 60
+        //        property int modDur: secDur % 60
+        //        property string dur: qsTr(minDur + ":" + (modDur < 10 ? "0" : "") + modDur)
+        //        //actual
+        //        property int secAct: video.position / 1000
+        //        property int minAct: secAct / 60
+        //        property int modAct: secAct % 60
+        //        property string act: qsTr(minAct + ":" + (modAct < 10 ? "0" : "") + modAct)
+        //        text: act + "/" + dur
+        //        font.family: "Arial"
+        //        font.pointSize: 10
+        //        color: "white"
+        //        Behavior on opacity {
+        //            OpacityAnimator {
+        //                duration: 200
+        //            }
+        //        }
+        //    }
+        //    Rectangle {
+        //        id: videoBar
+        //        property bool show: false
+        //        property int len: 25
+        //        color: "grey"
+        //        visible: true
+        //        anchors {
+        //            bottom: parent.bottom
+        //            right: parent.right
+        //            left: videoInfo.right
+        //            leftMargin: 5
+        //        }
+        //        height: videoBar.show ? 8 : 0
+        //        MouseArea {
+        //            anchors.fill: parent
+        //            onClicked: {
+        //                var seekDur = mouseX / parent.width * video.duration
+        //                video.seek(seekDur)
+        //            }
+        //        }
+        //        Rectangle {
+        //            color: "red"
+        //            anchors {
+        //                left: parent.left
+        //                top: parent.top
+        //                bottom: parent.bottom
+        //            }
+        //            width: (video.position / video.duration) * parent.width
+        //        }
+        //        Behavior on height {
+        //            NumberAnimation {
+        //                duration: 200
+        //            }
+        //        }
+        //    }
+        //}
     }
 
     CustomButton {
