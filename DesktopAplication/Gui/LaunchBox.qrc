@@ -5,6 +5,8 @@
 	<file>TopBar.qml</file>
 	<file>Home.qml</file>
 	<file>Settings.qml</file>
+	<file>Aplication.qml</file>
+	<file>MainChecker.qml</file>
 	<file>GameChoser.qml</file>
 	<file>Sylio.qml</file>
 	<file>Rest.qml</file>

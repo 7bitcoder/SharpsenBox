@@ -49,7 +49,7 @@
       "variables": [
         {
           "name": "AUTO_QT_LIBS",
-          "value": "False",
+          "value": "True",
           "type": "BOOL"
         }
       ]
@@ -57,7 +57,7 @@
     {
       "name": "x64-Release",
       "generator": "Ninja",
-      "configurationType": "RelWithDebInfo",
+      "configurationType": "Release",
       "buildRoot": "${projectDir}\\out\\build\\${name}",
       "installRoot": "${projectDir}\\out\\install\\${name}",
       "cmakeCommandArgs": "",

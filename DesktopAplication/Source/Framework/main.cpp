@@ -6,7 +6,8 @@
 #include "Button.hpp"
 
 int main(int argc, char** argv) {
-	QCoreApplication::setAttribute(Qt::AA_UseSoftwareOpenGL);
+	//poprawia wydajnoœæ ale animacje s¹ za szybkie
+	//QCoreApplication::setAttribute(Qt::AA_UseSoftwareOpenGL);
 	QGuiApplication app(argc, argv);
 	QQmlApplicationEngine engine;
 	engine.load("qrc:/LaunchBox.qml");

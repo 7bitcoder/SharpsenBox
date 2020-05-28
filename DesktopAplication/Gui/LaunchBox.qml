@@ -1,16 +1,16 @@
-import QtQuick 2.14
+import QtQuick 2.0
 import QtQuick.Controls 2.14
-import QtQuick.Window 2.14
-import QtWebEngine 1.0
+import QtQuick.Window 2.12
+import QtWebEngine 1.8
 
-Window {
+ApplicationWindow {
     id: window
     visible: true
     width: 1000
     height: 500
     color: "#202020"
-    flags: Qt.Window | Qt.FramelessWindowHint | Qt.WindowMinimizeButtonHint
-           | Qt.WindowMaximizeButtonHint
+    // flags: Qt.Window | Qt.FramelessWindowHint | Qt.WindowMinimizeButtonHint
+    //        | Qt.WindowMaximizeButtonHint
     minimumWidth: 1000
     minimumHeight: 600
     // for window movement
@@ -70,7 +70,7 @@ Window {
     }
     Timer {
         running: true
-        interval: 1000
+        interval: 3000
         onTriggered: contentLoader.sw = true
         Component.onCompleted: start()
     }
