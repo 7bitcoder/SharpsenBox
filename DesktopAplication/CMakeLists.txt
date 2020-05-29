@@ -10,6 +10,9 @@ project ("LaunchBox")
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/CmakeModules")
 include(Config)
 
+include(./conanbuildinfo.cmake)
+
+
 find_package(Qt5 REQUIRED COMPONENTS 
 	Core 
 	Widgets 

@@ -4,6 +4,11 @@ DesktopAplication/deployLauncher.bat
 DesktopAplication/gitGui.bat
 DesktopAplication/.vs
 DesktopAplication/QtPaths.json
+
+DesktopAplication/conan.lock
+DesktopAplication/conanbuildinfo.cmake
+DesktopAplication/conaninfo.txt
+DesktopAplication/conanbuildinfo.txt
 ServerCode/bin
 ServerCode/obj
 ServerCode/.vs

@@ -1,16 +1,19 @@
 ﻿
-find_package(curl)
+find_package(Curl REQUIRED)
+#find_package(openssl REQUIRED)
+#find_package(Zlib REQUIRED)
+
+conan_basic_setup(TARGETS)
 
 add_library(AppUpdateChecker STATIC
     AppUpdateChecker.cpp)
 
 
-target_include_directories(AppUpdateChecker PUBLIC
+target_include_directories(AppUpdateChecker PRIVATE
     "../MainWindow" 
-    ${ZLIB_INCLUDE_DIRS} 
-    ${OPENSSL_INCLUDE_DIRS} 
-    ${CURL_INCLUDE_DIRS})
-    
+    #${ZLIB_INCLUDE_DIRS} 
+    #${OPENSSL_INCLUDE_DIRS} )
+    )
 
 qt5_use_modules(AppUpdateChecker 
     Quick 
@@ -23,6 +26,8 @@ target_link_libraries(AppUpdateChecker
     Qt5::Gui
     Qt5::Core
     Qt5::Widgets
-    ${CURL_LIBRARIES} 
-    ${OPENSSL_LIBRARIES} 
-    ${ZLIB_LIBRARIES})
+    CONAN_PKG::libcurl 
+    #${OPENSSL_LIBRARIES} 
+    #${ZLIB_LIBRARIES})
+    )
+
