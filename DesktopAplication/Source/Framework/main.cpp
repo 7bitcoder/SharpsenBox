@@ -13,5 +13,6 @@ int main(int argc, char** argv) {
 	engine.load("qrc:/LaunchBox.qml");
 	bc::Backend backend(engine);
 	backend.init();
+	//_sleep(10000);
 	return app.exec();
 }

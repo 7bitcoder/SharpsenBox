@@ -18,7 +18,7 @@ Rectangle {
             onClicked: {
                 parent.pressed = !parent.pressed
                 parent.color = parent.pressed ? "white" : "#DDDDDD"
-                //_Button.buttonClicked("ads")
+                _Button.buttonClicked("ads")
                 if (window.tmp !== 0)
                     window.tmp = 0
                 else

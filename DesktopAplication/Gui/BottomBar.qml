@@ -7,7 +7,7 @@ Rectangle {
 
     //max height
     property int len
-    height: len
+    height: 0
 
     //states of instatation
     property int checking: 0
@@ -20,6 +20,21 @@ Rectangle {
 
     //stete
     property int state: downloading
+
+    //porgress property
+    property int progress
+    property color barColor: "green"
+
+    //progress settings
+    property string statusInfo: "Downloading: 2GB (500MB/s)"
+    property string percentage: qsTr(progress + "%")
+
+    //bar states
+    property int hidden: 0
+    property int showed: 1
+    property int minimalized: 2
+
+    property int visibleState: window.tmp
 
     onStateChanged: {
         if (state === checking) {
@@ -47,21 +62,6 @@ Rectangle {
             bottomBar.barColor = "green"
         }
     }
-
-    //porgress property
-    property int progress
-    property color barColor: "green"
-
-    //progress settings
-    property string statusInfo: "Downloading: 2GB (500MB/s)"
-    property string percentage: qsTr(progress + "%")
-
-    //bar states
-    property int hidden: 0
-    property int showed: 1
-    property int minimalized: 2
-
-    property int visibleState: window.tmp
 
     //hiding showing animation
     Behavior on height {

@@ -49,7 +49,7 @@
       "variables": [
         {
           "name": "AUTO_QT_LIBS",
-          "value": "True",
+          "value": "False",
           "type": "BOOL"
         }
       ]
@@ -67,7 +67,7 @@
       "variables": [
         {
           "name": "AUTO_QT_LIBS",
-          "value": "True",
+          "value": "False",
           "type": "BOOL"
         }
       ]

@@ -19,7 +19,7 @@ ApplicationWindow {
     property point startWindowPos
     property size startWindowSize
 
-    property int tmp: 1
+    property int tmp: 0
 
     function absoluteMousePos(mouseArea) {
         var windowAbs = mouseArea.mapToItem(null, mouseArea.mouseX,
