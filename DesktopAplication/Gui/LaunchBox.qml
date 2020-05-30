@@ -19,7 +19,7 @@ ApplicationWindow {
     property point startWindowPos
     property size startWindowSize
 
-    property int tmp: 0
+    property int tmp: 1
 
     function absoluteMousePos(mouseArea) {
         var windowAbs = mouseArea.mapToItem(null, mouseArea.mouseX,
@@ -56,7 +56,7 @@ ApplicationWindow {
         id: bottomBar
         len: 55
         visible: true
-        progress: 50
+        //progress: 50
         anchors {
             left: parent.left
             bottom: parent.bottom
@@ -70,7 +70,7 @@ ApplicationWindow {
     }
     Timer {
         running: true
-        interval: 3000
+        interval: 500
         onTriggered: contentLoader.sw = true
         Component.onCompleted: start()
     }

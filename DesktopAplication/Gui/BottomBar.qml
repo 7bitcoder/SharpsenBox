@@ -19,23 +19,44 @@ Rectangle {
     property int completed: 6
 
     //stete
-    property int state: downloading
+    property int state: _BottomBar.downloadState
 
     //porgress property
-    property int progress
+    property real progress: _BottomBar.progress
+
     property color barColor: "green"
 
     //progress settings
-    property string statusInfo: "Downloading: 2GB (500MB/s)"
-    property string percentage: qsTr(progress + "%")
+    property int updateInterval: 100
+    property real actualDown: _BottomBar.actual
+    property real total: _BottomBar.total
+
+    property real lastDown: _BottomBar.actual
+    property string actualDownloaded: actualDown
+    property string totalStr: actualDown
+    onTotalChanged: {
+        console.log(total)
+        if (total > 1000)
+            totalStr = (total / 1000).toFixed(2) + "GB"
+        else {
+            totalStr = total.toFixed(2) + "GB"
+        }
+    }
+
+    property string speed: "0"
+
+    property string statusInfo: "Downloading: " + actualDownloaded + "/"
+                                + totalStr + " (" + speed + "MB/s)"
+    property string percentage: qsTr(progress.toFixed(1) + "%")
 
     //bar states
     property int hidden: 0
     property int showed: 1
     property int minimalized: 2
 
-    property int visibleState: window.tmp
+    property int visibleState: _BottomBar.visibleState
 
+    property bool hideLock: _BottomBar.hideLock
     onStateChanged: {
         if (state === checking) {
             bottomBar.barColor = "white"
@@ -93,22 +114,33 @@ Rectangle {
     //tmp timers for test purposes
     Timer {
         id: prog
-        interval: 50
+        interval: updateInterval
         onTriggered: {
-            progress = ((progress + 1) % 101)
-            //winPRogress.setBalue(progress)
+            var actualDown = _BottomBar.actual
+
+            var dt = actualDown - lastDown
+            speed = (dt * 1000 / updateInterval).toFixed(2)
+            lastDown = actualDown
+
+            if (actualDown > 1000) {
+                actualDown /= 1000
+                actualDownloaded = actualDown.toFixed(2) + "GB"
+            } else {
+                actualDownloaded = actualDown.toFixed(2) + "MB"
+            }
         }
         repeat: true
-        running: true
+        running: state == downloading
     }
-    Timer {
-        interval: 5000
-        onTriggered: {
-            bottomBar.state = ((bottomBar.state + 1) % 7)
-        }
-        repeat: true
-        running: true
-    }
+
+    //Timer {
+    //    interval: 5000
+    //    onTriggered: {
+    //        bottomBar.state = ((bottomBar.state + 1) % 7)
+    //    }
+    //    repeat: true
+    //    running: true
+    //}
 
     //minimalized bar
     Rectangle {
@@ -134,7 +166,8 @@ Rectangle {
         //normal mouse area
         MouseArea {
             anchors.fill: parent
-            onClicked: bottomBar.visibleState = bottomBar.showed
+            onClicked: if (!bottomBar.hideLock)
+                           bottomBar.visibleState = bottomBar.showed
         }
 
         Behavior on height {
@@ -179,6 +212,14 @@ Rectangle {
             width: parent.size
             height: parent.size
             property bool play: false
+            onPlayChanged: {
+                console.log("heheheh")
+                if (play)
+                    _BottomBar.pauseD()
+                else
+                    _BottomBar.resumeD()
+            }
+
             property real opac: 0.6
             Image {
                 anchors.fill: parent
@@ -239,8 +280,7 @@ Rectangle {
                 hoverEnabled: true
                 anchors.fill: parent
                 onClicked: {
-
-                    //call c++
+                    _BottomBar.stopD()
                 }
                 onEntered: stopImag.opacity = 1
                 onExited: stopImag.opacity = 0.6
@@ -337,6 +377,7 @@ Rectangle {
             left: loadingBar.left
         }
 
-        onClicked: bottomBar.visibleState = bottomBar.minimalized
+        onClicked: if (!bottomBar.hideLock)
+                       bottomBar.visibleState = bottomBar.minimalized
     }
 }

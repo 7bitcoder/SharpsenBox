@@ -58,7 +58,7 @@ Item {
                     parent.pressed = !parent.pressed
                     parent.color = parent.pressed ? "white" : "#DDDDDD"
                     //_Button.buttonClicked("ads")
-                    _AppUpdateChecker.checkForUpdates()
+                    _BottomBar.download()
                     if (window.tmp !== 0)
                         window.tmp = 0
                     else
@@ -91,15 +91,16 @@ Item {
             bottom: parent.bottom
             bottomMargin: 65
         }
-        Rectangle {
-            color: "black"
-            anchors.fill: parent
-            WebEngineView {
-                id: webView
-                anchors.fill: parent
-                url: "https://www.youtube.com/embed/T5zxTI1gxOQ?&autohide=1&showinfo=0&amp;fs=0&amp;showinfo=0"
-            }
-        }
+        // Rectangle {
+        //     color: "black"
+        //     anchors.fill: parent
+        //     visible: false
+        //     WebEngineView {
+        //         id: webView
+        //         anchors.fill: parent
+        //         url: "https://www.youtube.com/embed/T5zxTI1gxOQ?&autohide=1&showinfo=0&amp;fs=0&amp;showinfo=0"
+        //     }
+        // }
         //Rectangle {
         //    id: ram
         //    color: "black"

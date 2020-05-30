@@ -4,7 +4,8 @@ add_library(AppBackend STATIC
 
 target_include_directories(AppBackend PUBLIC
 "../MainWindow"
-"../AppUpdateChecker")
+"../AppUpdateChecker"
+"../BottomBar")
 
 qt5_use_modules(AppBackend 
     Quick 
@@ -14,6 +15,7 @@ qt5_use_modules(AppBackend
 target_link_libraries(AppBackend
     Button
     AppUpdateChecker
+    BottomBar
     Qt5::Widgets
     Qt5::Gui
     Qt5::Core)

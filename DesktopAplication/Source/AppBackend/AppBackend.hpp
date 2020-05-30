@@ -2,23 +2,25 @@
 #include <QObject>
 #include <QQmlApplicationEngine>
 #include <QDebug>
+#include <unordered_map>
+#include "IQmlObject.hpp"
 
+// Backend class - registers all objects that will be exported to qml
 namespace bc {
 	class Backend {
 	public:
-		/*
-		Backend class - registers all objects that will be exported to qml
-		*/
-		explicit Backend(QQmlApplicationEngine& eng) { engine = &eng; }
-		~Backend();
+		static Backend& getBakend();
+		void init(QQmlApplicationEngine* eng);
+		QObject* getObject(std::string name);
 
-		void init();
-		static QQmlApplicationEngine* engine;
 	private:
+		Backend() {};
+		~Backend();
+		QQmlApplicationEngine* engine;
 		void registerObjects();
 
-		void registerObject(std::string name, QObject* object);
+		void registerObject(IQmlObject* object);
 
-		std::vector<QObject*> objects_;
+		std::unordered_map<std::string, QObject*> objects_;
 	};
 }

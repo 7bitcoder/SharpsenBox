@@ -2,9 +2,10 @@
 #include <QObject>
 #include <QQmlApplicationEngine>
 #include <QDebug>
+#include "IQmlObject.hpp"
 
 namespace bc {
-	class Button : public QObject {
+	class Button : public bc::IQmlObject {
 		Q_OBJECT
 	public:
 		//Q_INVOKABLE QString launch(const QString& program);
@@ -13,6 +14,10 @@ namespace bc {
 		// QObjects are expected to support a parent/child hierarchy.  I've modified
 		// the constructor to match the standard.
 		Button();
+		std::string getName() { return TYPENAME(Button); }
+		void update() {}
+		void init() override {}
+
 		virtual ~Button() {};
 	public slots:
 		// This method needs to take either a QString or a const reference to one.

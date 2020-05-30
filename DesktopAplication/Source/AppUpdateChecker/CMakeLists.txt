@@ -11,6 +11,8 @@ add_library(AppUpdateChecker STATIC
 
 target_include_directories(AppUpdateChecker PRIVATE
     "../MainWindow" 
+    "../AppBackend"
+    "../BottomBar"
     #${ZLIB_INCLUDE_DIRS} 
     #${OPENSSL_INCLUDE_DIRS} )
     )
