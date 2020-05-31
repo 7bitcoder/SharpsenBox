@@ -28,7 +28,7 @@ namespace bb {
 		void init() override {}
 
 		//QML Propetries
-		Q_PROPERTY(double progress READ getProgress NOTIFY progresChanged);
+		Q_PROPERTY(double speed READ getSpeed NOTIFY speedChanged);
 		Q_PROPERTY(int downloadState READ getDownloadState NOTIFY downloadStateChanged);
 		Q_PROPERTY(int visibleState READ getVisibleState NOTIFY visibleStateChanged);
 		Q_PROPERTY(bool hideLock READ getHideLock NOTIFY hideLockChanged);
@@ -36,7 +36,7 @@ namespace bb {
 		Q_PROPERTY(double total READ getTotal NOTIFY totalChanged);
 
 		//QMl invoklabes
-		Q_INVOKABLE double getProgress() const;
+		Q_INVOKABLE double getSpeed() const;
 		Q_INVOKABLE int getDownloadState() const;
 		Q_INVOKABLE int getVisibleState() const;
 		Q_INVOKABLE bool getHideLock() const;
@@ -46,7 +46,7 @@ namespace bb {
 
 	public slots:
 		void download();
-		void status(qint64 progress, qint64 total);
+		void status(qint64 progress, qint64 total, double speed);
 		void TotalSize(qint64 total);
 		void pauseD();
 		void resumeD();
@@ -54,7 +54,7 @@ namespace bb {
 
 		void termination();
 	signals:
-		void progresChanged();
+		void speedChanged();
 		void downloadStateChanged();
 		void visibleStateChanged();
 		void hideLockChanged();
@@ -74,6 +74,7 @@ namespace bb {
 		bool hideLock_ = false;
 		double progress_ = 0;
 		double total_ = 0;
+		double speed_ = 0;
 		qint64 downloaded_ = 0;
 		QThread ftpThread_;
 		double actual_ = 0;

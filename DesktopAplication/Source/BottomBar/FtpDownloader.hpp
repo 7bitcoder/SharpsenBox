@@ -20,6 +20,7 @@ namespace bb {
 		void setUrl(std::string url) { url_ = url; }
 		qint64 getTotal() { return total_; }
 		qint64 getProgress() { return now_; }
+		void setFilestoDownload(std::vector<std::string> files) { files_ = files; }
 		~FtpDownloader() {}
 
 		std::atomic_flag pause;
@@ -27,26 +28,25 @@ namespace bb {
 		std::atomic_flag stop;
 		void run() override;
 	signals:
-		void statusSignal(qint64 progress, qint64 total);
+		void statusSignal(qint64 progress, qint64 total, double speed);
 		void ended();
 	public slots:
 	private:
-		void emitStatus() {
-			emit statusSignal(now_, total_);
-		}
+		void emitStatus();
 		static size_t my_fwrite(void* buffer, size_t size, size_t nmemb, void* userdata);
 		static int progress_callback(void* clientp, curl_off_t dltotal, curl_off_t dlnow, curl_off_t ultotal, curl_off_t ulnow);
 		int checkState();
 	private:
 		std::string outfile_ = "curl.tar.gz";
-		std::string url_ = "ftp://speedtest.tele2.net/10GB.zip";
+		std::string url_;
 		qint64 total_ = 0;
 		qint64 now_ = 0;
+		double speed_;
 		FILE* stream_ = nullptr;
 		bc::IQmlObject& update_;
 		CURL* curl;
 		CURLcode res;
 		bool cancelled = false;
-
+		std::vector<std::string> files_ = { "ftp://speedtest.tele2.net/10GB.zip" };
 	};
 }

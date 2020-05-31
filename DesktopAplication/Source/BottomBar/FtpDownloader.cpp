@@ -46,20 +46,21 @@ namespace bb {
 		return 0;
 	}
 
-
+	void FtpDownloader::emitStatus() {
+		auto x = curl_easy_getinfo(curl, CURLINFO_SPEED_DOWNLOAD, &speed_);
+		emit statusSignal(now_, total_, speed_);
+	}
 
 	void FtpDownloader::run() {
 		try {
 			// clear flags etc 
 			curl_global_init(CURL_GLOBAL_DEFAULT);
-			update_.update();
 			curl = curl_easy_init();
 			if (curl) {
 				/*
 				 * You better replace the URL with one that works!
 				 */
-				curl_easy_setopt(curl, CURLOPT_URL, url_.c_str());
-				/* Define our callback to get called when there's data to be written */
+				 /* Define our callback to get called when there's data to be written */
 				curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, FtpDownloader::my_fwrite);
 				/* Set a pointer to our struct to pass to the callback */
 				curl_easy_setopt(curl, CURLOPT_WRITEDATA, this);
@@ -72,25 +73,26 @@ namespace bb {
 				/* Switch on full protocol/debug output */
 
 				curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
-
-				int res = curl_easy_perform(curl);
-
-				/* always cleanup */
-
-				if (CURLE_OK != res) {
-					/* we failed */
-					if (res == CURLE_OPERATION_TIMEDOUT && cancelled) {
-						//ok cancelled 
-					} else
-						fprintf(stderr, "curl told us %d\n", res);
+				for (size_t i = 0; i < cancelled && files_.size(); i++, url_ = files_[i]) {
+					curl_easy_setopt(curl, CURLOPT_URL, url_.c_str());
+					res = curl_easy_perform(curl);
+					if (CURLE_OK != res) {
+						/* we failed */
+						if (res == CURLE_OPERATION_TIMEDOUT && cancelled) {
+							//ok cancelled 
+						} else
+							fprintf(stderr, "curl told us %d\n", res);
+					}
+					if (stream_)
+						fclose(stream_); /* close the local file */
+					stream_ = nullptr;
+					cancelled = false;
 				}
+				/* always cleanup */
 				curl_easy_cleanup(curl);
 			}
 
-			if (stream_)
-				fclose(stream_); /* close the local file */
-			stream_ = nullptr;
-			cancelled = false;
+
 			curl_global_cleanup();
 		} catch (...) {
 			fprintf(stderr, "exception catched white doanloading data");

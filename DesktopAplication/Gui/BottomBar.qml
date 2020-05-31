@@ -21,34 +21,74 @@ Rectangle {
     //stete
     property int state: _BottomBar.downloadState
 
-    //porgress property
-    property real progress: _BottomBar.progress
-
     property color barColor: "green"
 
+    //porgress property
     //progress settings
-    property int updateInterval: 100
-    property real actualDown: _BottomBar.actual
-    property real total: _BottomBar.total
+    property int updateInterval: 50
+    property int infoInterval: 100
+    property int speedInterval: 300
 
-    property real lastDown: _BottomBar.actual
-    property string actualDownloaded: actualDown
-    property string totalStr: actualDown
-    onTotalChanged: {
-        console.log(total)
-        if (total > 1000)
-            totalStr = (total / 1000).toFixed(2) + "GB"
-        else {
-            totalStr = total.toFixed(2) + "GB"
+    property real progress: 0
+    property real actual: 0
+    property real total: 0
+    property real speed: 0
+    property real speedAvg: 0
+
+    property string actualStr: "0"
+    property string totalStr: "0"
+    property string speedStr: "0"
+    property string percenStr: "0"
+    property string speedAvgStr: "0"
+
+    property string statusInfo: "Downloading: " + actualStr + "/" + totalStr
+                                + " (Average Speed: " + speedAvgStr
+                                + "MB/s / Current Speed: " + speedStr + "MB/s )"
+
+    Timer {
+        id: info
+        interval: infoInterval
+        onTriggered: {
+            speedAvgStr = (speedAvg / (1024 * 1024)).toFixed(2) // B/s -> MB/s
+            speedStr = speed.toFixed(2)
+            if (actual > 1000)
+                actualStr = (actual / 1000).toFixed(2) + "GB"
+            else
+                actualStr = actual.toFixed(2) + "MB"
+            if (total > 1000)
+                totalStr = (total / 1000).toFixed(2) + "GB"
+            else
+                totalStr = total.toFixed(2) + "GB"
         }
+        repeat: true
+        running: state == downloading
     }
 
-    property string speed: "0"
-
-    property string statusInfo: "Downloading: " + actualDownloaded + "/"
-                                + totalStr + " (" + speed + "MB/s)"
-    property string percentage: qsTr(progress.toFixed(1) + "%")
-
+    Timer {
+        id: prog
+        interval: updateInterval
+        onTriggered: {
+            //MB
+            actual = _BottomBar.actual
+            total = _BottomBar.total
+            speedAvg = _BottomBar.speed //B/s
+            progress = (actual / total) * 100
+            percenStr = qsTr(progress.toFixed(1) + "%")
+        }
+        repeat: true
+        running: state == downloading
+    }
+    Timer {
+        id: speedTimer
+        interval: speedInterval
+        property real lastActual: actual
+        onTriggered: {
+            speed = 1000 * (actual - lastActual) / speedInterval
+            lastActual = actual
+        }
+        repeat: true
+        running: state == downloading
+    }
     //bar states
     property int hidden: 0
     property int showed: 1
@@ -112,26 +152,6 @@ Rectangle {
     }
 
     //tmp timers for test purposes
-    Timer {
-        id: prog
-        interval: updateInterval
-        onTriggered: {
-            var actualDown = _BottomBar.actual
-
-            var dt = actualDown - lastDown
-            speed = (dt * 1000 / updateInterval).toFixed(2)
-            lastDown = actualDown
-
-            if (actualDown > 1000) {
-                actualDown /= 1000
-                actualDownloaded = actualDown.toFixed(2) + "GB"
-            } else {
-                actualDownloaded = actualDown.toFixed(2) + "MB"
-            }
-        }
-        repeat: true
-        running: state == downloading
-    }
 
     //Timer {
     //    interval: 5000
@@ -366,7 +386,7 @@ Rectangle {
         font.family: "Arial"
         font.pointSize: 12
         color: "white"
-        text: percentage
+        text: percenStr
     }
     //minimalize mouse area
     MouseArea {

@@ -19,8 +19,8 @@ namespace bb {
 	Q_INVOKABLE std::string BottomBar::getName() {
 		return TYPENAME(BottomBar);
 	}
-	Q_INVOKABLE double BottomBar::getProgress() const {
-		return progress_;
+	Q_INVOKABLE double BottomBar::getSpeed() const {
+		return speed_;
 	}
 	Q_INVOKABLE int BottomBar::getDownloadState() const {
 		return downloadState_;
@@ -47,20 +47,12 @@ namespace bb {
 		}
 	}
 
-	void BottomBar::status(qint64 progress, qint64 total) {
+	void BottomBar::status(qint64 progress, qint64 total, double speed) {
 		static qint64 lastTotal = 0;
 		if (total) {
 			actual_ = getMB(progress);
-			auto newProgress = double(progress * 100) / total;
-			if (newProgress - progress_ > 0.1) {
-				if (lastTotal != total) { // to save unnecesary callbacks 
-					total_ = getMB(total);
-					lastTotal = total;
-					totalChanged();
-				}
-				progress_ = newProgress;
-				progresChanged();
-			}
+			total_ = getMB(total);
+			speed_ = speed; // B/s
 		}
 		//std::cout << total_ << " \t\t " << progress_ << "\n";
 	}
