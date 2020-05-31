@@ -6,11 +6,17 @@
 
 namespace bb {
 
+	FtpDownloader::FtpDownloader() {
+		pause.test_and_set();
+		stop.test_and_set();
+		resume.test_and_set();
+	}
+
 	size_t FtpDownloader::my_fwrite(void* buffer, size_t size, size_t nmemb, void* userdata) {
 		FtpDownloader* out = (FtpDownloader*)userdata;
 		if (!out->stream_) {
 			/* open file for writing */
-			out->stream_ = fopen(out->outfile_.c_str(), "wb");
+			out->stream_ = fopen(out->outfile_.string().c_str(), "wb");
 			if (!out->stream_)
 				return -1; /* failure, can't open file to write */
 		}  if (out->cancelled)
@@ -61,42 +67,53 @@ namespace bb {
 				 * You better replace the URL with one that works!
 				 */
 				 /* Define our callback to get called when there's data to be written */
-				curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, FtpDownloader::my_fwrite);
+				res = curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, FtpDownloader::my_fwrite);
 				/* Set a pointer to our struct to pass to the callback */
-				curl_easy_setopt(curl, CURLOPT_WRITEDATA, this);
+				res = curl_easy_setopt(curl, CURLOPT_WRITEDATA, this);
 
-				curl_easy_setopt(curl, CURLOPT_NOPROGRESS, FALSE);
+				res = curl_easy_setopt(curl, CURLOPT_NOPROGRESS, FALSE);
 
-				curl_easy_setopt(curl, CURLOPT_XFERINFODATA, this);
+				res = curl_easy_setopt(curl, CURLOPT_XFERINFODATA, this);
 				// Install the callback function
-				curl_easy_setopt(curl, CURLOPT_XFERINFOFUNCTION, FtpDownloader::progress_callback);
+				res = curl_easy_setopt(curl, CURLOPT_XFERINFOFUNCTION, FtpDownloader::progress_callback);
 				/* Switch on full protocol/debug output */
 
+				res = curl_easy_setopt(curl, CURLOPT_USERNAME, "public");
+				res = curl_easy_setopt(curl, CURLOPT_PASSWORD, "1234");
+
 				curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
-				for (size_t i = 0; i < cancelled && files_.size(); i++, url_ = files_[i]) {
-					curl_easy_setopt(curl, CURLOPT_URL, url_.c_str());
+				for (size_t i = 0; !cancelled && i < files_.size(); i++) {
+					url_ = files_[i].first;
+					outfile_ = files_[i].second;
+					res = curl_easy_setopt(curl, CURLOPT_URL, url_.c_str());
 					res = curl_easy_perform(curl);
 					if (CURLE_OK != res) {
-						/* we failed */
-						if (res == CURLE_OPERATION_TIMEDOUT && cancelled) {
-							//ok cancelled 
-						} else
-							fprintf(stderr, "curl told us %d\n", res);
+						break;
 					}
 					if (stream_)
 						fclose(stream_); /* close the local file */
 					stream_ = nullptr;
-					cancelled = false;
 				}
-				/* always cleanup */
-				curl_easy_cleanup(curl);
 			}
-
-
-			curl_global_cleanup();
+			/* we failed */
+			switch (res) {
+			case CURLE_OK:
+				break;
+			case CURLE_OPERATION_TIMEDOUT:
+				if (cancelled)
+					break;
+			default:
+				emit error(res);
+			}
+			cancelled = false;
 		} catch (...) {
 			fprintf(stderr, "exception catched white doanloading data");
+			emit error(0);
 		}
+		stream_ = nullptr;
+		cancelled = false;
+		curl_easy_cleanup(curl);
+		curl_global_cleanup();
 		std::cout << "termination\n";
 		emit ended();
 	}

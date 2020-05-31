@@ -12,10 +12,8 @@ add_library(AppUpdateChecker STATIC
 target_include_directories(AppUpdateChecker PRIVATE
     "../MainWindow" 
     "../AppBackend"
-    "../BottomBar"
-    #${ZLIB_INCLUDE_DIRS} 
-    #${OPENSSL_INCLUDE_DIRS} )
-    )
+    "../DownloadManager"
+    "../Config")
 
 qt5_use_modules(AppUpdateChecker 
     Quick 
@@ -28,8 +26,5 @@ target_link_libraries(AppUpdateChecker
     Qt5::Gui
     Qt5::Core
     Qt5::Widgets
-    CONAN_PKG::libcurl 
-    #${OPENSSL_LIBRARIES} 
-    #${ZLIB_LIBRARIES})
-    )
+    CONAN_PKG::libcurl)
 

@@ -58,7 +58,7 @@ Item {
                     parent.pressed = !parent.pressed
                     parent.color = parent.pressed ? "white" : "#DDDDDD"
                     //_Button.buttonClicked("ads")
-                    _BottomBar.download()
+                    _DownloadManager.download(false)
                     if (window.tmp !== 0)
                         window.tmp = 0
                     else

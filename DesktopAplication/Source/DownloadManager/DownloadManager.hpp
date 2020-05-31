@@ -9,23 +9,29 @@
 #include "IQmlObject.hpp"
 
 namespace bb {
-	class BottomBar : public bc::IQmlObject {
+	class DownloadManager : public bc::IQmlObject {
 		Q_OBJECT
 	public:
+		static DownloadManager& getObject() {
+			static DownloadManager uc;
+			return uc;
+		}
+		enum Stage : int {
+			NONE = 0, DOWNLOAD, INSTALL
+		};
 		enum  DownloadState : int {
-			checking = 0, downloading, installing, pause, error, stopped, completed
+			CHECKING = 0, DOWNLOADING, INSTALLING, PAUSE, ERRORD, STOPPED, COMPLEET
 		};
 		enum  VisibleState : int {
-			hidden = 0, showed, minimalized
+			HIDDEN = 0, SHOWED, MINIMALIZED
 		};
 
-		virtual ~BottomBar();
-		BottomBar() :ftp_(*this) {}
+
 
 		// implementation IQmlObject
 		void update() override;
 		std::string getName() override;
-		void init() override {}
+		void init() override;
 
 		//QML Propetries
 		Q_PROPERTY(double speed READ getSpeed NOTIFY speedChanged);
@@ -34,6 +40,8 @@ namespace bb {
 		Q_PROPERTY(bool hideLock READ getHideLock NOTIFY hideLockChanged);
 		Q_PROPERTY(double actual READ getActual NOTIFY actualChanged);
 		Q_PROPERTY(double total READ getTotal NOTIFY totalChanged);
+		Q_PROPERTY(int error READ getError  NOTIFY errorChanged);
+		Q_PROPERTY(QString errorString READ getErrorString);
 
 		//QMl invoklabes
 		Q_INVOKABLE double getSpeed() const;
@@ -42,16 +50,24 @@ namespace bb {
 		Q_INVOKABLE bool getHideLock() const;
 		Q_INVOKABLE double getActual() const;
 		Q_INVOKABLE double getTotal() const;
+		Q_INVOKABLE int getError() const;
+		Q_INVOKABLE QString getErrorString() const;
 
 
+		void downloadFile(std::string url, std::string fileName);
+		void downloadLauchBoxJson(std::string url, std::string fileName);
+		std::filesystem::path& getDownloadDir() { return downloadDir; }
+	private:
+		virtual ~DownloadManager();
+		DownloadManager() {};
 	public slots:
-		void download();
+		void download(bool minimalLock);
 		void status(qint64 progress, qint64 total, double speed);
 		void TotalSize(qint64 total);
 		void pauseD();
 		void resumeD();
 		void stopD();
-
+		void errorCatched(int code);
 		void termination();
 	signals:
 		void speedChanged();
@@ -60,6 +76,8 @@ namespace bb {
 		void hideLockChanged();
 		void actualChanged();
 		void totalChanged();
+		void errorChanged();
+		void notifyDownload();
 
 		//signals to ftp thread
 		void startDownloading();
@@ -68,9 +86,13 @@ namespace bb {
 		void stopDownloading();
 
 	private:
-		DownloadState downloadState_ = DownloadState::downloading;
-		VisibleState visibleState_ = VisibleState::showed;
+		Stage stage_ = Stage::NONE;
+		DownloadState downloadState_ = DownloadState::DOWNLOADING;
+		VisibleState visibleState_ = VisibleState::SHOWED;
 		FtpDownloader ftp_;
+		std::filesystem::path downloadDir = "./Download";
+
+		//qml properties
 		bool hideLock_ = false;
 		double progress_ = 0;
 		double total_ = 0;
@@ -78,5 +100,7 @@ namespace bb {
 		qint64 downloaded_ = 0;
 		QThread ftpThread_;
 		double actual_ = 0;
+		int error_ = 0;
+		QString errorStr_ = "";
 	};
 }

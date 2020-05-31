@@ -17,9 +17,10 @@ namespace bc {
 		Backend() {};
 		~Backend();
 		QQmlApplicationEngine* engine;
-		void registerObjects();
+		template <class T>
+		void registerObject();
 
-		void registerObject(IQmlObject* object);
+		void registerObjects();
 
 		std::unordered_map<std::string, QObject*> objects_;
 	};

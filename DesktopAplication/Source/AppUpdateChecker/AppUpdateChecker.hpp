@@ -4,33 +4,38 @@
 #include <QDebug>
 #include <QNetworkAccessManager>
 #include "IQmlObject.hpp"
+#include "DownloadManager.hpp"
+#include <filesystem>
 
 
 namespace upd {
 	class AppUpdateChecker : public bc::IQmlObject {
 		Q_OBJECT
 	public:
-		virtual ~AppUpdateChecker() {};
-		AppUpdateChecker() {}
+		static AppUpdateChecker& getObject() {
+			static AppUpdateChecker uc;
+			return uc;
+		}
 
 		// implementation IQmlObject
 		void update() override;
+		void init() override;
 		std::string getName() override;
-		void init() override {}
 
-
-		//QML Propetries
-		//Q_PROPERTY(qint64 progress READ getProgress NOTIFY progresChanged);
-		//QMl invoklabes
-		//Q_INVOKABLE qint64 getProgress() const;
-
+	private:
+		AppUpdateChecker() {}
+		virtual ~AppUpdateChecker() {};
 
 	public slots:
-		//void checkForUpdates();
+		void checkForUpdates();
+		void LauchBoxJsonDownloaded();
 	signals:
 		//void progresChanged();
 	private:
 		qint64 progress_ = 0;
 		qint64 total_ = 0;
+		bb::DownloadManager* dm = nullptr;
+		std::string LBJsonUrl = "ftp://localhost/LaunchBoxInfo.json";
+		std::string LBJsonFileName = "LaunchBoxInfo.json";
 	};
 }

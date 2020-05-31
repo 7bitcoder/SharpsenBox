@@ -19,7 +19,7 @@ Rectangle {
     property int completed: 6
 
     //stete
-    property int state: _BottomBar.downloadState
+    property int state: _DownloadManager.downloadState
 
     property color barColor: "green"
 
@@ -58,7 +58,7 @@ Rectangle {
             if (total > 1000)
                 totalStr = (total / 1000).toFixed(2) + "GB"
             else
-                totalStr = total.toFixed(2) + "GB"
+                totalStr = total.toFixed(2) + "MB"
         }
         repeat: true
         running: state == downloading
@@ -69,9 +69,9 @@ Rectangle {
         interval: updateInterval
         onTriggered: {
             //MB
-            actual = _BottomBar.actual
-            total = _BottomBar.total
-            speedAvg = _BottomBar.speed //B/s
+            actual = _DownloadManager.actual
+            total = _DownloadManager.total
+            speedAvg = _DownloadManager.speed //B/s
             progress = (actual / total) * 100
             percenStr = qsTr(progress.toFixed(1) + "%")
         }
@@ -94,9 +94,9 @@ Rectangle {
     property int showed: 1
     property int minimalized: 2
 
-    property int visibleState: _BottomBar.visibleState
+    property int visibleState: _DownloadManager.visibleState
 
-    property bool hideLock: _BottomBar.hideLock
+    property bool hideLock: _DownloadManager.hideLock
     onStateChanged: {
         if (state === checking) {
             bottomBar.barColor = "white"
@@ -117,6 +117,7 @@ Rectangle {
         } else if (state === error) {
             anim.stop()
             bottomBar.barColor = "red"
+            statusInfo = _DownloadManager.errorString
         } else if (state === completed) {
             anim.stop()
             loader.visible = false
@@ -235,9 +236,9 @@ Rectangle {
             onPlayChanged: {
                 console.log("heheheh")
                 if (play)
-                    _BottomBar.pauseD()
+                    _DownloadManager.pauseD()
                 else
-                    _BottomBar.resumeD()
+                    _DownloadManager.resumeD()
             }
 
             property real opac: 0.6
@@ -300,7 +301,7 @@ Rectangle {
                 hoverEnabled: true
                 anchors.fill: parent
                 onClicked: {
-                    _BottomBar.stopD()
+                    _DownloadManager.stopD()
                 }
                 onEntered: stopImag.opacity = 1
                 onExited: stopImag.opacity = 0.6
@@ -373,7 +374,7 @@ Rectangle {
         }
         font.family: "Arial"
         font.pointSize: 12
-        color: "white"
+        color: parent.state === parent.error ? "red" : "white"
         text: statusInfo
     }
     Text {

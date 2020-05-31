@@ -31,6 +31,7 @@ else()
 	string(REGEX MATCH "(\"Qt32Bit\"):.?\"([^\"]*)\".?\n"  QtLib ${stream})
 endif()
 
+message("CULR dir: ${CURL_LIB}")
 set(QtLib ${CMAKE_MATCH_2})
 set (CMAKE_PREFIX_PATH ${QtLib}/lib/cmake/Qt5 )
 message("Qt library path: ${QtLib}")

@@ -4,7 +4,8 @@
 #include "AppBackend.hpp"
 #include "Button.hpp"
 #include "AppUpdateChecker.hpp"
-#include "BottomBar.hpp"
+#include "DownloadManager.hpp"
+#include "Config.hpp"
 
 
 
@@ -21,19 +22,20 @@ namespace bc {
 
 	void Backend::registerObjects() {
 		// ZIP macro changes [Class] to ["Class", new Class]
-		registerObject(new Button);
-		registerObject(new upd::AppUpdateChecker);
-		registerObject(new bb::BottomBar);
+		registerObject<cf::Config>();
+		registerObject<Button>();
+		registerObject<bb::DownloadManager>();
+		registerObject<upd::AppUpdateChecker>();
 	}
 
-	void Backend::registerObject(IQmlObject* object) {
-		auto name = object->getName();
-		if (objects_.find(name) != objects_.end())
-			throw std::exception("object already registered");
-		objects_.insert({ name , object });
+	template <class T>
+	void Backend::registerObject() {
+		auto& object = T::getObject();
+		object.init();
+		auto name = object.getName();
 		name.insert(0, "_");
 		auto cStr = name.c_str();
-		engine->rootContext()->setContextProperty(cStr, object);
+		engine->rootContext()->setContextProperty(cStr, &object);
 	}
 
 	QObject* Backend::getObject(std::string name) {
