@@ -1,5 +1,6 @@
 [requires]
 libcurl/7.52.1@bincrafters/stable
+zlib/1.2.11@conan/stable
 
 [generators]
 cmake

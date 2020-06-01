@@ -3,8 +3,7 @@
 #include <QQmlContext>
 #include "AppBackend.hpp"
 #include "Button.hpp"
-#include "AppUpdateChecker.hpp"
-#include "DownloadManager.hpp"
+#include "InstalationManager.hpp"
 #include "Config.hpp"
 
 
@@ -24,8 +23,7 @@ namespace bc {
 		// ZIP macro changes [Class] to ["Class", new Class]
 		registerObject<cf::Config>();
 		registerObject<Button>();
-		registerObject<bb::DownloadManager>();
-		registerObject<upd::AppUpdateChecker>();
+		registerObject<bb::InstalationManager>();
 	}
 
 	template <class T>

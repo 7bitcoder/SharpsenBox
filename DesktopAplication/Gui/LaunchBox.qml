@@ -49,7 +49,7 @@ ApplicationWindow {
             bottom: parent.bottom
         }
         property bool sw: false
-        source: sw ? "Aplication.qml" : "MainChecker.qml"
+        source: "Aplication.qml"
     }
 
     BottomBar {
@@ -67,11 +67,5 @@ ApplicationWindow {
     ResizingFrames {
         anchors.fill: parent
         size: 3
-    }
-    Timer {
-        running: true
-        interval: 500
-        onTriggered: contentLoader.sw = true
-        Component.onCompleted: start()
     }
 }

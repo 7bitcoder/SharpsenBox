@@ -21,12 +21,17 @@ namespace cf {
 		void init() override;
 		std::string getName() override;
 
-		QString& getVer() { return version; }
+		QString& getVer() { return version_; }
+		std::filesystem::path& getDownloadDir() { return downloadDir_; }
+		std::filesystem::path& getConfigJson() { return configJson_; }
+		std::string& getFtpDir() { return ftpUrl_; }
 	private:
 		Config() {}
 		virtual ~Config() {};
 	private:
-		QString version;
-		std::filesystem::path ConfigJson = "./LaunchBoxInfo.json";
+		QString version_;
+		std::filesystem::path configJson_ = "./LaunchBoxInfo.json";
+		std::filesystem::path downloadDir_ = "../Download";
+		std::string ftpUrl_ = "ftp://localhost/";
 	};
 }

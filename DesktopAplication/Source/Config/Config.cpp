@@ -9,17 +9,17 @@ namespace cf {
 
 	void Config::init() {
 
-		if (!std::filesystem::exists(ConfigJson))
+		if (!std::filesystem::exists(configJson_))
 			;//problem
 		QString val;
 		QFile file;
-		file.setFileName(ConfigJson.string().c_str());
+		file.setFileName(configJson_.string().c_str());
 		file.open(QIODevice::ReadOnly | QIODevice::Text);
 		val = file.readAll();
 		file.close();
 		QJsonDocument d = QJsonDocument::fromJson(val.toUtf8());
 		QJsonObject sett2 = d.object();
-		version = d["Ver"].toString();
+		version_ = d["Ver"].toString();
 	}
 
 	std::string Config::getName() {

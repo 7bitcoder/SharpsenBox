@@ -1,7 +1,8 @@
 ﻿
-add_subdirectory(DownloadManager)
+add_subdirectory(InstalationManager)
 add_subdirectory(Config)
 add_subdirectory(MainWindow)
-add_subdirectory(AppUpdateChecker)
+add_subdirectory(AppUpdater)
+add_subdirectory(LaunchBox)
 add_subdirectory(AppBackend)
-add_subdirectory(Framework)
+add_subdirectory(LaunchBoxUpdater)

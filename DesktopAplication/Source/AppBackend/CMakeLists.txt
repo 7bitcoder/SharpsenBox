@@ -4,8 +4,7 @@ add_library(AppBackend STATIC
 
 target_include_directories(AppBackend PUBLIC
     "../MainWindow"
-    "../AppUpdateChecker"
-    "../DownloadManager"
+    "../InstalationManager"
     "../Config")
 
 qt5_use_modules(AppBackend 
@@ -16,8 +15,7 @@ qt5_use_modules(AppBackend
 target_link_libraries(AppBackend
     Button
     Config
-    AppUpdateChecker
-    DownloadManager
+    InstalationManager
     Qt5::Widgets
     Qt5::Gui
     Qt5::Core)
