@@ -25,6 +25,7 @@ target_link_libraries(LaunchBox
     Qt5::Core
     Qt5::Quick
     Qt5::Qml
-    Qt5::QuickControls2)
+    Qt5::QuickControls2
+    ${CURL_LIBRARY})
 
 target_include_directories(LaunchBox PUBLIC "../AppBackend" "../test")

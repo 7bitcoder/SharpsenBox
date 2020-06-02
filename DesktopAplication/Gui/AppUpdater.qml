@@ -79,9 +79,7 @@ ApplicationWindow {
                 font.family: "Arial"
                 font.pixelSize: 20
                 color: "#AAAAAA"
-                Component.onCompleted: {
-                    console.log("gwewqfewf++++++++++++")
-                }
+
             }
 
             Item {

@@ -3,7 +3,7 @@
 #include "InstalationManager.hpp"
 #include "AppBackend.hpp"
 #include "Config.hpp"
-#include <curl/curl.h>
+#include "curl.h"
 
 namespace bb {
 	void InstalationManager::download() {
