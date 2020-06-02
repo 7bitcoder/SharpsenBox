@@ -71,11 +71,12 @@ if(DEBUG)
 	set(d d)
 endif()
 
-set(CURL_INC "${CMAKE_SOURCE_DIR}/ExternalLibs/curl/include")
+set(LCURL_INC "${CMAKE_SOURCE_DIR}/ExternalLibs/curl/x64-windows-static/include")
 
 if(64BIT)
 	if(WIN)
-		set(CURL_LIBRARY  "${CMAKE_SOURCE_DIR}/ExternalLibs/curl/${platform}64/${type}/${libType}/libcurl${d}.lib")
+		set(LCURL_LIBRARY  "${CMAKE_SOURCE_DIR}/ExternalLibs/curl/x64-windows-static/lib/libcurl.lib")
+		set(ZLIB_LIBRARY  "${CMAKE_SOURCE_DIR}/ExternalLibs/curl/x64-windows-static/lib/zlib.lib")
 	elseif(LINUX)
 	
 	else()# mac
@@ -85,7 +86,7 @@ if(64BIT)
 else()#32 bit
 
 	if(WIN)
-		set(CURL_LIBRARY  "${CMAKE_SOURCE_DIR}/ExternalLibs/curl/${platform}32/${type}/${libType}/libcurl${d}.lib")
+		set(LCURL_LIBRARY  "${CMAKE_SOURCE_DIR}/ExternalLibs/curl/x86-windows-static/lib/libcurl.lib")
 	elseif(LINUX)
 	
 	else()# mac
