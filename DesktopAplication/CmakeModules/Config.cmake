@@ -64,3 +64,34 @@ if(AUTO_QT_LIBS)
 		USES_TERMINAL)
 		add_dependencies(deploy LaunchBox)
 endif()
+
+set(libType dynamic)
+#External Libs
+if(DEBUG)
+	set(d d)
+endif()
+
+set(LCURL_INC "${CMAKE_SOURCE_DIR}/ExternalLibs/curl/x64-windows-static/include")
+
+if(64BIT)
+	if(WIN)
+		set(LCURL_LIBRARY  "${CMAKE_SOURCE_DIR}/ExternalLibs/curl/x64-windows-static/lib/libcurl.lib")
+		set(ZLIB_LIBRARY  "${CMAKE_SOURCE_DIR}/ExternalLibs/curl/x64-windows-static/lib/zlib.lib")
+	elseif(LINUX)
+	
+	else()# mac
+
+	endif() 
+	
+else()#32 bit
+
+	if(WIN)
+		set(LCURL_LIBRARY  "${CMAKE_SOURCE_DIR}/ExternalLibs/curl/x86-windows-static/lib/libcurl.lib")
+	elseif(LINUX)
+	
+	else()# mac
+
+	endif() #32 bit
+endif()
+message("asdasds ========== ${CURL_INC}")
+message("asdasds ========== ${CURL_LIBRARY}")

@@ -61,7 +61,7 @@ namespace bb {
 	void FtpDownloader::run() {
 		try {
 			// clear flags etc 
-			curl_global_init(CURL_GLOBAL_DEFAULT);
+			::curl_global_init(CURL_GLOBAL_DEFAULT);
 			curl = curl_easy_init();
 			if (curl) {
 				/*
@@ -116,8 +116,8 @@ namespace bb {
 		}
 		stream_ = nullptr;
 		cancelled = false;
-		curl_easy_cleanup(curl);
-		curl_global_cleanup();
+		::curl_easy_cleanup(curl);
+		::curl_global_cleanup();
 		std::cout << "termination\n";
 		emit ended();
 	}
