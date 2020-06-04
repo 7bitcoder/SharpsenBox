@@ -97,6 +97,66 @@
    "False"
   ],
   [
+   "libarchive:shared",
+   "False"
+  ],
+  [
+   "libarchive:with_acl",
+   "True"
+  ],
+  [
+   "libarchive:with_bzip2",
+   "False"
+  ],
+  [
+   "libarchive:with_cng",
+   "False"
+  ],
+  [
+   "libarchive:with_expat",
+   "False"
+  ],
+  [
+   "libarchive:with_iconv",
+   "True"
+  ],
+  [
+   "libarchive:with_libb2",
+   "False"
+  ],
+  [
+   "libarchive:with_libxml2",
+   "False"
+  ],
+  [
+   "libarchive:with_lz4",
+   "False"
+  ],
+  [
+   "libarchive:with_lzma",
+   "False"
+  ],
+  [
+   "libarchive:with_lzo",
+   "False"
+  ],
+  [
+   "libarchive:with_nettle",
+   "False"
+  ],
+  [
+   "libarchive:with_openssl",
+   "False"
+  ],
+  [
+   "libarchive:with_pcreposix",
+   "False"
+  ],
+  [
+   "libarchive:with_zstd",
+   "False"
+  ],
+  [
    "libcurl:custom_cacert",
    "False"
   ],
@@ -146,6 +206,10 @@
   ],
   [
    "libcurl:with_winssl",
+   "False"
+  ],
+  [
+   "libiconv:shared",
    "False"
   ],
   [

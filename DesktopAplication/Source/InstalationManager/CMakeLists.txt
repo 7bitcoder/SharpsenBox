@@ -1,12 +1,15 @@
-﻿add_library(InstalationManager STATIC
+﻿find_package(curl)
+find_package(libarchieve)
+conan_basic_setup(TARGETS)
+
+add_library(InstalationManager STATIC
     InstalationManager.cpp
     FtpDownloader.cpp 
-    ZlibInstaller.cpp)
+    "ArchieveInstaller.cpp")
 
 target_include_directories(InstalationManager PUBLIC
     "../AppBackend"
-    "../Config"
-    "C:/Users/Sylwek/Desktop/LaunchBox/DesktopAplication/vcpkg/packages/curl_x86-windows-static/include")
+    "../Config")
 
 qt5_use_modules(InstalationManager 
     Quick 
@@ -15,7 +18,8 @@ qt5_use_modules(InstalationManager
 
 message("asdsadsadsa d ${CURL_LIBRARIES}")
 target_link_libraries(InstalationManager
-    ${CURL_LIBRARIES}
     Qt5::Widgets
     Qt5::Gui
-    Qt5::Core)
+    Qt5::Core
+    CONAN_PKG::libcurl
+    CONAN_PKG::libarchive)

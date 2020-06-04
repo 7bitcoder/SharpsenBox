@@ -1,7 +1,3 @@
-#pragma comment(lib, "wldap32.lib")
-#pragma comment(lib, "ws2_32.lib")
-#pragma comment(lib, "winmm.lib")
-
 #include "FtpDownloader.hpp"
 #include "Config.hpp"
 #include <stdio.h>
