@@ -11,7 +11,6 @@ namespace bc {
 	public:
 		static Backend& getBakend();
 		void init(QQmlApplicationEngine* eng);
-		QObject* getObject(std::string name);
 
 	private:
 		Backend() {};
@@ -19,9 +18,9 @@ namespace bc {
 		QQmlApplicationEngine* engine;
 		template <class T>
 		void registerObject();
-
 		void registerObjects();
+		void initializeObjects();
 
-		std::unordered_map<std::string, QObject*> objects_;
+		std::vector<IQmlObject*> objects_;
 	};
 }

@@ -26,7 +26,7 @@ namespace cf {
 		std::filesystem::path& getConfigJson() { return configJson_; }
 		std::string& getFtpDir() { return ftpUrl_; }
 	private:
-		Config() {}
+		Config();
 		virtual ~Config() {};
 	private:
 		QString version_;

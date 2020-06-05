@@ -69,9 +69,9 @@ Rectangle {
         interval: updateInterval
         onTriggered: {
             //MB
-            actual = _DownloadManager.actual
-            total = _DownloadManager.total
-            speedAvg = _DownloadManager.speed //B/s
+            actual = _LoadingBar.actual
+            total = _LoadingBar.total
+            speedAvg = _LoadingBar.speed //B/s
             progress = (actual / total) * 100
             percenStr = qsTr(progress.toFixed(1) + "%")
         }
@@ -94,9 +94,9 @@ Rectangle {
     property int showed: 1
     property int minimalized: 2
 
-    property int visibleState: _DownloadManager.visibleState
+    property int visibleState: _LoadingBar.visibleState
 
-    property bool hideLock: _DownloadManager.hideLock
+    property bool hideLock: false
     onStateChanged: {
         if (state === checking) {
             bottomBar.barColor = "white"
@@ -117,7 +117,7 @@ Rectangle {
         } else if (state === error) {
             anim.stop()
             bottomBar.barColor = "red"
-            statusInfo = _DownloadManager.errorString
+            statusInfo = _LoadingBar.errorString
         } else if (state === completed) {
             anim.stop()
             loader.visible = false
@@ -234,11 +234,10 @@ Rectangle {
             height: parent.size
             property bool play: false
             onPlayChanged: {
-                console.log("heheheh")
                 if (play)
-                    _DownloadManager.pauseD()
+                    _LoadingBar.pauseD()
                 else
-                    _DownloadManager.resumeD()
+                    _LoadingBar.resumeD()
             }
 
             property real opac: 0.6
@@ -301,7 +300,7 @@ Rectangle {
                 hoverEnabled: true
                 anchors.fill: parent
                 onClicked: {
-                    _DownloadManager.stopD()
+                    _LoadingBar.stopD()
                 }
                 onEntered: stopImag.opacity = 1
                 onExited: stopImag.opacity = 0.6

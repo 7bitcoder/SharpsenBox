@@ -7,8 +7,7 @@
 
 namespace cf {
 
-	void Config::init() {
-
+	Config::Config() {
 		if (!std::filesystem::exists(configJson_))
 			;//problem
 		QString val;
@@ -20,6 +19,8 @@ namespace cf {
 		QJsonDocument d = QJsonDocument::fromJson(val.toUtf8());
 		QJsonObject sett2 = d.object();
 		version_ = d["Ver"].toString();
+	}
+	void Config::init() {
 	}
 
 	std::string Config::getName() {

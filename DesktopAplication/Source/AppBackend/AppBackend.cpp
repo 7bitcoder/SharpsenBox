@@ -5,7 +5,7 @@
 #include "Button.hpp"
 #include "InstalationManager.hpp"
 #include "Config.hpp"
-#include "LoadingBarManager.hpp"
+#include "LoadingBar.hpp"
 
 
 
@@ -18,35 +18,29 @@ namespace bc {
 	void Backend::init(QQmlApplicationEngine* eng) {
 		engine = eng;
 		registerObjects();
+		initializeObjects();
 	}
 
 	void Backend::registerObjects() {
 		// ZIP macro changes [Class] to ["Class", new Class]
 		registerObject<cf::Config>();
 		registerObject<Button>();
-		registerObject<bb::LoadingBarManager>();
 		registerObject<bb::InstalationManager>();
+		registerObject<lb::LoadingBar>();
 	}
-
+	void Backend::initializeObjects() {
+		for (auto* object : objects_)
+			object->init();
+	}
 	template <class T>
 	void Backend::registerObject() {
 		auto& object = T::getObject();
-		object.init();
+		objects_.push_back(&object);
 		auto name = object.getName();
 		name.insert(0, "_");
 		auto cStr = name.c_str();
 		engine->rootContext()->setContextProperty(cStr, &object);
 	}
 
-	QObject* Backend::getObject(std::string name) {
-		auto it = objects_.find(name);
-		if (it == objects_.end())
-			throw std::exception("wrong object name");
-		return it->second;
-	}
-
-	Backend::~Backend() {
-		for (auto ptr : objects_)
-			delete ptr.second;
-	}
+	Backend::~Backend() {}
 }

@@ -1,6 +1,7 @@
 ﻿
-add_subdirectory(InstalationManager)
 add_subdirectory(Config)
+add_subdirectory(InstalationManager)
+add_subdirectory(LoadingBar)
 add_subdirectory(MainWindow)
 add_subdirectory(AppUpdater)
 add_subdirectory(LaunchBox)

@@ -2,7 +2,7 @@
 import QmlProject 1.1
 
 Project {
-    mainFile: "AppUpdater.qml"
+    mainFile: "LaunchBox.qml"
 
     /* Include .qml, .js, and image files from current directory and subdirectories */
     QmlFiles {
