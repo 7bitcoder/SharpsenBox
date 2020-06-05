@@ -5,6 +5,7 @@
 #include "Button.hpp"
 #include "InstalationManager.hpp"
 #include "Config.hpp"
+#include "LoadingBarManager.hpp"
 
 
 
@@ -23,6 +24,7 @@ namespace bc {
 		// ZIP macro changes [Class] to ["Class", new Class]
 		registerObject<cf::Config>();
 		registerObject<Button>();
+		registerObject<bb::LoadingBarManager>();
 		registerObject<bb::InstalationManager>();
 	}
 
