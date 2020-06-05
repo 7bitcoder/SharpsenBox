@@ -74,9 +74,9 @@ namespace upd {
 	}
 	void AppUpdater::errorCatched() {
 		if (state_ == State::downloading) { //handle downloading errors
-			auto msg = bb::InstalationManager::getObject().getErrorString();
+			//auto msg = bb::InstalationManager::getObject().getErrorString();
 			state_ = State::error;
-			statusStr_ = msg;
+			//statusStr_ = msg;
 			stateStrChanged();
 		} else if (state_ == State::installing) {//todo
 		}

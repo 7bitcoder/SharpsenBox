@@ -72,14 +72,40 @@ ApplicationWindow {
                 id: info
                 anchors {
                     bottom: parent.bottom
-                    bottomMargin: 40
+                    bottomMargin: 60
                     horizontalCenter: parent.horizontalCenter
                 }
-                text: _AppUpdater.statusStr
+                text: statusStr //_AppUpdater.statusStr
                 font.family: "Arial"
                 font.pixelSize: 20
                 color: "#AAAAAA"
 
+            }
+
+            Rectangle {
+                visible: true
+                anchors {
+                    bottom: parent.bottom
+                    bottomMargin: 30
+                    horizontalCenter: parent.horizontalCenter
+                    left: parent.left
+                    right: parent.right
+                    leftMargin: 20
+                    rightMargin: 20
+                }
+                height: 8
+                color: "black"
+                radius: 4
+                Rectangle {
+                    anchors{
+                        top: parent.top
+                        left: parent.left
+                        bottom: parent.bottom
+                    }
+                    width: 99/100*parent.width
+                    color: "white"
+                    radius: parent.radius
+                }
             }
 
             Item {

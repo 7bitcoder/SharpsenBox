@@ -7,7 +7,9 @@
 #include "IQmlObject.hpp"
 #include "FtpDownloader.hpp"
 #include "IQmlObject.hpp"
-
+namespace lb {
+	class LoadingBar;
+}
 namespace bb {
 	class InstalationManager : public bc::IQmlObject {
 		Q_OBJECT
@@ -34,31 +36,6 @@ namespace bb {
 		std::string getName() override;
 		void init() override;
 
-		//QML Propetries
-		Q_PROPERTY(double speed READ getSpeed); //download speed B/s
-		Q_PROPERTY(double actual READ getActual); //actual downloaded MB
-		Q_PROPERTY(double total READ getTotal); // total MB to download
-
-		Q_PROPERTY(int state READ getState NOTIFY stateChanged);
-		Q_PROPERTY(int visibleState READ getVisibleState NOTIFY visibleStateChanged);
-		Q_PROPERTY(bool hideLock READ getHideLock NOTIFY hideLockChanged);
-
-		Q_PROPERTY(int error READ getError  NOTIFY errorChanged);
-		Q_PROPERTY(QString errorString READ getErrorString);
-
-		//QMl invoklabes
-		Q_INVOKABLE double getSpeed() const;
-		Q_INVOKABLE double getActual() const;
-		Q_INVOKABLE double getTotal() const;
-
-		Q_INVOKABLE int getState() const;
-		Q_INVOKABLE int getVisibleState() const;
-		Q_INVOKABLE bool getHideLock() const;
-
-		Q_INVOKABLE int getError() const;
-		Q_INVOKABLE QString getErrorString() const;
-
-
 		void downloadFile(std::filesystem::path fileName);
 	private:
 		virtual ~InstalationManager();
@@ -73,16 +50,11 @@ namespace bb {
 		void errorCatched(int code);
 		void termination();
 	signals:
-		void stateChanged();
-		void visibleStateChanged();
-		void hideLockChanged();
-
-		void errorChanged();
 		void notifyDownload();
-		void getProgress(qint64 actual);
 
 
 	private:
+		lb::LoadingBar* LoadingBar_ = nullptr;
 		Stage stage_ = Stage::NONE;
 		State state_ = State::DOWNLOADING;
 		VisibleState visibleState_ = VisibleState::HIDDEN;

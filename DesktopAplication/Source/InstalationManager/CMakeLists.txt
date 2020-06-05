@@ -9,7 +9,8 @@ add_library(InstalationManager STATIC
 
 target_include_directories(InstalationManager PUBLIC
     "../AppBackend"
-    "../Config")
+    "../Config"
+    "../LoadingBar")
 
 qt5_use_modules(InstalationManager 
     Quick 

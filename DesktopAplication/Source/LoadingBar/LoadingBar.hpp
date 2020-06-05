@@ -29,14 +29,36 @@ namespace lb {
 		std::string getName() override;
 		void init() override;
 
-		void SetTotal(double tot) {
+		void setTotal(double tot) {
 			total_ = tot;
 		}
-		void SetActual(double act) {
+		void setActual(double act) {
 			actual_ = act;
 		}
-		void SetProgress(double prog) {
+		void setProgress(double prog) {
 			progress_ = prog;
+		}
+		void setSpeed(double sp) {
+			speed_ = sp;
+		}
+		void setError(int code, QString str) {
+			error_ = code;
+			errorStr_ = str;
+			errorChanged();
+		}
+		void setState(State st) {
+			state_= st;
+			stateChanged();
+		}
+		void setVisibleState(VisibleState st) {
+			visibleState_ = st;
+			visibleStateChanged();
+		}
+		void reset() {
+			error_ = 0;
+			progress_ = 0;
+			actual_ = 0;
+			total_ = 0;
 		}
 	protected:
 		//QML Propetries

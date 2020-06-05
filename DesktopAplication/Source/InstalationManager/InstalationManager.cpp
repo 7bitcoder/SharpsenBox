@@ -3,16 +3,14 @@
 #include "InstalationManager.hpp"
 #include "AppBackend.hpp"
 #include "Config.hpp"
+#include "LoadingBar.hpp"
 #include <curl/curl.h>
 
 namespace bb {
 	void InstalationManager::download() {
 		stage_ = Stage::DOWNLOAD;
-		state_ = State::DOWNLOADING;
-		visibleState_ = VisibleState::SHOWED;
-		stateChanged();
-		visibleStateChanged();
-
+		LoadingBar_->setState( lb::LoadingBar::State::DOWNLOADING );
+		LoadingBar_->setVisibleState(lb::LoadingBar::VisibleState::SHOWED );
 		connect(&ftp_, &FtpDownloader::statusSignal, this, &InstalationManager::status);
 		connect(&ftp_, &FtpDownloader::ended, this, &InstalationManager::termination);
 		connect(&ftp_, &FtpDownloader::error, this, &InstalationManager::errorCatched);
@@ -28,33 +26,7 @@ namespace bb {
 	Q_INVOKABLE std::string InstalationManager::getName() {
 		return TYPENAME(InstalationManager);
 	}
-	Q_INVOKABLE double InstalationManager::getSpeed() const {
-		return speed_;
-	}
-	Q_INVOKABLE int InstalationManager::getState() const {
-		return state_;
-	}
-	Q_INVOKABLE int InstalationManager::getVisibleState() const {
-		return visibleState_;
-	}
-	Q_INVOKABLE bool InstalationManager::getHideLock() const {
-		return hideLock_;
-	}
-	Q_INVOKABLE double InstalationManager::getActual() const {
-		return actual_;
-	}
-	Q_INVOKABLE double InstalationManager::getTotal() const {
-		return total_;
-	}
-
-	Q_INVOKABLE int InstalationManager::getError() const {
-		return Q_INVOKABLE double();
-	}
-
-	Q_INVOKABLE QString InstalationManager::getErrorString() const {
-		return errorStr_;
-	}
-
+	
 	namespace {
 		double getMB(qint64 progress) {
 			double prog = progress / 1024;//B -> KB
@@ -64,14 +36,11 @@ namespace bb {
 	}
 
 	void InstalationManager::status(qint64 progress, qint64 total, double speed) {
-		static qint64 lastTotal = 0;
 		if (total) {
-
-			actual_ = getMB(progress);
-			total_ = getMB(total);
-			speed_ = speed; // B/s
+			LoadingBar_->setProgress( getMB(progress) );
+			LoadingBar_->setTotal( getMB(total) );
+			LoadingBar_->setSpeed( speed ); // B/s
 		}
-		//std::cout << total_ << " \t\t " << progress_ << "\n";
 	}
 	void InstalationManager::TotalSize(qint64 total) {}
 
@@ -79,20 +48,16 @@ namespace bb {
 		ftp_.pause.clear();
 		std::cout << "pause\n";
 		state_ = State::PAUSE;
-		stateChanged();
+		LoadingBar_->setState(lb::LoadingBar::State::PAUSE);
 	}
 	void InstalationManager::resumeD() {
 		ftp_.resume.clear();
-		if (stage_ == Stage::DOWNLOAD)
-			state_ = State::DOWNLOADING;
-		stateChanged();
+		LoadingBar_->setState(stage_ == Stage::DOWNLOAD ? lb::LoadingBar::State::DOWNLOADING : lb::LoadingBar::State::INSTALLING);
 	}
 	void InstalationManager::stopD() {
 		ftp_.stop.clear();
-		state_ = State::STOPPED;
-		visibleState_ = VisibleState::HIDDEN;
-		visibleStateChanged();
-		stateChanged();
+		LoadingBar_->setState( lb::LoadingBar::State::STOPPED );
+		LoadingBar_->setVisibleState( lb::LoadingBar::VisibleState::HIDDEN );
 	}
 	void InstalationManager::errorCatched(int code) {
 		error_ = code;
@@ -128,19 +93,13 @@ namespace bb {
 			errorStr_ = "Unknown error while doanloading data";
 			break;
 		}
-		state_ = State::ERRORD;
-		stateChanged();
-		errorChanged();
+		LoadingBar_->setState( lb::LoadingBar::State::ERRORD );
+		LoadingBar_->setError(code, errorStr_);
 	}
 	void InstalationManager::termination() {
 		stage_ = Stage::NONE;
-		state_ = State::COMPLEET;
-		visibleState_ = VisibleState::HIDDEN;
-		stateChanged();
-		visibleStateChanged();
-		notifyDownload();
-		///ftpThread_.wait();
-		//ftpThread_.quit();
+		LoadingBar_->setState(lb::LoadingBar::State::COMPLEET );
+		LoadingBar_->setVisibleState( lb::LoadingBar::VisibleState::HIDDEN );
 	}
 
 	void InstalationManager::downloadFile(std::filesystem::path fileName) {
@@ -156,5 +115,6 @@ namespace bb {
 				//todo
 			}
 		}
+		LoadingBar_ = &lb::LoadingBar::getObject();
 	}
 }
