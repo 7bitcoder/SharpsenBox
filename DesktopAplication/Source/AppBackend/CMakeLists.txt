@@ -17,7 +17,6 @@ target_link_libraries(AppBackend
     Button
     Config
     InstalationManager
-    LoadingBar
     Qt5::Widgets
     Qt5::Gui
     Qt5::Core)

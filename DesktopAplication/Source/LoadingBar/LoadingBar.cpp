@@ -27,6 +27,9 @@ namespace lb {
 	Q_INVOKABLE double LoadingBar::getTotal() const {
 		return total_;
 	}
+	Q_INVOKABLE double LoadingBar::getProgress() const {
+		return progress_;
+	}
 
 	Q_INVOKABLE int LoadingBar::getError() const {
 		return Q_INVOKABLE double();
@@ -35,15 +38,6 @@ namespace lb {
 	Q_INVOKABLE QString LoadingBar::getErrorString() const {
 		return errorStr_;
 	}
-
-	namespace {
-		double getMB(qint64 progress) {
-			double prog = progress / 1024;//B -> KB
-			prog /= 1024; //KB -> MB
-			return prog;
-		}
-	}
-
 
 	void LoadingBar::pauseD() { 
 		pauseS(); 

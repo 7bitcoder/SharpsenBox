@@ -60,7 +60,6 @@ namespace lb {
 			actual_ = 0;
 			total_ = 0;
 		}
-	protected:
 		//QML Propetries
 		Q_PROPERTY(double speed READ getSpeed); //download speed B/s
 		Q_PROPERTY(double actual READ getActual); //actual downloaded MB

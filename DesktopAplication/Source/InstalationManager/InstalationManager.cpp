@@ -7,26 +7,6 @@
 #include <curl/curl.h>
 
 namespace bb {
-	void InstalationManager::download() {
-		stage_ = Stage::DOWNLOAD;
-		LoadingBar_->setState( lb::LoadingBar::State::DOWNLOADING );
-		LoadingBar_->setVisibleState(lb::LoadingBar::VisibleState::SHOWED );
-		connect(&ftp_, &FtpDownloader::statusSignal, this, &InstalationManager::status);
-		connect(&ftp_, &FtpDownloader::ended, this, &InstalationManager::termination);
-		connect(&ftp_, &FtpDownloader::error, this, &InstalationManager::errorCatched);
-		ftp_.start();
-	}
-	InstalationManager::~InstalationManager() {
-		ftp_.exit();
-		ftp_.terminate();
-		ftp_.wait();
-	}
-
-	void InstalationManager::update() {}
-	Q_INVOKABLE std::string InstalationManager::getName() {
-		return TYPENAME(InstalationManager);
-	}
-	
 	namespace {
 		double getMB(qint64 progress) {
 			double prog = progress / 1024;//B -> KB
@@ -35,13 +15,45 @@ namespace bb {
 		}
 	}
 
-	void InstalationManager::status(qint64 progress, qint64 total, double speed) {
+	void InstalationManager::download() {
+		stage_ = Stage::DOWNLOAD;
+		LoadingBar_->setState( lb::LoadingBar::State::DOWNLOADING );
+		LoadingBar_->setVisibleState(lb::LoadingBar::VisibleState::SHOWED );
+		connect(&ftp_, &FtpDownloader::statusSignal, this, &InstalationManager::downloadStatus);
+		connect(&ftp_, &FtpDownloader::ended, this, &InstalationManager::ftpEnded);
+		connect(&ftp_, &FtpDownloader::error, this, &InstalationManager::errorCatched);
+		ftp_.start();
+	}
+
+	InstalationManager::~InstalationManager() {
+		ftp_.exit();
+		ftp_.terminate();
+		ftp_.wait();
+	}
+
+	void InstalationManager::setTotal(qint64 tot) { 
+		totalBytes_ = tot;
+		total_ = getMB(totalBytes_);
+	}
+
+	void InstalationManager::setProgress() {
+		ProgressBytes_ = downloadedBytes_ + unpackedBytes_;
+		progress_ = ProgressBytes_ / totalBytes_ * 99;
+	}
+
+	void InstalationManager::update() {}
+	Q_INVOKABLE std::string InstalationManager::getName() {
+		return TYPENAME(InstalationManager);
+	}
+
+	void InstalationManager::downloadStatus(qint64 progress, qint64 total, double speed) {
+		downloadedBytes_ = progress;
 		if (total) {
-			LoadingBar_->setProgress( getMB(progress) );
-			LoadingBar_->setTotal( getMB(total) );
-			LoadingBar_->setSpeed( speed ); // B/s
+			setProgress();
+			speed_ =  speed; // B/s
 		}
 	}
+
 	void InstalationManager::TotalSize(qint64 total) {}
 
 	void InstalationManager::pauseD() {
@@ -50,15 +62,18 @@ namespace bb {
 		state_ = State::PAUSE;
 		LoadingBar_->setState(lb::LoadingBar::State::PAUSE);
 	}
+
 	void InstalationManager::resumeD() {
 		ftp_.resume.clear();
 		LoadingBar_->setState(stage_ == Stage::DOWNLOAD ? lb::LoadingBar::State::DOWNLOADING : lb::LoadingBar::State::INSTALLING);
 	}
+
 	void InstalationManager::stopD() {
 		ftp_.stop.clear();
 		LoadingBar_->setState( lb::LoadingBar::State::STOPPED );
 		LoadingBar_->setVisibleState( lb::LoadingBar::VisibleState::HIDDEN );
 	}
+
 	void InstalationManager::errorCatched(int code) {
 		error_ = code;
 		switch (code) {
@@ -96,10 +111,22 @@ namespace bb {
 		LoadingBar_->setState( lb::LoadingBar::State::ERRORD );
 		LoadingBar_->setError(code, errorStr_);
 	}
-	void InstalationManager::termination() {
-		stage_ = Stage::NONE;
-		LoadingBar_->setState(lb::LoadingBar::State::COMPLEET );
-		LoadingBar_->setVisibleState( lb::LoadingBar::VisibleState::HIDDEN );
+	void InstalationManager::ftpEnded() {
+		stage_ = Stage::INSTALL;
+		LoadingBar_->setState(lb::LoadingBar::State::INSTALLING);
+		downloadEnded();
+		disconnectAll();
+		connect(&installer_, &ArchieveInstaller::statusSignal, this, &InstalationManager::installStatus);
+		connect(&installer_, &ArchieveInstaller::ended, this, &InstalationManager::archieveEnded);
+		connect(&installer_, &ArchieveInstaller::error, this, &InstalationManager::errorCatched);
+		installer_.start();
+	}
+
+	void InstalationManager::archieveEnded() {
+		stage_ = Stage::INSTALL;
+		installEnded();
+		disconnectAll();
+	
 	}
 
 	void InstalationManager::downloadFile(std::filesystem::path fileName) {

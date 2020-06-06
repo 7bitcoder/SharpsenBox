@@ -19,6 +19,7 @@ qt5_use_modules(InstalationManager
 
 message("asdsadsadsa d ${CURL_LIBRARIES}")
 target_link_libraries(InstalationManager
+    LoadingBar
     Qt5::Widgets
     Qt5::Gui
     Qt5::Core

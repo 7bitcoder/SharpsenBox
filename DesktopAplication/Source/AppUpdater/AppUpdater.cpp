@@ -9,8 +9,7 @@
 
 namespace upd {
 
-	AppUpdater::AppUpdater() {
-		auto& cf = cf::Config::getObject();
+	AppUpdater::AppUpdater() : cf(cf::Config::getObject()), im(bb::InstalationManager::getObject()) {
 		cf.init();
 		auto& downloadDir = cf.getDownloadDir();
 		if (!std::filesystem::exists(downloadDir))
@@ -19,7 +18,7 @@ namespace upd {
 	}
 
 	void AppUpdater::checkForUpdates() {
-		auto& cfJson = cf::Config::getObject().getConfigJson();
+		auto& cfJson = cf.getConfigJson();
 		auto& im = bb::InstalationManager::getObject();
 		connect(&im, &bb::InstalationManager::notifyDownload, this, &AppUpdater::LauchBoxJsonDownloaded);
 		connect(&im, &bb::InstalationManager::errorCatched, this, &AppUpdater::errorCatched);
@@ -27,8 +26,7 @@ namespace upd {
 	}
 
 	void AppUpdater::LauchBoxJsonDownloaded() {
-		auto& dm = bb::InstalationManager::getObject();
-		auto& downloadDIr = cf::Config::getObject().getDownloadDir();
+		auto& downloadDIr = cf.getDownloadDir();
 		auto JsonPath = downloadDIr / LBJsonFileName;
 		if (!std::filesystem::exists(JsonPath))
 			;//problem
@@ -45,6 +43,7 @@ namespace upd {
 		QString size = d["Size"].toString();
 		updateSize_ = std::stoll(size.toUtf8().constData());
 		auto& actualVersion = cf::Config::getObject().getVer();
+		UpdateFile = d["Url"].toString();
 		if (version != actualVersion) {
 			//download new Laucher
 			std::cout << "downloading Laucher\n";
@@ -61,10 +60,9 @@ namespace upd {
 	}
 
 	void AppUpdater::downloadUpdate() {
-		auto& im = bb::InstalationManager::getObject();
 		disconnect(&im, &bb::InstalationManager::notifyDownload, this, &AppUpdater::LauchBoxJsonDownloaded);
 		connect(&im, &bb::InstalationManager::notifyDownload, this, &AppUpdater::updateDownloaded);
-		im.downloadFile("./bin_.rar");
+		im.downloadFile(UpdateFile.toUtf8().constData());
 	}
 
 	void AppUpdater::updateDownloaded() {
@@ -72,6 +70,12 @@ namespace upd {
 		statusStr_ = "Installing update";
 		stateStrChanged();
 	}
+
+	void AppUpdater::installUpdate() {
+		disconnect(&im, &bb::InstalationManager::notifyDownload, this, &AppUpdater::LauchBoxJsonDownloaded);
+		connect(&im, &bb::InstalationManager::notifyDownload, this, &AppUpdater::updateInstalled);
+	}
+
 	void AppUpdater::errorCatched() {
 		if (state_ == State::downloading) { //handle downloading errors
 			//auto msg = bb::InstalationManager::getObject().getErrorString();

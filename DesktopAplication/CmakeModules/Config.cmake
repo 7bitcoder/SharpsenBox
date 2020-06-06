@@ -56,10 +56,16 @@ else()
 	set(platform mac)
 endif()
 
+set(UpdaterPath ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/../Updater)
+if(NOT EXISTS ${UpdaterPath})
+	file(MAKE_DIRECTORY ${UpdaterPath})
+endif()
+
 if(AUTO_QT_LIBS)
 	add_custom_target(deploy ALL
 		WORKING_DIRECTORY ${QtLib}/bin 
 		COMMAND ${platform}deployqt --qmldir ${CMAKE_SOURCE_DIR}/Gui --${type} --quick ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+		COMMAND ${platform}deployqt --qmldir ${CMAKE_SOURCE_DIR}/Gui --${type} --quick ${UpdaterPath}
 		COMMENT "========= Deploying Aplication =========" 
 		USES_TERMINAL)
 		add_dependencies(deploy LaunchBox)
