@@ -34,25 +34,30 @@ namespace bb {
 		//!!!!! disconnect(receiver, SLOT(slot()));@ !! disconnect
 
 		// implementation IQmlObject
-		void update() override;
+		void update() override {};
 		std::string getName() override;
 		void init() override;
+		//
+		void clearDownloadDir();
 		void setTotal(qint64 tot);
-
-		void downloadFile(std::filesystem::path fileName); //just download
-		void installFile(std::filesystem::path fileName); //download + install
-		void downloadFiles(files files); //just download
-		void installFiles(files files); //download + install
+		void downloadFile(std::filesystem::path fileName, qint64 tot); //just download
+		void installFile(std::filesystem::path fileName, qint64 tot); //download + install
+		void downloadFiles(files files, qint64 tot); //just download
+		void installFiles(files files, qint64 tot); //download + install
 		double getProgress() { return progress_; }
 		double getTotal() { return total_; }
 		double getSpeed() { return speed_; }
 		double getActual() { return actual_; }
+		QString getError() { return errorStr_; }
 	private:
 		virtual ~InstalationManager();
 		InstalationManager() {};
+		void download(); //just download
+		void install(); //download + install
+		void reset();
+		void disconnectAll() {};
 		void setProgress();
 	public slots:
-		void download();
 		void downloadStatus(qint64 progress, qint64 total, double speed);
 		void installStatus(qint64 progress);
 		void TotalSize(qint64 total);
@@ -63,14 +68,16 @@ namespace bb {
 		void ftpEnded();
 		void archieveEnded();
 	signals:
+		void errorEmit();
 		void downloadEnded();
 		void installEnded();
 		void clearFilesEnded();
 	private:
+		bool onlyDownload;
 		files files_;
 		lb::LoadingBar* LoadingBar_ = nullptr;
 		Stage stage_ = Stage::NONE;
-		State state_ = State::DOWNLOADING;
+		State state_ = State::CHECKING;
 		VisibleState visibleState_ = VisibleState::HIDDEN;
 		FtpDownloader ftp_;
 		ArchieveInstaller installer_;
@@ -82,7 +89,6 @@ namespace bb {
 		qint64 ProgressBytes_ = 0; // dwonloaded + unpacked
 
 		//qml properties
-		bool hideLock_ = false;
 		double progress_ = 0;
 		double actual_ = 0;
 		double total_ = 0;

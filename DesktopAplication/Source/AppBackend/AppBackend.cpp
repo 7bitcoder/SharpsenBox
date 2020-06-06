@@ -22,7 +22,6 @@ namespace bc {
 	}
 
 	void Backend::registerObjects() {
-		// ZIP macro changes [Class] to ["Class", new Class]
 		registerObject<cf::Config>();
 		registerObject<Button>();
 		registerObject<bb::InstalationManager>();

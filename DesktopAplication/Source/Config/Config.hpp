@@ -27,7 +27,7 @@ namespace cf {
 		std::string& getFtpDir() { return ftpUrl_; }
 	private:
 		Config();
-		virtual ~Config() {};
+		virtual ~Config();
 	private:
 		QString version_;
 		std::filesystem::path configJson_ = "./LaunchBoxInfo.json";

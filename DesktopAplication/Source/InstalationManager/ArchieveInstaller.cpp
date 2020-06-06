@@ -10,23 +10,25 @@
 #include <archive.h>
 #include <archive_entry.h>
 #include "ArchieveInstaller.hpp"
+#include "Config.hpp"
 
 namespace bb {
 	void ArchieveInstaller::setUnpackFiles(std::vector<std::filesystem::path> files) {
 		filesToUnpack = files;
 	}
 
-	SSIZE_T ArchieveInstaller::myread(struct archive* a, void* client_data, const void** buff) {
+	SSIZE_T ArchieveInstaller::myread(::archive* a, void* client_data, const void** buff) {
 			ArchieveInstaller* data = (ArchieveInstaller*)client_data;
 			*buff = data->buff;
-			data->file.read(data->buff, SIZE);
+			data->file.read(data->buff, BLOCK_SIZE);
 			auto len = data->file.gcount();
 			data->alreadyRead += len;
-			std::cout << data->alreadyRead << "/" << data->size << "\n";
+			//std::cout << data->alreadyRead << "/" << data->size << "\n";
+			data->emitStatus();
 			return len;
 	}
 
-	int ArchieveInstaller::myclose(struct archive* a, void* client_data) {
+	int ArchieveInstaller::myclose(::archive* a, void* client_data) {
 		struct ArchieveInstaller* data = (ArchieveInstaller*)client_data;
 		if (data->file.is_open())
 			data->file.close();
@@ -34,15 +36,17 @@ namespace bb {
 	}
 
 	void ArchieveInstaller::run() {
-		archive* a;
-		archive_entry* entry;
+		::archive* a;
+		::archive_entry* entry;
 		int flags;
 		flags = ARCHIVE_EXTRACT_TIME;
 		flags |= ARCHIVE_EXTRACT_PERM;
 		flags |= ARCHIVE_EXTRACT_ACL;
 		flags |= ARCHIVE_EXTRACT_FFLAGS;
+		auto& downloadDir = cf::Config::getObject().getDownloadDir();
 		for (auto& arch : filesToUnpack) {
 			a = archive_read_new();
+			auto actualUnpacking = downloadDir / arch;
 			size = std::filesystem::file_size(actualUnpacking);
 			file.open(actualUnpacking, std::ios::binary);
 			if (!file.is_open())
@@ -52,11 +56,17 @@ namespace bb {
 			archive_read_open(a, this, NULL, ArchieveInstaller::myread, ArchieveInstaller::myclose);
 			while (archive_read_next_header(a, &entry) == ARCHIVE_OK) {
 				//printf("%s\n", archive_entry_pathname(entry));
+				const char* currentFile = archive_entry_pathname(entry);
+				std::string fullOutputPath = "../";
+				fullOutputPath += currentFile;
+				archive_entry_set_pathname(entry, fullOutputPath.c_str());
 				archive_read_extract(a, entry, flags);
 			}
 			archive_read_finish(a);
 		}
+		ended();
 	}
+
 	void ArchieveInstaller::emitStatus() {
 		statusSignal(alreadyRead);
 	}

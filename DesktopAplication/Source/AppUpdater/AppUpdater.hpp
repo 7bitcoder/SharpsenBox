@@ -17,15 +17,16 @@ namespace upd {
 			none = 0, downloading, installing, ended, error, noUpdateFound
 		};
 		Q_PROPERTY(QString statusStr READ getStateStr NOTIFY stateStrChanged);
-		Q_PROPERTY(qint64 progress READ getProgress);
+		Q_PROPERTY(int progress READ getProgress);
+		Q_PROPERTY(bool exit READ getExit NOTIFY exitChanged);
 
 		Q_INVOKABLE QString getStateStr() const { return statusStr_; }
-		Q_INVOKABLE qint64 getProgress() const { return im.getProgress(); }
+		Q_INVOKABLE int getProgress() const { return im.getProgress(); }
+		Q_INVOKABLE bool getExit() const { return exit_; }
 
 		AppUpdater();
 		virtual ~AppUpdater() {};
 	private:
-		void downloadUpdate();
 		void installUpdate();
 	public slots:
 		void LauchBoxJsonDownloaded();
@@ -34,9 +35,11 @@ namespace upd {
 		void checkForUpdates();
 		void errorCatched();
 	signals:
+		void exitChanged();
 		void stateStrChanged();
 
 	private:
+		bool exit_ = false;
 		cf::Config& cf;
 		bb::InstalationManager& im;
 		QString statusStr_ = "Searching for updates";

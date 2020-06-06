@@ -3,6 +3,7 @@
 #include <QQmlApplicationEngine>
 #include <QDebug>
 #include "IQmlObject.hpp"
+#include "..\Config\Config.hpp"
 
 namespace bc {
 	class Button : public bc::IQmlObject {
