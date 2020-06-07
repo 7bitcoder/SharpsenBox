@@ -49,14 +49,10 @@ namespace upd {
 		if (version != actualVersion) {
 			//download new Laucher
 			state_ = State::downloading;
-			statusStr_ = "Downloading update";
-			stateStrChanged();
 			stateChanged();
 			installUpdate();
 		} else {
 			state_ = State::noUpdateFound;
-			statusStr_ = "No updates found";
-			stateStrChanged();
 			stateChanged();
 		}
 
@@ -71,15 +67,11 @@ namespace upd {
 
 	void AppUpdater::updateDownloaded() {
 		state_ = State::installing;
-		statusStr_ = "Installing update";
-		stateStrChanged();
 		stateChanged();
 	}
 
 	void AppUpdater::updateInstalled() {
 		state_ = State::ended;
-		statusStr_ = "Installation Complete";
-		stateStrChanged();
 		disconnect(&im, &bb::InstalationManager::clearFilesEnded, this, &AppUpdater::updateInstalled);
 		disconnect(&im, &bb::InstalationManager::downloadEnded, this, &AppUpdater::updateDownloaded);
 		disconnect(&im, &bb::InstalationManager::errorEmit, this, &AppUpdater::errorCatched);

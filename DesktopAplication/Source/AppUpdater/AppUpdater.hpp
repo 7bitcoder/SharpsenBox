@@ -16,7 +16,7 @@ namespace upd {
 		enum State : int {
 			none = 0, downloading, installing, ended, error, noUpdateFound
 		};
-		Q_PROPERTY(QString statusStr READ getStateStr NOTIFY stateStrChanged);
+		Q_PROPERTY(QString statusStr READ getStateStr);
 		Q_PROPERTY(int progress READ getProgress);
 		Q_PROPERTY(int updateState READ getState NOTIFY stateChanged);
 
@@ -36,12 +36,11 @@ namespace upd {
 		void errorCatched();
 	signals:
 		void stateChanged();
-		void stateStrChanged();
 
 	private:
 		cf::Config& cf;
 		bb::InstalationManager& im;
-		QString statusStr_ = "Searching for updates";
+		QString statusStr_;
 		State state_ = State::none;
 		bb::InstalationManager* dm = nullptr;
 		std::filesystem::path LBJsonFileName = "LaunchBoxInfo.json";

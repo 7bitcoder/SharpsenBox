@@ -1,5 +1,9 @@
 {
   "Ver": "1.0",
   "Size": "128 744 158",
-  "Url": "bin.zip"
+  "Url": "bin.zip",
+  "Games": [
+    "Sylio",
+    "Rest" 
+  ]
 }

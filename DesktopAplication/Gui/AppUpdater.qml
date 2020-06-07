@@ -18,11 +18,39 @@ ApplicationWindow {
     }
 
     property int status: _AppUpdater.updateState
-    property string statusStr: _AppUpdater.statusStr
+    property string statusStr: "Searching for updates"
     property int progress: 0
 
     onStatusChanged: {
-        console.log("stauts: " + status)
+        switch (status) {
+        case 0:
+            //none
+            statusStr = "Searching for updates"
+            break
+        case 1:
+            //downloading
+            statusStr = "Downloading update"
+            break
+        case 2:
+            // installing
+            statusStr = "Installing update"
+            break
+        case 3:
+            //ended
+            statusStr = "Installation Complete"
+            exiter.start()
+            break
+        case 4:
+            //error
+            statusStr = "Error ocured:\n" + _AppUpdater.statusStr
+            exiter.start()
+            break
+        case 5:
+            //noUpdateFound
+            statusStr = "No updates found"
+            exiter.start()
+            break
+        }
     }
 
     Timer {
@@ -73,6 +101,7 @@ ApplicationWindow {
             text: statusStr //_AppUpdater.statusStr
             font.family: "Arial"
             font.pixelSize: 20
+            verticalAlignment: Text.AlignVCenter
             color: "#AAAAAA"
         }
 
