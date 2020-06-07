@@ -10,6 +10,7 @@
 	<file>Sylio.qml</file>
 	<file>Rest.qml</file>
 	<file>BottomBar.qml</file>
+	<file>InstallPopOut.qml</file>
 	<file>ResizingFrames.qml</file>
 	<file>LeftBar.qml</file>
 	<file>content/person.png</file>

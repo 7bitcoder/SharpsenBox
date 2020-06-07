@@ -99,7 +99,19 @@ namespace bb {
 					stream_ = nullptr;
 				}
 			}
-			/* we failed */
+
+
+		} catch (...) {
+			fprintf(stderr, "exception catched white doanloading data");
+			res = 0;
+		}
+		stream_ = nullptr;
+		cancelled = false;
+		::curl_easy_cleanup(curl);
+		::curl_global_cleanup();
+		std::cout << "termination\n";
+		/* we failed */
+		if (res != CURLE_OK) {
 			switch (res) {
 			case CURLE_OK:
 				break;
@@ -109,16 +121,8 @@ namespace bb {
 			default:
 				emit error(res);
 			}
-			cancelled = false;
-		} catch (...) {
-			fprintf(stderr, "exception catched white doanloading data");
-			emit error(0);
+		} else {
+			emit ended();
 		}
-		stream_ = nullptr;
-		cancelled = false;
-		::curl_easy_cleanup(curl);
-		::curl_global_cleanup();
-		std::cout << "termination\n";
-		emit ended();
 	}
 }

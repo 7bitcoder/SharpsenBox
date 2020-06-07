@@ -23,6 +23,7 @@ namespace upd {
 		auto& im = bb::InstalationManager::getObject();
 		connect(&im, &bb::InstalationManager::downloadEnded, this, &AppUpdater::LauchBoxJsonDownloaded);
 		connect(&im, &bb::InstalationManager::errorEmit, this, &AppUpdater::errorCatched);
+		state_ = State::downloading;
 		im.downloadFile(cfJson, 0);
 	}
 
@@ -84,12 +85,9 @@ namespace upd {
 	}
 
 	void AppUpdater::errorCatched() {
-		if (state_ == State::downloading) { //handle downloading errors
-			//auto msg = bb::InstalationManager::getObject().getErrorString();
-			state_ = State::error;
-			statusStr_ = im.getError();
-			stateStrChanged();
-		} else if (state_ == State::installing) {//todo
-		}
+		//auto msg = bb::InstalationManager::getObject().getErrorString();
+		state_ = State::error;
+		statusStr_ = im.getError();
+		stateStrChanged();
 	}
 }

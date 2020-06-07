@@ -64,6 +64,17 @@ ApplicationWindow {
         }
     }
 
+    InstallPopOut {
+        id: installGameBar
+        anchors {
+            top: topBar.bottom
+            left: parent.left
+            right: parent.right
+            bottom: parent.bottom
+        }
+        visible: false
+    }
+
     ResizingFrames {
         anchors.fill: parent
         size: 3
