@@ -49,7 +49,7 @@
       "variables": [
         {
           "name": "AUTO_QT_LIBS",
-          "value": "False",
+          "value": "True",
           "type": "BOOL"
         }
       ]

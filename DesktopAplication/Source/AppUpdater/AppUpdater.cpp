@@ -51,11 +51,13 @@ namespace upd {
 			state_ = State::downloading;
 			statusStr_ = "Downloading update";
 			stateStrChanged();
+			stateChanged();
 			installUpdate();
 		} else {
 			state_ = State::noUpdateFound;
 			statusStr_ = "No updates found";
 			stateStrChanged();
+			stateChanged();
 		}
 
 	}
@@ -71,6 +73,7 @@ namespace upd {
 		state_ = State::installing;
 		statusStr_ = "Installing update";
 		stateStrChanged();
+		stateChanged();
 	}
 
 	void AppUpdater::updateInstalled() {
@@ -80,14 +83,13 @@ namespace upd {
 		disconnect(&im, &bb::InstalationManager::clearFilesEnded, this, &AppUpdater::updateInstalled);
 		disconnect(&im, &bb::InstalationManager::downloadEnded, this, &AppUpdater::updateDownloaded);
 		disconnect(&im, &bb::InstalationManager::errorEmit, this, &AppUpdater::errorCatched);
-		exit_ = true;
-		exitChanged();
+		stateChanged();
 	}
 
 	void AppUpdater::errorCatched() {
 		//auto msg = bb::InstalationManager::getObject().getErrorString();
 		state_ = State::error;
 		statusStr_ = im.getError();
-		stateStrChanged();
+		stateChanged();
 	}
 }

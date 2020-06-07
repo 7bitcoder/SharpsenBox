@@ -17,15 +17,12 @@ ApplicationWindow {
         return Qt.point(windowAbs.x + window.x, windowAbs.y + window.y)
     }
 
-    property bool exit: _AppUpdater.exit
+    property int status: _AppUpdater.updateState
     property string statusStr: _AppUpdater.statusStr
     property int progress: 0
 
-    onExitChanged: {
-        if (exit === true) {
-            console.log("exiting")
-            exiter.start()
-        }
+    onStatusChanged: {
+        console.log("stauts: " + status)
     }
 
     Timer {

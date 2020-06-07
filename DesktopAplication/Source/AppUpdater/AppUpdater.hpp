@@ -18,11 +18,11 @@ namespace upd {
 		};
 		Q_PROPERTY(QString statusStr READ getStateStr NOTIFY stateStrChanged);
 		Q_PROPERTY(int progress READ getProgress);
-		Q_PROPERTY(bool exit READ getExit NOTIFY exitChanged);
+		Q_PROPERTY(int updateState READ getState NOTIFY stateChanged);
 
 		Q_INVOKABLE QString getStateStr() const { return statusStr_; }
 		Q_INVOKABLE int getProgress() const { return im.getProgress(); }
-		Q_INVOKABLE bool getExit() const { return exit_; }
+		Q_INVOKABLE int getState() const { return static_cast<int>(state_); }
 
 		AppUpdater();
 		virtual ~AppUpdater() {};
@@ -35,16 +35,14 @@ namespace upd {
 		void checkForUpdates();
 		void errorCatched();
 	signals:
-		void exitChanged();
+		void stateChanged();
 		void stateStrChanged();
 
 	private:
-		bool exit_ = false;
 		cf::Config& cf;
 		bb::InstalationManager& im;
 		QString statusStr_ = "Searching for updates";
 		State state_ = State::none;
-		bool installing_ = false;
 		bb::InstalationManager* dm = nullptr;
 		std::filesystem::path LBJsonFileName = "LaunchBoxInfo.json";
 		QString UpdateFile;

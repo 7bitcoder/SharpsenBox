@@ -8,7 +8,7 @@ add_executable(AppUpdater
     ${RESOURCES})
 
 if(WIN AND RELEASE)
-    set_target_properties(AppUpdater PROPERTIES WIN32_EXECUTABLE TRUE)
+    #set_target_properties(AppUpdater PROPERTIES WIN32_EXECUTABLE TRUE)
 endif()
 
 qt5_use_modules(AppUpdater 
