@@ -3,6 +3,7 @@ import QtMultimedia 5.12
 import QtWebEngine 1.8
 
 Item {
+    id: sylio
     property int gameId: 1
     property string descriptionStr: "<h2>Sylio</h2> Simple multiplayer game, players controls snail and tries to survive as long as it is possible, using various powerups and collecting points. In game you can change music settings choose your nickname, controls and change number of rounds."
     property string platformStr: "Platform:\tWindows/Linux\nSize:\t200MB"
@@ -60,12 +61,8 @@ Item {
                 onClicked: {
                     parent.pressed = !parent.pressed
                     parent.color = parent.pressed ? "white" : "#DDDDDD"
-                    installGameBar.gameId = gameId
-                    installGameBar.visible = true
-                    if (window.tmp !== 0)
-                        window.tmp = 0
-                    else
-                        window.tmp = 1
+                    window.gameId = sylio.gameId
+                    window.stage = 1
                 }
                 onEntered: {
                     parent.color = parent.pressed ? parent.color : "#DDDDDD"

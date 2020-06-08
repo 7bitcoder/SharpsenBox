@@ -4,6 +4,8 @@
   "Size": "128744158",
   "Url": "Sylio.zip",
   "Installed": "false",
+  "Shortcut":  "false",
   "GameDir": "",
-  "GameExecPath": ""
+  "GameExecPath": "",
+  "ShortcutPath": ""
 }

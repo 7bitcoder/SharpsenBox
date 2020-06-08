@@ -18,8 +18,8 @@ ApplicationWindow {
     property point startMousePos
     property point startWindowPos
     property size startWindowSize
-
-    property int tmp: 1
+    property int stage: 0
+    property int gameId: 0 //to install
 
     function absoluteMousePos(mouseArea) {
         var windowAbs = mouseArea.mapToItem(null, mouseArea.mouseX,
@@ -49,7 +49,35 @@ ApplicationWindow {
             bottom: parent.bottom
         }
         property bool sw: false
+        property int stage: window.stage
+
+        onStageChanged: {
+            switch (stage) {
+            case 0:
+                source = "Aplication.qml"
+                break
+            case 1:
+                source = "InstallPopOut.qml"
+                break
+            }
+            animation.running = true
+        }
+
         source: "Aplication.qml"
+        onSourceChanged: {
+            animation.stop()
+            animation.start()
+        }
+
+        NumberAnimation {
+            id: animation
+            target: contentLoader.item
+            property: "opacity"
+            from: 0
+            to: 1
+            duration: 200
+            easing.type: Easing.OutCubic
+        }
     }
 
     BottomBar {
@@ -62,17 +90,6 @@ ApplicationWindow {
             bottom: parent.bottom
             right: parent.right
         }
-    }
-
-    InstallPopOut {
-        id: installGameBar
-        anchors {
-            top: topBar.bottom
-            left: parent.left
-            right: parent.right
-            bottom: parent.bottom
-        }
-        visible: false
     }
 
     ResizingFrames {

@@ -12,14 +12,19 @@ namespace cf {
 	class Game {
 	public:
 		int id;
+		bool installed;
+		bool shortcut;
+		size_t size;
 		QString name;
 		QString version;
-		size_t size;
 		QString url;
-		bool installed;
 		QString gameDir;
 		QString execDir;
+		QString shortcutPath;
 		std::unordered_map<QString, int> sha;
+		bool operator==(const Game& g) {
+			return id == g.id;
+		}
 	};
 
 	class Config : public bc::IQmlObject {
@@ -29,11 +34,9 @@ namespace cf {
 			static Config uc;
 			return uc;
 		}
-		Q_INVOKABLE bool installed(int id) const { 
-			auto it = games_.find(id);
-			if (it != games_.end())
-				return it->second.installed;
-		}
+		Q_INVOKABLE bool installed(int id) const;
+		Q_INVOKABLE QString gamePath(int id) const;
+		Q_INVOKABLE void setGamevariables(int id, QString path, bool shortcut);
 
 		// implementation IQmlObject
 		void update() override {};

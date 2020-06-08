@@ -28,7 +28,8 @@ namespace cf {
 		}
 	}
 
-	Game Config::readGameInfo(std::filesystem::path path) {
+	Game Config::readGameInfo(std::filesystem::path path) 
+	{
 		QFile file;
 		file.setFileName((".." / path).string().c_str());
 		file.open(QIODevice::ReadOnly | QIODevice::Text);
@@ -37,12 +38,19 @@ namespace cf {
 		QJsonDocument d = QJsonDocument::fromJson(val.toUtf8());
 		QJsonObject sett2 = d.object();
 		Game g;
-		g.id = d["Id"].toInt();
+		auto ss = std::string(d["Id"].toString().toUtf8().constData());
+		g.id = std::stoi(ss);
+		g.installed = d["Url"].toBool();
 		g.version = d["Ver"].toString();
 		QString size = d["Size"].toString();
 		g.size = std::stoll(size.toUtf8().constData());
 		g.url = d["Url"].toString();
-		g.installed = d["Url"].toBool();
+		g.gameDir = d["GameDir"].toString();
+		g.execDir = d["GameExecPath"].toString();
+		g.shortcutPath = d["ShortcutPath"].toString();
+		g.shortcutPath = d["Shortcut"].toBool();
+		//std::cout << g.id << g.url.toUtf8().constData() << g.version.toUtf8().constData() << g.installed;
+		return g;
 	}	
 
 	void Config::init() {
@@ -59,4 +67,38 @@ namespace cf {
 	//qint64 AppUpdateChecker::getProgress() const {
 	//	return progress_;
 	//}
+
+	Q_INVOKABLE bool Config::installed(int id) const {
+		auto it = games_.find(id);
+		if (it != games_.end())
+			return it->second.installed;
+		return false;
+	}
+	Q_INVOKABLE QString Config::gamePath(int id) const {
+		auto it = games_.find(id);
+		if (it != games_.end()) {
+			auto& path = it->second.gameDir;
+			if (path.isEmpty()) {
+				std::string pf("file:///");
+				std::string  env(getenv("PROGRAMFILES"));
+				if (!env.empty()) { //windows
+					std::filesystem::path path = env;
+					pf += path.generic_string();
+					return pf.c_str();
+				} else { //mac /linux
+					return "";
+				}
+			}
+		}
+		return "";
+	}
+	Q_INVOKABLE void Config::setGamevariables(int id, QString path, bool shortcut) {
+		auto it = games_.find(id);
+		if (it != games_.end()) {
+			auto game = it->second;
+			game.gameDir = path;
+			game.shortcut = shortcut;
+			games_.insert({ game.id, game });
+		}
+	}
 }

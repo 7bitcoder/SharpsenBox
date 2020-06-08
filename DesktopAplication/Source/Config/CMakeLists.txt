@@ -1,6 +1,6 @@
 ﻿
 add_library(Config STATIC
-    Config.cpp)
+    Config.cpp "Game.cpp")
 
 
 target_include_directories(Config PRIVATE

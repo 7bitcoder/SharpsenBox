@@ -6,7 +6,7 @@ Rectangle {
     id: installbar
     implicitHeight: 800
     implicitWidth: 800
-    property int gameId: 0
+    property int gameId: windows.gameId
     property int normalTextSize: 15
     property string installDirectory: folderDialog.folder.toString(
                                           ).substring(8)
@@ -59,8 +59,7 @@ Rectangle {
             FolderDialog {
                 id: folderDialog
                 title: "Chose installation folder"
-                folder: StandardPaths.standardLocations(
-                            StandardPaths.GenericConfigLocation)[0]
+                folder: _Config.gamePath(1)
                 options: FolderDialog.ShowDirsOnly
             }
             Rectangle {
@@ -203,7 +202,7 @@ Rectangle {
                 width: 100
                 text: "Cancel"
                 onClicked: {
-                    installbar.visible = false
+                    window.stage = 0
                 }
 
                 contentItem: Text {
