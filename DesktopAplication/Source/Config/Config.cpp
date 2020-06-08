@@ -74,17 +74,15 @@ namespace cf {
 			return it->second.installed;
 		return false;
 	}
-	Q_INVOKABLE QString Config::gamePath(int id) const {
+	Q_INVOKABLE QUrl Config::gamePath(int id) const {
 		auto it = games_.find(id);
 		if (it != games_.end()) {
 			auto& path = it->second.gameDir;
 			if (path.isEmpty()) {
-				std::string pf("file:///");
-				std::string  env(getenv("PROGRAMFILES"));
-				if (!env.empty()) { //windows
-					std::filesystem::path path = env;
-					pf += path.generic_string();
-					return pf.c_str();
+				QUrl pf;
+				if (getenv("PROGRAMFILES")) { //windows
+					std::filesystem::path path = getenv("PROGRAMFILES");
+					return QUrl::fromLocalFile(path.generic_string().c_str());
 				} else { //mac /linux
 					return "";
 				}
@@ -92,13 +90,11 @@ namespace cf {
 		}
 		return "";
 	}
-	Q_INVOKABLE void Config::setGamevariables(int id, QString path, bool shortcut) {
-		auto it = games_.find(id);
-		if (it != games_.end()) {
-			auto game = it->second;
-			game.gameDir = path;
-			game.shortcut = shortcut;
-			games_.insert({ game.id, game });
+
+	Game& Config::getGame(int id) {
+		if (games_.contains(id)) {
+			return games_[id];
 		}
+		throw std::exception("Bad game Id");
 	}
 }

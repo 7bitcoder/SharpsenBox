@@ -88,7 +88,7 @@ namespace bb {
 				curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
 				for (size_t i = 0; !cancelled && i < files_.size(); i++) {
 					url_ = ftpDir + files_[i].generic_string().c_str();
-					outfile_ = downloadDir / files_[i].filename();
+					outfile_ = (downloadDir / files_[i].filename()).generic_string();
 					res = curl_easy_setopt(curl, CURLOPT_URL, url_.c_str());
 					res = curl_easy_perform(curl);
 					if (CURLE_OK != res) {

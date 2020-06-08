@@ -19,7 +19,7 @@ Rectangle {
     property int completed: 6
 
     //stete
-    property int state: _DownloadManager.downloadState
+    property int state: _LoadingBar.state
 
     property color barColor: "green"
 
@@ -41,9 +41,7 @@ Rectangle {
     property string percenStr: "0"
     property string speedAvgStr: "0"
 
-    property string statusInfo: "Downloading: " + actualStr + "/" + totalStr
-                                + " (Average Speed: " + speedAvgStr
-                                + "MB/s / Current Speed: " + speedStr + "MB/s )"
+    property string statusInfo: "Initialization"
 
     Timer {
         id: info
@@ -63,6 +61,10 @@ Rectangle {
         repeat: true
         running: state == downloading
     }
+    function writeInfo() {
+        statusInfo = "Downloading: " + actualStr + "/" + totalStr + " (Average Speed: "
+                + speedAvgStr + "MB/s / Current Speed: " + speedStr + "MB/s )"
+    }
 
     Timer {
         id: prog
@@ -72,11 +74,20 @@ Rectangle {
             actual = _LoadingBar.actual
             total = _LoadingBar.total
             speedAvg = _LoadingBar.speed //B/s
-            progress = (actual / total) * 100
+            writeInfo()
+        }
+        repeat: true
+        running: false
+    }
+    Timer {
+        id: percentage
+        interval: updateInterval
+        onTriggered: {
+            progress = _LoadingBar.progress
             percenStr = qsTr(progress.toFixed(1) + "%")
         }
         repeat: true
-        running: state == downloading
+        running: false
     }
     Timer {
         id: speedTimer
@@ -85,46 +96,92 @@ Rectangle {
         onTriggered: {
             speed = 1000 * (actual - lastActual) / speedInterval
             lastActual = actual
+            writeInfo()
         }
         repeat: true
-        running: state == downloading
+        running: false
     }
     //bar states
     property int hidden: 0
     property int showed: 1
     property int minimalized: 2
+    property int visibleCInput: _LoadingBar.visibleState
+    onVisibleCInputChanged: {
+        switch (visibleCInput) {
+        case 0:
+            visibleState = 0
+            break
+        case 1:
+            visibleState = 1
+            break
+        case 2:
+            visibleState = 2
+            break
+        }
+    }
 
-    property int visibleState: _LoadingBar.visibleState
+    property int visibleState: 0
 
     property bool hideLock: false
     onStateChanged: {
         if (state === checking) {
+            prog.stop()
+            percentage.stop()
+            speedTimer.stop()
             bottomBar.barColor = "white"
             loader.visible = true
             anim.start()
             //bottomBar.progress = 100
         } else if (state === downloading) {
+            prog.start()
+            percentage.start()
+            speedTimer.start()
             bottomBar.barColor = "orange"
             loader.visible = false
             anim.stop()
         } else if (state === installing) {
+            prog.stop()
+            percentage.start()
+            speedTimer.stop()
+            statusInfo = "Installing"
             loader.visible = true
             anim.start()
             bottomBar.barColor = "orange"
         } else if (state === pause) {
+            prog.stop()
+            percentage.stop()
+            speedTimer.stop()
             anim.stop()
             bottomBar.barColor = "yellow"
         } else if (state === error) {
+            prog.stop()
+            percentage.stop()
+            speedTimer.stop()
             anim.stop()
             bottomBar.barColor = "red"
             statusInfo = _LoadingBar.errorString
         } else if (state === completed) {
+            prog.stop()
+            percentage.stop()
+            speedTimer.stop()
+            progress = 100
+            percenStr = "100%"
             anim.stop()
             loader.visible = false
+            statusInfo = "Instalation complete"
             bottomBar.barColor = "green"
+            hideBar.start()
         }
     }
 
+    Timer {
+        id: hideBar
+        interval: 1000
+        property real lastActual: actual
+        onTriggered: visibleState = hidden
+        repeat: false
+        running: false
+    }
     //hiding showing animation
     Behavior on height {
         NumberAnimation {

@@ -46,7 +46,7 @@ namespace bb {
 		auto& downloadDir = cf::Config::getObject().getDownloadDir();
 		for (auto& arch : filesToUnpack) {
 			a = archive_read_new();
-			auto actualUnpacking = downloadDir / arch;
+			auto actualUnpacking = (downloadDir / arch).generic_string();
 			size = std::filesystem::file_size(actualUnpacking);
 			file.open(actualUnpacking, std::ios::binary);
 			if (!file.is_open())
@@ -57,9 +57,12 @@ namespace bb {
 			while (archive_read_next_header(a, &entry) == ARCHIVE_OK) {
 				//printf("%s\n", archive_entry_pathname(entry));
 				const char* currentFile = archive_entry_pathname(entry);
-				std::string fullOutputPath = "../";
-				fullOutputPath += currentFile;
-				archive_entry_set_pathname(entry, fullOutputPath.c_str());
+				std::filesystem::path fullOutputPath = destinationDir_.generic_string();
+				if (std::filesystem::exists(fullOutputPath))
+					int gg = 44;
+				fullOutputPath /= currentFile;
+				fullOutputPath = fullOutputPath.generic_string();
+				archive_entry_set_pathname(entry, fullOutputPath.generic_string().c_str());
 				archive_read_extract(a, entry, flags);
 			}
 			archive_read_finish(a);

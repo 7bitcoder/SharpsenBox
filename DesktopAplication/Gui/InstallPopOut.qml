@@ -6,7 +6,7 @@ Rectangle {
     id: installbar
     implicitHeight: 800
     implicitWidth: 800
-    property int gameId: windows.gameId
+    property int gameId: 1
     property int normalTextSize: 15
     property string installDirectory: folderDialog.folder.toString(
                                           ).substring(8)
@@ -167,7 +167,10 @@ Rectangle {
                 width: 100
                 text: "Install"
                 onClicked: {
-                    installbar.visible = false
+                    _GameInstaller.installGame(installbar.gameId,
+                                               folderDialog.folder,
+                                               createShortcut.enabled)
+                    window.stage = 0
                 }
                 contentItem: Text {
                     text: install.text

@@ -6,6 +6,7 @@
 #include "InstalationManager.hpp"
 #include "Config.hpp"
 #include "LoadingBar.hpp"
+#include "GameInstaller.hpp"
 
 
 
@@ -26,6 +27,7 @@ namespace bc {
 		registerObject<Button>();
 		registerObject<bb::InstalationManager>();
 		registerObject<lb::LoadingBar>();
+		registerObject<gi::GameInstaller>();
 	}
 	void Backend::initializeObjects() {
 		for (auto* object : objects_)

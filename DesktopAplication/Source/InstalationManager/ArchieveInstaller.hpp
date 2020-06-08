@@ -18,6 +18,9 @@ namespace bb {
 		ArchieveInstaller() {};
 		~ArchieveInstaller() {}
 		void setUnpackFiles(std::vector<std::filesystem::path> files);
+		void setInstalationDir(std::filesystem::path dir) {
+			destinationDir_ = dir;
+		}
 
 		void run() override;
 	signals:
@@ -30,6 +33,7 @@ namespace bb {
 		void emitStatus();
 		static int64_t myread(archive* a, void* client_data, const void** buff);
 		static int ArchieveInstaller::myclose(archive* a, void* client_data);
+		std::filesystem::path destinationDir_;
 		files filesToUnpack;
 		std::ifstream file;
 		std::string actualUnpacking;

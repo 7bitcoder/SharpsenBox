@@ -24,6 +24,7 @@ namespace bb {
 	void InstalationManager::setTotal(qint64 tot) { 
 		totalBytes_ = tot;
 		total_ = getMB(totalBytes_);
+		LoadingBar_->setTotal(total_);
 	}
 
 	void InstalationManager::setProgress() {
@@ -43,12 +44,19 @@ namespace bb {
 		if (total) {
 			setProgress();
 			speed_ =  speed; // B/s
+			sendDataToBar();
 		}
 	}
 
+	void InstalationManager::sendDataToBar() {
+		LoadingBar_->setProgress(progress_);
+		LoadingBar_->setActual(getMB(downloadedBytes_));
+		LoadingBar_->setSpeed(speed_);
+	}
 	void InstalationManager::installStatus(qint64 progress) {
 		unpackedBytes_ = progress;
 		setProgress();
+		sendDataToBar();
 	}
 
 	void InstalationManager::TotalSize(qint64 total) {}
@@ -88,6 +96,7 @@ namespace bb {
 			errorCatched(-1);
 		}
 		progress_ = 100;
+		sendDataToBar();
 		LoadingBar_->setState(lb::LoadingBar::State::COMPLEET);
 		clearFilesEnded();
 	}
@@ -96,8 +105,8 @@ namespace bb {
 		downloadFiles({ fileName }, tot);
 	}
 
-	void InstalationManager::installFile(std::filesystem::path fileName, qint64 tot) {
-		installFiles({ fileName }, tot);
+	void InstalationManager::installFile(std::filesystem::path fileName, qint64 tot, std::filesystem::path dir) {
+		installFiles({ fileName }, tot, dir);
 	}
 
 	void InstalationManager::downloadFiles(files files, qint64 tot) {
@@ -109,13 +118,14 @@ namespace bb {
 		download();
 	}
 
-	void InstalationManager::installFiles(files files, qint64 tot) {
+	void InstalationManager::installFiles(files files, qint64 tot, std::filesystem::path dir) {
 		reset();
 		setTotal(tot);
 		files_ = files;
 		onlyDownload = false;
 		ftp_.setFilestoDownload(files_);
 		installer_.setUnpackFiles(files_);
+		installDir_ = dir;
 		install();
 	}
 	
@@ -141,6 +151,7 @@ namespace bb {
 		connect(&installer_, &ArchieveInstaller::ended, this, &InstalationManager::archieveEnded);
 		connect(&installer_, &ArchieveInstaller::error, this, &InstalationManager::errorCatched);
 		ftp_.start();
+		installer_.setInstalationDir(installDir_);
 	}
 
 	void InstalationManager::init() {
@@ -177,6 +188,10 @@ namespace bb {
 		disconnect(&installer_, &ArchieveInstaller::statusSignal, this, &InstalationManager::installStatus);
 		disconnect(&installer_, &ArchieveInstaller::ended, this, &InstalationManager::archieveEnded);
 		disconnect(&installer_, &ArchieveInstaller::error, this, &InstalationManager::errorCatched);
+	}
+
+	void InstalationManager::installGame(const cf::Game& game) {
+		installFile(game.url.toUtf8().constData(), game.size, game.gameDir.toUtf8().constData());
 	}
 
 	void InstalationManager::errorCatched(int code) {

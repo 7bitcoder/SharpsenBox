@@ -8,6 +8,8 @@
 #include "FtpDownloader.hpp"
 #include "ArchieveInstaller.hpp"
 #include "IQmlObject.hpp"
+#include "Config.hpp"
+
 namespace lb {
 	class LoadingBar;
 }
@@ -41,9 +43,12 @@ namespace bb {
 		void clearDownloadDir();
 		void setTotal(qint64 tot);
 		void downloadFile(std::filesystem::path fileName, qint64 tot); //just download
-		void installFile(std::filesystem::path fileName, qint64 tot); //download + install
+		void installFile(std::filesystem::path fileName, qint64 tot, std::filesystem::path dir = "../"); //download + install
+		
+		void installGame(const cf::Game& game); //download + install
+
 		void downloadFiles(files files, qint64 tot); //just download
-		void installFiles(files files, qint64 tot); //download + install
+		void installFiles(files files, qint64 tot, std::filesystem::path dir = "../"); //download + install
 		double getProgress() { return progress_; }
 		double getTotal() { return total_; }
 		double getSpeed() { return speed_; }
@@ -57,6 +62,7 @@ namespace bb {
 		void reset();
 		void disconnectAll() {};
 		void setProgress();
+		void sendDataToBar();
 	public slots:
 		void downloadStatus(qint64 progress, qint64 total, double speed);
 		void installStatus(qint64 progress);
@@ -82,6 +88,7 @@ namespace bb {
 		FtpDownloader ftp_;
 		ArchieveInstaller installer_;
 		std::filesystem::path downloadDir_;
+		std::filesystem::path installDir_;
 
 		qint64 totalBytes_ = 0; //total Bytes to download unpack all files together
 		qint64 downloadedBytes_ = 0; //Bytes downloaded

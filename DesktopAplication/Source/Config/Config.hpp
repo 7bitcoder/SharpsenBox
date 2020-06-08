@@ -35,14 +35,15 @@ namespace cf {
 			return uc;
 		}
 		Q_INVOKABLE bool installed(int id) const;
-		Q_INVOKABLE QString gamePath(int id) const;
-		Q_INVOKABLE void setGamevariables(int id, QString path, bool shortcut);
+		Q_INVOKABLE QUrl gamePath(int id) const;
+		
 
 		// implementation IQmlObject
 		void update() override {};
 		void init() override;
 		std::string getName() override;
 
+		Game& getGame(int id);
 		QString& getVer() { return version_; }
 		std::filesystem::path& getDownloadDir() { return downloadDir_; }
 		std::filesystem::path& getConfigJson() { return configJson_; }
