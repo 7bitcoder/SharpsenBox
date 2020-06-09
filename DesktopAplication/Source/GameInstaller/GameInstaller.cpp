@@ -10,12 +10,11 @@ namespace gi {
 		return TYPENAME(GameInstaller);
 	}
 
-	Q_INVOKABLE void GameInstaller::installGame(int id, QUrl path, bool shortcut) {
+	Q_INVOKABLE void GameInstaller::installGame(int id, QString path, bool shortcut) {
 		if (!lock_) {
 			lock();
 			auto& game = cf::Config::getObject().getGame(id);
-			QUrl ff = path;
-			std::string gg = ff.path().toStdString();
+			std::string gg = path.toStdString();
 #ifdef _WIN32
 			if (gg.starts_with("/"))
 				gg = gg.substr(1);

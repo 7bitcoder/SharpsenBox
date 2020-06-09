@@ -23,5 +23,3 @@ find_package(Qt5 REQUIRED COMPONENTS
 	Network)
 
 add_subdirectory(Source)
-
-

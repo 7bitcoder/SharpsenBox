@@ -15,7 +15,7 @@ namespace gi {
 			return uc;
 		}
 
-		Q_INVOKABLE void installGame(int id, QUrl path, bool shortcut);
+		Q_INVOKABLE void installGame(int id, QString path, bool shortcut);
 
 		// implementation IQmlObject
 		void update() override {};

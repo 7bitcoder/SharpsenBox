@@ -5,6 +5,13 @@
 #include "Config.hpp"
 #include "LoadingBar.hpp"
 #include <curl/curl.h>
+#include "windows.h"
+#include "winnls.h"
+#include "shobjidl.h"
+#include "objbase.h"
+#include "objidl.h"
+#include "shlguid.h"
+#include <QStandardPaths>
 
 namespace bb {
 	namespace {
@@ -13,6 +20,45 @@ namespace bb {
 			prog /= 1024; //KB -> MB
 			return prog;
 		}
+#ifdef  _WIN32
+
+
+		HRESULT CreateLink(LPCSTR lpszPathObj, LPCSTR lpszPathLink, LPCSTR lpszDesc) {
+			HRESULT hres;
+			IShellLink* psl;
+
+			// Get a pointer to the IShellLink interface. It is assumed that CoInitialize
+			// has already been called.
+			hres = CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLink, (LPVOID*)&psl);
+			if (SUCCEEDED(hres)) {
+				IPersistFile* ppf;
+
+				// Set the path to the shortcut target and add the description. 
+				psl->SetPath(lpszPathObj);
+				psl->SetDescription(lpszDesc);
+
+				// Query IShellLink for the IPersistFile interface, used for saving the 
+				// shortcut in persistent storage. 
+				hres = psl->QueryInterface(IID_IPersistFile, (LPVOID*)&ppf);
+
+				if (SUCCEEDED(hres)) {
+					WCHAR wsz[MAX_PATH];
+
+					// Ensure that the string is Unicode. 
+					MultiByteToWideChar(CP_ACP, 0, lpszPathLink, -1, wsz, MAX_PATH);
+
+					// Add code here to check return value from MultiByteWideChar 
+					// for success.
+
+					// Save the link by calling IPersistFile::Save. 
+					hres = ppf->Save(wsz, TRUE);
+					ppf->Release();
+				}
+				psl->Release();
+			}
+			return hres;
+		}
+#endif
 	}
 
 	InstalationManager::~InstalationManager() {
@@ -90,7 +136,21 @@ namespace bb {
 	void InstalationManager::archieveEnded() {
 		installEnded();
 		disconnectAll();
-
+		if (actualGame_) {
+			actualGame_->installed = true;
+			if (actualGame_->shortcut) {
+				QString desktopPath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+				std::filesystem::path link = desktopPath.toUtf8().constData();
+				link /= actualGame_->name.toUtf8().constData();
+				link += ".lnk";
+				std::filesystem::path path = actualGame_->gameDir.toUtf8().constData();
+				path /= actualGame_->execDir.toUtf8().constData();
+				std::string ff(path.generic_string().c_str());
+				auto res = CreateLink(path.generic_string().c_str(), link.generic_string().c_str(), "Sylio shortcut");
+				actualGame_->shortcutPath = link.generic_string().c_str();
+			}
+			
+		}
 		progress_ = 100;
 		sendDataToBar();
 		LoadingBar_->setState(lb::LoadingBar::State::COMPLEET);
@@ -101,8 +161,8 @@ namespace bb {
 		downloadFiles({ fileName }, tot);
 	}
 
-	void InstalationManager::installFile(std::filesystem::path fileName, qint64 tot, std::filesystem::path dir) {
-		installFiles({ fileName }, tot, dir);
+	void InstalationManager::installFile(std::filesystem::path fileName, qint64 tot, std::filesystem::path dir, cf::Game* game) {
+		installFiles({ fileName }, tot, dir, game);
 	}
 
 	void InstalationManager::downloadFiles(files files, qint64 tot) {
@@ -114,9 +174,10 @@ namespace bb {
 		download();
 	}
 
-	void InstalationManager::installFiles(files files, qint64 tot, std::filesystem::path dir) {
+	void InstalationManager::installFiles(files files, qint64 tot, std::filesystem::path dir, cf::Game* game) {
 		reset();
 		setTotal(tot);
+		actualGame_ = game;
 		files_ = files;
 		onlyDownload = false;
 		ftp_.setFilestoDownload(files_);
@@ -172,6 +233,7 @@ namespace bb {
 		total_ = 0;
 		speed_ = 0;
 		error_ = 0;
+		actualGame_ = nullptr;
 		onlyDownload = false;
 		QString errorStr_ = "";
 		files_.clear();
@@ -186,8 +248,8 @@ namespace bb {
 		disconnect(&installer_, &ArchieveInstaller::error, this, &InstalationManager::errorCatched);
 	}
 
-	void InstalationManager::installGame(const cf::Game& game) {
-		installFile(game.url.toUtf8().constData(), game.size, game.gameDir.toUtf8().constData());
+	void InstalationManager::installGame(cf::Game& game) {
+		installFile(game.url.toUtf8().constData(), game.size, game.gameDir.toUtf8().constData(), &game);
 	}
 
 	void InstalationManager::errorCatched(int code) {
@@ -239,4 +301,6 @@ namespace bb {
 		LoadingBar_->setError(code, errorStr_);
 		errorEmit();
 	} 
+
+	
 }

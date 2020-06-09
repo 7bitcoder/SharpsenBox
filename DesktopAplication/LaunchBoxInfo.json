@@ -2,8 +2,9 @@
   "Ver": "1.0",
   "Size": "128 744 158",
   "Url": "bin.zip",
+  "DownloadSpeed": "0",
   "Games": [
     "Sylio",
-    "Rest" 
+    "Rest"
   ]
 }

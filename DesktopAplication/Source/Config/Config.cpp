@@ -8,6 +8,11 @@
 
 namespace cf {
 
+	namespace {
+		bool readBool(const QJsonValue& val) { return val.toString() == "1"; }
+		QString writeBool(bool f) { return f ? "1" : "0"; }
+	}
+
 	Config::Config() {
 		if (!std::filesystem::exists(configJson_))
 			;//problem
@@ -22,15 +27,13 @@ namespace cf {
 		version_ = d["Ver"].toString();
 		std::cout << version_.toUtf8().constData();
 		auto games = d["Games"].toArray();
+		downloadSpeed_ = std::stoi(d["DownloadSpeed"].toString().toStdString());
 		for (int i = 0; i < games.size(); ++i) {
 			auto gam = readGameInfo((games[i].toString() + ".json").toUtf8().constData());
 			games_.insert({ gam.id, gam });
 		}
 	}
-	namespace {
-		bool readBool(const QJsonValue& val) { return val.toString() == "1"; }
-		QString writeBool(bool f) { return f ? "1" : "0"; }
-	}
+
 	Game Config::readGameInfo(std::filesystem::path path) {
 		QFile file;
 		file.setFileName((".." / path).string().c_str());
@@ -89,9 +92,22 @@ namespace cf {
 	}
 
 	Config::~Config() {
+		QJsonDocument d;
+		QJsonObject RootObject = d.object();
+		RootObject.insert("Ver", version_);
+		RootObject.insert("DownloadSpeed", QString::number(downloadSpeed_));
+		QJsonArray arr;
 		for (auto& game : games_) {
 			writedGameInfo(game.second);
+			arr.push_back(game.second.name);
 		}
+		RootObject.insert("Games", arr);
+		d.setObject(RootObject);
+		QFile file;
+		file.setFileName((std::filesystem::path(".." ) / configJson_).generic_string().c_str());
+		file.open(QIODevice::WriteOnly | QIODevice::Text);
+		file.write(d.toJson());
+		file.close();
 	}
 	//
 	//qint64 AppUpdateChecker::getProgress() const {

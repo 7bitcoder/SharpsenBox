@@ -54,6 +54,9 @@ namespace cf {
 			return v;
 		}
 
+		Q_INVOKABLE QString getGameName(int id) {
+			return getGame(id).name;
+		}
 		// implementation IQmlObject
 		void update() override {};
 		void init() override;

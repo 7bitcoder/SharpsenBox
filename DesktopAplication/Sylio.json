@@ -8,6 +8,6 @@
   "Installed": "false",
   "Shortcut": "false",
   "GameDir": "",
-  "GameExecPath": "",
+  "GameExecPath": "./build/x64-Debug/bin/LaunchBox.exe",
   "ShortcutPath": ""
 }

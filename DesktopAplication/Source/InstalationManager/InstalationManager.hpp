@@ -43,12 +43,12 @@ namespace bb {
 		void clearDownloadDir();
 		void setTotal(qint64 tot);
 		void downloadFile(std::filesystem::path fileName, qint64 tot); //just download
-		void installFile(std::filesystem::path fileName, qint64 tot, std::filesystem::path dir = "../"); //download + install
+		void installFile(std::filesystem::path fileName, qint64 tot, std::filesystem::path dir = "../", cf::Game* game = nullptr); //download + install
 		
-		void installGame(const cf::Game& game); //download + install
+		void installGame(cf::Game& game); //download + install
 
 		void downloadFiles(files files, qint64 tot); //just download
-		void installFiles(files files, qint64 tot, std::filesystem::path dir = "../"); //download + install
+		void installFiles(files files, qint64 tot, std::filesystem::path dir = "../", cf::Game* game = nullptr); //download + install
 		double getProgress() { return progress_; }
 		double getTotal() { return total_; }
 		double getSpeed() { return speed_; }
@@ -80,6 +80,7 @@ namespace bb {
 		void clearFilesEnded();
 	private:
 		bool onlyDownload;
+		cf::Game* actualGame_ = nullptr;
 		files files_;
 		lb::LoadingBar* LoadingBar_ = nullptr;
 		Stage stage_ = Stage::NONE;
