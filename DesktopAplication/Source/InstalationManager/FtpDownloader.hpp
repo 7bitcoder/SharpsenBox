@@ -1,4 +1,4 @@
-#pragma once 
+﻿#pragma once 
 
 #include <iostream>
 #include <QObject>
@@ -36,11 +36,13 @@ namespace bb {
 		static size_t my_fwrite(void* buffer, size_t size, size_t nmemb, void* userdata);
 		static int progress_callback(void* clientp, long long dltotal, long long dlnow, long long ultotal, long long ulnow);
 		int checkState();
+		void checkSpeed();
 	private:
 		std::filesystem::path outfile_ = "curl.tar.gz";
 		std::string url_;
 		qint64 total_ = 0;
 		qint64 now_ = 0;
+		qint32 downloadSpeed_ = 0;
 		double speed_;
 		FILE* stream_ = nullptr;
 		void* curl;

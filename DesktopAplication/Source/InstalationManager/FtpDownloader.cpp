@@ -1,4 +1,4 @@
-#include "FtpDownloader.hpp"
+﻿#include "FtpDownloader.hpp"
 #include "Config.hpp"
 #include <stdio.h>
 #include <iostream>
@@ -35,7 +35,16 @@ namespace bb {
 		return out->checkState();
 	}
 
+	void FtpDownloader::checkSpeed() {
+		auto sp = cf::Config::getObject().getDownloadSpeed();
+		if (downloadSpeed_ != sp) {
+			downloadSpeed_ = sp;
+			curl_easy_setopt(curl, CURLOPT_MAX_RECV_SPEED_LARGE, downloadSpeed_ * 1024); //KB/s -> B/s
+		}
+	}
+
 	int FtpDownloader::checkState() {
+		checkSpeed();
 		if (!pause.test_and_set()) {
 			res = curl_easy_pause(curl, CURLPAUSE_ALL);
 			if (res == CURLE_OK)

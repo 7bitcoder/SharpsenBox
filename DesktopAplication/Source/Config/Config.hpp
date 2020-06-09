@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <QObject>
 #include <QQmlApplicationEngine>
 #include <QDebug>
@@ -14,6 +14,7 @@ namespace cf {
 		int id;
 		bool installed;
 		bool shortcut;
+		bool autoCheck;
 		size_t size;
 		QString name;
 		QString version;
@@ -36,7 +37,22 @@ namespace cf {
 		}
 		Q_INVOKABLE bool installed(int id) const;
 		Q_INVOKABLE QUrl gamePath(int id) const;
-		
+		Q_INVOKABLE void setDownloadSpeed(qint32 dp) {
+			downloadSpeed_ = dp;
+		}
+		Q_INVOKABLE qint32 getDownloadSpeed() {
+			return downloadSpeed_;
+		}
+		Q_INVOKABLE void setGameAutoCheck(int id) {
+			getGame(id).autoCheck = true;
+		}
+		Q_INVOKABLE void setGameAutoCheck(int id, bool val) {
+			getGame(id).autoCheck = val;
+		}
+		Q_INVOKABLE bool getGameAutoCheck(int id) {
+			bool v = getGame(id).autoCheck;
+			return v;
+		}
 
 		// implementation IQmlObject
 		void update() override {};
@@ -52,11 +68,13 @@ namespace cf {
 		Config();
 		virtual ~Config();
 		Game readGameInfo(std::filesystem::path path);
+		void writedGameInfo(Game& game);
 	private:
 		QString version_;
 		std::filesystem::path configJson_ = "./LaunchBoxInfo.json";
 		std::filesystem::path downloadDir_ = "../Download";
 		std::string ftpUrl_ = "ftp://localhost/";
 		std::unordered_map<int, Game> games_;
+		qint32 downloadSpeed_;
 	};
 }

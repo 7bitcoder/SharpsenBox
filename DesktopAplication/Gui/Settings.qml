@@ -9,12 +9,20 @@ Item {
             margins: 20
             rightMargin: 100
         }
-        height: 500
-        ScrollBar.vertical.policy: ScrollBar.AlwaysOn
+        contentHeight: content.contentHeigh
         property int main: 15
         property int inner: 30
+        ScrollBar.vertical.policy: ScrollBar.AsNeeded
+        clip: true
         Rectangle {
-            anchors.fill: parent
+            id: content
+            anchors {
+                top: parent.top
+                left: parent.left
+                right: parent.right
+            }
+            property int contentHeigh: rest.y + rest.height - content.y
+
             color: "transparent"
             Item {
                 anchors.fill: parent
@@ -72,7 +80,7 @@ Item {
                             rightMargin: 4
                         }
                         clip: true
-                        text: "0"
+                        text: _Config.getDownloadSpeed()
                         font.family: "Arial"
                         color: "white"
                         font.pixelSize: 20
@@ -89,6 +97,7 @@ Item {
                                     n = 2147483647
                                 textInput.text = n.toString()
                                 parseError.text = ""
+                                _Config.setDownloadSpeed(n)
                             }
                         }
                     }
@@ -168,6 +177,7 @@ Item {
                     hide: false
                 }
                 GameSettings {
+                    id: rest
                     anchors {
                         top: sylio.bottom
                         left: parent.left

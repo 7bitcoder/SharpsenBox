@@ -1,9 +1,13 @@
-{
+﻿{
   "Id": "2",
+  "Name": "Rest",
   "Ver": "1.0",
   "Size": "128744158",
   "Url": "Rest.zip",
+  "AutoUpdate": "false",
   "Installed": "false",
+  "Shortcut": "false",
   "GameDir": "",
-  "GameExecPath": ""
+  "GameExecPath": "",
+  "ShortcutPath": ""
 }

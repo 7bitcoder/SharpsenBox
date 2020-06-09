@@ -12,6 +12,7 @@
 	<file>BottomBar.qml</file>
 	<file>InstallPopOut.qml</file>
 	<file>PopOutInfo.qml</file>
+	<file>GameSettings.qml</file>
 	<file>ResizingFrames.qml</file>
 	<file>LeftBar.qml</file>
 	<file>content/person.png</file>

@@ -1,4 +1,4 @@
-#include "Config.hpp"
+﻿#include "Config.hpp"
 #include <QElapsedTimer>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -27,41 +27,71 @@ namespace cf {
 			games_.insert({ gam.id, gam });
 		}
 	}
-
-	Game Config::readGameInfo(std::filesystem::path path) 
-	{
+	namespace {
+		bool readBool(const QJsonValue& val) { return val.toString() == "1"; }
+		QString writeBool(bool f) { return f ? "1" : "0"; }
+	}
+	Game Config::readGameInfo(std::filesystem::path path) {
 		QFile file;
 		file.setFileName((".." / path).string().c_str());
 		file.open(QIODevice::ReadOnly | QIODevice::Text);
 		QString val = file.readAll();
+		std::string gg(val.toUtf8().constData());
 		file.close();
 		QJsonDocument d = QJsonDocument::fromJson(val.toUtf8());
 		QJsonObject sett2 = d.object();
 		Game g;
 		auto ss = std::string(d["Id"].toString().toUtf8().constData());
 		g.id = std::stoi(ss);
-		g.installed = d["Url"].toBool();
+		g.installed = readBool(d["Installed"]);
 		g.version = d["Ver"].toString();
+		g.name = d["Name"].toString();
 		QString size = d["Size"].toString();
 		g.size = std::stoll(size.toUtf8().constData());
 		g.url = d["Url"].toString();
 		g.gameDir = d["GameDir"].toString();
 		g.execDir = d["GameExecPath"].toString();
 		g.shortcutPath = d["ShortcutPath"].toString();
-		g.shortcutPath = d["Shortcut"].toBool();
+		g.shortcut = readBool(d["Shortcut"]);
+		g.autoCheck = readBool(d["AutoUpdate"]);
 		//std::cout << g.id << g.url.toUtf8().constData() << g.version.toUtf8().constData() << g.installed;
 		return g;
-	}	
-
-	void Config::init() {
 	}
+
+	void Config::writedGameInfo(Game& game) {
+		QJsonDocument d;
+		QJsonObject RootObject = d.object();
+		RootObject.insert("Id", QString::number(game.id));
+		RootObject.insert("Name", game.name);
+		RootObject.insert("Installed", writeBool(game.installed));
+		RootObject.insert("Ver", game.version);
+		RootObject.insert("Size", QString::number(game.size));
+		RootObject.insert("Url", game.url);
+		RootObject.insert("GameDir", game.gameDir);
+		RootObject.insert("GameExecPath", game.execDir);
+		RootObject.insert("ShortcutPath", game.shortcutPath);
+		RootObject.insert("Shortcut", writeBool(game.shortcut));
+		RootObject.insert("AutoUpdate", writeBool(game.autoCheck));
+
+		d.setObject(RootObject);
+		QFile file;
+		std::string ff(game.name.toUtf8().constData());
+		file.setFileName("../" + game.name + ".json");
+		file.open(QIODevice::WriteOnly | QIODevice::Text);
+		file.write(d.toJson());
+		file.close();
+	}
+
+	void Config::init() {}
 
 	std::string Config::getName() {
 		return TYPENAME(Config);
 	}
 
 	Config::~Config() {
-		// save config
+		for (auto& game : games_) {
+			writedGameInfo(game.second);
+		}
 	}
 	//
 	//qint64 AppUpdateChecker::getProgress() const {

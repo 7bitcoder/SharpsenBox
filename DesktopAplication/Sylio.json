@@ -1,8 +1,10 @@
-{
+﻿{
   "Id": "1",
+  "Name": "Sylio",
   "Ver": "1.0",
   "Size": "507486069",
   "Url": "Sylio.zip",
+  "AutoUpdate": "false",
   "Installed": "false",
   "Shortcut": "false",
   "GameDir": "",
