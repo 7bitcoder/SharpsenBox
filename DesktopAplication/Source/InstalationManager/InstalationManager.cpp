@@ -90,11 +90,7 @@ namespace bb {
 	void InstalationManager::archieveEnded() {
 		installEnded();
 		disconnectAll();
-		try {
-			std::filesystem::remove_all(downloadDir_/ ".");
-		} catch (...) {
-			errorCatched(-1);
-		}
+
 		progress_ = 100;
 		sendDataToBar();
 		LoadingBar_->setState(lb::LoadingBar::State::COMPLEET);

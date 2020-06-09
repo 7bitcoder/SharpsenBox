@@ -32,7 +32,7 @@ namespace lb {
 	}
 
 	Q_INVOKABLE int LoadingBar::getError() const {
-		return Q_INVOKABLE double();
+		return error_;
 	}
 
 	Q_INVOKABLE QString LoadingBar::getErrorString() const {

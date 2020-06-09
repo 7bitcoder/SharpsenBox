@@ -22,20 +22,17 @@ Rectangle {
 
     Rectangle {
         id: sylio
-        property bool selected: true
+        property bool selected: window.gameBarS === "Sylio.qml"
         anchors {
             top: parent.top
             left: parent.left
             bottom: parent.bottom
         }
         width: parent.size
-        color: selected ? window.color : "transparent"
+        color: selected || sylioM.containsMouse ? window.color : "transparent"
         onSelectedChanged: {
-            if (selected) {
-                sylioText.color = "white"
-                gameChoserLoader.source = "Sylio.qml"
-            } else
-                sylioText.color = gameChoser.normal
+            if (selected)
+                window.gameBarS = "Sylio.qml"
         }
         Text {
             id: sylioText
@@ -43,7 +40,7 @@ Rectangle {
             text: "Sylio"
             font.family: "Arial"
             font.pointSize: 25
-            color: "white"
+            color: parent.selected ? "white" : gameChoser.normal
             Behavior on opacity {
                 OpacityAnimator {
                     duration: gameChoser.timeClicked
@@ -56,16 +53,12 @@ Rectangle {
             }
         }
         MouseArea {
+            id: sylioM
             anchors.fill: parent
             hoverEnabled: true
             onClicked: {
                 resetAll(sylioId)
                 parent.selected = true
-            }
-            onEntered: sylioText.color = "white"
-            onExited: {
-                if (!sylio.selected)
-                    sylioText.color = gameChoser.normal
             }
             // onPressed: sylioText.opacity = gameChoser.clicked
             // onReleased: sylioText.opacity = gameChoser.hovered
@@ -73,20 +66,17 @@ Rectangle {
     }
     Rectangle {
         id: rest
-        property bool selected: false
+        property bool selected: window.gameBarS === "Rest.qml"
         anchors {
             top: parent.top
             left: sylio.right
             bottom: parent.bottom
         }
         width: parent.size
-        color: selected ? window.color : "transparent"
+        color: selected || restM.containsMouse ? window.color : "transparent"
         onSelectedChanged: {
-            if (selected) {
-                restText.color = "white"
-                gameChoserLoader.source = "Rest.qml"
-            } else
-                restText.color = gameChoser.normal
+            if (selected)
+                window.gameBarS = "Rest.qml"
         }
 
         Text {
@@ -95,7 +85,7 @@ Rectangle {
             text: "Rest"
             font.family: "Arial"
             font.pointSize: 25
-            color: gameChoser.normal
+            color: parent.selected ? "white" : gameChoser.normal
             Behavior on opacity {
                 OpacityAnimator {
                     duration: gameChoser.timeClicked
@@ -108,16 +98,12 @@ Rectangle {
             }
         }
         MouseArea {
+            id: restM
             anchors.fill: parent
             hoverEnabled: true
             onClicked: {
                 resetAll(restId)
                 parent.selected = true
-            }
-            onEntered: restText.color = "white"
-            onExited: {
-                if (!rest.selected)
-                    restText.color = gameChoser.normal
             }
             // onPressed: restText.opacity = gameChoser.clicked
             // onReleased: restText.opacity = gameChoser.hovered

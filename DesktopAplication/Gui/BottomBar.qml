@@ -42,6 +42,14 @@ Rectangle {
     property string speedAvgStr: "0"
 
     property string statusInfo: "Initialization"
+    //error
+    property int errorCode: _LoadingBar.error
+    onErrorCodeChanged: {
+        if (errorCode != 0) {
+            window.info = _LoadingBar.errorString
+            window.stage = 2
+        }
+    }
 
     Timer {
         id: info
@@ -159,7 +167,7 @@ Rectangle {
             speedTimer.stop()
             anim.stop()
             bottomBar.barColor = "red"
-            statusInfo = _LoadingBar.errorString
+            hideBar.start()
         } else if (state === completed) {
             prog.stop()
             percentage.stop()
@@ -177,7 +185,6 @@ Rectangle {
     Timer {
         id: hideBar
         interval: 1000
-        property real lastActual: actual
         onTriggered: visibleState = hidden
         repeat: false
         running: false
@@ -430,7 +437,7 @@ Rectangle {
         }
         font.family: "Arial"
         font.pointSize: 12
-        color: parent.state === parent.error ? "red" : "white"
+        color: "white"
         text: statusInfo
     }
     Text {

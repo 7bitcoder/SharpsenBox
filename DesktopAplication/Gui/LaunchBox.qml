@@ -20,6 +20,8 @@ ApplicationWindow {
     property size startWindowSize
     property int stage: 0
     property int gameId: 0 //to install
+    property string gameBarS: "Sylio.qml"
+    property string info: "elo"
 
     function absoluteMousePos(mouseArea) {
         var windowAbs = mouseArea.mapToItem(null, mouseArea.mouseX,
@@ -59,8 +61,10 @@ ApplicationWindow {
             case 1:
                 source = "InstallPopOut.qml"
                 break
+            case 2:
+                source = "PopOutInfo.qml"
+                break
             }
-            animation.running = true
         }
 
         source: "Aplication.qml"

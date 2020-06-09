@@ -50,12 +50,19 @@ Item {
         Text {
             id: buttonPLay
             property bool pressed: false
+            property bool lock: _GameInstaller.lock
+            property bool realLock: false
+            onLockChanged: {
+                realLock = _GameInstaller.checkLock(gameId)
+            }
+
             anchors.centerIn: parent
             text: "Install"
             font.family: "Arial"
             font.pointSize: 25
             color: "#AAAAAA"
             MouseArea {
+                visible: !parent.realLock
                 hoverEnabled: true
                 anchors.fill: parent
                 onClicked: {
@@ -91,16 +98,17 @@ Item {
             bottom: parent.bottom
             bottomMargin: 65
         }
-        // Rectangle {
-        //     color: "black"
-        //     anchors.fill: parent
-        //     visible: false
-        //     WebEngineView {
-        //         id: webView
-        //         anchors.fill: parent
-        //         url: "https://www.youtube.com/embed/T5zxTI1gxOQ?&autohide=1&showinfo=0&amp;fs=0&amp;showinfo=0"
-        //     }
-        // }
+        Rectangle {
+            color: "black"
+            anchors.fill: parent
+            visible: true
+            WebEngineView {
+                id: webView
+                anchors.fill: parent
+                url: "https://www.youtube.com/embed/T5zxTI1gxOQ?&autohide=1&showinfo=0&amp;fs=0&amp;showinfo=0"
+            }
+        }
+
         //Rectangle {
         //    id: ram
         //    color: "black"

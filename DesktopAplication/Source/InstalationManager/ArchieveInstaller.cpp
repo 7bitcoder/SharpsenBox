@@ -67,6 +67,12 @@ namespace bb {
 			}
 			archive_read_finish(a);
 		}
+
+		try {
+			std::filesystem::remove_all(downloadDir / ".");
+		} catch (...) {
+			;//errorCatched(-1);
+		}
 		ended();
 	}
 

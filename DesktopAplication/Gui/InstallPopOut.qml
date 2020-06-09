@@ -59,8 +59,12 @@ Rectangle {
             FolderDialog {
                 id: folderDialog
                 title: "Chose installation folder"
-                folder: _Config.gamePath(1)
+                folder: _Config.gamePath(gameId)
                 options: FolderDialog.ShowDirsOnly
+                onAccepted: {
+                    installDirectory = folderDialog.folder.toString(
+                                ).substring(8)
+                }
             }
             Rectangle {
                 id: pathDisplay
@@ -89,6 +93,7 @@ Rectangle {
                     font.family: "Arial"
                     font.pixelSize: normalTextSize
                     selectByMouse: true
+                    onAccepted: installDirectory = text
                 }
             }
             Button {
@@ -168,7 +173,7 @@ Rectangle {
                 text: "Install"
                 onClicked: {
                     _GameInstaller.installGame(installbar.gameId,
-                                               folderDialog.folder,
+                                               installbar.installDirectory,
                                                createShortcut.enabled)
                     window.stage = 0
                 }

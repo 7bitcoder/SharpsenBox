@@ -21,5 +21,32 @@ Item {
             bottom: parent.bottom
         }
         source: "Home.qml"
+        property bool sw: false
+        //property int changeTo: "Home.qml"
+
+        // onSourceChanged: {
+        //switch (changeTo) {
+        //case "Home.qml":
+        //    source = changeTo
+        //    break
+        //case "Rest.qml":
+        //    source = changeTo
+        //    break
+        //}
+        //}
+        onSourceChanged: {
+            animation.stop()
+            animation.start()
+        }
+
+        NumberAnimation {
+            id: animation
+            target: contentLoader.item
+            property: "opacity"
+            from: 0
+            to: 1
+            duration: 200
+            easing.type: Easing.OutCubic
+        }
     }
 }
