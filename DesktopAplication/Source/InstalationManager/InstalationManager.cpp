@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include <string>
 #include "InstalationManager.hpp"
 #include "AppBackend.hpp"
@@ -13,6 +13,7 @@
 #include "shlguid.h"
 #include <QStandardPaths>
 #include "archive.h"
+#include "GameInstaller.hpp"
 
 namespace bb {
 	namespace {
@@ -68,7 +69,7 @@ namespace bb {
 		ftp_.wait();
 	}
 
-	void InstalationManager::setTotal(qint64 tot) { 
+	void InstalationManager::setTotal(qint64 tot) {
 		totalBytes_ = tot;
 		total_ = getMB(totalBytes_);
 		LoadingBar_->setTotal(total_);
@@ -77,7 +78,7 @@ namespace bb {
 	void InstalationManager::setProgress() {
 		ProgressBytes_ = downloadedBytes_ + unpackedBytes_;
 		if (totalBytes_) {
-			progress_ = (double(ProgressBytes_)/ (2 * totalBytes_)) * 99;
+			progress_ = (double(ProgressBytes_) / (2 * totalBytes_)) * 99;
 			//std::cout << "progress: " << progress_ << "\n";
 		}
 	}
@@ -90,7 +91,7 @@ namespace bb {
 		downloadedBytes_ = progress;
 		if (total) {
 			setProgress();
-			speed_ =  speed; // B/s
+			speed_ = speed; // B/s
 			sendDataToBar();
 		}
 	}
@@ -121,15 +122,15 @@ namespace bb {
 
 	void InstalationManager::stopD() {
 		ftp_.stop.clear();
-		LoadingBar_->setState( lb::LoadingBar::State::STOPPED );
-		LoadingBar_->setVisibleState( lb::LoadingBar::VisibleState::HIDDEN );
+		LoadingBar_->setState(lb::LoadingBar::State::STOPPED);
+		LoadingBar_->setVisibleState(lb::LoadingBar::VisibleState::HIDDEN);
 	}
 
-	
+
 	void InstalationManager::ftpEnded() {
 		stage_ = Stage::INSTALL;
 		LoadingBar_->setState(lb::LoadingBar::State::INSTALLING);
-		if(!onlyDownload)
+		if (!onlyDownload)
 			installer_.start();
 		downloadEnded();
 	}
@@ -150,8 +151,8 @@ namespace bb {
 				auto res = CreateLink(path.generic_string().c_str(), link.generic_string().c_str(), "Sylio shortcut");
 				actualGame_->shortcutPath = link.generic_string().c_str();
 			}
-			
 		}
+		gi::GameInstaller::getObject().unLock();
 		progress_ = 100;
 		sendDataToBar();
 		LoadingBar_->setState(lb::LoadingBar::State::COMPLEET);
@@ -186,7 +187,7 @@ namespace bb {
 		installDir_ = dir;
 		install();
 	}
-	
+
 	void InstalationManager::download() {
 		stage_ = Stage::DOWNLOAD;
 		progress_ = 100; //for checking state
@@ -297,8 +298,8 @@ namespace bb {
 				errorStr_ = "Installing Fatal error, check memory disk space";
 				break;
 			case ARCHIVE_EOF:
-			case ARCHIVE_WARN :
-			case ARCHIVE_FAILED: 
+			case ARCHIVE_WARN:
+			case ARCHIVE_FAILED:
 			default:
 				errorStr_ = "Unknown error while installing data";
 				break;
@@ -306,8 +307,9 @@ namespace bb {
 		}
 		LoadingBar_->setState(lb::LoadingBar::State::ERRORD);
 		LoadingBar_->setError(code, errorStr_);
+		gi::GameInstaller::getObject().unLock();
 		errorEmit();
-	} 
+	}
 
-	
+
 }

@@ -12,6 +12,8 @@ qt5_use_modules(AppUpdaterBackend
     Core)
 
 target_link_libraries(AppUpdaterBackend
+    LoadingBar
+    GameInstaller
     InstalationManager
     Config
     Qt5::Gui

@@ -16,14 +16,19 @@ namespace gi {
 		}
 
 		Q_INVOKABLE void installGame(int id, QString path, bool shortcut);
+		Q_INVOKABLE bool getLock() { return lock_; }
+		Q_PROPERTY(int lock READ getLock NOTIFY lockChanged);
+
 
 		// implementation IQmlObject
 		void update() override {};
 		std::string getName() override;
 		void init() override {};
-		void lock() { lock_ = true; }
-		void unLock() { lock_ = false; }
+		void lock() { lock_ = true; lockChanged(); }
+		void unLock() { lock_ = false; lockChanged(); }
 
+	signals:
+		void lockChanged();
 
 	private:
 		virtual ~GameInstaller() {};

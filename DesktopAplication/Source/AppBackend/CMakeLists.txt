@@ -7,7 +7,8 @@ target_include_directories(AppBackend PUBLIC
     "../InstalationManager"
     "../Config"
     "../LoadingBar"
-    "../GameInstaller")
+    "../GameInstaller"
+    "../GameExecutor")
 
 qt5_use_modules(AppBackend 
     Quick 
@@ -17,8 +18,10 @@ qt5_use_modules(AppBackend
 target_link_libraries(AppBackend
     Button
     Config
-    InstalationManager
+    GameExecutor
+    LoadingBar
     GameInstaller
+    InstalationManager
     Qt5::Widgets
     Qt5::Gui
     Qt5::Core)
