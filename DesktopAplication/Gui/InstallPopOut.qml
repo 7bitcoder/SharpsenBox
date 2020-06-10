@@ -137,7 +137,8 @@ Rectangle {
                     right: parent.right
                 }
                 clip: true
-                text: "Full Path: " + installDirectory + "/" + "Gra"
+                text: "Full Path: " + installDirectory + "/" + _Config.getGameName(
+                          gameId)
                 font.family: "Arial"
                 font.pixelSize: installbar.normalTextSize
                 wrapMode: Text.WrapAnywhere

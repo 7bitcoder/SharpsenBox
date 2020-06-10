@@ -5,8 +5,7 @@ conan_basic_setup(TARGETS)
 add_library(InstalationManager STATIC
     InstalationManager.cpp
     FtpDownloader.cpp 
-    ArchieveInstaller.cpp 
-    Uninstaller.cpp)
+    ArchieveInstaller.cpp)
 
 target_include_directories(InstalationManager PUBLIC
     "../AppBackend"

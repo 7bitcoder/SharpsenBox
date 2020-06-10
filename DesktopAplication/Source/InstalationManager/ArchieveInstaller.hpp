@@ -1,4 +1,4 @@
-#pragma once 
+﻿#pragma once 
 #include <iostream>
 #include <QObject>
 #include <QThread>
@@ -16,7 +16,7 @@ namespace bb {
 	public:
 		using files = std::vector < std::filesystem::path>;
 		ArchieveInstaller() {};
-		~ArchieveInstaller() {}
+		virtual ~ArchieveInstaller() {}
 		void setUnpackFiles(std::vector<std::filesystem::path> files);
 		void setInstalationDir(std::filesystem::path dir) {
 			destinationDir_ = dir;

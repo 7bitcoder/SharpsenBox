@@ -1,6 +1,7 @@
 ﻿
 add_library(GameInstaller STATIC
-    GameInstaller.cpp)
+    GameInstaller.cpp
+    GameUninstaller.cpp)
 
 target_include_directories(GameInstaller PUBLIC
     "../AppBackend"

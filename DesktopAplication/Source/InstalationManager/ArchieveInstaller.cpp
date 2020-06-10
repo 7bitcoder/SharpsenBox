@@ -52,6 +52,8 @@ namespace bb {
 				file.open(actualUnpacking, std::ios::binary);
 				if (!file.is_open())
 					throw std::exception("Could not open file");
+				if (!std::filesystem::exists(destinationDir_.generic_string()))
+					std::filesystem::create_directories(destinationDir_.generic_string());
 				res = archive_read_support_compression_all(a);
 				res = archive_read_support_format_all(a);
 				res = archive_read_open(a, this, NULL, ArchieveInstaller::myread, ArchieveInstaller::myclose);
@@ -76,7 +78,9 @@ namespace bb {
 			} catch (...) {
 				res = -1;//errorCatched(-1);
 			}
-		} catch ( ... ) {}
+		} catch ( ... ) {
+			res = -1;
+		}
 
 		if (res != ARCHIVE_OK) {
 			emit error(res);
