@@ -8,7 +8,7 @@
 #include "IQmlObject.hpp"
 #include <filesystem>
 #include <fstream>
-#define BLOCK_SIZE 512000
+#define BLOCK_SIZE 512000 //~500KB
 struct archive;
 namespace bb {
 	class ArchieveInstaller : public  QThread {
@@ -40,5 +40,6 @@ namespace bb {
 		char buff[BLOCK_SIZE];
 		qint64 alreadyRead = 0;
 		size_t size;
+		int res = 0;
 	};
 }

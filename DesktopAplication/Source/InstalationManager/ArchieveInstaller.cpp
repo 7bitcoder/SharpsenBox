@@ -43,37 +43,46 @@ namespace bb {
 		flags |= ARCHIVE_EXTRACT_PERM;
 		flags |= ARCHIVE_EXTRACT_ACL;
 		flags |= ARCHIVE_EXTRACT_FFLAGS;
-		auto& downloadDir = cf::Config::getObject().getDownloadDir();
-		for (auto& arch : filesToUnpack) {
-			a = archive_read_new();
-			auto actualUnpacking = (downloadDir / arch).generic_string();
-			size = std::filesystem::file_size(actualUnpacking);
-			file.open(actualUnpacking, std::ios::binary);
-			if (!file.is_open())
-				throw std::exception("Could not open file");
-			archive_read_support_compression_all(a);
-			archive_read_support_format_all(a);
-			archive_read_open(a, this, NULL, ArchieveInstaller::myread, ArchieveInstaller::myclose);
-			while (archive_read_next_header(a, &entry) == ARCHIVE_OK) {
-				//printf("%s\n", archive_entry_pathname(entry));
-				const char* currentFile = archive_entry_pathname(entry);
-				std::filesystem::path fullOutputPath = destinationDir_.generic_string();
-				if (std::filesystem::exists(fullOutputPath))
-					int gg = 44;
-				fullOutputPath /= currentFile;
-				fullOutputPath = fullOutputPath.generic_string();
-				archive_entry_set_pathname(entry, fullOutputPath.generic_string().c_str());
-				archive_read_extract(a, entry, flags);
-			}
-			archive_read_finish(a);
-		}
-
 		try {
-			std::filesystem::remove_all(downloadDir / ".");
-		} catch (...) {
-			;//errorCatched(-1);
+			auto& downloadDir = cf::Config::getObject().getDownloadDir();
+			for (auto& arch : filesToUnpack) {
+				a = archive_read_new();
+				auto actualUnpacking = (downloadDir / arch).generic_string();
+				size = std::filesystem::file_size(actualUnpacking);
+				file.open(actualUnpacking, std::ios::binary);
+				if (!file.is_open())
+					throw std::exception("Could not open file");
+				res = archive_read_support_compression_all(a);
+				res = archive_read_support_format_all(a);
+				res = archive_read_open(a, this, NULL, ArchieveInstaller::myread, ArchieveInstaller::myclose);
+				while (archive_read_next_header(a, &entry) == ARCHIVE_OK) {
+					//printf("%s\n", archive_entry_pathname(entry));
+					const char* currentFile = archive_entry_pathname(entry);
+					std::filesystem::path fullOutputPath = destinationDir_.generic_string();
+					fullOutputPath /= currentFile;
+					fullOutputPath = fullOutputPath.generic_string();
+					archive_entry_set_pathname(entry, fullOutputPath.generic_string().c_str());
+					res = archive_read_extract(a, entry, flags);
+					if (res != ARCHIVE_OK) {
+						archive_read_finish(a);
+						break;
+					}
+				}
+				res = archive_read_finish(a);
+			}
+
+			try {
+				std::filesystem::remove_all(downloadDir / ".");
+			} catch (...) {
+				res = -1;//errorCatched(-1);
+			}
+		} catch ( ... ) {}
+
+		if (res != ARCHIVE_OK) {
+			emit error(res);
+		} else {
+			ended();
 		}
-		ended();
 	}
 
 	void ArchieveInstaller::emitStatus() {

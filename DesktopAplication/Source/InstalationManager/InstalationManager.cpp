@@ -12,6 +12,7 @@
 #include "objidl.h"
 #include "shlguid.h"
 #include <QStandardPaths>
+#include "archive.h"
 
 namespace bb {
 	namespace {
@@ -292,6 +293,12 @@ namespace bb {
 			case -1: //while deleting archieves
 				errorStr_ = "Error ocured while deleting instalation files";
 				break;
+			case ARCHIVE_FATAL:
+				errorStr_ = "Installing Fatal error, check memory disk space";
+				break;
+			case ARCHIVE_EOF:
+			case ARCHIVE_WARN :
+			case ARCHIVE_FAILED: 
 			default:
 				errorStr_ = "Unknown error while installing data";
 				break;
