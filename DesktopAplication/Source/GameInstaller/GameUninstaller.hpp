@@ -19,5 +19,7 @@ namespace gi {
 	private:
 		int id_;
 		std::filesystem::path gameDir_;
+		bool shortcut_;
+		std::filesystem::path shortcutPath_;
 	};
 }
