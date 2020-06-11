@@ -74,7 +74,10 @@ namespace bb {
 			}
 
 			try {
-				std::filesystem::remove_all(downloadDir / ".");
+				for (auto& p : std::filesystem::recursive_directory_iterator(downloadDir)) {
+					auto& path = p.path();
+					std::filesystem::remove_all(path);
+				}
 			} catch (...) {
 				res = -1;//errorCatched(-1);
 			}

@@ -16,7 +16,7 @@ namespace lb {
 			return uc;
 		}
 		enum  State : int {
-			CHECKING = 0, DOWNLOADING, INSTALLING, PAUSE, ERRORD, STOPPED, COMPLEET
+			NONE = -1, CHECKING = 0, DOWNLOADING, INSTALLING, PAUSE, ERRORD, STOPPED, COMPLEET
 		};
 		enum  VisibleState : int {
 			HIDDEN = 0, SHOWED, MINIMALIZED
@@ -54,12 +54,12 @@ namespace lb {
 			visibleState_ = st;
 			visibleStateChanged();
 		}
-		void reset() {
-			error_ = 0;
-			progress_ = 0;
-			actual_ = 0;
-			total_ = 0;
+
+		void setUninstallMode(bool un) {
+			uninstall_ = un;
 		}
+
+		void reset();
 		//QML Propetries
 		Q_PROPERTY(double speed READ getSpeed); //download speed B/s
 		Q_PROPERTY(double actual READ getActual); //actual downloaded MB
@@ -71,6 +71,8 @@ namespace lb {
 
 		Q_PROPERTY(int error READ getError  NOTIFY errorChanged);
 		Q_PROPERTY(QString errorString READ getErrorString);
+
+		Q_PROPERTY(int uninstall READ getUninstall);
 
 		//QMl invoklabes
 		Q_INVOKABLE double getSpeed() const;
@@ -84,6 +86,7 @@ namespace lb {
 		Q_INVOKABLE int getError() const;
 		Q_INVOKABLE QString getErrorString() const;
 
+		Q_INVOKABLE bool getUninstall() const;
 
 	private:
 		virtual ~LoadingBar();
@@ -105,7 +108,7 @@ namespace lb {
 		void stopS();
 
 	private:
-		State state_ = State::DOWNLOADING;
+		State state_ = State::NONE;
 		VisibleState visibleState_ = VisibleState::HIDDEN;
 
 		//qml properties
@@ -115,5 +118,7 @@ namespace lb {
 		double actual_ = 0;
 		int error_ = 0;
 		QString errorStr_ = "";
+
+		bool uninstall_ = false;
 	};
 }

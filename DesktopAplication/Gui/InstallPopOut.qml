@@ -59,7 +59,7 @@ Rectangle {
             FolderDialog {
                 id: folderDialog
                 title: "Chose installation folder"
-                folder: _Config.gamePath(gameId)
+                folder: _Config.defaultInstallDir()
                 options: FolderDialog.ShowDirsOnly
                 onAccepted: {
                     installDirectory = folderDialog.folder.toString(

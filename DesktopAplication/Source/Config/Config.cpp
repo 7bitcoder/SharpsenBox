@@ -120,19 +120,12 @@ namespace cf {
 			return it->second.installed;
 		return false;
 	}
-	Q_INVOKABLE QUrl Config::gamePath(int id) const {
-		auto it = games_.find(id);
-		if (it != games_.end()) {
-			auto& path = it->second.gameDir;
-			if (path.isEmpty()) {
-				QUrl pf;
-				if (getenv("PROGRAMFILES")) { //windows
-					std::filesystem::path path = getenv("PROGRAMFILES");
-					return QUrl::fromLocalFile(path.generic_string().c_str());
-				} else { //mac /linux
-					return "";
-				}
-			}
+	Q_INVOKABLE QUrl Config::defaultInstallDir() {
+		if (getenv("PROGRAMFILES")) { //windows
+			std::filesystem::path path = getenv("PROGRAMFILES");
+			return QUrl::fromLocalFile(path.generic_string().c_str());
+		} else { //mac /linux
+			return "";
 		}
 		return "";
 	}

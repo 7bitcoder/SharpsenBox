@@ -155,7 +155,9 @@ namespace bb {
 		gi::GameInstaller::getObject().unLock();
 		progress_ = 100;
 		sendDataToBar();
+		LoadingBar_->reset();
 		LoadingBar_->setState(lb::LoadingBar::State::COMPLEET);
+		LoadingBar_->setVisibleState(lb::LoadingBar::VisibleState::HIDDEN);
 		clearFilesEnded();
 	}
 
@@ -305,7 +307,9 @@ namespace bb {
 				break;
 			}
 		}
+		LoadingBar_->reset();
 		LoadingBar_->setState(lb::LoadingBar::State::ERRORD);
+		LoadingBar_->setVisibleState(lb::LoadingBar::VisibleState::HIDDEN);
 		LoadingBar_->setError(code, errorStr_);
 		gi::GameInstaller::getObject().unLock();
 		errorEmit();

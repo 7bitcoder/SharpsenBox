@@ -10,6 +10,7 @@ Rectangle {
     height: 0
 
     //states of instatation
+    property int none: -1
     property int checking: 0
     property int downloading: 1
     property int installing: 2
@@ -117,7 +118,7 @@ Rectangle {
     onVisibleCInputChanged: {
         switch (visibleCInput) {
         case 0:
-            visibleState = 0
+            hideBar.start()
             break
         case 1:
             visibleState = 1
@@ -139,7 +140,10 @@ Rectangle {
             bottomBar.barColor = "white"
             loader.visible = true
             anim.start()
-            //bottomBar.progress = 100
+            bottomBar.progress = 100
+            if (_LoadingBar.uninstall) {
+                statusInfo = "Uninstalling"
+            }
         } else if (state === downloading) {
             prog.start()
             percentage.start()
@@ -167,7 +171,6 @@ Rectangle {
             speedTimer.stop()
             anim.stop()
             bottomBar.barColor = "red"
-            hideBar.start()
         } else if (state === completed) {
             prog.stop()
             percentage.stop()
@@ -176,9 +179,11 @@ Rectangle {
             percenStr = "100%"
             anim.stop()
             loader.visible = false
-            statusInfo = "Instalation complete"
+            if (_LoadingBar.uninstall)
+                statusInfo = "Uninstallation complete"
+            else
+                statusInfo = "Instalation complete"
             bottomBar.barColor = "green"
-            hideBar.start()
         }
     }
 

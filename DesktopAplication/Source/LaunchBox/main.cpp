@@ -3,8 +3,7 @@
 #include <QQmlContext>
 #include <qvariant.h>
 #include "AppBackend.hpp"
-#include "Button.hpp"
-void ff();
+
 int main(int argc, char** argv) {
 	//poprawia wydajnoœæ ale animacje s¹ za szybkie
 	//QCoreApplication::setAttribute(Qt::AA_UseSoftwareOpenGL);

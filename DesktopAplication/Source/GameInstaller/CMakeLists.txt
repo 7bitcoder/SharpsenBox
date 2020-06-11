@@ -7,7 +7,8 @@ target_include_directories(GameInstaller PUBLIC
     "../AppBackend"
     "../Config"
     "../LoadingBar"
-    "../InstalationManager")
+    "../InstalationManager"
+    "../Dialog")
 
 qt5_use_modules(GameInstaller 
     Quick 

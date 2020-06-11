@@ -2,7 +2,7 @@
 #include <QDebug>
 #include <QQmlContext>
 #include "AppBackend.hpp"
-#include "Button.hpp"
+#include "Dialog.hpp"
 #include "InstalationManager.hpp"
 #include "Config.hpp"
 #include "LoadingBar.hpp"
@@ -25,7 +25,7 @@ namespace bc {
 
 	void Backend::registerObjects() {
 		registerObject<cf::Config>();
-		registerObject<Button>();
+		registerObject<dl::Dialog>();
 		registerObject<bb::InstalationManager>();
 		registerObject<lb::LoadingBar>();
 		registerObject<gi::GameInstaller>();

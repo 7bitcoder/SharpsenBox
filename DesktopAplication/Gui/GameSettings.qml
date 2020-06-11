@@ -102,7 +102,7 @@ Rectangle {
             width: 300
             text: "Uninstall"
             onClicked: {
-                _GameInstaller.unistall(gameId)
+                _GameInstaller.unistallRequest(gameId)
             }
 
             contentItem: Text {

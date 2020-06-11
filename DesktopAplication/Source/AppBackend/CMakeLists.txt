@@ -3,7 +3,7 @@ add_library(AppBackend STATIC
     AppBackend.cpp)
 
 target_include_directories(AppBackend PUBLIC
-    "../MainWindow"
+    "../Dialog"
     "../InstalationManager"
     "../Config"
     "../LoadingBar"
@@ -16,7 +16,7 @@ qt5_use_modules(AppBackend
     Network)
 
 target_link_libraries(AppBackend
-    Button
+    Dialog
     Config
     GameExecutor
     LoadingBar

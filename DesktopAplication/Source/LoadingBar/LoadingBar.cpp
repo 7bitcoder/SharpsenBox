@@ -39,6 +39,9 @@ namespace lb {
 		return errorStr_;
 	}
 
+	Q_INVOKABLE bool LoadingBar::getUninstall() const {
+		return uninstall_;
+	}
 	void LoadingBar::pauseD() { 
 		pauseS(); 
 	}
@@ -50,5 +53,18 @@ namespace lb {
 	}
 
 	void LoadingBar::init() {
+	}
+
+	void LoadingBar::reset() {
+
+		//qml properties
+		progress_ = 0;
+		total_ = 0;
+		speed_ = 0;
+		actual_ = 0;
+		error_ = 0;
+		errorStr_ = "";
+
+		uninstall_ = false;
 	}
 }

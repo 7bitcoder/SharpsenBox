@@ -36,15 +36,12 @@ namespace cf {
 			return uc;
 		}
 		Q_INVOKABLE bool installed(int id) const;
-		Q_INVOKABLE QUrl gamePath(int id) const;
+		Q_INVOKABLE QUrl defaultInstallDir();
 		Q_INVOKABLE void setDownloadSpeed(qint32 dp) {
 			downloadSpeed_ = dp;
 		}
 		Q_INVOKABLE qint32 getDownloadSpeed() {
 			return downloadSpeed_;
-		}
-		Q_INVOKABLE void setGameAutoCheck(int id) {
-			getGame(id).autoCheck = true;
 		}
 		Q_INVOKABLE void setGameAutoCheck(int id, bool val) {
 			getGame(id).autoCheck = val;

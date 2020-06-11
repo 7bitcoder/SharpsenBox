@@ -23,6 +23,14 @@ ApplicationWindow {
     property string gameBarS: "Sylio.qml"
     property string info: "elo"
 
+    property bool dialogTrigger: _Dialog.showDialog
+    onDialogTriggerChanged: {
+        if (dialogTrigger) {
+            stage = 3
+            info = _Dialog.info
+        }
+    }
+
     function absoluteMousePos(mouseArea) {
         var windowAbs = mouseArea.mapToItem(null, mouseArea.mouseX,
                                             mouseArea.mouseY)
@@ -63,6 +71,9 @@ ApplicationWindow {
                 break
             case 2:
                 source = "PopOutInfo.qml"
+                break
+            case 3:
+                source = "PopOutDialog.qml"
                 break
             }
         }
