@@ -26,6 +26,7 @@ namespace bb {
 		std::atomic_flag resume;
 		std::atomic_flag stop;
 		void run() override;
+		void reset();
 	signals:
 		void statusSignal(qint64 progress, qint64 total, double speed);
 		void ended();

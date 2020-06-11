@@ -228,6 +228,8 @@ namespace bb {
 	}
 
 	void InstalationManager::reset() {
+		ftp_.reset();
+		installer_.reset();
 		totalBytes_ = 0; //total Bytes to download unpack all files together
 		downloadedBytes_ = 0; //Bytes downloaded
 		unpackedBytes_ = 0; // Bytes Unpacked

@@ -23,6 +23,7 @@ namespace bb {
 		}
 
 		void run() override;
+		void reset();
 	signals:
 		void statusSignal(qint64 progress);
 		void ended();
@@ -34,11 +35,11 @@ namespace bb {
 		static int64_t myread(archive* a, void* client_data, const void** buff);
 		static int ArchieveInstaller::myclose(archive* a, void* client_data);
 		std::filesystem::path destinationDir_;
-		files filesToUnpack;
+		files filesToUnpack_;
 		std::ifstream file;
 		std::string actualUnpacking;
 		char buff[BLOCK_SIZE];
-		qint64 alreadyRead = 0;
+		qint64 alreadyRead_ = 0;
 		size_t size;
 		int res = 0;
 	};

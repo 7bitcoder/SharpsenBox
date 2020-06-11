@@ -134,4 +134,16 @@ namespace bb {
 			emit ended();
 		}
 	}
+	void FtpDownloader::reset() {
+		 outfile_ = "curl.tar.gz";
+		 url_ = "";
+		 total_ = 0;
+		 now_ = 0;
+		 downloadSpeed_ = 0;
+		 speed_ = 0;
+		 stream_ = nullptr;
+		 res = 0;
+		 cancelled = false;
+		 files_.clear();
+	}
 }

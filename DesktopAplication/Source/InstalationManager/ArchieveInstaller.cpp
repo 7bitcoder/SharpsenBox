@@ -14,7 +14,7 @@
 
 namespace bb {
 	void ArchieveInstaller::setUnpackFiles(std::vector<std::filesystem::path> files) {
-		filesToUnpack = files;
+		filesToUnpack_ = files;
 	}
 
 	SSIZE_T ArchieveInstaller::myread(::archive* a, void* client_data, const void** buff) {
@@ -22,7 +22,7 @@ namespace bb {
 			*buff = data->buff;
 			data->file.read(data->buff, BLOCK_SIZE);
 			auto len = data->file.gcount();
-			data->alreadyRead += len;
+			data->alreadyRead_ += len;
 			//std::cout << data->alreadyRead << "/" << data->size << "\n";
 			data->emitStatus();
 			return len;
@@ -45,7 +45,7 @@ namespace bb {
 		flags |= ARCHIVE_EXTRACT_FFLAGS;
 		try {
 			auto& downloadDir = cf::Config::getObject().getDownloadDir();
-			for (auto& arch : filesToUnpack) {
+			for (auto& arch : filesToUnpack_) {
 				a = archive_read_new();
 				auto actualUnpacking = (downloadDir / arch).generic_string();
 				size = std::filesystem::file_size(actualUnpacking);
@@ -93,6 +93,16 @@ namespace bb {
 	}
 
 	void ArchieveInstaller::emitStatus() {
-		statusSignal(alreadyRead);
+		statusSignal(alreadyRead_);
+	}
+
+	void ArchieveInstaller::reset() {
+		 destinationDir_ = "";
+		 filesToUnpack_.clear();
+		 actualUnpacking = "";
+		
+		 alreadyRead_ = 0;
+		 size = 0;
+		 res = 0;
 	}
 }
