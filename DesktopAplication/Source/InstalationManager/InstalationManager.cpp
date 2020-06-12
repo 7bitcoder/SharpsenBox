@@ -25,7 +25,7 @@ namespace bb {
 #ifdef  _WIN32
 
 
-		HRESULT CreateLink(LPCSTR lpszPathObj, LPCSTR lpszPathLink, LPCSTR lpszDesc) {
+		HRESULT CreateLink(LPCSTR lpszPathObj, LPCSTR lpszDir, LPCSTR lpszPathLink, LPCSTR lpszDesc) {
 			HRESULT hres;
 			IShellLink* psl;
 
@@ -37,6 +37,7 @@ namespace bb {
 
 				// Set the path to the shortcut target and add the description. 
 				psl->SetPath(lpszPathObj);
+				psl->SetWorkingDirectory(lpszDir);
 				psl->SetDescription(lpszDesc);
 
 				// Query IShellLink for the IPersistFile interface, used for saving the 
@@ -148,7 +149,7 @@ namespace bb {
 				std::filesystem::path path = actualGame_->gameDir.toUtf8().constData();
 				path /= actualGame_->execDir.toUtf8().constData();
 				std::string ff(path.generic_string().c_str());
-				auto res = CreateLink(path.generic_string().c_str(), link.generic_string().c_str(), "Sylio shortcut");
+				auto res = CreateLink(path.generic_string().c_str(), path.parent_path().generic_string().c_str(), link.generic_string().c_str(), "Sylio shortcut");
 				actualGame_->shortcutPath = link.generic_string().c_str();
 			}
 		}

@@ -15,15 +15,13 @@ namespace ge {
 			return uc;
 		}
 
-		Q_INVOKABLE void execute(int id);
-
-
 		// implementation IQmlObject
 		void update() override {};
 		std::string getName() override;
 		void init() override {};
 
 
+		Q_INVOKABLE void execute(int id);
 	private:
 		virtual ~GameExecutor() {};
 		GameExecutor() {};

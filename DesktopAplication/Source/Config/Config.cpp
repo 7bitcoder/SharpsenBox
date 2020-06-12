@@ -14,11 +14,13 @@ namespace cf {
 	}
 
 	Config::Config() {
-		if (!std::filesystem::exists(configJson_))
+		if (!std::filesystem::exists(config_))
+			std::filesystem::create_directories(config_);
+		if (!std::filesystem::exists(getConfigJson()))
 			;//problem
 		QString val;
 		QFile file;
-		file.setFileName((".." / configJson_).string().c_str());
+		file.setFileName(getConfigJson().generic_string().c_str());
 		file.open(QIODevice::ReadOnly | QIODevice::Text);
 		val = file.readAll();
 		file.close();
@@ -36,7 +38,7 @@ namespace cf {
 
 	Game Config::readGameInfo(std::filesystem::path path) {
 		QFile file;
-		file.setFileName((".." / path).string().c_str());
+		file.setFileName((config_ / path).string().c_str());
 		file.open(QIODevice::ReadOnly | QIODevice::Text);
 		QString val = file.readAll();
 		std::string gg(val.toUtf8().constData());
@@ -79,7 +81,8 @@ namespace cf {
 		d.setObject(RootObject);
 		QFile file;
 		std::string ff(game.name.toUtf8().constData());
-		file.setFileName("../" + game.name + ".json");
+		auto gamePath = config_ / (game.name.toStdString() + ".json");
+		file.setFileName(gamePath.generic_string().c_str());
 		file.open(QIODevice::WriteOnly | QIODevice::Text);
 		file.write(d.toJson());
 		file.close();
@@ -104,7 +107,7 @@ namespace cf {
 		RootObject.insert("Games", arr);
 		d.setObject(RootObject);
 		QFile file;
-		file.setFileName((std::filesystem::path(".." ) / configJson_).generic_string().c_str());
+		file.setFileName(getConfigJson().generic_string().c_str());
 		file.open(QIODevice::WriteOnly | QIODevice::Text);
 		file.write(d.toJson());
 		file.close();
@@ -129,6 +132,7 @@ namespace cf {
 		}
 		return "";
 	}
+
 
 	Game& Config::getGame(int id) {
 		if (games_.contains(id)) {

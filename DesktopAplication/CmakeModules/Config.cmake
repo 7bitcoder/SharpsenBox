@@ -71,7 +71,7 @@ if(AUTO_QT_LIBS)
 		add_dependencies(deploy LaunchBox)
 endif()
 
-file( COPY  ${CMAKE_SOURCE_DIR}/LaunchBoxInfo.json ${CMAKE_SOURCE_DIR}/Sylio.json ${CMAKE_SOURCE_DIR}/Rest.json DESTINATION  ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/.. )
+file( COPY  ${CMAKE_SOURCE_DIR}/LaunchBoxInfo.json ${CMAKE_SOURCE_DIR}/Sylio.json ${CMAKE_SOURCE_DIR}/Rest.json DESTINATION  ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/../Config )
 
 #set(libType dynamic)
 ##External Libs
