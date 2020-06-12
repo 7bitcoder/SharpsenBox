@@ -39,7 +39,7 @@ namespace bb {
 		int checkState();
 		void checkSpeed();
 	private:
-		std::filesystem::path outfile_ = "curl.tar.gz";
+		std::filesystem::path outfile_ = "";
 		std::string url_;
 		qint64 total_ = 0;
 		qint64 now_ = 0;

@@ -88,16 +88,20 @@ namespace bb {
 				res = curl_easy_setopt(curl, CURLOPT_XFERINFOFUNCTION, FtpDownloader::progress_callback);
 				/* Switch on full protocol/debug output */
 
-				res = curl_easy_setopt(curl, CURLOPT_USERNAME, "public");
-				res = curl_easy_setopt(curl, CURLOPT_PASSWORD, "1234");
-
-				auto& ftpDir = cf::Config::getObject().getFtpDir();
+				//res = curl_easy_setopt(curl, CURLOPT_USERNAME, "public");
+				//res = curl_easy_setopt(curl, CURLOPT_PASSWORD, "1234");
 				auto& downloadDir = cf::Config::getObject().getDownloadDir();
 
-				curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+
+				curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+				curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+				curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+
+				//curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
 				for (size_t i = 0; !cancelled && i < files_.size(); i++) {
-					url_ = ftpDir + files_[i].generic_string().c_str();
-					outfile_ = (downloadDir / files_[i].filename()).generic_string();
+					url_ = files_[i].generic_string().c_str();
+					auto& filename = files_[i].filename();
+					outfile_ = (downloadDir / filename).generic_string();
 					res = curl_easy_setopt(curl, CURLOPT_URL, url_.c_str());
 					res = curl_easy_perform(curl);
 					if (CURLE_OK != res) {
@@ -135,7 +139,7 @@ namespace bb {
 		}
 	}
 	void FtpDownloader::reset() {
-		 outfile_ = "curl.tar.gz";
+		 outfile_ = "";
 		 url_ = "";
 		 total_ = 0;
 		 now_ = 0;

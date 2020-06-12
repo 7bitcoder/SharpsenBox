@@ -1,4 +1,4 @@
-#include "stdio.h"
+﻿#include "stdio.h"
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -18,14 +18,14 @@ namespace bb {
 	}
 
 	SSIZE_T ArchieveInstaller::myread(::archive* a, void* client_data, const void** buff) {
-			ArchieveInstaller* data = (ArchieveInstaller*)client_data;
-			*buff = data->buff;
-			data->file.read(data->buff, BLOCK_SIZE);
-			auto len = data->file.gcount();
-			data->alreadyRead_ += len;
-			//std::cout << data->alreadyRead << "/" << data->size << "\n";
-			data->emitStatus();
-			return len;
+		ArchieveInstaller* data = (ArchieveInstaller*)client_data;
+		*buff = data->buff;
+		data->file.read(data->buff, BLOCK_SIZE);
+		auto len = data->file.gcount();
+		data->alreadyRead_ += len;
+		//std::cout << data->alreadyRead << "/" << data->size << "\n";
+		data->emitStatus();
+		return len;
 	}
 
 	int ArchieveInstaller::myclose(::archive* a, void* client_data) {
@@ -47,8 +47,7 @@ namespace bb {
 			auto& downloadDir = cf::Config::getObject().getDownloadDir();
 			for (auto& arch : filesToUnpack_) {
 				a = archive_read_new();
-				auto actualUnpacking = (downloadDir / arch).generic_string();
-				size = std::filesystem::file_size(actualUnpacking);
+				auto actualUnpacking = (downloadDir / arch.filename()).generic_string();
 				file.open(actualUnpacking, std::ios::binary);
 				if (!file.is_open())
 					throw std::exception("Could not open file");
@@ -61,13 +60,17 @@ namespace bb {
 					//printf("%s\n", archive_entry_pathname(entry));
 					const char* currentFile = archive_entry_pathname(entry);
 					std::filesystem::path fullOutputPath = destinationDir_.generic_string();
-					fullOutputPath /= currentFile;
-					fullOutputPath = fullOutputPath.generic_string();
-					archive_entry_set_pathname(entry, fullOutputPath.generic_string().c_str());
-					res = archive_read_extract(a, entry, flags);
-					if (res != ARCHIVE_OK) {
-						archive_read_finish(a);
-						break;
+					if (currentFile) {
+						fullOutputPath /= currentFile;
+						fullOutputPath = fullOutputPath.generic_string();
+						archive_entry_set_pathname(entry, fullOutputPath.generic_string().c_str());
+						res = archive_read_extract(a, entry, flags);
+						if (res != ARCHIVE_OK) {
+							//archive_read_finish(a);
+							break;
+						}
+					} else {
+						int gg = 0;
 					}
 				}
 				res = archive_read_finish(a);
@@ -81,7 +84,7 @@ namespace bb {
 			} catch (...) {
 				res = -1;//errorCatched(-1);
 			}
-		} catch ( ... ) {
+		} catch (...) {
 			res = -1;
 		}
 
@@ -97,12 +100,12 @@ namespace bb {
 	}
 
 	void ArchieveInstaller::reset() {
-		 destinationDir_ = "";
-		 filesToUnpack_.clear();
-		 actualUnpacking = "";
-		
-		 alreadyRead_ = 0;
-		 size = 0;
-		 res = 0;
+		destinationDir_ = "";
+		filesToUnpack_.clear();
+		actualUnpacking = "";
+
+		alreadyRead_ = 0;
+		size = 0;
+		res = 0;
 	}
 }

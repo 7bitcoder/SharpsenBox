@@ -16,7 +16,6 @@ namespace ge {
 		}
 
 		Q_INVOKABLE void execute(int id);
-		Q_INVOKABLE void uninstall(int id);
 
 
 		// implementation IQmlObject

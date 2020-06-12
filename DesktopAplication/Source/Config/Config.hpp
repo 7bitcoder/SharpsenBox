@@ -63,7 +63,6 @@ namespace cf {
 		QString& getVer() { return version_; }
 		std::filesystem::path& getDownloadDir() { return downloadDir_; }
 		std::filesystem::path& getConfigJson() { return configJson_; }
-		std::string& getFtpDir() { return ftpUrl_; }
 	private:
 		Config();
 		virtual ~Config();
@@ -73,7 +72,6 @@ namespace cf {
 		QString version_;
 		std::filesystem::path configJson_ = "./LaunchBoxInfo.json";
 		std::filesystem::path downloadDir_ = "../Download";
-		std::string ftpUrl_ = "ftp://localhost/";
 		std::unordered_map<int, Game> games_;
 		qint32 downloadSpeed_;
 	};

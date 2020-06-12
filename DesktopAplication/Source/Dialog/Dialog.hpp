@@ -28,7 +28,7 @@ namespace dl {
 		Q_PROPERTY(bool showDialog READ getShowDialog NOTIFY showDialogChanged);
 		Q_PROPERTY(QString info READ getInfo);
 
-
+		//QMl invoklabes
 		Q_INVOKABLE void dialog(bool value);
 		Q_INVOKABLE bool getShowDialog() { return show_; }
 		Q_INVOKABLE QString getInfo() {	return info_; }
