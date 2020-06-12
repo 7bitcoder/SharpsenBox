@@ -15,6 +15,7 @@ namespace lb {
 			static LoadingBar uc;
 			return uc;
 		}
+
 		enum  State : int {
 			NONE = -1, CHECKING = 0, DOWNLOADING, INSTALLING, PAUSE, ERRORD, STOPPED, COMPLEET
 		};
@@ -22,42 +23,21 @@ namespace lb {
 			HIDDEN = 0, SHOWED, MINIMALIZED
 		};
 
-		//!!!!! disconnect(receiver, SLOT(slot()));@ !! disconnect
 
-		// implementation IQmlObject
+		// IQmlObject implementation
 		void update() override;
 		std::string getName() override;
 		void init() override;
 
-		void setTotal(double tot) {
-			total_ = tot;
-		}
-		void setActual(double act) {
-			actual_ = act;
-		}
-		void setProgress(double prog) {
-			progress_ = prog;
-		}
-		void setSpeed(double sp) {
-			speed_ = sp;
-		}
-		void setError(int code, QString str) {
-			error_ = code;
-			errorStr_ = str;
-			errorChanged();
-		}
-		void setState(State st) {
-			state_= st;
-			stateChanged();
-		}
-		void setVisibleState(VisibleState st) {
-			visibleState_ = st;
-			visibleStateChanged();
-		}
-
-		void setUninstallMode(bool un) {
-			uninstall_ = un;
-		}
+		// Interface for other components
+		void setTotal(double tot);
+		void setActual(double act);
+		void setProgress(double prog);
+		void setSpeed(double sp);
+		void setError(int code, QString str);
+		void setState(State st);
+		void setVisibleState(VisibleState st);
+		void setUninstallMode(bool un);
 
 		void reset();
 		//QML Propetries
@@ -111,6 +91,8 @@ namespace lb {
 		State state_ = State::NONE;
 		VisibleState visibleState_ = VisibleState::HIDDEN;
 
+		//synhronize mutex
+		std::mutex mx_;
 		//qml properties
 		double progress_ = 0;
 		double total_ = 0;

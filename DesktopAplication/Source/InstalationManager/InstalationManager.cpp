@@ -316,6 +316,4 @@ namespace bb {
 		gi::GameInstaller::getObject().unLock();
 		errorEmit();
 	}
-
-
 }

@@ -5,7 +5,7 @@
 #include "AppBackend.hpp"
 
 int main(int argc, char** argv) {
-	//poprawia wydajnoœæ ale animacje s¹ za szybkie
+	//responsible is more efficient but animations are too fast
 	//QCoreApplication::setAttribute(Qt::AA_UseSoftwareOpenGL);
 	QGuiApplication app(argc, argv);
 	QQmlApplicationEngine engine;

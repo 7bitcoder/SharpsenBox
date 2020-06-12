@@ -12,22 +12,27 @@ namespace dl {
 			static Dialog uc;
 			return uc;
 		}
-		Q_INVOKABLE void dialog(bool value);
-		Q_INVOKABLE bool getShowDialog() { return show_; }
-		Q_INVOKABLE QString getInfo() {
-			return info_;
-		}
-		Q_PROPERTY(bool showDialog READ getShowDialog NOTIFY showDialogChanged);
-		Q_PROPERTY(QString info READ getInfo);
-		
-		bool getValue() { return value_; }
+
+		// IQmlObject intefrace
+
 		std::string getName() { return TYPENAME(Dialog); }
 		void update() {}
-
 		void init() override {}
 
+		// interface
 		void setInfo(QString str) { info_ = str; }
 		void show() { show_ = true;  showDialogChanged(); }
+		bool getValue() { return value_; }
+
+		// QML Propetries
+		Q_PROPERTY(bool showDialog READ getShowDialog NOTIFY showDialogChanged);
+		Q_PROPERTY(QString info READ getInfo);
+
+
+		Q_INVOKABLE void dialog(bool value);
+		Q_INVOKABLE bool getShowDialog() { return show_; }
+		Q_INVOKABLE QString getInfo() {	return info_; }
+
 	private:
 		Dialog() {};
 		virtual ~Dialog() {};
