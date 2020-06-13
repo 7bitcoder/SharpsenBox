@@ -23,3 +23,13 @@ find_package(Qt5 REQUIRED COMPONENTS
 	Network)
 
 add_subdirectory(Source)
+
+install(FILES Config/Updater/LaunchBoxInfo.json DESTINATION ${UpdaterPath}/Config)
+install(FILES Config/Updater/Sylio.json DESTINATION ${UpdaterPath}/Config)
+install(FILES Config/Updater/Rest.json DESTINATION ${UpdaterPath}/Config)
+
+install(FILES Config/LaunchBox/LaunchBoxInfo.json DESTINATION ${LaunchBoxPath}/Config)
+install(FILES Config/LaunchBox/Sylio.json DESTINATION ${LaunchBoxPath}/Config)
+install(FILES Config/LaunchBox/Rest.json DESTINATION ${LaunchBoxPath}/Config)
+
+install(FILES Config/LaunchBox/LaunchBoxInfo.json DESTINATION ${LaunchBoxPath}/..)

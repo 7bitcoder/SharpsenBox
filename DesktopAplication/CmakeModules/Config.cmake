@@ -71,35 +71,9 @@ if(AUTO_QT_LIBS)
 		add_dependencies(deploy LaunchBox)
 endif()
 
-file( COPY  ${CMAKE_SOURCE_DIR}/LaunchBoxInfo.json ${CMAKE_SOURCE_DIR}/Sylio.json ${CMAKE_SOURCE_DIR}/Rest.json DESTINATION  ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/../Config )
+set(totalPath  ${CMAKE_SOURCE_DIR}/Config/LaunchBox)
+file( COPY  ${totalPath}/LaunchBoxInfo.json ${totalPath}/Sylio.json ${totalPath}/Rest.json DESTINATION  ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/../Config )
 
-#set(libType dynamic)
-##External Libs
-#if(DEBUG)
-#	set(d d)
-#endif()
-#
-#set(LCURL_INC "${CMAKE_SOURCE_DIR}/ExternalLibs/curl/x64-windows-static/include")
-#
-#if(64BIT)
-#	if(WIN)
-#		set(LCURL_LIBRARY  "${CMAKE_SOURCE_DIR}/ExternalLibs/curl/x64-windows-static/lib/libcurl.lib")
-#		set(ZLIB_LIBRARY  "${CMAKE_SOURCE_DIR}/ExternalLibs/curl/x64-windows-static/lib/zlib.lib")
-#	elseif(LINUX)
-#	
-#	else()# mac
-#
-#	endif() 
-#	
-#else()#32 bit
-#
-#	if(WIN)
-#		set(LCURL_LIBRARY  "${CMAKE_SOURCE_DIR}/ExternalLibs/curl/x86-windows-static/lib/libcurl.lib")
-#	elseif(LINUX)
-#	
-#	else()# mac
-#
-#	endif() #32 bit
-#endif()
-#message("asdasds ========== ${LCURL_INC}")
-#message("dddddd ========== ${LCURL_LIBRARY}")
+set(UpdaterPath Updater)
+
+set(LaunchBoxPath LaunchBox)

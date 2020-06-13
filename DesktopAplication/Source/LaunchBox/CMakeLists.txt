@@ -29,3 +29,5 @@ target_link_libraries(LaunchBox
     ${CURL_LIBRARY})
 
 target_include_directories(LaunchBox PUBLIC "../AppBackend" "../test")
+
+install(TARGETS LaunchBox DESTINATION ${LaunchBoxPath}/bin)

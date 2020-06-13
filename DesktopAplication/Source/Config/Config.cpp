@@ -97,7 +97,14 @@ namespace cf {
 	}
 
 	Config::~Config() {
-		QJsonDocument d;
+		QFile file;
+		file.setFileName(getConfigJson().string().c_str());
+		file.open(QIODevice::ReadOnly | QIODevice::Text);
+		QString val = file.readAll();
+		std::string gg(val.toUtf8().constData());
+		file.close();
+		QJsonDocument d = QJsonDocument::fromJson(val.toUtf8());
+
 		QJsonObject RootObject = d.object();
 		RootObject.insert("Ver", version_);
 		RootObject.insert("DownloadSpeed", QString::number(downloadSpeed_));
@@ -108,7 +115,6 @@ namespace cf {
 		}
 		RootObject.insert("Games", arr);
 		d.setObject(RootObject);
-		QFile file;
 		file.setFileName(getConfigJson().generic_string().c_str());
 		file.open(QIODevice::WriteOnly | QIODevice::Text);
 		file.write(d.toJson());

@@ -30,3 +30,6 @@ target_include_directories(AppUpdater PUBLIC
     "../InstalationManager")
 
 set_target_properties(AppUpdater PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Updater")
+
+
+install(TARGETS AppUpdater DESTINATION ${UpdaterPath}/Updater)
