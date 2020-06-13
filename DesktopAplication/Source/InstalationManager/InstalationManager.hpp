@@ -1,14 +1,15 @@
-#pragma once
+﻿#pragma once
 #include <QObject>
 #include <QQmlApplicationEngine>
 #include <QDebug>
 #include <QThread>
 #include <QNetworkAccessManager>
 #include "IQmlObject.hpp"
-#include "FtpDownloader.hpp"
+#include "Downloader.hpp"
 #include "ArchieveInstaller.hpp"
 #include "IQmlObject.hpp"
 #include "Config.hpp"
+#include "Cleanup.hpp"
 
 namespace lb {
 	class LoadingBar;
@@ -17,7 +18,7 @@ namespace bb {
 	class InstalationManager : public bc::IQmlObject {
 		Q_OBJECT
 	public:
-		using files = std::vector<std::filesystem::path>;
+		using files = std::vector<std::pair<std::filesystem::path, std::string>>;
 		static InstalationManager& getObject() {
 			static InstalationManager uc;
 			return uc;
@@ -32,28 +33,31 @@ namespace bb {
 			HIDDEN = 0, SHOWED, MINIMALIZED
 		};
 
-
-		//!!!!! disconnect(receiver, SLOT(slot()));@ !! disconnect
-
 		// implementation IQmlObject
 		void update() override {};
 		std::string getName() override;
 		void init() override;
-		//
+
+		// interface
 		void clearDownloadDir();
 		void setTotal(qint64 tot);
-		void downloadFile(std::filesystem::path fileName, qint64 tot); //just download
-		void installFile(std::filesystem::path fileName, qint64 tot, std::filesystem::path dir = "../", cf::Game* game = nullptr); //download + install
-		
-		void installGame(cf::Game& game); //download + install
 
+		void downloadFile(std::filesystem::path url, std::string fileName, qint64 tot); //just download
+		void installFile(std::filesystem::path url, std::string fileName, qint64 tot, std::filesystem::path dir = "../", cf::Game* game = nullptr); //download + install
 		void downloadFiles(files files, qint64 tot); //just download
 		void installFiles(files files, qint64 tot, std::filesystem::path dir = "../", cf::Game* game = nullptr); //download + install
+
+		void installGame(cf::Game& game); //download + install
+
 		double getProgress() { return progress_; }
 		double getTotal() { return total_; }
 		double getSpeed() { return speed_; }
 		double getActual() { return actual_; }
 		QString getError() { return errorStr_; }
+
+		void pause();
+		void resume();
+		void stop();
 	private:
 		virtual ~InstalationManager();
 		InstalationManager() {};
@@ -67,12 +71,10 @@ namespace bb {
 		void downloadStatus(qint64 progress, qint64 total, double speed);
 		void installStatus(qint64 progress);
 		void TotalSize(qint64 total);
-		void pauseD();
-		void resumeD();
-		void stopD();
 		void errorCatched(int code);
-		void ftpEnded();
+		void ftpEnded(bool cancelled);
 		void archieveEnded();
+		void cleanUpEnded();
 	signals:
 		void errorEmit();
 		void downloadEnded();
@@ -80,14 +82,20 @@ namespace bb {
 		void clearFilesEnded();
 	private:
 		bool onlyDownload;
-		cf::Game* actualGame_ = nullptr;
+		bool cancel_;
 		files files_;
+
+		cf::Game* actualGame_ = nullptr;
 		lb::LoadingBar* LoadingBar_ = nullptr;
+		
 		Stage stage_ = Stage::NONE;
 		State state_ = State::CHECKING;
 		VisibleState visibleState_ = VisibleState::HIDDEN;
-		FtpDownloader ftp_;
+		
+		Downloader downloader_;
 		ArchieveInstaller installer_;
+		cu::Cleanup cleanUpper_;
+
 		std::filesystem::path downloadDir_;
 		std::filesystem::path installDir_;
 

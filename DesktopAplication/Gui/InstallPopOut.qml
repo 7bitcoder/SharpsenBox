@@ -173,9 +173,9 @@ Rectangle {
                 width: 100
                 text: "Install"
                 onClicked: {
-                    _GameInstaller.installGame(installbar.gameId,
-                                               installbar.installDirectory,
-                                               createShortcut.enabled)
+                    _GameManager.installGame(installbar.gameId,
+                                             installbar.installDirectory,
+                                             createShortcut.enabled)
                     window.stage = 0
                 }
                 contentItem: Text {

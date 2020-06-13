@@ -1,19 +1,21 @@
 ﻿#include <iostream>
 #include <string>
-#include "GameInstaller.hpp"
+#include "GameManager.hpp"
 #include "Config.hpp"
 #include"InstalationManager.hpp"
 #include "GameUninstaller.hpp"
 #include "LoadingBar.hpp"
 #include "Dialog.hpp"
 
-namespace gi {
+namespace gm {
 
-	std::string GameInstaller::getName() {
-		return TYPENAME(GameInstaller);
+	std::string GameManager::getName() {
+		return TYPENAME(GameManager);
 	}
-	GameInstaller::GameInstaller() : uninstaller_(new GameUninstaller) {};
-	Q_INVOKABLE void GameInstaller::installGame(int id, QString path, bool shortcut) {
+	GameManager::GameManager() : uninstaller_(new GameUninstaller) {};
+
+
+	Q_INVOKABLE void GameManager::installGame(int id, QString path, bool shortcut) {
 		if (!lock_) {
 			lock();
 			auto& game = cf::Config::getObject().getGame(id);
@@ -29,20 +31,21 @@ namespace gi {
 			bb::InstalationManager::getObject().installGame(game);
 		}
 	}
-	void GameInstaller::init() {
-		connect(uninstaller_, &GameUninstaller::uninstalationComplete, this, &GameInstaller::uninstallation);
+	void GameManager::init() {
+		connect(uninstaller_, &GameUninstaller::uninstalationComplete, this, &GameManager::uninstallation);
 	};
-	Q_INVOKABLE void GameInstaller::unistallRequest(int id) {
+
+	Q_INVOKABLE void GameManager::unistallRequest(int id) {
 		Gameid_ = id;
 		auto& dialog = dl::Dialog::getObject();
-		connect(&dialog, &dl::Dialog::dialogTriggered, this, &GameInstaller::uninstall);
-		dialog.setInfo(QString("Are you sure you want to remove " ) + cf::Config::getObject().getGameName(id));
+		connect(&dialog, &dl::Dialog::dialogTriggered, this, &GameManager::uninstall);
+		dialog.setInfo(QString("Are you sure you want to remove ") + cf::Config::getObject().getGameName(id));
 		dialog.show();
 	}
 
-	void GameInstaller::uninstall(bool dialogValue) {
+	void GameManager::uninstall(bool dialogValue) {
 		if (dialogValue) {
-			gi::GameInstaller::getObject().lock();
+			lock();
 			auto& lb = lb::LoadingBar::getObject();
 			lb.reset();
 			lb.setUninstallMode(true);
@@ -52,12 +55,12 @@ namespace gi {
 			uninstaller_->start();
 		} else {} //nothing
 		auto& dialog = dl::Dialog::getObject();
-		disconnect(&dialog, &dl::Dialog::dialogTriggered, this, &GameInstaller::uninstall);
+		disconnect(&dialog, &dl::Dialog::dialogTriggered, this, &GameManager::uninstall);
 	}
 
-	void GameInstaller::uninstallation(int id) {
+	void GameManager::uninstallation(int id) {
 		cf::Config::getObject().getGame(id).installed = false;
-		gi::GameInstaller::getObject().unLock();
+		unLock();
 		auto& lb = lb::LoadingBar::getObject();
 		lb.reset();
 		lb.setUninstallMode(false);

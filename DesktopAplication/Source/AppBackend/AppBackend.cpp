@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include <QDebug>
 #include <QQmlContext>
 #include "AppBackend.hpp"
@@ -6,7 +6,7 @@
 #include "InstalationManager.hpp"
 #include "Config.hpp"
 #include "LoadingBar.hpp"
-#include "GameInstaller.hpp"
+#include "GameManager.hpp"
 #include "GameExecutor.hpp"
 
 
@@ -28,7 +28,7 @@ namespace bc {
 		registerObject<dl::Dialog>();
 		registerObject<bb::InstalationManager>();
 		registerObject<lb::LoadingBar>();
-		registerObject<gi::GameInstaller>();
+		registerObject<gm::GameManager>();
 		registerObject<ge::GameExecutor>();
 	}
 	void Backend::initializeObjects() {

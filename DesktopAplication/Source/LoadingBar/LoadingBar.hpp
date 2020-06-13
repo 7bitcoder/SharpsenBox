@@ -1,10 +1,11 @@
-#pragma once
+﻿#pragma once
 #include <QObject>
 #include <QQmlApplicationEngine>
 #include <QDebug>
 #include <QThread>
 #include <QNetworkAccessManager>
 #include "IQmlObject.hpp"
+#include "InstalationManager.hpp"
 #include <filesystem>
 
 namespace lb {
@@ -68,13 +69,14 @@ namespace lb {
 
 		Q_INVOKABLE bool getUninstall() const;
 
+		Q_INVOKABLE void pause() const { bb::InstalationManager::getObject().pause(); };
+		Q_INVOKABLE void resume() const { bb::InstalationManager::getObject().resume(); };
+		Q_INVOKABLE void stop() const { bb::InstalationManager::getObject().stop(); };
+
 	private:
 		virtual ~LoadingBar();
 		LoadingBar() {};
 	public slots:
-		void pauseD();
-		void resumeD();
-		void stopD();
 	signals:
 		void stateChanged();
 		void visibleStateChanged();
@@ -82,11 +84,6 @@ namespace lb {
 		void errorChanged();
 		void notifyEnded();
 		void getProgress(qint64 actual);
-
-		void pauseS();
-		void resumeS();
-		void stopS();
-
 	private:
 		State state_ = State::NONE;
 		VisibleState visibleState_ = VisibleState::HIDDEN;

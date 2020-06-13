@@ -1,7 +1,8 @@
 {
   "Ver": "1.0",
-  "Size": "128 744 158",
-  "Url": "bin.zip",
+  "Size": "128744158",
+  "FileName": "bin.zip",
+  "Url": "https://sourceforge.net/projects/gamelaunchbox/files/bin.zip",
   "DownloadSpeed": "0",
   "Games": [
     "Sylio",

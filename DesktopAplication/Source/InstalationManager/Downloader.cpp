@@ -1,4 +1,4 @@
-﻿#include "FtpDownloader.hpp"
+﻿#include "Downloader.hpp"
 #include "Config.hpp"
 #include <stdio.h>
 #include <iostream>
@@ -7,14 +7,14 @@
 
 namespace bb {
 
-	FtpDownloader::FtpDownloader() {
+	Downloader::Downloader() {
 		pause.test_and_set();
 		stop.test_and_set();
 		resume.test_and_set();
 	}
 
-	size_t FtpDownloader::my_fwrite(void* buffer, size_t size, size_t nmemb, void* userdata) {
-		FtpDownloader* out = (FtpDownloader*)userdata;
+	size_t Downloader::my_fwrite(void* buffer, size_t size, size_t nmemb, void* userdata) {
+		Downloader* out = (Downloader*)userdata;
 		if (!out->stream_) {
 			/* open file for writing */
 			out->stream_ = fopen(out->outfile_.string().c_str(), "wb");
@@ -26,16 +26,16 @@ namespace bb {
 		return  fwrite(buffer, size, nmemb, out->stream_);
 	}
 
-	int FtpDownloader::progress_callback(void* userData, curl_off_t dltotal, curl_off_t dlnow, curl_off_t ultotal, curl_off_t ulnow) {
+	int Downloader::progress_callback(void* userData, curl_off_t dltotal, curl_off_t dlnow, curl_off_t ultotal, curl_off_t ulnow) {
 		// It's here you will write the code for the progress message or bar
-		FtpDownloader* out = (FtpDownloader*)userData;
+		Downloader* out = (Downloader*)userData;
 		out->total_ = dltotal;
 		out->now_ = dlnow;
 		out->emitStatus();
 		return out->checkState();
 	}
 
-	void FtpDownloader::checkSpeed() {
+	void Downloader::checkSpeed() {
 		auto sp = cf::Config::getObject().getDownloadSpeed();
 		if (downloadSpeed_ != sp) {
 			downloadSpeed_ = sp;
@@ -43,7 +43,7 @@ namespace bb {
 		}
 	}
 
-	int FtpDownloader::checkState() {
+	int Downloader::checkState() {
 		checkSpeed();
 		if (!pause.test_and_set()) {
 			res = curl_easy_pause(curl, CURLPAUSE_ALL);
@@ -62,12 +62,12 @@ namespace bb {
 		return 0;
 	}
 
-	void FtpDownloader::emitStatus() {
+	void Downloader::emitStatus() {
 		auto x = curl_easy_getinfo(curl, CURLINFO_SPEED_DOWNLOAD, &speed_);
 		emit statusSignal(now_, total_, speed_);
 	}
 
-	void FtpDownloader::run() {
+	void Downloader::run() {
 		try {
 			// clear flags etc 
 			::curl_global_init(CURL_GLOBAL_DEFAULT);
@@ -77,7 +77,7 @@ namespace bb {
 				 * You better replace the URL with one that works!
 				 */
 				 /* Define our callback to get called when there's data to be written */
-				res = curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, FtpDownloader::my_fwrite);
+				res = curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, Downloader::my_fwrite);
 				/* Set a pointer to our struct to pass to the callback */
 				res = curl_easy_setopt(curl, CURLOPT_WRITEDATA, this);
 
@@ -85,9 +85,10 @@ namespace bb {
 
 				res = curl_easy_setopt(curl, CURLOPT_XFERINFODATA, this);
 				// Install the callback function
-				res = curl_easy_setopt(curl, CURLOPT_XFERINFOFUNCTION, FtpDownloader::progress_callback);
+				res = curl_easy_setopt(curl, CURLOPT_XFERINFOFUNCTION, Downloader::progress_callback);
 				/* Switch on full protocol/debug output */
 
+				curl_easy_setopt(curl, CURLOPT_TIMEOUT_MS, 20'000L);
 				//res = curl_easy_setopt(curl, CURLOPT_USERNAME, "public");
 				//res = curl_easy_setopt(curl, CURLOPT_PASSWORD, "1234");
 				auto& downloadDir = cf::Config::getObject().getDownloadDir();
@@ -99,17 +100,14 @@ namespace bb {
 
 				//curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
 				for (size_t i = 0; !cancelled && i < files_.size(); i++) {
-					url_ = files_[i].generic_string().c_str();
-					auto& filename = files_[i].filename();
+					url_ = files_[i].first.generic_string().c_str();
+					auto& filename = files_[i].second;
 					outfile_ = (downloadDir / filename).generic_string();
 					res = curl_easy_setopt(curl, CURLOPT_URL, url_.c_str());
 					res = curl_easy_perform(curl);
 					if (CURLE_OK != res) {
 						break;
 					}
-					if (stream_)
-						fclose(stream_); /* close the local file */
-					stream_ = nullptr;
 				}
 			}
 
@@ -118,8 +116,9 @@ namespace bb {
 			fprintf(stderr, "exception catched white doanloading data");
 			res = 0;
 		}
+		if (stream_)
+			fclose(stream_); /* close the local file */
 		stream_ = nullptr;
-		cancelled = false;
 		::curl_easy_cleanup(curl);
 		::curl_global_cleanup();
 		std::cout << "termination\n";
@@ -129,25 +128,31 @@ namespace bb {
 			case CURLE_OK:
 				break;
 			case CURLE_OPERATION_TIMEDOUT:
-				if (cancelled)
+				if (cancelled) {
+					emit ended(true);
 					break;
+				}
 			default:
 				emit error(res);
 			}
 		} else {
-			emit ended();
+			emit ended(false);
 		}
+		cancelled = false;
 	}
-	void FtpDownloader::reset() {
-		 outfile_ = "";
-		 url_ = "";
-		 total_ = 0;
-		 now_ = 0;
-		 downloadSpeed_ = 0;
-		 speed_ = 0;
-		 stream_ = nullptr;
-		 res = 0;
-		 cancelled = false;
-		 files_.clear();
+	void Downloader::reset() {
+		pause.test_and_set();
+		stop.test_and_set();
+		resume.test_and_set();
+		outfile_ = "";
+		url_ = "";
+		total_ = 0;
+		now_ = 0;
+		downloadSpeed_ = 0;
+		speed_ = 0;
+		stream_ = nullptr;
+		res = 0;
+		cancelled = false;
+		files_.clear();
 	}
 }

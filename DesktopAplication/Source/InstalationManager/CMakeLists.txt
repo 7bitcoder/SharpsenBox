@@ -4,21 +4,20 @@ conan_basic_setup(TARGETS)
 
 add_library(InstalationManager STATIC
     InstalationManager.cpp
-    FtpDownloader.cpp 
-    ArchieveInstaller.cpp)
+    Downloader.cpp 
+    ArchieveInstaller.cpp "Cleanup.cpp" "Cleanup.hpp")
 
 target_include_directories(InstalationManager PUBLIC
     "../AppBackend"
     "../Config"
     "../LoadingBar"
-    "../GameInstaller")
+    "../GameManager")
 
 qt5_use_modules(InstalationManager 
     Quick 
     Core 
     Network)
 
-message("asdsadsadsa d ${CURL_LIBRARIES}")
 target_link_libraries(InstalationManager
     Qt5::Widgets
     Qt5::Gui

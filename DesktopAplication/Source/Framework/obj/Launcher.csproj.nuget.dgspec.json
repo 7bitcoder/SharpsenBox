@@ -1,21 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Sylwek\\Desktop\\LaunchBox\\DesktopAplication\\Source\\Framework\\Launcher\\Launcher.csproj": {}
+    "C:\\Users\\Sylwester\\Desktop\\LaunchBox\\DesktopAplication\\Source\\Framework\\Launcher.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Sylwek\\Desktop\\LaunchBox\\DesktopAplication\\Source\\Framework\\Launcher\\Launcher.csproj": {
+    "C:\\Users\\Sylwester\\Desktop\\LaunchBox\\DesktopAplication\\Source\\Framework\\Launcher.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Sylwek\\Desktop\\LaunchBox\\DesktopAplication\\Source\\Framework\\Launcher\\Launcher.csproj",
+        "projectUniqueName": "C:\\Users\\Sylwester\\Desktop\\LaunchBox\\DesktopAplication\\Source\\Framework\\Launcher.csproj",
         "projectName": "Launcher",
-        "projectPath": "C:\\Users\\Sylwek\\Desktop\\LaunchBox\\DesktopAplication\\Source\\Framework\\Launcher\\Launcher.csproj",
-        "packagesPath": "C:\\Users\\Sylwek\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Sylwek\\Desktop\\LaunchBox\\DesktopAplication\\Source\\Framework\\Launcher\\obj\\",
+        "projectPath": "C:\\Users\\Sylwester\\Desktop\\LaunchBox\\DesktopAplication\\Source\\Framework\\Launcher.csproj",
+        "packagesPath": "C:\\Users\\Sylwester\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Sylwester\\Desktop\\LaunchBox\\DesktopAplication\\Source\\Framework\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Microsoft\\Xamarin\\NuGet\\"
+        ],
         "configFilePaths": [
-          "C:\\Users\\Sylwek\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\Sylwester\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp3.1"
@@ -52,7 +56,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.202\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.301\\RuntimeIdentifierGraph.json"
         }
       }
     }

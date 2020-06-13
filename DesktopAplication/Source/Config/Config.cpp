@@ -59,6 +59,7 @@ namespace cf {
 		g.shortcutPath = d["ShortcutPath"].toString();
 		g.shortcut = readBool(d["Shortcut"]);
 		g.autoCheck = readBool(d["AutoUpdate"]);
+		g.fileName = d["FileName"].toString();
 		//std::cout << g.id << g.url.toUtf8().constData() << g.version.toUtf8().constData() << g.installed;
 		return g;
 	}
@@ -72,6 +73,7 @@ namespace cf {
 		RootObject.insert("Ver", game.version);
 		RootObject.insert("Size", QString::number(game.size));
 		RootObject.insert("Url", game.url);
+		RootObject.insert("FileName", game.fileName);
 		RootObject.insert("GameDir", game.gameDir);
 		RootObject.insert("GameExecPath", game.execDir);
 		RootObject.insert("ShortcutPath", game.shortcutPath);
@@ -123,6 +125,7 @@ namespace cf {
 			return it->second.installed;
 		return false;
 	}
+
 	Q_INVOKABLE QUrl Config::defaultInstallDir() {
 		if (getenv("PROGRAMFILES")) { //windows
 			std::filesystem::path path = getenv("PROGRAMFILES");

@@ -19,6 +19,7 @@ namespace cf {
 		QString name;
 		QString version;
 		QString url;
+		QString fileName;
 		QString gameDir;
 		QString execDir;
 		QString shortcutPath;
@@ -44,8 +45,10 @@ namespace cf {
 		// interface 
 		Game& getGame(int id);
 		QString& getVer() { return version_; }
+		void setVer(QString ver) { version_ = ver; }
 		std::filesystem::path& getDownloadDir() { return downloadDir_; }
 		std::filesystem::path getConfigJson() { return config_ / configJson_; }
+		std::filesystem::path getConfigJsonFileName() { return configJson_; }
 
 		//QMl invoklabes
 		Q_INVOKABLE bool installed(int id) const;
@@ -55,6 +58,7 @@ namespace cf {
 		Q_INVOKABLE void setGameAutoCheck(int id, bool val) { getGame(id).autoCheck = val; }
 		Q_INVOKABLE bool getGameAutoCheck(int id) { bool v = getGame(id).autoCheck;	return v; }
 		Q_INVOKABLE QString getGameName(int id) { return getGame(id).name; }
+		Q_INVOKABLE QString  getConfigJsonUrl() { return configJsonUrl_; }
 	private:
 		Config();
 		virtual ~Config();
@@ -63,7 +67,9 @@ namespace cf {
 	private:
 		QString version_;
 		std::filesystem::path config_ = "../Config";
-		std::filesystem::path configJson_ = "./LaunchBoxInfo.json";
+		std::filesystem::path configJson_ = "LaunchBoxInfo.json";
+		QString configJsonUrl_ = "https://sourceforge.net/projects/gamelaunchbox/files/LaunchBoxInfo.json";
+
 		std::filesystem::path downloadDir_ = "../Download";
 		std::unordered_map<int, Game> games_;
 		qint32 downloadSpeed_;

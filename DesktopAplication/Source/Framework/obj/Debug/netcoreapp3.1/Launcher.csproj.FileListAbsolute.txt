@@ -11,3 +11,16 @@ C:\Users\Sylwek\Desktop\LaunchBox\DesktopAplication\Source\Framework\Launcher\ob
 C:\Users\Sylwek\Desktop\LaunchBox\DesktopAplication\Source\Framework\Launcher\obj\Debug\netcoreapp3.1\Launcher.dll
 C:\Users\Sylwek\Desktop\LaunchBox\DesktopAplication\Source\Framework\Launcher\obj\Debug\netcoreapp3.1\Launcher.pdb
 C:\Users\Sylwek\Desktop\LaunchBox\DesktopAplication\Source\Framework\Launcher\obj\Debug\netcoreapp3.1\Launcher.genruntimeconfig.cache
+C:\Users\Sylwester\Desktop\LaunchBox\DesktopAplication\Source\Framework\bin\Debug\netcoreapp3.1\Launcher.exe
+C:\Users\Sylwester\Desktop\LaunchBox\DesktopAplication\Source\Framework\bin\Debug\netcoreapp3.1\Launcher.deps.json
+C:\Users\Sylwester\Desktop\LaunchBox\DesktopAplication\Source\Framework\bin\Debug\netcoreapp3.1\Launcher.runtimeconfig.json
+C:\Users\Sylwester\Desktop\LaunchBox\DesktopAplication\Source\Framework\bin\Debug\netcoreapp3.1\Launcher.runtimeconfig.dev.json
+C:\Users\Sylwester\Desktop\LaunchBox\DesktopAplication\Source\Framework\bin\Debug\netcoreapp3.1\Launcher.dll
+C:\Users\Sylwester\Desktop\LaunchBox\DesktopAplication\Source\Framework\bin\Debug\netcoreapp3.1\Launcher.pdb
+C:\Users\Sylwester\Desktop\LaunchBox\DesktopAplication\Source\Framework\obj\Debug\netcoreapp3.1\Launcher.csprojAssemblyReference.cache
+C:\Users\Sylwester\Desktop\LaunchBox\DesktopAplication\Source\Framework\obj\Debug\netcoreapp3.1\Launcher.AssemblyInfoInputs.cache
+C:\Users\Sylwester\Desktop\LaunchBox\DesktopAplication\Source\Framework\obj\Debug\netcoreapp3.1\Launcher.AssemblyInfo.cs
+C:\Users\Sylwester\Desktop\LaunchBox\DesktopAplication\Source\Framework\obj\Debug\netcoreapp3.1\Launcher.csproj.CoreCompileInputs.cache
+C:\Users\Sylwester\Desktop\LaunchBox\DesktopAplication\Source\Framework\obj\Debug\netcoreapp3.1\Launcher.dll
+C:\Users\Sylwester\Desktop\LaunchBox\DesktopAplication\Source\Framework\obj\Debug\netcoreapp3.1\Launcher.pdb
+C:\Users\Sylwester\Desktop\LaunchBox\DesktopAplication\Source\Framework\obj\Debug\netcoreapp3.1\Launcher.genruntimeconfig.cache

@@ -71,7 +71,7 @@ Rectangle {
         running: state == downloading
     }
     function writeInfo() {
-        statusInfo = "Downloading: " + actualStr + "/" + totalStr + " (Average Speed: "
+        bottomBar.statusInfo = "Downloading: " + actualStr + "/" + totalStr + " (Average Speed: "
                 + speedAvgStr + "MB/s / Current Speed: " + speedStr + "MB/s )"
     }
 
@@ -142,7 +142,7 @@ Rectangle {
             anim.start()
             bottomBar.progress = 100
             if (_LoadingBar.uninstall) {
-                statusInfo = "Uninstalling"
+                bottomBar.statusInfo = "Uninstalling"
             }
         } else if (state === downloading) {
             prog.start()
@@ -155,7 +155,7 @@ Rectangle {
             prog.stop()
             percentage.start()
             speedTimer.stop()
-            statusInfo = "Installing"
+            bottomBar.statusInfo = "Installing"
             loader.visible = true
             anim.start()
             bottomBar.barColor = "orange"
@@ -171,6 +171,14 @@ Rectangle {
             speedTimer.stop()
             anim.stop()
             bottomBar.barColor = "red"
+        } else if (state === stopped) {
+            prog.stop()
+            percentage.stop()
+            speedTimer.stop()
+            anim.stop()
+            bottomBar.barColor = "red"
+            bottomBar.statusInfo = "Installation terminated"
+            console.log("asdasd==========" + bottomBar.statusInfo)
         } else if (state === completed) {
             prog.stop()
             percentage.stop()
@@ -180,9 +188,9 @@ Rectangle {
             anim.stop()
             loader.visible = false
             if (_LoadingBar.uninstall)
-                statusInfo = "Uninstallation complete"
+                bottomBar.statusInfo = "Uninstallation complete"
             else
-                statusInfo = "Instalation complete"
+                bottomBar.statusInfo = "Instalation complete"
             bottomBar.barColor = "green"
         }
     }
@@ -304,9 +312,9 @@ Rectangle {
             property bool play: false
             onPlayChanged: {
                 if (play)
-                    _LoadingBar.pauseD()
+                    _LoadingBar.pause()
                 else
-                    _LoadingBar.resumeD()
+                    _LoadingBar.resume()
             }
 
             property real opac: 0.6
@@ -369,7 +377,7 @@ Rectangle {
                 hoverEnabled: true
                 anchors.fill: parent
                 onClicked: {
-                    _LoadingBar.stopD()
+                    _LoadingBar.stop()
                 }
                 onEntered: stopImag.opacity = 1
                 onExited: stopImag.opacity = 0.6
@@ -443,7 +451,7 @@ Rectangle {
         font.family: "Arial"
         font.pointSize: 12
         color: "white"
-        text: statusInfo
+        text: bottomBar.statusInfo
     }
     Text {
         id: percent

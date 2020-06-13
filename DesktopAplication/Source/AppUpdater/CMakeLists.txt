@@ -13,7 +13,7 @@ qt5_use_modules(AppUpdaterBackend
 
 target_link_libraries(AppUpdaterBackend
     LoadingBar
-    GameInstaller
+    GameManager
     Dialog
     InstalationManager
     Config

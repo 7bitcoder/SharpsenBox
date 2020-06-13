@@ -4,7 +4,8 @@ add_library(LoadingBar STATIC
 
 target_include_directories(LoadingBar PUBLIC
     "../AppBackend"
-    "../Config")
+    "../Config"
+    "../InstalationManager")
 
 qt5_use_modules(LoadingBar 
     Quick 

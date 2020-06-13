@@ -1,4 +1,4 @@
-#include "AppUpdater.hpp"
+﻿#include "AppUpdater.hpp"
 #include "Config.hpp"
 #include <QElapsedTimer>
 #include <QJsonDocument>
@@ -19,17 +19,15 @@ namespace upd {
 	}
 
 	void AppUpdater::checkForUpdates() {
-		auto& cfJson = cf.getConfigJson();
 		auto& im = bb::InstalationManager::getObject();
 		connect(&im, &bb::InstalationManager::downloadEnded, this, &AppUpdater::LauchBoxJsonDownloaded);
 		connect(&im, &bb::InstalationManager::errorEmit, this, &AppUpdater::errorCatched);
 		state_ = State::downloading;
-		im.downloadFile(cfJson, 0);
+		im.downloadFile(cf.getConfigJsonUrl().toStdString(), cf.getConfigJsonFileName().string(), 0);
 	}
 
 	void AppUpdater::LauchBoxJsonDownloaded() {
-		auto& downloadDIr = cf.getDownloadDir();
-		auto JsonPath = downloadDIr / LBJsonFileName;
+		auto JsonPath = cf.getDownloadDir() / cf.getConfigJsonFileName();
 		if (!std::filesystem::exists(JsonPath))
 			;//problem
 		QString val;
@@ -41,13 +39,15 @@ namespace upd {
 		QJsonDocument d = QJsonDocument::fromJson(val.toUtf8());
 		QJsonObject sett2 = d.object();
 		QString version = d["Ver"].toString();
-
 		QString size = d["Size"].toString();
 		updateSize_ = std::stoll(size.toUtf8().constData());
+		
 		auto& actualVersion = cf.getVer();
-		UpdateFile = d["Url"].toString();
+		UpdateFile_ = d["FileName"].toString();
+		url_ = d["Url"].toString();
 		if (version != actualVersion) {
 			//download new Laucher
+			updatingToVer_ = version;
 			state_ = State::downloading;
 			stateChanged();
 			installUpdate();
@@ -55,14 +55,13 @@ namespace upd {
 			state_ = State::noUpdateFound;
 			stateChanged();
 		}
-
 	}
 
 	void AppUpdater::installUpdate() {
 		disconnect(&im, &bb::InstalationManager::downloadEnded, this, &AppUpdater::LauchBoxJsonDownloaded);
 		connect(&im, &bb::InstalationManager::clearFilesEnded, this, &AppUpdater::updateInstalled);
 		connect(&im, &bb::InstalationManager::downloadEnded, this, &AppUpdater::updateDownloaded);
-		im.installFile(UpdateFile.toUtf8().constData(), updateSize_);
+		im.installFile(url_.toStdString(), UpdateFile_.toStdString(), updateSize_);
 	}
 
 	void AppUpdater::updateDownloaded() {
@@ -75,6 +74,7 @@ namespace upd {
 		disconnect(&im, &bb::InstalationManager::clearFilesEnded, this, &AppUpdater::updateInstalled);
 		disconnect(&im, &bb::InstalationManager::downloadEnded, this, &AppUpdater::updateDownloaded);
 		disconnect(&im, &bb::InstalationManager::errorEmit, this, &AppUpdater::errorCatched);
+		cf.setVer(updatingToVer_);
 		stateChanged();
 	}
 

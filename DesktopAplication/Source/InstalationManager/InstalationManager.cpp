@@ -13,7 +13,7 @@
 #include "shlguid.h"
 #include <QStandardPaths>
 #include "archive.h"
-#include "GameInstaller.hpp"
+#include "GameManager.hpp"
 
 namespace bb {
 	namespace {
@@ -65,9 +65,15 @@ namespace bb {
 	}
 
 	InstalationManager::~InstalationManager() {
-		ftp_.exit();
-		ftp_.terminate();
-		ftp_.wait();
+		downloader_.exit();
+		downloader_.terminate();
+		downloader_.wait();
+		installer_.exit();
+		installer_.terminate();
+		installer_.wait();
+		cleanUpper_.exit();
+		cleanUpper_.terminate();
+		cleanUpper_.wait();
 	}
 
 	void InstalationManager::setTotal(qint64 tot) {
@@ -110,30 +116,39 @@ namespace bb {
 
 	void InstalationManager::TotalSize(qint64 total) {}
 
-	void InstalationManager::pauseD() {
-		ftp_.pause.clear();
-		state_ = State::PAUSE;
-		LoadingBar_->setState(lb::LoadingBar::State::PAUSE);
+	void InstalationManager::pause() {
+		if (stage_ == Stage::DOWNLOAD) {
+			downloader_.pause.clear();
+			state_ = State::PAUSE;
+			LoadingBar_->setState(lb::LoadingBar::State::PAUSE);
+		}
 	}
 
-	void InstalationManager::resumeD() {
-		ftp_.resume.clear();
-		LoadingBar_->setState(stage_ == Stage::DOWNLOAD ? lb::LoadingBar::State::DOWNLOADING : lb::LoadingBar::State::INSTALLING);
+	void InstalationManager::resume() {
+		if (stage_ == Stage::DOWNLOAD) {
+			downloader_.resume.clear();
+			LoadingBar_->setState( lb::LoadingBar::State::DOWNLOADING );
+		}
 	}
 
-	void InstalationManager::stopD() {
-		ftp_.stop.clear();
-		LoadingBar_->setState(lb::LoadingBar::State::STOPPED);
-		LoadingBar_->setVisibleState(lb::LoadingBar::VisibleState::HIDDEN);
+	void InstalationManager::stop() {
+		downloader_.stop.clear();
 	}
 
 
-	void InstalationManager::ftpEnded() {
-		stage_ = Stage::INSTALL;
-		LoadingBar_->setState(lb::LoadingBar::State::INSTALLING);
-		if (!onlyDownload)
-			installer_.start();
-		downloadEnded();
+	void InstalationManager::ftpEnded(bool cancelled) {
+		cancel_ = cancelled;
+		if (cancel_) {
+			LoadingBar_->setState(lb::LoadingBar::State::STOPPED);
+			gm::GameManager::getObject().unLock();
+			cleanUpper_.start();
+		} else {
+			stage_ = Stage::INSTALL;
+			LoadingBar_->setState(lb::LoadingBar::State::INSTALLING);
+			if (!onlyDownload)
+				installer_.start();
+			downloadEnded();
+		}
 	}
 
 	void InstalationManager::archieveEnded() {
@@ -153,21 +168,26 @@ namespace bb {
 				actualGame_->shortcutPath = link.generic_string().c_str();
 			}
 		}
-		gi::GameInstaller::getObject().unLock();
+		gm::GameManager::getObject().unLock();
+		cleanUpper_.start();
+	}
+
+	void InstalationManager::cleanUpEnded() {
 		progress_ = 100;
 		sendDataToBar();
 		LoadingBar_->reset();
-		LoadingBar_->setState(lb::LoadingBar::State::COMPLEET);
+		if(!cancel_)
+			LoadingBar_->setState(lb::LoadingBar::State::COMPLEET);
 		LoadingBar_->setVisibleState(lb::LoadingBar::VisibleState::HIDDEN);
 		clearFilesEnded();
 	}
 
-	void InstalationManager::downloadFile(std::filesystem::path fileName, qint64 tot) {
-		downloadFiles({ fileName }, tot);
+	void InstalationManager::downloadFile(std::filesystem::path url, std::string fileName, qint64 tot) {
+		downloadFiles({ {url, fileName} }, tot);
 	}
 
-	void InstalationManager::installFile(std::filesystem::path fileName, qint64 tot, std::filesystem::path dir, cf::Game* game) {
-		installFiles({ fileName }, tot, dir, game);
+	void InstalationManager::installFile(std::filesystem::path url, std::string fileName, qint64 tot, std::filesystem::path dir, cf::Game* game) {
+		installFiles({ {url, fileName} }, tot, dir, game);
 	}
 
 	void InstalationManager::downloadFiles(files files, qint64 tot) {
@@ -175,7 +195,7 @@ namespace bb {
 		setTotal(tot);
 		files_ = files;
 		onlyDownload = true;
-		ftp_.setFilestoDownload(files_);
+		downloader_.setFilestoDownload(files_);
 		download();
 	}
 
@@ -185,7 +205,7 @@ namespace bb {
 		actualGame_ = game;
 		files_ = files;
 		onlyDownload = false;
-		ftp_.setFilestoDownload(files_);
+		downloader_.setFilestoDownload(files_);
 		installer_.setUnpackFiles(files_);
 		installDir_ = dir;
 		install();
@@ -196,23 +216,25 @@ namespace bb {
 		progress_ = 100; //for checking state
 		LoadingBar_->setState(lb::LoadingBar::State::CHECKING);
 		LoadingBar_->setVisibleState(lb::LoadingBar::VisibleState::SHOWED);
-		connect(&ftp_, &FtpDownloader::statusSignal, this, &InstalationManager::downloadStatus);
-		connect(&ftp_, &FtpDownloader::ended, this, &InstalationManager::ftpEnded); // archieve ended is final stage skipping archeve install
-		connect(&ftp_, &FtpDownloader::error, this, &InstalationManager::errorCatched);
-		ftp_.start();
+		connect(&downloader_, &Downloader::statusSignal, this, &InstalationManager::downloadStatus);
+		connect(&downloader_, &Downloader::ended, this, &InstalationManager::ftpEnded); // archieve ended is final stage skipping archeve install
+		connect(&downloader_, &Downloader::error, this, &InstalationManager::errorCatched);
+		downloader_.start();
 	}
 
 	void InstalationManager::install() {
 		stage_ = Stage::DOWNLOAD;
 		LoadingBar_->setState(lb::LoadingBar::State::DOWNLOADING);
 		LoadingBar_->setVisibleState(lb::LoadingBar::VisibleState::SHOWED);
-		connect(&ftp_, &FtpDownloader::statusSignal, this, &InstalationManager::downloadStatus);
-		connect(&ftp_, &FtpDownloader::ended, this, &InstalationManager::ftpEnded);
-		connect(&ftp_, &FtpDownloader::error, this, &InstalationManager::errorCatched);
+		connect(&downloader_, &Downloader::statusSignal, this, &InstalationManager::downloadStatus);
+		connect(&downloader_, &Downloader::ended, this, &InstalationManager::ftpEnded);
+		connect(&downloader_, &Downloader::error, this, &InstalationManager::errorCatched);
 		connect(&installer_, &ArchieveInstaller::statusSignal, this, &InstalationManager::installStatus);
 		connect(&installer_, &ArchieveInstaller::ended, this, &InstalationManager::archieveEnded);
 		connect(&installer_, &ArchieveInstaller::error, this, &InstalationManager::errorCatched);
-		ftp_.start();
+		connect(&cleanUpper_, &cu::Cleanup::ended, this, &InstalationManager::cleanUpEnded);
+		connect(&cleanUpper_, &cu::Cleanup::error, this, &InstalationManager::errorCatched);
+		downloader_.start();
 		installer_.setInstalationDir(installDir_);
 	}
 
@@ -229,7 +251,7 @@ namespace bb {
 	}
 
 	void InstalationManager::reset() {
-		ftp_.reset();
+		downloader_.reset();
 		installer_.reset();
 		totalBytes_ = 0; //total Bytes to download unpack all files together
 		downloadedBytes_ = 0; //Bytes downloaded
@@ -247,16 +269,16 @@ namespace bb {
 		stage_ = Stage::NONE;
 		state_ = State::CHECKING;
 		visibleState_ = VisibleState::HIDDEN;
-		disconnect(&ftp_, &FtpDownloader::statusSignal, this, &InstalationManager::downloadStatus);
-		disconnect(&ftp_, &FtpDownloader::ended, this, &InstalationManager::ftpEnded);
-		disconnect(&ftp_, &FtpDownloader::error, this, &InstalationManager::errorCatched);
+		disconnect(&downloader_, &Downloader::statusSignal, this, &InstalationManager::downloadStatus);
+		disconnect(&downloader_, &Downloader::ended, this, &InstalationManager::ftpEnded);
+		disconnect(&downloader_, &Downloader::error, this, &InstalationManager::errorCatched);
 		disconnect(&installer_, &ArchieveInstaller::statusSignal, this, &InstalationManager::installStatus);
 		disconnect(&installer_, &ArchieveInstaller::ended, this, &InstalationManager::archieveEnded);
 		disconnect(&installer_, &ArchieveInstaller::error, this, &InstalationManager::errorCatched);
 	}
 
 	void InstalationManager::installGame(cf::Game& game) {
-		installFile(game.url.toUtf8().constData(), game.size, game.gameDir.toUtf8().constData(), &game);
+		installFile(game.url.toStdString(), game.fileName.toStdString(), game.size, game.gameDir.toUtf8().constData(), &game);
 	}
 
 	void InstalationManager::errorCatched(int code) {
@@ -289,6 +311,9 @@ namespace bb {
 			case CURLE_WRITE_ERROR:
 				errorStr_ = "Could not save files on disk";
 				break;
+			case CURLE_OPERATION_TIMEDOUT:
+				errorStr_ = "Connection timeout";
+				break;
 			case 0: // exception catched
 			default:
 				errorStr_ = "Unknown error while doanloading data";
@@ -314,7 +339,7 @@ namespace bb {
 		LoadingBar_->setState(lb::LoadingBar::State::ERRORD);
 		LoadingBar_->setVisibleState(lb::LoadingBar::VisibleState::HIDDEN);
 		LoadingBar_->setError(code, errorStr_);
-		gi::GameInstaller::getObject().unLock();
+		gm::GameManager::getObject().unLock();
 		errorEmit();
 	}
 }

@@ -1,7 +1,7 @@
 ﻿#include "GameUninstaller.hpp"
 #include "Config.hpp"
 
-namespace gi {
+namespace gm {
 	void GameUninstaller::setId(int id) {
 		id_ = id;
 		auto& game = cf::Config::getObject().getGame(id_);

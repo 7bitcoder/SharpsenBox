@@ -13,7 +13,7 @@
 #include "Config.hpp"
 
 namespace bb {
-	void ArchieveInstaller::setUnpackFiles(std::vector<std::filesystem::path> files) {
+	void ArchieveInstaller::setUnpackFiles(files files) {
 		filesToUnpack_ = files;
 	}
 
@@ -47,7 +47,7 @@ namespace bb {
 			auto& downloadDir = cf::Config::getObject().getDownloadDir();
 			for (auto& arch : filesToUnpack_) {
 				a = archive_read_new();
-				auto actualUnpacking = (downloadDir / arch.filename()).generic_string();
+				auto actualUnpacking = (downloadDir / arch.second).generic_string();
 				file.open(actualUnpacking, std::ios::binary);
 				if (!file.is_open())
 					throw std::exception("Could not open file");
@@ -76,14 +76,7 @@ namespace bb {
 				res = archive_read_finish(a);
 			}
 
-			try {
-				for (auto& p : std::filesystem::recursive_directory_iterator(downloadDir)) {
-					auto& path = p.path();
-					std::filesystem::remove_all(path);
-				}
-			} catch (...) {
-				res = -1;//errorCatched(-1);
-			}
+
 		} catch (...) {
 			res = -1;
 		}

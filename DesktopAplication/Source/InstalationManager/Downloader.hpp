@@ -10,12 +10,12 @@
 #include <filesystem>
 
 namespace bb {
-	class FtpDownloader : public  QThread {
+	class Downloader : public  QThread {
 		Q_OBJECT
 	public:
-		using files = std::vector < std::filesystem::path>;
-		FtpDownloader();
-		~FtpDownloader() {}
+		using files = std::vector < std::pair<std::filesystem::path, std::string >>;
+		Downloader();
+		~Downloader() {}
 		void setOutputFile(std::string file) { outfile_ = file; }
 		void setUrl(std::string url) { url_ = url; }
 		qint64 getTotal() { return total_; }
@@ -29,7 +29,7 @@ namespace bb {
 		void reset();
 	signals:
 		void statusSignal(qint64 progress, qint64 total, double speed);
-		void ended();
+		void ended(bool cancelled);
 		void error(int);
 	public slots:
 	private:

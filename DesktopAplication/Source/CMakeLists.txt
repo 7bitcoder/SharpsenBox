@@ -2,7 +2,7 @@
 add_subdirectory(Config)
 add_subdirectory(InstalationManager)
 add_subdirectory(LoadingBar)
-add_subdirectory(GameInstaller)
+add_subdirectory(GameManager)
 add_subdirectory(GameExecutor)
 add_subdirectory(Dialog)
 add_subdirectory(AppUpdater)

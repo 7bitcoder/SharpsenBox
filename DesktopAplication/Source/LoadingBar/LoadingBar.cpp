@@ -1,12 +1,11 @@
-#include <iostream>
+﻿#include <iostream>
 #include <string>
 #include "LoadingBar.hpp"
 #include "AppBackend.hpp"
 #include "Config.hpp"
 
 namespace lb {
-	LoadingBar::~LoadingBar() {
-	}
+	LoadingBar::~LoadingBar() {}
 
 	void LoadingBar::update() {}
 	Q_INVOKABLE std::string LoadingBar::getName() {
@@ -85,20 +84,7 @@ namespace lb {
 		uninstall_ = un;
 	}
 
-	void LoadingBar::pauseD() { 
-		pauseS(); 
-	}
-
-	void LoadingBar::resumeD() { 
-		resumeS(); 
-	}
-
-	void LoadingBar::stopD() {
-		stopS();
-	}
-
-	void LoadingBar::init() {
-	}
+	void LoadingBar::init() {}
 
 	void LoadingBar::reset() {
 

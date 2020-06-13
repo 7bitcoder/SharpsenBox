@@ -14,14 +14,14 @@ namespace bb {
 	class ArchieveInstaller : public  QThread {
 		Q_OBJECT
 	public:
-		using files = std::vector < std::filesystem::path>;
+		using files = std::vector < std::pair<std::filesystem::path, std::string>>;
+
 		ArchieveInstaller() {};
 		virtual ~ArchieveInstaller() {}
-		void setUnpackFiles(std::vector<std::filesystem::path> files);
-		void setInstalationDir(std::filesystem::path dir) {
-			destinationDir_ = dir;
-		}
 
+		// interface
+		void setUnpackFiles(files files);
+		void setInstalationDir(std::filesystem::path dir) { destinationDir_ = dir; }
 		void run() override;
 		void reset();
 	signals:
