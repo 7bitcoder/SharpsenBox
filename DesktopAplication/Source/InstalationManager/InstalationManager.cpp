@@ -76,6 +76,116 @@ namespace bb {
 		cleanUpper_.wait();
 	}
 
+	void InstalationManager::updateMainApp(QString version, std::filesystem::path appInfoUrl) {
+		reset();
+		setTotal(0);
+		appInfoParser_.setVerToCheck(version);
+		files_ = files{ {appInfoUrl, "AppInfo.json" } };
+		downloader_.setFilestoDownload(files_);
+		stage_ = Stage::DOWNLOAD;
+		LoadingBar_->setState(lb::LoadingBar::State::CHECKING);
+		LoadingBar_->setVisibleState(lb::LoadingBar::VisibleState::SHOWED);
+		connect(&downloader_, &Downloader::ended, this, &InstalationManager::appInfoDownloaded);
+		connect(&downloader_, &Downloader::error, this, &InstalationManager::errorCatched);
+		downloader_.start();
+	}
+
+	void InstalationManager::updateGame(cf::Game& game) {
+		reset();
+		setTotal(0);
+		actualGame_ = &game;
+		appInfoParser_.setVerToCheck(game.version);
+		files_ = files{ {game.appInfoUrl.toStdString(), "AppInfo.json" } };
+		downloader_.setFilestoDownload(files_);
+		stage_ = Stage::DOWNLOAD;
+		progress_ = 100;
+		LoadingBar_->setState(lb::LoadingBar::State::CHECKING);
+		LoadingBar_->setVisibleState(lb::LoadingBar::VisibleState::SHOWED);
+		connect(&downloader_, &Downloader::ended, this, &InstalationManager::appInfoDownloaded);
+		connect(&downloader_, &Downloader::error, this, &InstalationManager::errorCatched); //todo przenies errory do konstruktora
+		downloader_.start();
+	}
+
+	void InstalationManager::appInfoDownloaded() {
+		connect(&appInfoParser_, &AppInfoParser::parseEnded, this, &InstalationManager::appInfoParserEnded);
+		disconnect(&downloader_, &Downloader::ended, this, &InstalationManager::appInfoDownloaded);
+		appInfoParser_.parse();
+	}
+
+	void InstalationManager::appInfoParserEnded() {
+		if (appInfoParser_.needUpdate()) {
+			install(appInfoParser_.getNeededFiles(), appInfoParser_.getBytesToDownload(), actualGame_);
+			updateStatus(true);
+		} else {
+			updateStatus(false);
+		}
+	}
+
+	void InstalationManager::install(files files, qint64 tot, cf::Game* game) {
+		reset();
+		setTotal(tot);
+		actualGame_ = game;
+		files_ = files;
+		downloader_.setFilestoDownload(files_);
+		installer_.setUnpackFiles(files_);
+		installDir_ = actualGame_ ? actualGame_->gameDir.toStdString() : std::string("../");
+		stage_ = Stage::DOWNLOAD;
+		LoadingBar_->setState(lb::LoadingBar::State::DOWNLOADING);
+		LoadingBar_->setVisibleState(lb::LoadingBar::VisibleState::SHOWED);
+		connect(&downloader_, &Downloader::statusSignal, this, &InstalationManager::downloadStatus);
+		connect(&downloader_, &Downloader::ended, this, &InstalationManager::downloadEnded);
+		connect(&downloader_, &Downloader::error, this, &InstalationManager::errorCatched);
+		connect(&installer_, &ArchieveInstaller::statusSignal, this, &InstalationManager::installStatus);
+		connect(&installer_, &ArchieveInstaller::ended, this, &InstalationManager::installEnded);
+		connect(&installer_, &ArchieveInstaller::error, this, &InstalationManager::errorCatched);
+		connect(&cleanUpper_, &cu::Cleanup::ended, this, &InstalationManager::cleanUpEnded);
+		connect(&cleanUpper_, &cu::Cleanup::error, this, &InstalationManager::errorCatched);
+		downloader_.start();
+		installer_.setInstalationDir(installDir_);
+	}
+
+	void InstalationManager::downloadEnded(bool cancelled) {
+		cancel_ = cancelled;
+		if (cancel_) {
+			LoadingBar_->setState(lb::LoadingBar::State::STOPPED);
+			cleanUpper_.start();
+		} else {
+			stage_ = Stage::INSTALL;
+			LoadingBar_->setState(lb::LoadingBar::State::INSTALLING);
+			installer_.start();
+		}
+	}
+
+	void InstalationManager::installEnded() {
+		disconnectAll();
+		if (actualGame_) {
+			actualGame_->installed = true;
+			if (actualGame_->shortcut) {
+				QString desktopPath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+				std::filesystem::path link = desktopPath.toUtf8().constData();
+				link /= actualGame_->name.toUtf8().constData();
+				link += ".lnk";
+				std::filesystem::path path = actualGame_->gameDir.toUtf8().constData();
+				path /= actualGame_->execPath.toUtf8().constData();
+				std::string ff(path.generic_string().c_str());
+				auto res = CreateLink(path.generic_string().c_str(), path.parent_path().generic_string().c_str(), link.generic_string().c_str(), "Sylio shortcut");
+				actualGame_->shortcutPath = link.generic_string().c_str();
+			}
+		}
+		gm::GameManager::getObject().unLock();
+		cleanUpper_.start();
+	}
+
+	void InstalationManager::cleanUpEnded() {
+		progress_ = 100;
+		sendDataToBar();
+		LoadingBar_->reset();
+		if (!cancel_)
+			LoadingBar_->setState(lb::LoadingBar::State::COMPLEET);
+		LoadingBar_->setVisibleState(lb::LoadingBar::VisibleState::HIDDEN);
+		updateEnded(appInfoParser_.getVer());
+	}
+
 	void InstalationManager::setTotal(qint64 tot) {
 		totalBytes_ = tot;
 		total_ = getMB(totalBytes_);
@@ -108,6 +218,7 @@ namespace bb {
 		LoadingBar_->setActual(getMB(downloadedBytes_));
 		LoadingBar_->setSpeed(speed_);
 	}
+
 	void InstalationManager::installStatus(qint64 progress) {
 		unpackedBytes_ = progress;
 		setProgress();
@@ -135,131 +246,6 @@ namespace bb {
 		downloader_.stop.clear();
 	}
 
-
-	void InstalationManager::downloadEnded(bool cancelled) {
-		cancel_ = cancelled;
-		if (cancel_) {
-			LoadingBar_->setState(lb::LoadingBar::State::STOPPED);
-			gm::GameManager::getObject().unLock();
-			cleanUpper_.start();
-		} else {
-			stage_ = Stage::INSTALL;
-			LoadingBar_->setState(lb::LoadingBar::State::INSTALLING);
-			if (!onlyDownload)
-				installer_.start();
-		}
-	}
-
-	void InstalationManager::archieveEnded() {
-		disconnectAll();
-		if (actualGame_) {
-			actualGame_->installed = true;
-			if (actualGame_->shortcut) {
-				QString desktopPath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
-				std::filesystem::path link = desktopPath.toUtf8().constData();
-				link /= actualGame_->name.toUtf8().constData();
-				link += ".lnk";
-				std::filesystem::path path = actualGame_->gameDir.toUtf8().constData();
-				path /= actualGame_->execPath.toUtf8().constData();
-				std::string ff(path.generic_string().c_str());
-				auto res = CreateLink(path.generic_string().c_str(), path.parent_path().generic_string().c_str(), link.generic_string().c_str(), "Sylio shortcut");
-				actualGame_->shortcutPath = link.generic_string().c_str();
-			}
-		}
-		gm::GameManager::getObject().unLock();
-		cleanUpper_.start();
-	}
-
-	void InstalationManager::cleanUpEnded() {
-		progress_ = 100;
-		sendDataToBar();
-		LoadingBar_->reset();
-		if (!cancel_)
-			LoadingBar_->setState(lb::LoadingBar::State::COMPLEET);
-		LoadingBar_->setVisibleState(lb::LoadingBar::VisibleState::HIDDEN);
-	}
-
-	void InstalationManager::updateMainApp(QString version, QString appInfoUrl) {
-		reset();
-		setTotal(0);
-		appInfoParser_.setVerToCheck(version);
-		files_ = files{ {appInfoUrl.toStdString(), "AppInfo.json" } };
-		downloader_.setFilestoDownload(files_);
-		stage_ = Stage::DOWNLOAD;
-		progress_ = 100; //for checking state
-		LoadingBar_->setState(lb::LoadingBar::State::CHECKING);
-		LoadingBar_->setVisibleState(lb::LoadingBar::VisibleState::SHOWED);
-		connect(&downloader_, &Downloader::ended, this, &InstalationManager::appInfoDownloaded);
-		connect(&downloader_, &Downloader::error, this, &InstalationManager::errorCatched);
-		downloader_.start();
-	}
-
-	void InstalationManager::appInfoDownloaded() {
-		appInfoParser_.parse();
-		disconnect(&downloader_, &Downloader::ended, this, &InstalationManager::appInfoDownloaded);
-	}
-
-	void InstalationManager::appInfoParserEnded() {
-		if (appInfoParser_.needUpdate()) {
-			installMainApp(appInfoParser_.getNeededFiles(), appInfoParser_.getBytesToDownload());
-			updateStatus(true);
-		} else {
-			updateStatus(false);
-		}
-	}
-	void InstalationManager::installMainApp(files files, qint64 tot) {
-		reset();
-		setTotal(tot);
-		files_ = files;
-		downloader_.setFilestoDownload(files_);
-		installer_.setUnpackFiles(files_);
-		installDir_ = "../";
-		install();
-	}
-
-	void InstalationManager::installFile(std::filesystem::path url, std::string fileName, qint64 tot, std::filesystem::path dir, cf::Game* game) {
-		installFiles({ {url, fileName} }, tot, dir, game);
-	}
-
-	void InstalationManager::installFiles(files files, qint64 tot, std::filesystem::path dir, cf::Game* game) {
-		reset();
-		setTotal(tot);
-		actualGame_ = game;
-		files_ = files;
-		onlyDownload = false;
-		downloader_.setFilestoDownload(files_);
-		installer_.setUnpackFiles(files_);
-		installDir_ = dir;
-		install();
-	}
-
-	void InstalationManager::download() {
-		stage_ = Stage::DOWNLOAD;
-		progress_ = 100; //for checking state
-		LoadingBar_->setState(lb::LoadingBar::State::CHECKING);
-		LoadingBar_->setVisibleState(lb::LoadingBar::VisibleState::SHOWED);
-		connect(&downloader_, &Downloader::statusSignal, this, &InstalationManager::downloadStatus);
-		connect(&downloader_, &Downloader::ended, this, &InstalationManager::ftpEnded); // archieve ended is final stage skipping archeve install
-		connect(&downloader_, &Downloader::error, this, &InstalationManager::errorCatched);
-		downloader_.start();
-	}
-
-	void InstalationManager::install() {
-		stage_ = Stage::DOWNLOAD;
-		LoadingBar_->setState(lb::LoadingBar::State::DOWNLOADING);
-		LoadingBar_->setVisibleState(lb::LoadingBar::VisibleState::SHOWED);
-		connect(&downloader_, &Downloader::statusSignal, this, &InstalationManager::downloadStatus);
-		connect(&downloader_, &Downloader::ended, this, &InstalationManager::ftpEnded);
-		connect(&downloader_, &Downloader::error, this, &InstalationManager::errorCatched);
-		connect(&installer_, &ArchieveInstaller::statusSignal, this, &InstalationManager::installStatus);
-		connect(&installer_, &ArchieveInstaller::ended, this, &InstalationManager::archieveEnded);
-		connect(&installer_, &ArchieveInstaller::error, this, &InstalationManager::errorCatched);
-		connect(&cleanUpper_, &cu::Cleanup::ended, this, &InstalationManager::cleanUpEnded);
-		connect(&cleanUpper_, &cu::Cleanup::error, this, &InstalationManager::errorCatched);
-		downloader_.start();
-		installer_.setInstalationDir(installDir_);
-	}
-
 	void InstalationManager::init() {
 		downloadDir_ = cf::Config::getObject().getDownloadDir();
 		if (!std::filesystem::exists(downloadDir_)) {
@@ -275,6 +261,7 @@ namespace bb {
 	void InstalationManager::reset() {
 		downloader_.reset();
 		installer_.reset();
+		appInfoParser_.reset();
 		totalBytes_ = 0; //total Bytes to download unpack all files together
 		downloadedBytes_ = 0; //Bytes downloaded
 		unpackedBytes_ = 0; // Bytes Unpacked
@@ -292,16 +279,14 @@ namespace bb {
 		state_ = State::CHECKING;
 		visibleState_ = VisibleState::HIDDEN;
 		disconnect(&downloader_, &Downloader::statusSignal, this, &InstalationManager::downloadStatus);
-		disconnect(&downloader_, &Downloader::ended, this, &InstalationManager::ftpEnded);
+		disconnect(&downloader_, &Downloader::ended, this, &InstalationManager::downloadEnded);
 		disconnect(&downloader_, &Downloader::error, this, &InstalationManager::errorCatched);
 		disconnect(&installer_, &ArchieveInstaller::statusSignal, this, &InstalationManager::installStatus);
-		disconnect(&installer_, &ArchieveInstaller::ended, this, &InstalationManager::archieveEnded);
+		disconnect(&installer_, &ArchieveInstaller::ended, this, &InstalationManager::installEnded);
 		disconnect(&installer_, &ArchieveInstaller::error, this, &InstalationManager::errorCatched);
 	}
 
-	void InstalationManager::installGame(cf::Game& game) {
-		installFile(game.appInfoUrl.toStdString(), game.fileName.toStdString(), game.size, game.gameDir.toUtf8().constData(), &game);
-	}
+
 
 	void InstalationManager::errorCatched(int code) {
 		error_ = code;
@@ -364,6 +349,4 @@ namespace bb {
 		gm::GameManager::getObject().unLock();
 		errorEmit();
 	}
-
-
 }

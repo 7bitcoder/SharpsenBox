@@ -25,7 +25,7 @@ namespace cf {
 		file.open(QIODevice::ReadOnly | QIODevice::Text);
 		val = file.readAll();
 		file.close();
-
+		auto& ff = val.toStdString();
 		QJsonDocument d = QJsonDocument::fromJson(val.toUtf8());
 
 		// Read settings

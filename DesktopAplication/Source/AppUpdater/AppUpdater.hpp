@@ -27,12 +27,8 @@ namespace upd {
 		AppUpdater();
 		virtual ~AppUpdater() {};
 	private:
-		void installUpdate();
-		void updateJson();
 	public slots:
-		void LauchBoxJsonDownloaded();
-		void updateDownloaded();
-		void updateInstalled();
+		void updateInstalled(QString version);
 		void checkForUpdates();
 		void errorCatched();
 		void updateStatus(bool needUpdate);
@@ -44,12 +40,5 @@ namespace upd {
 		bb::InstalationManager& im;
 		QString statusStr_;
 		State state_ = State::none;
-		bb::InstalationManager* dm = nullptr;
-		std::filesystem::path LBJsonFileName = "LaunchBoxInfo.json";
-
-		QString url_ = "";
-		QString UpdateFile_ = "";
-		qint64 updateSize_ = 0;
-		QString updatingToVer_ = "";
 	};
 }

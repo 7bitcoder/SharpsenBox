@@ -51,6 +51,7 @@ namespace cf {
 		std::filesystem::path& getDownloadDir() { return downloadDir_; }
 		std::filesystem::path getConfigJson() { return config_ / configJson_; }
 		std::filesystem::path getConfigJsonFileName() { return configJson_; }
+		std::filesystem::path getLauncherAppInfoUrl() { return LauncherAppInfo; }
 
 		//QMl invoklabes
 		Q_INVOKABLE bool installed(int id) const;

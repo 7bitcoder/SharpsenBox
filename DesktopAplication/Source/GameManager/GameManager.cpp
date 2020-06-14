@@ -28,7 +28,7 @@ namespace gm {
 			p /= game.name.toStdString();
 			game.gameDir = p.generic_string().c_str();
 			game.shortcut = shortcut;
-			bb::InstalationManager::getObject().installGame(game);
+			bb::InstalationManager::getObject().updateGame(game);
 		}
 	}
 	void GameManager::init() {

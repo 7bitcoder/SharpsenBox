@@ -1,6 +1,6 @@
 ﻿{
-  "Ver": "0.11",
-  "AppInfoUrl": "https://sourceforge.net/projects/gamelaunchbox/files/LaunchBox.zip",
+  "Ver": "0.10",
+  "AppInfoUrl": "https://sourceforge.net/projects/gamelaunchbox/files/AppInfo.json",
   "GamesInfoRepository": "",
   "DownloadSpeed": "0"
 }

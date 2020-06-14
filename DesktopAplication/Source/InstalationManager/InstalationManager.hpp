@@ -43,16 +43,8 @@ namespace bb {
 		void clearDownloadDir();
 		void setTotal(qint64 tot);
 
-		void updateMainApp(QString version, QString appInfoUrl);
+		void updateMainApp(QString version, std::filesystem::path appInfoUrl);
 		void updateGame(cf::Game& game);
-
-		void installMainApp(files files, qint64 tot);
-		void installGame(cf::Game& game); //download + install
-
-		void downloadFile(std::filesystem::path url, std::string fileName, qint64 tot); //just download
-		void installFile(std::filesystem::path url, std::string fileName, qint64 tot, std::filesystem::path dir = "../", cf::Game* game = nullptr); //download + install
-		void downloadFiles(files files, qint64 tot); //just download
-		void installFiles(files files, qint64 tot, std::filesystem::path dir = "../", cf::Game* game = nullptr); //download + install
 
 
 		double getProgress() { return progress_; }
@@ -67,9 +59,8 @@ namespace bb {
 	private:
 		virtual ~InstalationManager();
 		InstalationManager() {};
-		void download(); //just download
-		void update(bool mainApp, QString version, QString appInfoUrl, std::filesystem::path destination = "../");
-		void install(); //download + install
+		void install(files files, qint64 tot, cf::Game* game);
+
 		void reset();
 		void disconnectAll() {};
 		void setProgress();
@@ -80,13 +71,14 @@ namespace bb {
 		void TotalSize(qint64 total);
 		void errorCatched(int code);
 		void downloadEnded(bool cancelled);
-		void archieveEnded();
+		void installEnded();
 		void cleanUpEnded();
 		void appInfoDownloaded();
 		void appInfoParserEnded();
 	signals:
 		void updateStatus(bool needUpdate);
 		void updateEnded(QString finalVersion);
+		void errorEmit();
 	private:
 		bool onlyDownload;
 		bool cancel_;

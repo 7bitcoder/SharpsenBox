@@ -49,7 +49,7 @@ Item {
         color: "transparent"
         Text {
             id: buttonPLay
-            property bool lock: _GameInstaller.lock
+            property bool lock: _GameManager.lock
             property bool installed: _Config.installed(gameId)
             property bool realLock: false
             onLockChanged: {

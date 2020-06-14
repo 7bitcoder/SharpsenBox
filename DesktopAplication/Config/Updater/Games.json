@@ -11,7 +11,7 @@
     "Desctiption": "",
     "YoutubeLink": "",
     "AdditionalInfo": "",
-    "AppInfoUrl" : "https://sourceforge.net/projects/sylio/files/Sylio.zip"
+    "AppInfoUrl": "https://sourceforge.net/projects/sylio/files/AppInfo.json/download"
   },
   "Rest": {
     "Id": "2",
@@ -25,6 +25,6 @@
     "Desctiption": "",
     "YoutubeLink": "",
     "AdditionalInfo": "",
-    "AppInfoUrl": "https://sourceforge.net/projects/sylio/files/Sylio.zip"
+    "AppInfoUrl": "https://sourceforge.net/projects/sylio/files/AppInfo.json/download"
   }
 }

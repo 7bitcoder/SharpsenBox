@@ -88,7 +88,7 @@ namespace bb {
 				res = curl_easy_setopt(curl, CURLOPT_XFERINFOFUNCTION, Downloader::progress_callback);
 				/* Switch on full protocol/debug output */
 
-				curl_easy_setopt(curl, CURLOPT_TIMEOUT_MS, 20'000L);
+				//curl_easy_setopt(curl, CURLOPT_TIMEOUT_MS, 20'000L);
 				//res = curl_easy_setopt(curl, CURLOPT_USERNAME, "public");
 				//res = curl_easy_setopt(curl, CURLOPT_PASSWORD, "1234");
 				auto& downloadDir = cf::Config::getObject().getDownloadDir();
