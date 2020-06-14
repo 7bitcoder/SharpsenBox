@@ -10,6 +10,7 @@
 #include "IQmlObject.hpp"
 #include "Config.hpp"
 #include "Cleanup.hpp"
+#include "AppInfoParser.hpp"
 
 namespace lb {
 	class LoadingBar;
@@ -42,12 +43,17 @@ namespace bb {
 		void clearDownloadDir();
 		void setTotal(qint64 tot);
 
+		void updateMainApp(QString version, QString appInfoUrl);
+		void updateGame(cf::Game& game);
+
+		void installMainApp(files files, qint64 tot);
+		void installGame(cf::Game& game); //download + install
+
 		void downloadFile(std::filesystem::path url, std::string fileName, qint64 tot); //just download
 		void installFile(std::filesystem::path url, std::string fileName, qint64 tot, std::filesystem::path dir = "../", cf::Game* game = nullptr); //download + install
 		void downloadFiles(files files, qint64 tot); //just download
 		void installFiles(files files, qint64 tot, std::filesystem::path dir = "../", cf::Game* game = nullptr); //download + install
 
-		void installGame(cf::Game& game); //download + install
 
 		double getProgress() { return progress_; }
 		double getTotal() { return total_; }
@@ -62,6 +68,7 @@ namespace bb {
 		virtual ~InstalationManager();
 		InstalationManager() {};
 		void download(); //just download
+		void update(bool mainApp, QString version, QString appInfoUrl, std::filesystem::path destination = "../");
 		void install(); //download + install
 		void reset();
 		void disconnectAll() {};
@@ -72,14 +79,14 @@ namespace bb {
 		void installStatus(qint64 progress);
 		void TotalSize(qint64 total);
 		void errorCatched(int code);
-		void ftpEnded(bool cancelled);
+		void downloadEnded(bool cancelled);
 		void archieveEnded();
 		void cleanUpEnded();
+		void appInfoDownloaded();
+		void appInfoParserEnded();
 	signals:
-		void errorEmit();
-		void downloadEnded();
-		void installEnded();
-		void clearFilesEnded();
+		void updateStatus(bool needUpdate);
+		void updateEnded(QString finalVersion);
 	private:
 		bool onlyDownload;
 		bool cancel_;
@@ -87,14 +94,15 @@ namespace bb {
 
 		cf::Game* actualGame_ = nullptr;
 		lb::LoadingBar* LoadingBar_ = nullptr;
-		
+
 		Stage stage_ = Stage::NONE;
 		State state_ = State::CHECKING;
 		VisibleState visibleState_ = VisibleState::HIDDEN;
-		
+
 		Downloader downloader_;
 		ArchieveInstaller installer_;
 		cu::Cleanup cleanUpper_;
+		AppInfoParser appInfoParser_;
 
 		std::filesystem::path downloadDir_;
 		std::filesystem::path installDir_;

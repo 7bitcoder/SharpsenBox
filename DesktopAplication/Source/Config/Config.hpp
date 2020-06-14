@@ -15,14 +15,16 @@ namespace cf {
 		bool installed;
 		bool shortcut;
 		bool autoCheck;
-		size_t size;
 		QString name;
 		QString version;
-		QString url;
+		QString appInfoUrl;
 		QString fileName;
 		QString gameDir;
-		QString execDir;
+		QString execPath;
 		QString shortcutPath;
+		QString desctiption;
+		QString youtubeLink;
+		QString additionalInfo;
 		std::unordered_map<QString, int> sha;
 		bool operator==(const Game& g) {
 			return id == g.id;
@@ -58,20 +60,25 @@ namespace cf {
 		Q_INVOKABLE void setGameAutoCheck(int id, bool val) { getGame(id).autoCheck = val; }
 		Q_INVOKABLE bool getGameAutoCheck(int id) { bool v = getGame(id).autoCheck;	return v; }
 		Q_INVOKABLE QString getGameName(int id) { return getGame(id).name; }
-		Q_INVOKABLE QString  getConfigJsonUrl() { return configJsonUrl_; }
+		Q_INVOKABLE QString  getConfigJsonUrl() { return ""; } //!!!!!!!!!
 	private:
 		Config();
 		virtual ~Config();
-		Game readGameInfo(std::filesystem::path path);
-		void writedGameInfo(Game& game);
+		void readGames();
+		Game readGameInfo(const QJsonObject& value);
+		void writeGames();
+		QJsonObject parseGameInfo(const Game& game);
 	private:
-		QString version_;
 		std::filesystem::path config_ = "../Config";
-		std::filesystem::path configJson_ = "LaunchBoxInfo.json";
-		QString configJsonUrl_ = "https://sourceforge.net/projects/gamelaunchbox/files/LaunchBoxInfo.json";
-
 		std::filesystem::path downloadDir_ = "../Download";
+		std::filesystem::path configJson_ = "LaunchBoxInfo.json";
+		std::filesystem::path gamesFileName_ = "Games.json";
+
 		std::unordered_map<int, Game> games_;
+
+		QString version_;
 		qint32 downloadSpeed_;
+		std::filesystem::path gameInfoRepo_;
+		std::filesystem::path LauncherAppInfo;
 	};
 }

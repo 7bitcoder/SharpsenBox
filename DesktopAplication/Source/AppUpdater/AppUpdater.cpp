@@ -20,8 +20,9 @@ namespace upd {
 
 	void AppUpdater::checkForUpdates() {
 		auto& im = bb::InstalationManager::getObject();
-		connect(&im, &bb::InstalationManager::downloadEnded, this, &AppUpdater::LauchBoxJsonDownloaded);
+		connect(&im, &bb::InstalationManager::updateStatus, this, &AppUpdater::updateStatus);
 		connect(&im, &bb::InstalationManager::errorEmit, this, &AppUpdater::errorCatched);
+		connect(&im, &bb::InstalationManager::updateEnded, this, &AppUpdater::updateInstalled);
 		state_ = State::downloading;
 		im.downloadFile(cf.getConfigJsonUrl().toStdString(), cf.getConfigJsonFileName().string(), 0);
 	}
@@ -41,7 +42,7 @@ namespace upd {
 		QString version = d["Ver"].toString();
 		QString size = d["Size"].toString();
 		updateSize_ = std::stoll(size.toUtf8().constData());
-		
+
 		auto& actualVersion = cf.getVer();
 		UpdateFile_ = d["FileName"].toString();
 		url_ = d["Url"].toString();
@@ -57,17 +58,22 @@ namespace upd {
 		}
 	}
 
+	void AppUpdater::updateStatus(bool needUpdate) {
+		if (needUpdate) {
+			//download new Laucher
+			state_ = State::downloading;
+			stateChanged();
+		} else {
+			state_ = State::noUpdateFound;
+			stateChanged();
+		}
+	}
 	void AppUpdater::installUpdate() {
 		disconnect(&im, &bb::InstalationManager::downloadEnded, this, &AppUpdater::LauchBoxJsonDownloaded);
 		connect(&im, &bb::InstalationManager::clearFilesEnded, this, &AppUpdater::updateInstalled);
-		connect(&im, &bb::InstalationManager::downloadEnded, this, &AppUpdater::updateDownloaded);
 		im.installFile(url_.toStdString(), UpdateFile_.toStdString(), updateSize_);
 	}
 
-	void AppUpdater::updateDownloaded() {
-		state_ = State::installing;
-		stateChanged();
-	}
 
 	void AppUpdater::updateInstalled() {
 		state_ = State::ended;

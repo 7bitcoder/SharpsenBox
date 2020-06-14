@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <QObject>
 #include <QQmlApplicationEngine>
 #include <QDebug>
@@ -27,7 +27,7 @@ namespace upd {
 		AppUpdater();
 		virtual ~AppUpdater() {};
 	private:
-		void installUpdate(); 
+		void installUpdate();
 		void updateJson();
 	public slots:
 		void LauchBoxJsonDownloaded();
@@ -35,6 +35,7 @@ namespace upd {
 		void updateInstalled();
 		void checkForUpdates();
 		void errorCatched();
+		void updateStatus(bool needUpdate);
 	signals:
 		void stateChanged();
 
@@ -45,7 +46,7 @@ namespace upd {
 		State state_ = State::none;
 		bb::InstalationManager* dm = nullptr;
 		std::filesystem::path LBJsonFileName = "LaunchBoxInfo.json";
-		
+
 		QString url_ = "";
 		QString UpdateFile_ = "";
 		qint64 updateSize_ = 0;

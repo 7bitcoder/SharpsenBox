@@ -127,7 +127,7 @@ namespace bb {
 	void InstalationManager::resume() {
 		if (stage_ == Stage::DOWNLOAD) {
 			downloader_.resume.clear();
-			LoadingBar_->setState( lb::LoadingBar::State::DOWNLOADING );
+			LoadingBar_->setState(lb::LoadingBar::State::DOWNLOADING);
 		}
 	}
 
@@ -136,7 +136,7 @@ namespace bb {
 	}
 
 
-	void InstalationManager::ftpEnded(bool cancelled) {
+	void InstalationManager::downloadEnded(bool cancelled) {
 		cancel_ = cancelled;
 		if (cancel_) {
 			LoadingBar_->setState(lb::LoadingBar::State::STOPPED);
@@ -147,12 +147,10 @@ namespace bb {
 			LoadingBar_->setState(lb::LoadingBar::State::INSTALLING);
 			if (!onlyDownload)
 				installer_.start();
-			downloadEnded();
 		}
 	}
 
 	void InstalationManager::archieveEnded() {
-		installEnded();
 		disconnectAll();
 		if (actualGame_) {
 			actualGame_->installed = true;
@@ -162,7 +160,7 @@ namespace bb {
 				link /= actualGame_->name.toUtf8().constData();
 				link += ".lnk";
 				std::filesystem::path path = actualGame_->gameDir.toUtf8().constData();
-				path /= actualGame_->execDir.toUtf8().constData();
+				path /= actualGame_->execPath.toUtf8().constData();
 				std::string ff(path.generic_string().c_str());
 				auto res = CreateLink(path.generic_string().c_str(), path.parent_path().generic_string().c_str(), link.generic_string().c_str(), "Sylio shortcut");
 				actualGame_->shortcutPath = link.generic_string().c_str();
@@ -176,27 +174,51 @@ namespace bb {
 		progress_ = 100;
 		sendDataToBar();
 		LoadingBar_->reset();
-		if(!cancel_)
+		if (!cancel_)
 			LoadingBar_->setState(lb::LoadingBar::State::COMPLEET);
 		LoadingBar_->setVisibleState(lb::LoadingBar::VisibleState::HIDDEN);
-		clearFilesEnded();
 	}
 
-	void InstalationManager::downloadFile(std::filesystem::path url, std::string fileName, qint64 tot) {
-		downloadFiles({ {url, fileName} }, tot);
+	void InstalationManager::updateMainApp(QString version, QString appInfoUrl) {
+		reset();
+		setTotal(0);
+		appInfoParser_.setVerToCheck(version);
+		files_ = files{ {appInfoUrl.toStdString(), "AppInfo.json" } };
+		downloader_.setFilestoDownload(files_);
+		stage_ = Stage::DOWNLOAD;
+		progress_ = 100; //for checking state
+		LoadingBar_->setState(lb::LoadingBar::State::CHECKING);
+		LoadingBar_->setVisibleState(lb::LoadingBar::VisibleState::SHOWED);
+		connect(&downloader_, &Downloader::ended, this, &InstalationManager::appInfoDownloaded);
+		connect(&downloader_, &Downloader::error, this, &InstalationManager::errorCatched);
+		downloader_.start();
+	}
+
+	void InstalationManager::appInfoDownloaded() {
+		appInfoParser_.parse();
+		disconnect(&downloader_, &Downloader::ended, this, &InstalationManager::appInfoDownloaded);
+	}
+
+	void InstalationManager::appInfoParserEnded() {
+		if (appInfoParser_.needUpdate()) {
+			installMainApp(appInfoParser_.getNeededFiles(), appInfoParser_.getBytesToDownload());
+			updateStatus(true);
+		} else {
+			updateStatus(false);
+		}
+	}
+	void InstalationManager::installMainApp(files files, qint64 tot) {
+		reset();
+		setTotal(tot);
+		files_ = files;
+		downloader_.setFilestoDownload(files_);
+		installer_.setUnpackFiles(files_);
+		installDir_ = "../";
+		install();
 	}
 
 	void InstalationManager::installFile(std::filesystem::path url, std::string fileName, qint64 tot, std::filesystem::path dir, cf::Game* game) {
 		installFiles({ {url, fileName} }, tot, dir, game);
-	}
-
-	void InstalationManager::downloadFiles(files files, qint64 tot) {
-		reset();
-		setTotal(tot);
-		files_ = files;
-		onlyDownload = true;
-		downloader_.setFilestoDownload(files_);
-		download();
 	}
 
 	void InstalationManager::installFiles(files files, qint64 tot, std::filesystem::path dir, cf::Game* game) {
@@ -278,7 +300,7 @@ namespace bb {
 	}
 
 	void InstalationManager::installGame(cf::Game& game) {
-		installFile(game.url.toStdString(), game.fileName.toStdString(), game.size, game.gameDir.toUtf8().constData(), &game);
+		installFile(game.appInfoUrl.toStdString(), game.fileName.toStdString(), game.size, game.gameDir.toUtf8().constData(), &game);
 	}
 
 	void InstalationManager::errorCatched(int code) {
@@ -342,4 +364,6 @@ namespace bb {
 		gm::GameManager::getObject().unLock();
 		errorEmit();
 	}
+
+
 }

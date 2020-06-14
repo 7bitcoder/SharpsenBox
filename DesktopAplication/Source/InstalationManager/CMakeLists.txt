@@ -5,7 +5,9 @@ conan_basic_setup(TARGETS)
 add_library(InstalationManager STATIC
     InstalationManager.cpp
     Downloader.cpp 
-    ArchieveInstaller.cpp "Cleanup.cpp" "Cleanup.hpp")
+    ArchieveInstaller.cpp 
+    Cleanup.cpp
+    AppInfoParser.cpp)
 
 target_include_directories(InstalationManager PUBLIC
     "../AppBackend"

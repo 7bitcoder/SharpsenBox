@@ -20,74 +20,90 @@ namespace cf {
 			;//problem
 		QString val;
 		QFile file;
+		//open LaunchBoxConfig file
 		file.setFileName(getConfigJson().generic_string().c_str());
 		file.open(QIODevice::ReadOnly | QIODevice::Text);
 		val = file.readAll();
 		file.close();
+
 		QJsonDocument d = QJsonDocument::fromJson(val.toUtf8());
-		QJsonObject sett2 = d.object();
+
+		// Read settings
 		version_ = d["Ver"].toString();
-		std::cout << version_.toUtf8().constData();
-		auto games = d["Games"].toArray();
 		downloadSpeed_ = std::stoi(d["DownloadSpeed"].toString().toStdString());
-		for (int i = 0; i < games.size(); ++i) {
-			auto gam = readGameInfo((games[i].toString() + ".json").toUtf8().constData());
-			games_.insert({ gam.id, gam });
+		gameInfoRepo_ = d["GamesInfoRepository"].toString().toStdString();
+		LauncherAppInfo = d["AppInfoUrl"].toString().toStdString();
+
+		std::cout << "version: " << version_.toUtf8().constData();
+		readGames();
+	}
+	void Config::readGames() {
+		QString val;
+		QFile file;
+		//open LaunchBoxConfig file
+		file.setFileName((config_ / gamesFileName_).generic_string().c_str());
+		file.open(QIODevice::ReadOnly | QIODevice::Text);
+		val = file.readAll();
+		file.close();
+
+		QJsonDocument d = QJsonDocument::fromJson(val.toUtf8());
+		QJsonObject json = d.object();
+		for (auto& key : json.keys()) {
+			QJsonObject value = json[key].toObject();
+			auto game = readGameInfo(value);
+			game.name = key;
+			games_.insert({ game.id, game });
 		}
 	}
-
-	Game Config::readGameInfo(std::filesystem::path path) {
-		QFile file;
-		file.setFileName((config_ / path).string().c_str());
-		file.open(QIODevice::ReadOnly | QIODevice::Text);
-		QString val = file.readAll();
-		std::string gg(val.toUtf8().constData());
-		file.close();
-		QJsonDocument d = QJsonDocument::fromJson(val.toUtf8());
-		QJsonObject sett2 = d.object();
+	Game Config::readGameInfo(const QJsonObject& value) {
 		Game g;
-		auto ss = std::string(d["Id"].toString().toUtf8().constData());
+		auto ss = std::string(value["Id"].toString().toUtf8().constData());
 		g.id = std::stoi(ss);
-		g.installed = readBool(d["Installed"]);
-		g.version = d["Ver"].toString();
-		g.name = d["Name"].toString();
-		QString size = d["Size"].toString();
-		g.size = std::stoll(size.toUtf8().constData());
-		g.url = d["Url"].toString();
-		g.gameDir = d["GameDir"].toString();
-		g.execDir = d["GameExecPath"].toString();
-		g.shortcutPath = d["ShortcutPath"].toString();
-		g.shortcut = readBool(d["Shortcut"]);
-		g.autoCheck = readBool(d["AutoUpdate"]);
-		g.fileName = d["FileName"].toString();
+		g.installed = readBool(value["Installed"]);
+		g.shortcut = readBool(value["Shortcut"]);
+		g.autoCheck = readBool(value["AutoUpdate"]);
+		g.version = value["Ver"].toString();
+		g.appInfoUrl = value["AppInfoUrl"].toString();
+		g.gameDir = value["GameDir"].toString();
+		g.execPath = value["GameExecPath"].toString();
+		g.shortcutPath = value["ShortcutPath"].toString();
+		g.desctiption = value["Desctiption"].toString();
+		g.youtubeLink = value["YoutubeLink"].toString();
+		g.additionalInfo = value["AdditionalInfo"].toString();
 		//std::cout << g.id << g.url.toUtf8().constData() << g.version.toUtf8().constData() << g.installed;
 		return g;
 	}
 
-	void Config::writedGameInfo(Game& game) {
-		QJsonDocument d;
-		QJsonObject RootObject = d.object();
-		RootObject.insert("Id", QString::number(game.id));
-		RootObject.insert("Name", game.name);
-		RootObject.insert("Installed", writeBool(game.installed));
-		RootObject.insert("Ver", game.version);
-		RootObject.insert("Size", QString::number(game.size));
-		RootObject.insert("Url", game.url);
-		RootObject.insert("FileName", game.fileName);
-		RootObject.insert("GameDir", game.gameDir);
-		RootObject.insert("GameExecPath", game.execDir);
-		RootObject.insert("ShortcutPath", game.shortcutPath);
-		RootObject.insert("Shortcut", writeBool(game.shortcut));
-		RootObject.insert("AutoUpdate", writeBool(game.autoCheck));
-
-		d.setObject(RootObject);
+	void Config::writeGames() {
+		QJsonObject RootObject;
+		for (auto& game : games_) {
+			auto jsonParsed = parseGameInfo(game.second);
+			RootObject.insert(game.second.name, jsonParsed);
+		}
 		QFile file;
-		std::string ff(game.name.toUtf8().constData());
-		auto gamePath = config_ / (game.name.toStdString() + ".json");
-		file.setFileName(gamePath.generic_string().c_str());
+		QJsonDocument d;
+		d.setObject(RootObject);
+		file.setFileName((config_ / gamesFileName_).generic_string().c_str());
 		file.open(QIODevice::WriteOnly | QIODevice::Text);
 		file.write(d.toJson());
 		file.close();
+	}
+
+	QJsonObject Config::parseGameInfo(const Game& game) {
+		QJsonObject RootObject;
+		RootObject.insert("Id", QString::number(game.id));
+		RootObject.insert("Ver", game.version);
+		RootObject.insert("AutoUpdate", writeBool(game.autoCheck));
+		RootObject.insert("Installed", writeBool(game.installed));
+		RootObject.insert("Shortcut", writeBool(game.shortcut));
+		RootObject.insert("GameDir", game.gameDir);
+		RootObject.insert("GameExecPath", game.execPath);
+		RootObject.insert("ShortcutPath", game.shortcutPath);
+		RootObject.insert("Desctiption", game.desctiption);
+		RootObject.insert("YoutubeLink", game.youtubeLink);
+		RootObject.insert("AdditionalInfo", game.additionalInfo);
+		RootObject.insert("AppInfoUrl", game.appInfoUrl);
+		return RootObject;
 	}
 
 	void Config::init() {}
@@ -98,27 +114,23 @@ namespace cf {
 
 	Config::~Config() {
 		QFile file;
-		file.setFileName(getConfigJson().string().c_str());
-		file.open(QIODevice::ReadOnly | QIODevice::Text);
-		QString val = file.readAll();
-		std::string gg(val.toUtf8().constData());
-		file.close();
-		QJsonDocument d = QJsonDocument::fromJson(val.toUtf8());
 
+		QJsonDocument d;
 		QJsonObject RootObject = d.object();
+
+
 		RootObject.insert("Ver", version_);
 		RootObject.insert("DownloadSpeed", QString::number(downloadSpeed_));
-		QJsonArray arr;
-		for (auto& game : games_) {
-			writedGameInfo(game.second);
-			arr.push_back(game.second.name);
-		}
-		RootObject.insert("Games", arr);
+		RootObject.insert("GamesInfoRepository", gameInfoRepo_.string().c_str());
+		RootObject.insert("AppInfoUrl", LauncherAppInfo.string().c_str());
+
 		d.setObject(RootObject);
 		file.setFileName(getConfigJson().generic_string().c_str());
 		file.open(QIODevice::WriteOnly | QIODevice::Text);
 		file.write(d.toJson());
 		file.close();
+
+		writeGames();
 	}
 	//
 	//qint64 AppUpdateChecker::getProgress() const {

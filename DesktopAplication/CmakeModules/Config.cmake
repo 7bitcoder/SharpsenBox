@@ -72,7 +72,7 @@ if(AUTO_QT_LIBS)
 endif()
 
 set(totalPath  ${CMAKE_SOURCE_DIR}/Config/LaunchBox)
-file( COPY  ${totalPath}/LaunchBoxInfo.json ${totalPath}/Sylio.json ${totalPath}/Rest.json DESTINATION  ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/../Config )
+file( COPY  ${totalPath}/LaunchBoxInfo.json ${totalPath}/Games.json DESTINATION  ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/../Config )
 
 set(UpdaterPath Updater)
 
