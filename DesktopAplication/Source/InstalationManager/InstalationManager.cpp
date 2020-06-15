@@ -118,6 +118,8 @@ namespace bb {
 			updateStatus(true);
 		} else {
 			updateStatus(false);
+			if(actualGame_)
+				actualGame_->updateChecked = true;
 		}
 	}
 
@@ -170,6 +172,7 @@ namespace bb {
 				std::string ff(path.generic_string().c_str());
 				auto res = CreateLink(path.generic_string().c_str(), path.parent_path().generic_string().c_str(), link.generic_string().c_str(), "Sylio shortcut");
 				actualGame_->shortcutPath = link.generic_string().c_str();
+				actualGame_->updateChecked = true;
 			}
 		}
 		gm::GameManager::getObject().unLock();

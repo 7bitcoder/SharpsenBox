@@ -18,95 +18,48 @@ Rectangle {
     property real clicked: 0.3
     property real hovered: 1
     property real timeHover: 200
-    property real timeClicked: 80
+    property real timeClicked: 120
 
-    Rectangle {
-        id: sylio
-        property bool selected: window.gameBarS === "Sylio.qml"
+    Component{
+        id: gameBLock
+        GameChoserBlock{ gameId: gId }
+    }
+
+    ListModel {
+         id: gameBarModel
+    }
+
+    ListView {
         anchors {
             top: parent.top
             left: parent.left
-            bottom: parent.bottom
+                        right: parent.right
         }
-        width: parent.size
-        color: selected || sylioM.containsMouse ? window.color : "transparent"
-        onSelectedChanged: {
-            if (selected)
-                window.gameBarS = "Sylio.qml"
-        }
-        Text {
-            id: sylioText
-            anchors.centerIn: parent
-            text: "Sylio"
-            font.family: "Arial"
-            font.pointSize: 25
-            color: parent.selected ? "white" : gameChoser.normal
-            Behavior on opacity {
-                OpacityAnimator {
-                    duration: gameChoser.timeClicked
-                }
-            }
-            Behavior on color {
-                ColorAnimation {
-                    duration: gameChoser.timeHover
-                }
-            }
-        }
-        MouseArea {
-            id: sylioM
-            anchors.fill: parent
-            hoverEnabled: true
-            onClicked: {
-                resetAll(sylioId)
-                parent.selected = true
-            }
-            // onPressed: sylioText.opacity = gameChoser.clicked
-            // onReleased: sylioText.opacity = gameChoser.hovered
-        }
+        height: parent.height
+        model: gameBarModel
+        id: gameBar
+        delegate: gameBLock
+        orientation: ListView.Horizontal
     }
-    Rectangle {
-        id: rest
-        property bool selected: window.gameBarS === "Rest.qml"
-        anchors {
-            top: parent.top
-            left: sylio.right
-            bottom: parent.bottom
-        }
-        width: parent.size
-        color: selected || restM.containsMouse ? window.color : "transparent"
-        onSelectedChanged: {
-            if (selected)
-                window.gameBarS = "Rest.qml"
-        }
 
-        Text {
-            id: restText
-            anchors.centerIn: parent
-            text: "Rest"
-            font.family: "Arial"
-            font.pointSize: 25
-            color: parent.selected ? "white" : gameChoser.normal
-            Behavior on opacity {
-                OpacityAnimator {
-                    duration: gameChoser.timeClicked
-                }
+    Component.onCompleted: {
+        console.log("here")
+        while (true) {
+            var gameId = _Config.getGameId()
+            //end
+            console.log("gameID " + gameId)
+            if (gameId === 0){
+                console.log("break")
+                break
             }
-            Behavior on color {
-                ColorAnimation {
-                    duration: gameChoser.timeHover
-                }
-            }
-        }
-        MouseArea {
-            id: restM
-            anchors.fill: parent
-            hoverEnabled: true
-            onClicked: {
-                resetAll(restId)
-                parent.selected = true
-            }
-            // onPressed: restText.opacity = gameChoser.clicked
-            // onReleased: restText.opacity = gameChoser.hovered
+            gameBarModel.append({ gId: gameId })
+            console.log("size" + gameBarModel.count)
         }
     }
 }
+
+/*##^##
+Designer {
+    D{i:0;autoSize:true;height:480;width:640}
+}
+##^##*/

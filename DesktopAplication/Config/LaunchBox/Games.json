@@ -8,9 +8,7 @@
     "GameDir": "",
     "GameExecPath": "./Release/Sylio.exe",
     "ShortcutPath": "",
-    "Desctiption": "",
-    "YoutubeLink": "",
-    "AdditionalInfo": "",
+    "PresentationUrl": "https://youtube.pl",
     "AppInfoUrl": "https://sourceforge.net/projects/sylio/files/AppInfo.json/download"
   },
   "Rest": {
@@ -22,9 +20,7 @@
     "GameDir": "",
     "GameExecPath": "./Release/Sylio.exe",
     "ShortcutPath": "",
-    "Desctiption": "",
-    "YoutubeLink": "",
-    "AdditionalInfo": "",
+    "PresentationUrl": "qml.html",
     "AppInfoUrl": "https://sourceforge.net/projects/sylio/files/AppInfo.json/download"
   }
 }

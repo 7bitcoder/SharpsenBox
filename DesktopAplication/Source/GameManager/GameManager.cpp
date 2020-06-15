@@ -67,4 +67,18 @@ namespace gm {
 		lb.setState(lb::LoadingBar::State::COMPLEET);
 		lb.setVisibleState(lb::LoadingBar::VisibleState::HIDDEN);
 	}
+
+	Q_INVOKABLE void GameManager::checkAutoUpdate(int id) {
+		auto& game = cf::Config::getObject().getGame(id);
+		if (game.autoCheck && game.installed) {
+			update(id);
+		}
+	}
+
+	Q_INVOKABLE void GameManager::update(int id) {
+		auto& game = cf::Config::getObject().getGame(id);
+		if (game.updateChecked)
+			return; //checked
+		bb::InstalationManager::getObject().updateGame(game);
+	}
 }

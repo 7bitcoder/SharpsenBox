@@ -3,15 +3,15 @@ import QtQuick.Controls 2.15
 
 Rectangle {
     id: gameBarList
-    property string name
-    property bool hide
+    anchors.right: parent.right
+    width: 600
+    property int gameId
+    property string name: _Config.getGameName(gameId)
     property bool listed: false
     property int minHeight: 50
     property int maxHeight: 150
-    property int gameId
-    anchors.topMargin: hide ? 0 : 20
     color: "#404040"
-    height: hide ? 0 : bar.height + list.height
+    height: bar.height + list.height
     Rectangle {
         id: bar
         color: "#808080"
@@ -20,14 +20,13 @@ Rectangle {
             left: parent.left
             right: parent.right
         }
-        height: parent.hide ? 0 : parent.minHeight
+        height: parent.minHeight
         Text {
             anchors {
                 verticalCenter: parent.verticalCenter
                 left: parent.left
                 leftMargin: 10
             }
-            visible: !gameBarList.hide
             text: name
             color: "white"
             font.family: "Arial"

@@ -5,6 +5,8 @@
 #include <QJsonArray>
 #include <QFile>
 #include <iostream>
+#include <algorithm>
+#include <QDir>
 
 namespace cf {
 
@@ -36,7 +38,13 @@ namespace cf {
 
 		std::cout << "version: " << version_.toUtf8().constData();
 		readGames();
+
+		for (auto& keys : games_) {
+			sortedId_.push_back(keys.first);
+		}
+		std::sort(sortedId_.begin(), sortedId_.end(), std::less<int>());
 	}
+
 	void Config::readGames() {
 		QString val;
 		QFile file;
@@ -67,9 +75,7 @@ namespace cf {
 		g.gameDir = value["GameDir"].toString();
 		g.execPath = value["GameExecPath"].toString();
 		g.shortcutPath = value["ShortcutPath"].toString();
-		g.desctiption = value["Desctiption"].toString();
-		g.youtubeLink = value["YoutubeLink"].toString();
-		g.additionalInfo = value["AdditionalInfo"].toString();
+		g.presentationUrl = value["PresentationUrl"].toString();
 		//std::cout << g.id << g.url.toUtf8().constData() << g.version.toUtf8().constData() << g.installed;
 		return g;
 	}
@@ -99,9 +105,7 @@ namespace cf {
 		RootObject.insert("GameDir", game.gameDir);
 		RootObject.insert("GameExecPath", game.execPath);
 		RootObject.insert("ShortcutPath", game.shortcutPath);
-		RootObject.insert("Desctiption", game.desctiption);
-		RootObject.insert("YoutubeLink", game.youtubeLink);
-		RootObject.insert("AdditionalInfo", game.additionalInfo);
+		RootObject.insert("PresentationUrl", game.presentationUrl);
 		RootObject.insert("AppInfoUrl", game.appInfoUrl);
 		return RootObject;
 	}
@@ -160,5 +164,32 @@ namespace cf {
 			return games_[id];
 		}
 		throw std::exception("Bad game Id");
+	}
+
+	Q_INVOKABLE int Config::getGameId() {
+		static int i = 0;
+		if(i < maxGameBarLen_ && i < sortedId_.size()) {
+			int id = sortedId_.at(i++);
+			return id;
+		}
+		i = 0;
+		return 0; // end
+	}
+	Q_INVOKABLE QString Config::getGamePresentationUrl(int id) {
+		auto& game = getGame(id);
+		auto& url = game.presentationUrl;
+		auto hh = url.toStdString();
+		if (url.startsWith("http")) { // its http link
+			return url;
+		} else { // local file 
+			auto full = "file:///" + QDir::currentPath() + "/" + url;
+			return full;
+		}
+	}
+
+	Q_INVOKABLE int Config::getDefaultGameId() {
+		if (sortedId_.size())
+			return sortedId_.at(0);
+		throw std::exception("None games provided");
 	}
 }

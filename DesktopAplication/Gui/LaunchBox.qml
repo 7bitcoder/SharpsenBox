@@ -19,9 +19,10 @@ ApplicationWindow {
     property point startWindowPos
     property size startWindowSize
     property int stage: 0
-    property int gameId: 0 //to install
-    property string gameBarS: "Sylio.qml"
-    property string info: "elo"
+
+    // to gameChoser
+    property int selectedGame: _Config.getDefaultGameId()
+    property string info: ""
 
     property bool dialogTrigger: _Dialog.showDialog
     onDialogTriggerChanged: {

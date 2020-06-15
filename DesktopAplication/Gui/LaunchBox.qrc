@@ -7,6 +7,7 @@
 	<file>Settings.qml</file>
 	<file>Aplication.qml</file>
 	<file>GameChoser.qml</file>
+	<file>GameChoserBlock.qml</file>
 	<file>Sylio.qml</file>
 	<file>Rest.qml</file>
 	<file>BottomBar.qml</file>
@@ -25,5 +26,6 @@
 	<file>content/plain-square.png</file>
 	<file>content/pause-button.png</file>
 	<file>content/play-button.png</file>
+	<file>clear.html</file>
 </qresource>
 </RCC>

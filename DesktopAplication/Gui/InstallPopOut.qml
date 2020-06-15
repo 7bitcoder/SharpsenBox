@@ -6,7 +6,7 @@ Rectangle {
     id: installbar
     implicitHeight: 800
     implicitWidth: 800
-    property int gameId: window.gameId
+    property int gameId: window.selectedGame
     property int normalTextSize: 15
     property string installDirectory: folderDialog.folder.toString(
                                           ).substring(8)

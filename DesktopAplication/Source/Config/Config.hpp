@@ -22,10 +22,10 @@ namespace cf {
 		QString gameDir;
 		QString execPath;
 		QString shortcutPath;
-		QString desctiption;
-		QString youtubeLink;
-		QString additionalInfo;
+		QString presentationUrl;
 		std::unordered_map<QString, int> sha;
+
+		bool updateChecked = false;
 		bool operator==(const Game& g) {
 			return id == g.id;
 		}
@@ -62,6 +62,10 @@ namespace cf {
 		Q_INVOKABLE bool getGameAutoCheck(int id) { bool v = getGame(id).autoCheck;	return v; }
 		Q_INVOKABLE QString getGameName(int id) { return getGame(id).name; }
 		Q_INVOKABLE QString  getConfigJsonUrl() { return ""; } //!!!!!!!!!
+		Q_INVOKABLE int getGameId(); // get game id for game choser
+		Q_INVOKABLE QString getGamePresentationUrl(int id); // get game id for game choser
+		Q_INVOKABLE int getDefaultGameId();
+
 	private:
 		Config();
 		virtual ~Config();
@@ -81,5 +85,9 @@ namespace cf {
 		qint32 downloadSpeed_;
 		std::filesystem::path gameInfoRepo_;
 		std::filesystem::path LauncherAppInfo;
+
+		//for gamebar
+		int maxGameBarLen_ = 4;
+		std::vector<int> sortedId_;
 	};
 }

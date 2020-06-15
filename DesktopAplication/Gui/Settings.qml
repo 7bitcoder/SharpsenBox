@@ -21,9 +21,10 @@ Item {
                 left: parent.left
                 right: parent.right
             }
-            property int contentHeigh: rest.y + rest.height - content.y
+            property int contentHeigh: gamesList.y + gamesList.contentHeight - content.y
 
             color: "transparent"
+
             Item {
                 anchors.fill: parent
                 anchors.leftMargin: 30
@@ -164,29 +165,43 @@ Item {
                     font.pixelSize: 25
                 }
 
-                GameSettings {
-                    id: sylio
+                Component{
+                    id: gameBLock
+                    GameSettings{ gameId: gId; }
+                }
+
+                ListModel {
+                     id: gameBarModel
+                }
+
+                ListView {
+                    id: gamesList
                     anchors {
                         top: gameSettingsS.bottom
+                        topMargin: 15
                         left: parent.left
-                        right: parent.right
                         leftMargin: scroll.inner
                     }
-                    name: "Sylio"
-                    gameId: 1
-                    hide: false
+                    height: contentHeight
+                    width: 600
+                    model: gameBarModel
+                    delegate: gameBLock
+                    spacing: 10
                 }
-                GameSettings {
-                    id: rest
-                    anchors {
-                        top: sylio.bottom
-                        left: parent.left
-                        right: parent.right
-                        leftMargin: scroll.inner
+
+                Component.onCompleted: {
+                    console.log("here")
+                    while (true) {
+                        var gameId = _Config.getGameId()
+                        //end
+                        console.log("gameID " + gameId)
+                        if (gameId === 0){
+                            console.log("break")
+                            break
+                        }
+                        gameBarModel.append({ gId: gameId })
+                        console.log("size" + gameBarModel.count)
                     }
-                    name: "Rest"
-                    gameId: 2
-                    hide: false
                 }
             }
         }

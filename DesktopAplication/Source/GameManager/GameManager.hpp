@@ -31,6 +31,8 @@ namespace gm {
 		Q_INVOKABLE void installGame(int id, QString path, bool shortcut);
 		Q_INVOKABLE bool getLock() { return lock_; }
 		Q_INVOKABLE void unistallRequest(int id);
+		Q_INVOKABLE void checkAutoUpdate(int id);
+		Q_INVOKABLE void update(int id);
 
 	public slots:
 		void uninstallation(int id);
