@@ -28,12 +28,12 @@ Item {
             anchors {
                 left: parent.left
                 top: parent.top
-                topMargin: 0
+                topMargin: 10
                 leftMargin: 20
             }
 
             width: 120
-            height: 80
+            height: 60
             color: "transparent"
             Text {
                 id: buttonPLay
@@ -70,64 +70,48 @@ Item {
             }
         }
 
-        Rectangle {
-            id: webBar
-            color: "grey"
-            anchors{
-                bottom: webView.top
-                left: parent.left
-            }
-            height: 5
-            width: (webView.loadProgress/100)*parent.width
-        }
-
-        WebEngineView {
-            visible: true
-            id: webView
+        Loader {
+            id: gameChoserLoader
             property int actualGame: window.selectedGame
+            property int destX: parent.x
             anchors {
                 top: button.bottom
                 left: parent.left
                 right: parent.right
                 bottom: parent.bottom
             }
-            backgroundColor: "transparent"
-            url: _Config.getGamePresentationUrl(actualGame) //"https://www.youtube.com/embed/T5zxTI1gxOQ?&autohide=1&showinfo=0&amp;fs=0&amp;showinfo=0"
+            width: parent.width
+            source: _Config.getPresentationFile(actualGame)
             onActualGameChanged: {
-                profile.clearHttpCache()
-                url = _Config.getGamePresentationUrl(actualGame)
+                source = _Config.getPresentationFile(actualGame)
                 _GameManager.checkAutoUpdate(actualGame)
-                //animation.stop()
-               // animationOp.stop()
-               // animation.start()
-                //animationOp.start()
-
+                animation.stop()
+                animationOp.stop()
+                animation.start()
+                animationOp.start()
             }
-            onContextMenuRequested: function(request) {
-                request.accepted = true;
-            }
-        }
-        MouseArea{
         }
     }
-    //NumberAnimation {
-    //    id: animation
-    //    target: content
-    //    property: "x"
-    //    from: content.destX + parent.width
-    //    to: content.destX
-    //    duration: 300
-    //    easing.type: Easing.OutQuart
-    //}
-    //NumberAnimation {
-    //    id: animationOp
-    //    target: content
-    //    property: "opacity"
-    //    from: 0
-    //    to: 1
-    //    duration: 300
-    //    easing.type: Easing.OutCubic
-    //}
+
+    NumberAnimation {
+        id: animation
+        target: content
+        property: "x"
+        from: content.destX + parent.width
+        to: content.destX
+        duration: 300
+        easing.type: Easing.OutQuart
+    }
+
+    NumberAnimation {
+        id: animationOp
+        target: content
+        property: "opacity"
+        from: 0
+        to: 1
+        duration: 300
+        easing.type: Easing.OutCubic
+    }
     //Loader {
     //    id: gameChoserLoader
     //    anchors {

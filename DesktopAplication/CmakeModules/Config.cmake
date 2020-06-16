@@ -72,7 +72,9 @@ if(AUTO_QT_LIBS)
 endif()
 
 set(totalPath  ${CMAKE_SOURCE_DIR}/Config/LaunchBox)
+set(pages ${CMAKE_SOURCE_DIR}/Gui)
 file( COPY  ${totalPath}/LaunchBoxInfo.json ${totalPath}/Games.json DESTINATION  ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/../Config )
+file( COPY  ${pages}/ExampleOne.qml ${pages}/ExampleTwo.qml DESTINATION  ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/../Pages )
 
 set(UpdaterPath Updater)
 

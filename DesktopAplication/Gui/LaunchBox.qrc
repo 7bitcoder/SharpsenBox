@@ -8,8 +8,6 @@
 	<file>Aplication.qml</file>
 	<file>GameChoser.qml</file>
 	<file>GameChoserBlock.qml</file>
-	<file>Sylio.qml</file>
-	<file>Rest.qml</file>
 	<file>BottomBar.qml</file>
 	<file>InstallPopOut.qml</file>
 	<file>PopOutDialog.qml</file>
@@ -17,6 +15,7 @@
 	<file>GameSettings.qml</file>
 	<file>ResizingFrames.qml</file>
 	<file>LeftBar.qml</file>
+	<file>WebGamePage.qml</file>
 	<file>content/person.png</file>
 	<file>content/cog.png</file>
 	<file>content/house.png</file>

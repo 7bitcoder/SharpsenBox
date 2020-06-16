@@ -64,7 +64,9 @@ namespace cf {
 		Q_INVOKABLE QString  getConfigJsonUrl() { return ""; } //!!!!!!!!!
 		Q_INVOKABLE int getGameId(); // get game id for game choser
 		Q_INVOKABLE QString getGamePresentationUrl(int id); // get game id for game choser
+		Q_INVOKABLE QString getPresentationFile(int id);
 		Q_INVOKABLE int getDefaultGameId();
+
 
 	private:
 		Config();
@@ -87,7 +89,7 @@ namespace cf {
 		std::filesystem::path LauncherAppInfo;
 
 		//for gamebar
-		int maxGameBarLen_ = 4;
+		int maxGameBarLen_ = 10;
 		std::vector<int> sortedId_;
 	};
 }

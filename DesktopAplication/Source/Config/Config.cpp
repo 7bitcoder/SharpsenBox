@@ -175,14 +175,33 @@ namespace cf {
 		i = 0;
 		return 0; // end
 	}
+
+	namespace {
+		QString getFullCfPath(QString url) {
+			return "file:///" + QDir::currentPath() + "/../Pages/" + url;
+		}
+	}
+
 	Q_INVOKABLE QString Config::getGamePresentationUrl(int id) {
 		auto& game = getGame(id);
 		auto& url = game.presentationUrl;
 		auto hh = url.toStdString();
 		if (url.startsWith("http")) { // its http link
 			return url;
-		} else { // local file 
-			auto full = "file:///" + QDir::currentPath() + "/" + url;
+		} else { // local html file 
+			auto full = getFullCfPath(url);
+			return full;
+		}
+	}
+
+	Q_INVOKABLE QString Config::getPresentationFile(int id) {
+		auto& game = getGame(id);
+		auto& url = game.presentationUrl;
+		auto hh = url.toStdString();
+		if (url.startsWith("http") || url.endsWith(".html")) { // its http link or locak html file
+			return "WebGamePage.qml";
+		} else if(url.endsWith(".qml")) { // local qml file 
+			auto full = getFullCfPath(url);
 			return full;
 		}
 	}

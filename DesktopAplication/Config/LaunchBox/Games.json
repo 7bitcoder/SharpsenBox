@@ -20,7 +20,79 @@
     "GameDir": "",
     "GameExecPath": "./Release/Sylio.exe",
     "ShortcutPath": "",
-    "PresentationUrl": "qml.html",
+    "PresentationUrl": "ExampleOne.qml",
+    "AppInfoUrl": "https://sourceforge.net/projects/sylio/files/AppInfo.json/download"
+  },
+  "Rest2": {
+    "Id": "3",
+    "Ver": "1.0",
+    "AutoUpdate": "false",
+    "Installed": "false",
+    "Shortcut": "false",
+    "GameDir": "",
+    "GameExecPath": "./Release/Sylio.exe",
+    "ShortcutPath": "",
+    "PresentationUrl": "ExampleOne.qml",
+    "AppInfoUrl": "https://sourceforge.net/projects/sylio/files/AppInfo.json/download"
+  },
+  "Rest4": {
+    "Id": "4",
+    "Ver": "1.0",
+    "AutoUpdate": "false",
+    "Installed": "false",
+    "Shortcut": "false",
+    "GameDir": "",
+    "GameExecPath": "./Release/Sylio.exe",
+    "ShortcutPath": "",
+    "PresentationUrl": "ExampleOne.qml",
+    "AppInfoUrl": "https://sourceforge.net/projects/sylio/files/AppInfo.json/download"
+  },
+  "Res3t": {
+    "Id": "3",
+    "Ver": "1.0",
+    "AutoUpdate": "false",
+    "Installed": "false",
+    "Shortcut": "false",
+    "GameDir": "",
+    "GameExecPath": "./Release/Sylio.exe",
+    "ShortcutPath": "",
+    "PresentationUrl": "ExampleOne.qml",
+    "AppInfoUrl": "https://sourceforge.net/projects/sylio/files/AppInfo.json/download"
+  },
+  "Rest6": {
+    "Id": "6",
+    "Ver": "1.0",
+    "AutoUpdate": "false",
+    "Installed": "false",
+    "Shortcut": "false",
+    "GameDir": "",
+    "GameExecPath": "./Release/Sylio.exe",
+    "ShortcutPath": "",
+    "PresentationUrl": "ExampleOne.qml",
+    "AppInfoUrl": "https://sourceforge.net/projects/sylio/files/AppInfo.json/download"
+  },
+  "Rest7": {
+    "Id": "8",
+    "Ver": "1.0",
+    "AutoUpdate": "false",
+    "Installed": "false",
+    "Shortcut": "false",
+    "GameDir": "",
+    "GameExecPath": "./Release/Sylio.exe",
+    "ShortcutPath": "",
+    "PresentationUrl": "ExampleOne.qml",
+    "AppInfoUrl": "https://sourceforge.net/projects/sylio/files/AppInfo.json/download"
+  },
+  "Rest9": {
+    "Id": "9",
+    "Ver": "1.0",
+    "AutoUpdate": "false",
+    "Installed": "false",
+    "Shortcut": "false",
+    "GameDir": "",
+    "GameExecPath": "./Release/Sylio.exe",
+    "ShortcutPath": "",
+    "PresentationUrl": "ExampleOne.qml",
     "AppInfoUrl": "https://sourceforge.net/projects/sylio/files/AppInfo.json/download"
   }
 }

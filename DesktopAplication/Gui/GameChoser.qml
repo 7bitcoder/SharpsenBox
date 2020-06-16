@@ -33,8 +33,9 @@ Rectangle {
         anchors {
             top: parent.top
             left: parent.left
-                        right: parent.right
+            right: parent.right
         }
+        clip: true
         height: parent.height
         model: gameBarModel
         id: gameBar
