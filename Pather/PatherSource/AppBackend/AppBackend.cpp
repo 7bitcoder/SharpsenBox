@@ -4,6 +4,7 @@
 #include "AppBackend.hpp"
 #include "AppBackend.hpp"
 #include "TreeModel.hpp"
+#include <QFileSystemModel>
 
 namespace bc {
 
@@ -18,7 +19,14 @@ namespace bc {
 	}
 
 	void Backend::registerObjects() {
-		registerObject<dt::TreeModel>();
+		QFileSystemModel* filemodel = new QFileSystemModel;
+		filemodel->setFilter(QDir::Files | QDir::NoDotAndDotDot);
+		filemodel->setNameFilterDisables(false);
+		filemodel->supportedDragActions();
+		filemodel->setRootPath("C:/Users/Sylwester/Desktop/TS");
+		
+		engine->rootContext()->setContextProperty("_TreeModel", filemodel);
+		//registerObject<dt::TreeModel>();
 	}
 	void Backend::initializeObjects() {}
 	template <class T>

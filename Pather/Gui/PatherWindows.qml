@@ -1,6 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Controls 1.4
-import QtQml.Models 2.15
+import QtQml.Models 2.12
 import Qt.labs.folderlistmodel 2.11
 
 Rectangle {
@@ -32,6 +32,7 @@ Rectangle {
 
         TreeView {
             id: treeview
+            property int dragItemIndex: -1
             anchors.fill: parent
             model: _TreeModel
             selectionMode: SelectionMode.ExtendedSelection
@@ -42,16 +43,6 @@ Rectangle {
             TableViewColumn {
                 role: "display" //this will show the folder/file name from the model
             }
-            TableViewColumn {
-                role: "name_role"
-                title: "Name"
-                width: 160
-            }
-            TableViewColumn {
-                role: "type_role"
-                title: "Type"
-                width: 75
-            }
             itemDelegate: Item {
                    Rectangle {
                        id: rect
@@ -61,6 +52,19 @@ Rectangle {
                            anchors.verticalCenter: parent.verticalCenter
                            color: styleData.selected ? "white" : "black"
                            text: styleData.value
+                       }
+
+                       MouseArea {
+                           id: mouseArea
+                           anchors.fill: parent
+                           drag.target: rect
+
+                           drag.onActiveChanged: {
+                               if (mouseArea.drag.active) {
+                                   treeview.dragItemIndex = index;
+                               }
+                               rect.Drag.drop();
+                           }
                        }
                       //MouseArea {
                       //    anchors.fill: parent
@@ -77,31 +81,51 @@ Rectangle {
                }
         }
 
-        DropArea {
-            id: dragTarget
+        Rectangle {
+            width: parent.width / 2
+            height: parent.height
+            anchors {
+                left: treeview.right
+                verticalCenter: treeview.verticalCenter
 
-            property string colorKey
-            property alias dropProxy: dragTarget
+            }
+            color: "#aaff0011"
 
-            width: 64; height: 64
-            keys: [ colorKey ]
-
-            Rectangle {
-                id: dropRectangle
-
+            DropArea {
+                id: dropArea
                 anchors.fill: parent
-                color: dragTarget.colorKey
-
-                states: [
-                    State {
-                        when: dragTarget.containsDrag
-                        PropertyChanges {
-                            target: dropRectangle
-                            color: "grey"
-                        }
-                    }
-                ]
+                onDropped: {
+                    treeview.model.remove(treeview.dragItemIndex);
+                    treeview.dragItemIndex = -1;
+                }
             }
         }
+
+       // DropArea {
+       //     id: dragTarget
+       //
+       //     property string colorKey
+       //     property alias dropProxy: dragTarget
+       //
+       //     width: 64; height: 64
+       //     keys: [ colorKey ]
+       //
+       //     Rectangle {
+       //         id: dropRectangle
+       //
+       //         anchors.fill: parent
+       //         color: dragTarget.colorKey
+       //
+       //         states: [
+       //             State {
+       //                 when: dragTarget.containsDrag
+       //                 PropertyChanges {
+       //                     target: dropRectangle
+       //                     color: "grey"
+       //                 }
+       //             }
+       //         ]
+       //     }
+       // }
     }
 }
