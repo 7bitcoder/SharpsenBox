@@ -1,0 +1,30 @@
+﻿{
+  "Sylio": {
+    "Id": "1",
+    "Ver": "1.0",
+    "AutoUpdate": "false",
+    "Installed": "false",
+    "Shortcut": "false",
+    "GameDir": "",
+    "GameExecPath": "./Release/Sylio.exe",
+    "ShortcutPath": "",
+    "Desctiption": "",
+    "YoutubeLink": "",
+    "AdditionalInfo": "",
+    "AppInfoUrl": "https://sourceforge.net/projects/sylio/files/AppInfo.json/download"
+  },
+  "Nygger": {
+    "Id": "2",
+    "Ver": "1.0",
+    "AutoUpdate": "false",
+    "Installed": "false",
+    "Shortcut": "false",
+    "GameDir": "",
+    "GameExecPath": "./Release/Sylio.exe",
+    "ShortcutPath": "",
+    "Desctiption": "",
+    "YoutubeLink": "",
+    "AdditionalInfo": "",
+    "AppInfoUrl": "https://sourceforge.net/projects/sylio/files/AppInfo.json/download"
+  }
+}

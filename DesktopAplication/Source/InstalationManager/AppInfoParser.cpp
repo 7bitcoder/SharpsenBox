@@ -26,18 +26,28 @@ namespace bb {
 		auto& gg = actualVersion_.toStdString();
 		if (ver != actualVersion_) { //need update
 			needUpdate_ = true;
-			QJsonObject appFiles = d["AppFiles"].toObject();
-			for (auto& key : appFiles.keys()) {
-				QJsonObject value = appFiles[key].toObject();
-				totalBytesTo_ += std::stoll(value["Size"].toString().toStdString());
-				std::filesystem::path url = value["Url"].toString().toStdString();
-				files_.push_back({ url, key.toStdString() });
-			}
+			getAllFiles(d);
 			actualVersion_ = ver;
 		} else { //app is up to date
 			needUpdate_ = false;
 		}
 		parseEnded();
+	}
+
+	void AppInfoParser::getAllFiles(QJsonDocument& doc) {
+		QJsonObject appFiles = doc["AppFiles"].toObject();
+		for (auto& key : appFiles.keys()) {
+			QJsonObject value = appFiles[key].toObject();
+			qint64 size = std::stoll(value["Size"].toString().toStdString());
+			QString url = value["Url"].toString();
+			if (allFiles_.contains(key))
+				throw std::exception("Files Duplicated");
+			allFiles_.insert({ key, {url , size} });
+		}
+	}
+
+	void AppInfoParser::getDeltaFiles(QJsonDocument& doc) {
+
 	}
 
 	void AppInfoParser::reset() {

@@ -1,0 +1,17 @@
+﻿{
+  "AppName": "Sylio",
+  "Ver": "0.11",
+  "AppComponents": {
+    "Sylio.zip": {
+      "files": {
+        "name": {
+          "Size": "47026448",
+          "sha": "asdwdddddddawdaaaaaaaaaaawwww"
+        }
+      },
+      "Url": "https://sourceforge.net/projects/sylio/files/Sylio.zip",
+      "Size": "47026448",
+      "sha": "asdwdddddddawdaaaaaaaaaaawwww"
+    }
+  }
+}

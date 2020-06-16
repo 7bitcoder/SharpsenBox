@@ -1,0 +1,9 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="/">
+    <file>Content.qml</file>
+	<file>Pather.qml</file>
+	<file>PatherWindows.qml</file>
+	<file>ResizingFrames.qml</file>
+	<file>TopBar.qml</file>
+</qresource>
+</RCC>

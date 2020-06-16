@@ -1,0 +1,11 @@
+﻿
+add_subdirectory(Config)
+add_subdirectory(InstalationManager)
+add_subdirectory(LoadingBar)
+add_subdirectory(GameManager)
+add_subdirectory(GameExecutor)
+add_subdirectory(Dialog)
+add_subdirectory(AppUpdater)
+add_subdirectory(LaunchBox)
+add_subdirectory(AppBackend)
+add_subdirectory(LaunchBoxUpdater)

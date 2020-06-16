@@ -1,0 +1,21 @@
+﻿{
+  "AppName" : "Sylio",
+  "Ver": "0.11",
+  "AppFiles": {
+    "Sylio.zip": {
+      "Url": "https://sourceforge.net/projects/sylio/files/Sylio.zip",
+      "Size": "47026448"
+    }
+   },
+  "Versioning": {
+    "1.0": [
+      "Sylio.zip"
+    ],
+    "0.7": [
+      "Sylio.zip"
+    ],
+    "0.1": [
+      "Sylio.zip"
+    ]
+  }
+}

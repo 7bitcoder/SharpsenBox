@@ -3,6 +3,7 @@
 #include <QObject>
 #include <QThread>
 #include <filesystem>
+#include <unordered_map>
 
 namespace bb {
 	class AppInfoParser :public QThread {
@@ -18,6 +19,8 @@ namespace bb {
 		void reset();
 
 		void run() override;
+		void getAllFiles(QJsonDocument& doc);
+		void getDeltaFiles(QJsonDocument& doc);
 	signals:
 		void parseEnded();
 	private:
@@ -26,5 +29,7 @@ namespace bb {
 		qint64 totalBytesTo_ = 0;
 		std::filesystem::path parseInfoFileName = "AppInfo.json";
 		bool needUpdate_ = false;
+		// fileName -> <fileUrl, size>
+		std::unordered_map < QString, std::pair < QString, qint64>> allFiles_;
 	};
 }
