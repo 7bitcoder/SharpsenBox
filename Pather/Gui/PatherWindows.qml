@@ -32,7 +32,7 @@ Rectangle {
 
         TreeView {
             id: treeview
-            property int dragItemIndex: -1
+            property  int dragItemIndex: -1
             anchors.fill: parent
             model: _TreeModel
             selectionMode: SelectionMode.ExtendedSelection
@@ -46,13 +46,20 @@ Rectangle {
             itemDelegate: Item {
                    Rectangle {
                        id: rect
-                       anchors.fill: parent
-                       color: styleData.selected ? "blue" : "transparent"
+                       anchors.left: parent.left
+                       anchors.verticalCenter: parent.verticalCenter
+                       height: 20
+                       width: 100
+                       color: Drag.active ? "lightgreen" : "transparent"
                        Text {
                            anchors.verticalCenter: parent.verticalCenter
                            color: styleData.selected ? "white" : "black"
                            text: styleData.value
                        }
+
+                       Drag.active: mouseArea.drag.active
+                       Drag.hotSpot.x: width / 2
+                       Drag.hotSpot.y: height / 2
 
                        MouseArea {
                            id: mouseArea
@@ -61,11 +68,29 @@ Rectangle {
 
                            drag.onActiveChanged: {
                                if (mouseArea.drag.active) {
-                                   treeview.dragItemIndex = index;
+                                   //treeview.dragItemIndex = index;
                                }
+                               treeview.model.gee(styleData.index)
+                               console.log(treeview.currentIndex)
+                               rect.visible = false
                                rect.Drag.drop();
                            }
                        }
+                       states: [
+                            State {
+                                when: rect.Drag.active
+
+                                ParentChange {
+                                    target: rect
+                                    parent: windows
+                                }
+                                AnchorChanges {
+                                    target: rect
+                                    anchors.left: undefined
+                                    anchors.verticalCenter: undefined
+                                }
+                            }
+                        ]
                       //MouseArea {
                       //    anchors.fill: parent
                       //    drag.target: symbolAvatar
@@ -81,23 +106,24 @@ Rectangle {
                }
         }
 
-        Rectangle {
-            width: parent.width / 2
-            height: parent.height
-            anchors {
-                left: treeview.right
-                verticalCenter: treeview.verticalCenter
+        DropArea {
+           id:set
+
+           anchors{
+            verticalCenter: treeview.verticalCenter
+            left: treeview.right
+            rightMargin: 50
+           }
+            width: 50; height: 50
+
+            Rectangle {
+                id: nyg
+                anchors.fill: parent
+                color: "green"
 
             }
-            color: "#aaff0011"
-
-            DropArea {
-                id: dropArea
-                anchors.fill: parent
-                onDropped: {
-                    treeview.model.remove(treeview.dragItemIndex);
-                    treeview.dragItemIndex = -1;
-                }
+            onDropped: {
+               nyg.color = "yellow"
             }
         }
 

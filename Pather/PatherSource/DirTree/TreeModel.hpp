@@ -10,31 +10,61 @@
 #include <QStandardItem>
 #include "IQmlObject.hpp"
 #include "TreeItem.hpp"
+#include <iostream>
+#include <filesystem>
 
 namespace dt {
-	class TreeModel : public QStandardItemModel {
-		Q_OBJECT
+    class TreeModel : public QAbstractItemModel {
+        Q_OBJECT
 
-	public:
-		static TreeModel& getObject() {
-			static TreeModel uc;
-			uc.setSandBoxDetails(QDir::currentPath());
-			return uc;
-		}
+    public:
+        static TreeModel& getObject() {
+            static TreeModel uc({"asdasd" "Asdasd"}, "AsdasD");
+            //uc.setupModelData( ".", nullptr);
+            return uc;
+        }
 
-		void update() {};
-		std::string getName() { return TYPENAME(TreeModel); };
-		void init() {};
-		TreeModel(QObject* parent = 0);
-		~TreeModel();
+        // implementation IQmlObject
+        void update()  {};
+        std::string getName() {
+            return TYPENAME(TreeModel);
+        }
+        void init()  {};
 
-		void setSandBoxDetails(QString names);
-		void populateSandBoxes(const QStringList& names);
-		void createDirectoryItem(QString dirName, QStandardItem* parentItem = NULL);
+        TreeModel(const QStringList& headers, const QString& data,
+            QObject* parent = nullptr);
+        ~TreeModel();
 
-	private:
-		QStandardItem* rootItem;
-		QIcon dirIcon;
-		QIcon fileIcon;
-	};
+        QVariant data(const QModelIndex& index, int role) const override;
+        QVariant headerData(int section, Qt::Orientation orientation,
+            int role = Qt::DisplayRole) const override;
+
+        QModelIndex index(int row, int column,
+            const QModelIndex& parent = QModelIndex()) const override;
+        QModelIndex parent(const QModelIndex& index) const override;
+
+        int rowCount(const QModelIndex& parent = QModelIndex()) const override;
+        int columnCount(const QModelIndex& parent = QModelIndex()) const override;
+
+        Qt::ItemFlags flags(const QModelIndex& index) const override;
+        bool setData(const QModelIndex& index, const QVariant& value,
+            int role = Qt::EditRole) override;
+        bool setHeaderData(int section, Qt::Orientation orientation,
+            const QVariant& value, int role = Qt::EditRole) override;
+
+        bool insertColumns(int position, int columns,
+            const QModelIndex& parent = QModelIndex()) override;
+        bool removeColumns(int position, int columns,
+            const QModelIndex& parent = QModelIndex()) override;
+        bool insertRows(int position, int rows,
+            const QModelIndex& parent = QModelIndex()) override;
+        bool removeRows(int position, int rows,
+            const QModelIndex& parent = QModelIndex()) override;
+
+    private:
+        void setupModelData(const std::filesystem::path, TreeItem* parent);
+        TreeItem* getItem(const QModelIndex& index) const;
+
+        TreeItem* rootItem;
+    };
 }

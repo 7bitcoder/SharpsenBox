@@ -7,23 +7,27 @@
 #include <QVector>
 
 namespace dt {
-	class TreeItem {
-	public:
-		explicit TreeItem(const QVector<QVariant>& data, TreeItem* parentItem = nullptr);
-		~TreeItem();
+    class TreeItem {
+    public:
+        explicit TreeItem(const QVector<QVariant>& data, TreeItem* parent = nullptr);
+        ~TreeItem();
 
-		void appendChild(TreeItem* child);
+        TreeItem* child(int number);
+        int childCount() const;
+        int columnCount() const;
+        QVariant data(int column) const;
+        TreeItem* appendChildren(QVector<QVariant> data);
+        bool insertChildren(int position, int count, int columns);
+        bool insertColumns(int position, int columns);
+        TreeItem* parent();
+        bool removeChildren(int position, int count);
+        bool removeColumns(int position, int columns);
+        int childNumber() const;
+        bool setData(int column, const QVariant& value);
 
-		TreeItem* child(int row);
-		int childCount() const;
-		int columnCount() const;
-		QVariant data(int column) const;
-		int row() const;
-		TreeItem* parentItem();
-
-	private:
-		QVector<TreeItem*> m_childItems;
-		QVector<QVariant> m_itemData;
-		TreeItem* m_parentItem;
-	};
+    private:
+        QVector<TreeItem*> childItems;
+        QVector<QVariant> itemData;
+        TreeItem* parentItem;
+    };
 }

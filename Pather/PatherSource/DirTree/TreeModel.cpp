@@ -3,63 +3,82 @@
 #include "TreeModel.hpp"
 
 namespace dt {
-	TreeModel::TreeModel(QObject* parent)
-		:QStandardItemModel(parent) {
-		rootItem = this->invisibleRootItem();
-	}
+    TreeModel::TreeModel(const QStringList& headers, const QString& data, QObject* parent)
+        : QAbstractItemModel(parent) {
+        QVector<QVariant> rootData;
+        for (const QString& header : headers)
+            rootData << header;
 
-	TreeModel::~TreeModel() {
+        rootItem = new TreeItem(rootData);
+        setupModelData(".", rootItem);
+    }
 
-	}
+    TreeModel::~TreeModel() {
+        delete rootItem;
+    }
 
-	/*
-	 Folder locations are parsed from the file which are seperated by new lines.
-	*/
-	void TreeModel::setSandBoxDetails(QString names) {
-		populateSandBoxes(names.split("\n"));
-	}
+    TreeItem* TreeModel::getItem(const QModelIndex& index) const {
+        if (index.isValid()) {
+            TreeItem* item = static_cast<TreeItem*>(index.internalPointer());
+            if (item)
+                return item;
+        }
+        return rootItem;
+    }
 
-	/*
-	 method to populate the contents of the sandboxes parsed from the file.
-	*/
-	void TreeModel::populateSandBoxes(const QStringList& names) {
-		QString name;
-		QStandardItem* parent;
+    int TreeModel::rowCount(const QModelIndex& parent) const {
+        const TreeItem* parentItem = getItem(parent);
 
-		foreach(name, names) {
-			if (!name.isEmpty()) {
-				name.remove("\r");
-				parent = new QStandardItem(dirIcon, name);  //create the parent directory item
-				parent->setAccessibleDescription(name);     //set actual path to item
-				rootItem->appendRow(parent);                //add the parent item to root item
-				createDirectoryItem(name, parent);          //Iterate and populate the contents
-			}
-		}
-	}
+        return parentItem ? parentItem->childCount() : 0;
+    }
 
-	/*
-	  Method to populate the contents of the given directory in recursive manner.
-	  Each found child will be appended to its parent item.
-	  Files & folders will be using its own standard icons  from current style.
-	  child->setAccessibleDescription() is used to set the actual path of the item
-	  which will be useful.
-	*/
-	void TreeModel::createDirectoryItem(QString dirName, QStandardItem* parentItem) {
-		QDir dir(dirName);
-		QFileInfoList subFolders;
-		QFileInfo folderName;
-		QStandardItem* child;
-		subFolders = dir.entryInfoList(QDir::Dirs | QDir::Files | QDir::NoDotAndDotDot);    //get all the sub folders
-		foreach(folderName, subFolders) {
-			if (folderName.isFile()) {
-				child = new QStandardItem(fileIcon, folderName.fileName());                 //Append a file
-				child->setAccessibleDescription(folderName.filePath());                     //set actual path to item
-			} else {
-				child = new QStandardItem(dirIcon, folderName.fileName());                  //Append a folder
-				child->setAccessibleDescription(folderName.filePath());                     //set actual path to item
-			}
-			parentItem->appendRow(child);
-			createDirectoryItem(folderName.filePath(), child);                              //Recurse its subdirectories
-		}
-	}
+    int TreeModel::columnCount(const QModelIndex& parent) const {
+        Q_UNUSED(parent);
+        return rootItem->columnCount();
+    }
+
+    Qt::ItemFlags TreeModel::flags(const QModelIndex& index) const {
+        if (!index.isValid())
+            return Qt::NoItemFlags;
+
+        return Qt::ItemIsEditable | QAbstractItemModel::flags(index);
+    }
+
+    QModelIndex TreeModel::index(int row, int column, const QModelIndex& parent) const {
+        if (parent.isValid() && parent.column() != 0)
+            return QModelIndex();
+       
+            TreeItem* parentItem = getItem(parent);
+        if (!parentItem)
+            return QModelIndex();
+
+        TreeItem* childItem = parentItem->child(row);
+        if (childItem)
+            return createIndex(row, column, childItem);
+        return QModelIndex();
+    }
+
+    QModelIndex TreeModel::parent(const QModelIndex& index) const {
+        if (!index.isValid())
+            return QModelIndex();
+
+        TreeItem* childItem = getItem(index);
+        TreeItem* parentItem = childItem ? childItem->parent() : nullptr;
+
+        if (parentItem == rootItem || !parentItem)
+            return QModelIndex();
+
+        return createIndex(parentItem->childNumber(), 0, parentItem);
+    }
+
+    void TreeModel::setupModelData(const std::filesystem::path lines, TreeItem* parent) {
+        for (auto& p : std::filesystem::directory_iterator(lines)) {
+            if (p.is_directory()) {
+                auto* appended = parent->appendChildren({ p.path().filename().generic_string().c_str(),  p.path().generic_string().c_str() });
+                setupModelData(p, appended);
+            } else {
+                auto* appended = parent->appendChildren({ p.path().filename().generic_string().c_str(),  p.path().generic_string().c_str() });
+            }
+        }
+    }
 }
