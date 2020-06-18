@@ -12,6 +12,7 @@
 #include "TreeItem.hpp"
 #include <iostream>
 #include <filesystem>
+#include <QHash>
 
 namespace dt {
     class TreeModel : public QAbstractItemModel {
@@ -57,8 +58,21 @@ namespace dt {
       //      const QModelIndex& parent = QModelIndex()) override;
         Q_INVOKABLE QModelIndex unbindRows(int position, int rows,
            const QModelIndex& parent = QModelIndex());
+        Q_INVOKABLE void setSelected(const QModelIndex& index);
+        Q_INVOKABLE void unsetSelected(const QModelIndex& index);
+
+        Qt::DropActions supportedDragActions() const override {
+            return Qt::MoveAction;
+        }
+
+        Qt::DropActions supportedDropActions() const override {
+            return Qt::MoveAction;
+        }
+
+        QMimeData* mimeData(const QModelIndexList& indexes) const override;
 
     private:
+        QSet<QModelIndex> selectedToMove_;
         void setupModelData(const std::filesystem::path, TreeItem* parent);
         TreeItem* getItem(const QModelIndex& index) const;
 

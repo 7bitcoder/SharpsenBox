@@ -32,6 +32,7 @@ Rectangle {
 
         TreeView {
             id: treeview
+            property bool dragFlag: false
             property  int dragItemIndex: -1
             anchors.fill: parent
             model: _left
@@ -58,7 +59,7 @@ Rectangle {
                            text: styleData.value
                        }
 
-                       Drag.active: mouseArea.drag.active
+                       Drag.active: treeview.dragFlag && styleData.selected
                        Drag.hotSpot.x: width / 2
                        Drag.hotSpot.y: height / 2
 
@@ -69,12 +70,15 @@ Rectangle {
 
                            drag.onActiveChanged: {
                                if (mouseArea.drag.active) {
-                                   treeview.selection.currentIndex = styleData.index;
-                               }
+                                   treeview.dragFlag = true
+                               } else
+                                    treeview.dragFlag = false
                                //console.log(styleData.row)
                                rect.row = styleData.row;
                                rect.Drag.drop();
                            }
+                           propagateComposedEvents :true
+                           onClicked: {}
                        }
                        states: [
                             State {

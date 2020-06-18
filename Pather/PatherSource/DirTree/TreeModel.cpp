@@ -1,6 +1,7 @@
 ﻿#include <QDir>
 #include <QDirIterator>
 #include "TreeModel.hpp"
+#include <QMimeData>
 
 namespace dt {
     TreeModel::TreeModel(const std::filesystem::path& rootPath, QObject* parent)
@@ -121,6 +122,32 @@ namespace dt {
        // beginRemoveRows(QModelIndex(), position, position + rows - 1);
     }
 
+
+    Q_INVOKABLE void  TreeModel::setSelected(const QModelIndex& index) {
+        selectedToMove_.insert(index);
+    }
+
+    Q_INVOKABLE void TreeModel::unsetSelected(const QModelIndex& index) {
+        selectedToMove_.remove(index);
+    }
+
+
+    QMimeData* TreeModel::mimeData(const QModelIndexList& indexes) const {
+        QMimeData* mimeData = new QMimeData();
+        QByteArray encodedData;
+
+        QDataStream stream(&encodedData, QIODevice::WriteOnly);
+
+        foreach(QModelIndex index, indexes) {
+            if (index.isValid()) {
+                QString text = data(index, Qt::DisplayRole).toString();
+                stream << text;
+            }
+        }
+
+        mimeData->setData("application/vnd.text.list", encodedData);
+        return mimeData;
+    }
 
     void TreeModel::setupModelData(const std::filesystem::path lines, TreeItem* parent) {
         for (auto& p : std::filesystem::directory_iterator(lines)) {
