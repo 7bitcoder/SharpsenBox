@@ -18,11 +18,6 @@ namespace dt {
         Q_OBJECT
 
     public:
-        static TreeModel& getObject() {
-            static TreeModel uc({"asdasd" "Asdasd"}, "AsdasD");
-            //uc.setupModelData( ".", nullptr);
-            return uc;
-        }
 
         // implementation IQmlObject
         void update()  {};
@@ -31,8 +26,10 @@ namespace dt {
         }
         void init()  {};
 
-        TreeModel(const QStringList& headers, const QString& data,
-            QObject* parent = nullptr);
+        Q_INVOKABLE void remove(const QModelIndex& index);
+
+
+        TreeModel(const std::filesystem::path& rootPath, QObject* parent = nullptr);
         ~TreeModel();
 
         QVariant data(const QModelIndex& index, int role) const override;
@@ -47,19 +44,19 @@ namespace dt {
         int columnCount(const QModelIndex& parent = QModelIndex()) const override;
 
         Qt::ItemFlags flags(const QModelIndex& index) const override;
-        bool setData(const QModelIndex& index, const QVariant& value,
-            int role = Qt::EditRole) override;
+       // bool setData(const QModelIndex& index, const QVariant& value,
+       //     int role = Qt::EditRole) override;
         bool setHeaderData(int section, Qt::Orientation orientation,
             const QVariant& value, int role = Qt::EditRole) override;
 
-        bool insertColumns(int position, int columns,
-            const QModelIndex& parent = QModelIndex()) override;
-        bool removeColumns(int position, int columns,
-            const QModelIndex& parent = QModelIndex()) override;
-        bool insertRows(int position, int rows,
-            const QModelIndex& parent = QModelIndex()) override;
-        bool removeRows(int position, int rows,
-            const QModelIndex& parent = QModelIndex()) override;
+      //  bool insertColumns(int position, int columns,
+      //      const QModelIndex& parent = QModelIndex()) override;
+        //bool removeColumns(int position, int columns,
+       //     const QModelIndex& parent = QModelIndex()) override;
+     //   bool insertRows(int position, int rows,
+      //      const QModelIndex& parent = QModelIndex()) override;
+        Q_INVOKABLE bool removeRows(int position, int rows,
+           const QModelIndex& parent = QModelIndex()) override;
 
     private:
         void setupModelData(const std::filesystem::path, TreeItem* parent);

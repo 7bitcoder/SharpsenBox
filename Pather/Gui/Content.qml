@@ -35,41 +35,12 @@ Item {
             onAccepted: installDirectory = text
         }
     }
-    Button {
-        id: choseFolder
-        y: 0
-        width: 100
-        anchors {
-            verticalCenter: pathDisplay.verticalCenter
-        }
-        height: 30
-        text: "Chose"
-        anchors.top: parent.top
-        anchors.left: pathDisplay.right
-        anchors.leftMargin: 6
-        onClicked: folderDialog.open()
-        contentItem: Text {
-            text: choseFolder.text
-            font.family: "Arial"
-            font.pixelSize: 22
-            color: "white"
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
-            elide: Text.ElideRight
-        }
-        background: Rectangle {
-            implicitWidth: 50
-            implicitHeight: 25
-            opacity: choseFolder.down ? 0.7 : 1
-            radius: 5
-            color: "green"
-            Behavior on opacity {
-                NumberAnimation {
-                    duration: 100
-                }
-            }
-        }
+
+    MyButton {
+            onClicked: folderDialog.open()
+            text: "Chose"
     }
+
     PatherWindows{
         anchors{
             left: parent.left

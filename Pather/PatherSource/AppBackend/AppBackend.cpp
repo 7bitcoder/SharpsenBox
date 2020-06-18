@@ -19,6 +19,11 @@ namespace bc {
 	}
 
 	void Backend::registerObjects() {
+		auto* left = new dt::TreeModel("C:/Users/Sylwester/Desktop/asd asdsad");
+		auto* right= new dt::TreeModel("C:/Users/Sylwester/Desktop/asd asdsad");
+		engine->rootContext()->setContextProperty("_left", left);
+		engine->rootContext()->setContextProperty("_right", right);
+		//uc.setupModelData( ".", nullptr);
 		//QFileSystemModel* filemodel = new QFileSystemModel;
 		//filemodel->setFilter(QDir::Files | QDir::NoDotAndDotDot);
 		//filemodel->setNameFilterDisables(false);
@@ -26,7 +31,7 @@ namespace bc {
 		//filemodel->setRootPath("C:/Users/Sylwester/Desktop/TS");
 		//
 		//engine->rootContext()->setContextProperty("_TreeModel", filemodel);
-		registerObject<dt::TreeModel>();
+		//registerObject<dt::TreeModel>();
 	}
 	void Backend::initializeObjects() {}
 	template <class T>

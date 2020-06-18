@@ -3,14 +3,14 @@
 #include "TreeModel.hpp"
 
 namespace dt {
-    TreeModel::TreeModel(const QStringList& headers, const QString& data, QObject* parent)
+    TreeModel::TreeModel(const std::filesystem::path& rootPath, QObject* parent)
         : QAbstractItemModel(parent) {
         QVector<QVariant> rootData;
-        for (const QString& header : headers)
-            rootData << header;
+        rootData << rootPath.generic_string().c_str();
 
         rootItem = new TreeItem(rootData);
-        setupModelData(".", rootItem);
+        auto * ptr = rootItem->appendChildren({rootPath.generic_string().c_str(), rootPath.generic_string().c_str()});
+        setupModelData(rootPath, ptr);
     }
 
     TreeModel::~TreeModel() {
@@ -70,6 +70,58 @@ namespace dt {
 
         return createIndex(parentItem->childNumber(), 0, parentItem);
     }
+
+
+    QVariant TreeModel::data(const QModelIndex& index, int role) const {
+        if (!index.isValid())
+            return QVariant();
+
+        if (role != Qt::DisplayRole)
+            return QVariant();
+
+        TreeItem* item = static_cast<TreeItem*>(index.internalPointer());
+
+        return item->data(index.column());
+    }
+
+
+    QVariant TreeModel::headerData(int section, Qt::Orientation orientation,
+        int role) const {
+        if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
+            return rootItem->data(section);
+
+        return QVariant();
+    }
+
+    bool TreeModel::setHeaderData(int section, Qt::Orientation orientation,
+        const QVariant& value, int role ) {
+        if (orientation == Qt::Horizontal && role == Qt::DisplayRole) {
+            rootItem->setData(section, value);
+            return true;
+        }
+
+        return false;
+    }
+
+    bool TreeModel::removeRows(int position, int rows, const QModelIndex& curr) {
+        if (position != -1 && rows != -1) {
+            beginRemoveRows(curr.parent(), curr.row(), curr.row());
+
+            auto* item = getItem(curr)->parent();
+            item->removeChildren(curr.row(), 1);
+
+            endRemoveRows();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    Q_INVOKABLE void TreeModel::remove(const QModelIndex& index) {
+        auto* item = getItem(index);
+       // beginRemoveRows(QModelIndex(), position, position + rows - 1);
+    }
+
 
     void TreeModel::setupModelData(const std::filesystem::path lines, TreeItem* parent) {
         for (auto& p : std::filesystem::directory_iterator(lines)) {
