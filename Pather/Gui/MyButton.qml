@@ -5,15 +5,6 @@ Button {
     property string txt
     id: choseFolder
     y: 0
-    width: 100
-    anchors {
-        verticalCenter: pathDisplay.verticalCenter
-    }
-    height: 30
-    text: txt
-    anchors.top: parent.top
-    anchors.left: pathDisplay.right
-    anchors.leftMargin: 6
     contentItem: Text {
         text: choseFolder.text
         font.family: "Arial"

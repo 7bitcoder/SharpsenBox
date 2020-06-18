@@ -21,6 +21,7 @@ namespace dt {
         bool insertColumns(int position, int columns);
         TreeItem* parent();
         bool removeChildren(int position, int count);
+        TreeItem* unbindChildren(int position);
         bool removeColumns(int position, int columns);
         int childNumber() const;
         bool setData(int column, const QVariant& value);

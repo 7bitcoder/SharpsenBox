@@ -55,8 +55,8 @@ namespace dt {
        //     const QModelIndex& parent = QModelIndex()) override;
      //   bool insertRows(int position, int rows,
       //      const QModelIndex& parent = QModelIndex()) override;
-        Q_INVOKABLE bool removeRows(int position, int rows,
-           const QModelIndex& parent = QModelIndex()) override;
+        Q_INVOKABLE QModelIndex unbindRows(int position, int rows,
+           const QModelIndex& parent = QModelIndex());
 
     private:
         void setupModelData(const std::filesystem::path, TreeItem* parent);

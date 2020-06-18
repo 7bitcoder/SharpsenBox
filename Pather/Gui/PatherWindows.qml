@@ -46,6 +46,7 @@ Rectangle {
             itemDelegate: Item {
                    Rectangle {
                        id: rect
+                       property int row: 0
                        anchors.left: parent.left
                        anchors.verticalCenter: parent.verticalCenter
                        height: 20
@@ -68,12 +69,12 @@ Rectangle {
 
                            drag.onActiveChanged: {
                                if (mouseArea.drag.active) {
-                                   //treeview.dragItemIndex = index;
+                                   treeview.selection.currentIndex = styleData.index;
                                }
-                               console.log(styleData.row)
+                               //console.log(styleData.row)
+                               rect.row = styleData.row;
                                rect.Drag.drop();
                            }
-                           onClicked: treeview.model.removeRows(styleData.row, 1, styleData.index)
                        }
                        states: [
                             State {
@@ -112,11 +113,13 @@ Rectangle {
          bottom: packeter.top
          right: packeter.right
         }
-            onClicked: {
-                packetModel.append({})
-                windows.packetCnt = windows.packetCnt + 1
-            }
-            text: "Add Packet"
+        width: 200
+        height: 30
+        onClicked: {
+            packetModel.append({})
+            windows.packetCnt = windows.packetCnt + 1
+        }
+        text: "+ Add Packet"
     }
 
     Rectangle {
@@ -147,7 +150,8 @@ Rectangle {
                         top: parent.top
                         right: parent.right
                     }
-                     implicitHeight: name.implicitHeight
+                    color: "lightblue"
+                    implicitHeight: name.implicitHeight
                     MouseArea{
                         anchors.fill: parent
                         onClicked: show = !show
@@ -166,7 +170,8 @@ Rectangle {
                   id:setL
                   anchors.fill: parent
                     onDropped: {
-                       console.log(styleData.index)
+                       console.log(drag.source.ind)
+                       var unbinded = treeview.model.unbindRows(drag.source.row, 1, drag.source.index)
                     }
                 }
 

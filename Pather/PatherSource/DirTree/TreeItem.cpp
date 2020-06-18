@@ -79,6 +79,19 @@ namespace dt {
         return true;
     }
 
+    TreeItem* TreeItem::unbindChildren(int position) {
+        if (position < 0 || position > childItems.size())
+            return nullptr;
+
+        auto* item = child(position);
+        if (!item)
+            return item;
+        item->parentItem = nullptr;
+        childItems.remove(position);
+
+        return item;
+    }
+
     bool TreeItem::insertColumns(int position, int columns) {
         if (position < 0 || position > itemData.size())
             return false;

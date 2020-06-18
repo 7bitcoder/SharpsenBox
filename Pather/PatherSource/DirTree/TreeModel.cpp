@@ -103,17 +103,16 @@ namespace dt {
         return false;
     }
 
-    bool TreeModel::removeRows(int position, int rows, const QModelIndex& curr) {
+    QModelIndex TreeModel::unbindRows(int position, int rows, const QModelIndex& curr) {
         if (position != -1 && rows != -1) {
             beginRemoveRows(curr.parent(), curr.row(), curr.row());
 
             auto* item = getItem(curr)->parent();
-            item->removeChildren(curr.row(), 1);
-
+            auto* unbinded = item->unbindChildren(curr.row());
             endRemoveRows();
-            return true;
+            return createIndex(0, 0, unbinded);
         } else {
-            return false;
+            return QModelIndex();
         }
     }
 
