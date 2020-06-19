@@ -17,6 +17,7 @@ namespace dt {
         int columnCount() const;
         QVariant data(int column) const;
         TreeItem* appendChildren(QVector<QVariant> data);
+        TreeItem* appendChildren(TreeItem* item);
         bool insertChildren(int position, int count, int columns);
         bool insertColumns(int position, int columns);
         TreeItem* parent();

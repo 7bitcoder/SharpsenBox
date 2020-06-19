@@ -5,6 +5,10 @@
 #include "AppBackend.hpp"
 #include "TreeModel.hpp"
 #include <QFileSystemModel>
+#include <QGuiApplication>
+#include <QQmlApplicationEngine>
+#include <QQmlContext>
+#include <qvariant.h>
 
 namespace bc {
 
@@ -19,10 +23,8 @@ namespace bc {
 	}
 
 	void Backend::registerObjects() {
-		auto* left = new dt::TreeModel("C:/Users/Sylwester/Desktop/asd asdsad");
-		auto* right= new dt::TreeModel("C:/Users/Sylwester/Desktop/asd asdsad");
-		engine->rootContext()->setContextProperty("_left", left);
-		engine->rootContext()->setContextProperty("_right", right);
+		dt::TreeModel::setRoot("C:/Users/Sylwester/Desktop/asd asdsad");
+		qmlRegisterType<dt::TreeModel>("custom.TreeModel", 1, 1, "TreeModel");
 		//uc.setupModelData( ".", nullptr);
 		//QFileSystemModel* filemodel = new QFileSystemModel;
 		//filemodel->setFilter(QDir::Files | QDir::NoDotAndDotDot);
@@ -31,7 +33,7 @@ namespace bc {
 		//filemodel->setRootPath("C:/Users/Sylwester/Desktop/TS");
 		//
 		//engine->rootContext()->setContextProperty("_TreeModel", filemodel);
-		//registerObject<dt::TreeModel>();
+		registerObject<dt::TreeModel>();
 	}
 	void Backend::initializeObjects() {}
 	template <class T>

@@ -2,16 +2,20 @@
 #include <QDirIterator>
 #include "TreeModel.hpp"
 #include <QMimeData>
+#include <istream>
+#include <iostream>
+#include <sstream>
 
 namespace dt {
-    TreeModel::TreeModel(const std::filesystem::path& rootPath, QObject* parent)
+    std::filesystem::path TreeModel::rootDir_;
+    TreeModel::TreeModel(bool packet, QObject* parent)
         : QAbstractItemModel(parent) {
         QVector<QVariant> rootData;
-        rootData << rootPath.generic_string().c_str();
-
+        rootData << rootDir_.generic_string().c_str();
         rootItem = new TreeItem(rootData);
-        auto * ptr = rootItem->appendChildren({rootPath.generic_string().c_str(), rootPath.generic_string().c_str()});
-        setupModelData(rootPath, ptr);
+        auto * ptr = rootItem->appendChildren({ rootDir_.generic_string().c_str(), rootDir_.generic_string().c_str()});
+        if(!packet)
+            setupModelData(rootDir_, ptr);
     }
 
     TreeModel::~TreeModel() {
@@ -104,21 +108,20 @@ namespace dt {
         return false;
     }
 
-    QModelIndex TreeModel::unbindRows(int position, int rows, const QModelIndex& curr) {
-        if (position != -1 && rows != -1) {
+    QModelIndex TreeModel::unbindRows(const QModelIndexList& list) {
+        for (auto& curr : list) {
             beginRemoveRows(curr.parent(), curr.row(), curr.row());
 
             auto* item = getItem(curr)->parent();
             auto* unbinded = item->unbindChildren(curr.row());
             endRemoveRows();
             return createIndex(0, 0, unbinded);
-        } else {
-            return QModelIndex();
         }
     }
 
-    Q_INVOKABLE void TreeModel::remove(const QModelIndex& index) {
-        auto* item = getItem(index);
+
+    Q_INVOKABLE void TreeModel::remove(const QModelIndexList& list) {
+        ///auto* item = getItem(index);
        // beginRemoveRows(QModelIndex(), position, position + rows - 1);
     }
 
@@ -147,6 +150,92 @@ namespace dt {
 
         mimeData->setData("application/vnd.text.list", encodedData);
         return mimeData;
+    }
+
+    Q_INVOKABLE void TreeModel::bind(const QModelIndexList& list) {
+       //modelAboutToBeReset();
+        beginResetModel();
+        for (auto& path : list) {
+            bind(path);
+        }
+        endResetModel();
+
+       // modelReset();
+    }
+
+    namespace {
+        std::string p(TreeItem* item) {
+            return item->data(0).toString().toStdString();
+        }
+    }
+
+    void TreeModel::addData(TreeItem* parent) {
+        int size = parent->childCount();
+        bool found = false;
+        if (dataToInsert_.depth >= dataToInsert_.folders.size())
+            return;
+        auto& element = dataToInsert_.folders.at(dataToInsert_.depth);
+        for (int i = 0; i < size; i++) {
+            auto& p2 = p(parent->child(i));
+            if ( element == p2 ) {
+                if (dataToInsert_.depth == dataToInsert_.folders.size() - 1) {//last element
+                    merge(parent->child(i), dataToInsert_.item);
+                    return;
+                } else {
+                    dataToInsert_.depth++;
+                    addData(parent->child(i));
+                }
+                found = true;
+                break;
+            }
+        } if (!found) {
+            if (dataToInsert_.depth == dataToInsert_.folders.size() - 1) //last element
+                parent->appendChildren(dataToInsert_.item);
+            else {
+                parent->appendChildren({ element.c_str(), (rootDir_ / element).generic_string().c_str() });
+                dataToInsert_.depth++;
+                addData(parent->child(parent->childCount() - 1));// last element
+            }
+        }
+    }
+    void TreeModel::merge(TreeItem* parent, TreeItem* toInsert) {
+        int size = toInsert->childCount();
+        bool found = false;
+        for (int i = 0; i < size; i++) {
+            auto* child = toInsert->child(i);
+            if (!child->childCount()) {//file
+                parent->appendChildren(child);
+            } else { //dir
+                int sizeP = parent->childCount();
+                std::string childS = p(child);
+                for (int j = 0; j < sizeP; ++j) {
+                    if (childS == p(parent->child(j))) {
+                        merge(parent->child(j), child);
+                        found = true;
+                    }
+                } if (!found) {
+                    parent->appendChildren(child);
+                }
+            }
+        } if (found)
+            delete toInsert;
+    }
+
+    void TreeModel::bind(const QModelIndex& index) {
+
+        TreeItem* item = static_cast<TreeItem*>(index.internalPointer());
+        dataToInsert_.item = item;
+        dataToInsert_.path = item->data(1).toString().toStdString();
+        dataToInsert_.dir = std::filesystem::is_directory(dataToInsert_.path);
+        dataToInsert_.folders.clear();
+        dataToInsert_.depth = 0;
+        auto rel = std::filesystem::relative(dataToInsert_.path, rootDir_);
+        std::stringstream relStr(rel.generic_string());
+        std::string segment;
+        while (std::getline(relStr, segment, '/')) {
+            dataToInsert_.folders.push_back(segment);
+        }
+        addData(rootItem->child(0));
     }
 
     void TreeModel::setupModelData(const std::filesystem::path lines, TreeItem* parent) {

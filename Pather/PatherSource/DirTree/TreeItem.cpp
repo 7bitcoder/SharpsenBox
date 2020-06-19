@@ -56,6 +56,12 @@ namespace dt {
             return item;
     }
 
+    TreeItem* TreeItem::appendChildren(TreeItem* item) {
+        item->parentItem = this;
+        childItems.append(item);
+        return item;
+    }
+
     bool TreeItem::insertChildren(int position, int count, int columns) {
         if (position < 0 || position > childItems.size())
             return false;

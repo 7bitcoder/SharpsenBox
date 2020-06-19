@@ -1,12 +1,15 @@
 import QtQuick 2.12
+import QtQuick.Controls 2.14
 import QtQuick.Controls 1.4
 import QtQml.Models 2.12
 import Qt.labs.folderlistmodel 2.11
 
 Rectangle {
     id: windows
+    property TreeView currentTreeview: treeview
+    property TreeView fromTreeview: treeview
     color: "transparent"
-    property int packetCnt: 1
+    property int packetCnt: 0
     Component{
         id: element
         Rectangle{
@@ -29,16 +32,37 @@ Rectangle {
             margins: 50
         }
         color: "white"
-
+        MouseArea {
+            anchors.fill: parent
+            hoverEnabled: true
+            preventStealing: true
+            onEntered: {
+                windows.currentTreeview = treeview
+                console.log(windows.currentTreeview)
+            }
+        }
+        DropArea {
+          id:setR
+          anchors.fill: parent
+            onDropped: {
+                if(windows.fromTreeview != treeview ) {
+                   var unbinded = windows.fromTreeview.selection.selectedIndexes
+                   windows.fromTreeview.model.unbindRows(unbinded)
+                   treeview.model.bind(unbinded)
+                }
+            }
+        }
         TreeView {
             id: treeview
             property bool dragFlag: false
             property  int dragItemIndex: -1
             anchors.fill: parent
-            model: _left
+            model: _TreeModel
+
             selectionMode: SelectionMode.ExtendedSelection
                selection: ItemSelectionModel {
                    model: treeview.model
+
                }
             // broken due to MouseArea in itemDelegate !
             TableViewColumn {
@@ -47,7 +71,6 @@ Rectangle {
             itemDelegate: Item {
                    Rectangle {
                        id: rect
-                       property int row: 0
                        anchors.left: parent.left
                        anchors.verticalCenter: parent.verticalCenter
                        height: 20
@@ -59,7 +82,7 @@ Rectangle {
                            text: styleData.value
                        }
 
-                       Drag.active: treeview.dragFlag && styleData.selected
+                       Drag.active: mouseArea.drag.active
                        Drag.hotSpot.x: width / 2
                        Drag.hotSpot.y: height / 2
 
@@ -70,15 +93,18 @@ Rectangle {
 
                            drag.onActiveChanged: {
                                if (mouseArea.drag.active) {
-                                   treeview.dragFlag = true
+                               //    treeview.dragFlag = true
                                } else
-                                    treeview.dragFlag = false
+                                 //   treeview.dragFlag = false
                                //console.log(styleData.row)
-                               rect.row = styleData.row;
+                               treeview.selection.select(styleData.index, 3)
+                               windows.fromTreeview = treeview
                                rect.Drag.drop();
                            }
-                           propagateComposedEvents :true
-                           onClicked: {}
+                           preventStealing: true
+                           onClicked: {
+                                treeview.selection.select(styleData.index, 3)
+                           }
                        }
                        states: [
                             State {
@@ -147,6 +173,14 @@ Rectangle {
                 property bool show: false
                 implicitHeight: name.height + treeviewL.height
                 width: parent.width
+                MouseArea{
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    onEntered: {
+                        windows.currentTreeview = treeviewL
+                        console.log(windows.currentTreeview.model)
+                    }
+                }
                 Rectangle{
                     id: rect
                     anchors{
@@ -167,15 +201,21 @@ Rectangle {
                         anchors.top: parent.top
                         font.pixelSize: 15
                         height: font.pixelSize
-                        text: "pcaket" + packetCnt + ".zip"
+                        text: ""
+                        Component.onCompleted: {
+                            name.text = "pcaket" + packetCnt + ".zip"
+                        }
                     }
                 }
                 DropArea {
                   id:setL
                   anchors.fill: parent
                     onDropped: {
-                       console.log(drag.source.ind)
-                       var unbinded = treeview.model.unbindRows(drag.source.row, 1, drag.source.index)
+                       if(windows.fromTreeview != treeviewL ) {
+                           var unbinded = windows.fromTreeview.selection.selectedIndexes
+                           windows.fromTreeview.model.unbindRows(unbinded)
+                           treeviewL.model.bind(unbinded)
+                       }
                     }
                 }
 
@@ -188,10 +228,10 @@ Rectangle {
                     height: packetIt.show ? 300 : 0
                     id: treeviewL
                     property  int dragItemIndex: -1
-                    model: _left
+                    model: _TreeModel.getNewPacket()
                     selectionMode: SelectionMode.ExtendedSelection
                        selection: ItemSelectionModel {
-                           model: treeview.model
+                           model: treeviewL.model
                        }
                     // broken due to MouseArea in itemDelegate !
                     TableViewColumn {
@@ -224,10 +264,13 @@ Rectangle {
                                        if (mouseAreaL.drag.active) {
                                            //treeview.dragItemIndex = index;
                                        }
-                                       console.log(styleData.row)
+                                       treeviewL.selection.select(styleData.index, 3)
+                                       windows.fromTreeview = treeviewL
                                        rectL.Drag.drop();
                                    }
-                                   onClicked: treeviewL.model.removeRows(styleData.row, 1, styleData.index)
+                                   onClicked: {
+                                        treeviewL.selection.select(styleData.index, 3)
+                                   }
                                }
 
                                states: [
@@ -255,15 +298,27 @@ Rectangle {
         ListModel {
              id: packetModel
         }
-
+        clip: true
         ListView {
             id: packetList
             anchors.fill: parent
-
+            anchors.rightMargin: 20
+            interactive: false
+            ScrollBar.vertical: ScrollBar {
+                anchors {
+                    left: parent.right
+                    top: parent.top
+                    bottom: parent.bottom
+                }
+                width: 20
+                policy: ScrollBar.AlwaysOn
+            }
             model: packetModel
             delegate: packet
             spacing: 10
+
         }
+
 
 
     }
