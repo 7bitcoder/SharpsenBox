@@ -17,10 +17,10 @@ namespace dt {
     void TreeModel::init(bool packet) {
         QVector<QVariant> rootData;
         rootData << rootDir_.generic_string().c_str() << rootDir_.generic_string().c_str();
-        rootItem = new TreeItem(rootData);
-        auto* ptr = rootItem->appendChildren({ rootDir_.generic_string().c_str(), rootDir_.generic_string().c_str() });
+        rootItem = new TreeItem(rootData, true);
+        auto* ptr = rootItem->appendChildren({ rootDir_.generic_string().c_str(), rootDir_.generic_string().c_str() }, true);
         if (!packet)
-            setupModelData(rootDir_, ptr);
+            setupModelData(".", ptr);
     }
 
     TreeModel::~TreeModel() {
@@ -197,7 +197,11 @@ namespace dt {
             if (dataToInsert_.depth == dataToInsert_.folders.size() - 1) //last element
                 parent->appendChildren(dataToInsert_.item);
             else {
-                auto p = rootDir_ / element;
+
+                auto p = rootDir_;
+                for (int j = 0; j <= dataToInsert_.depth; ++j) {
+                    p /= dataToInsert_.folders.at(j);
+                }
                 parent->appendChildren({ element.c_str(), p.generic_string().c_str() }, std::filesystem::is_directory(p));
                 dataToInsert_.depth++;
                 addData(parent->child(parent->childCount() - 1));// last element
@@ -245,7 +249,7 @@ namespace dt {
     }
 
     void TreeModel::setupModelData(const std::filesystem::path lines, TreeItem* parent) {
-        for (auto& path : std::filesystem::directory_iterator(lines)) {
+        for (auto& path : std::filesystem::directory_iterator(rootDir_ / lines)) {
             auto p = std::filesystem::relative(path.path(), rootDir_);
             if (path.is_directory()) {
                 auto* appended = parent->appendChildren({ p.filename().generic_string().c_str(),  p.generic_string().c_str() }, true);

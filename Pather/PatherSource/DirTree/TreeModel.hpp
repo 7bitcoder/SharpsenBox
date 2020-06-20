@@ -73,6 +73,7 @@ namespace dt {
         Q_INVOKABLE void remove(const QModelIndexList& list);
         Q_INVOKABLE QAbstractItemModel* getNewPacket() { auto* ptr = new TreeModel(); packets.push_back(ptr); return packets.back(); }
         static void setRoot(std::filesystem::path path) { rootDir_ = path; }
+        static std::filesystem::path& getRoot() { return rootDir_ ; }
         QMimeData* mimeData(const QModelIndexList& indexes) const override;
 
         public slots:

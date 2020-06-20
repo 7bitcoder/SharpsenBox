@@ -5,12 +5,14 @@
 #include <QCryptographichash>
 #include <QFile>
 #include "Project.hpp"
+#include "TreeModel.hpp"
 
 namespace dt {
     namespace fs = std::filesystem;
     namespace {
-        std::pair<QString, qint64 > fileChecksum(const QString& fileName,
+        std::pair<QString, qint64 > fileChecksum(QString fileName,
             QCryptographicHash::Algorithm hashAlgorithm) {
+
             QFile f(fileName);
             qint64 size = f.size();
             if (f.open(QFile::ReadOnly)) {
@@ -35,9 +37,11 @@ namespace dt {
         isDir = isDIr;
         state = fileState::SAME;
         if (!isDir) {
-            auto data = fileChecksum(path, QCryptographicHash::Algorithm::RealSha3_256);
+            auto path = TreeModel::getRoot();
+            path /= str;
+            auto data = fileChecksum(path.generic_string().c_str(), QCryptographicHash::Algorithm::RealSha3_256);
             if (data.first.isEmpty())
-                throw std::exception((std::string("Could not calculate sha for file ") + path.toStdString()).c_str());
+                throw std::exception((std::string("Could not calculate sha for file: ") + path.generic_string()).c_str());
             sha = data.first;
             size = data.second;
         }

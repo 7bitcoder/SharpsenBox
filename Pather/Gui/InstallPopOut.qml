@@ -13,8 +13,8 @@ Rectangle {
     property string gameDir: gamefolderDialog.folder.toString(
                                           ).substring(8)
 
-    property string projectNameStr: ""
-    property string gameNameStr: ""
+    property string projectNameStr: "SylioProj"
+    property string gameNameStr: "Sylio"
 
     Rectangle {
         anchors.fill: parent
@@ -68,6 +68,7 @@ Rectangle {
             FolderDialog {
                 id: folderDialog
                 title: "Chose installation folder"
+                folder: "folder:/C:/Users/Sylwester/Desktop"
                 options: FolderDialog.ShowDirsOnly
                 onAccepted: {
                     projectDir = folderDialog.folder.toString(
@@ -151,6 +152,7 @@ Rectangle {
             FolderDialog {
                 id: gamefolderDialog
                 title: "Chose installation folder"
+                folder: "folder:/C:/Users/Sylwester/Desktop/LaunchBox"
                 options: FolderDialog.ShowDirsOnly
                 onAccepted: {
                     gameDir = gamefolderDialog.folder.toString(
@@ -255,7 +257,7 @@ Rectangle {
                         rightMargin: 4
                     }
                     clip: true
-                    text: ""
+                    text: gameNameStr
                     font.family: "Arial"
                     font.pixelSize: normalTextSize
                     selectByMouse: true
@@ -297,7 +299,7 @@ Rectangle {
                         rightMargin: 4
                     }
                     clip: true
-                    text: ""
+                    text: projectNameStr
                     font.family: "Arial"
                     font.pixelSize: normalTextSize
                     selectByMouse: true
