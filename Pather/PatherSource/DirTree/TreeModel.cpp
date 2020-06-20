@@ -7,6 +7,12 @@
 #include <sstream>
 
 namespace dt {
+    namespace {
+        std::size_t filesInDir(std::filesystem::path path) {
+            return (std::size_t)std::distance(std::filesystem::recursive_directory_iterator{ path }, std::filesystem::recursive_directory_iterator{});
+        }
+    }
+
     std::filesystem::path TreeModel::rootDir_;
     TreeModel::TreeModel(bool packet, QObject* parent)
         : QAbstractItemModel(parent) {
@@ -19,8 +25,11 @@ namespace dt {
         rootData << rootDir_.generic_string().c_str() << rootDir_.generic_string().c_str();
         rootItem = new TreeItem(rootData, true);
         auto* ptr = rootItem->appendChildren({ rootDir_.generic_string().c_str(), rootDir_.generic_string().c_str() }, true);
-        if (!packet)
+        if (!packet) {
+            total_ = filesInDir(rootDir_);
+            actual_ = 0;
             setupModelData(".", ptr);
+        }
     }
 
     TreeModel::~TreeModel() {
@@ -123,7 +132,6 @@ namespace dt {
             return createIndex(0, 0, unbinded);
         }
     }
-
 
     Q_INVOKABLE void TreeModel::remove(const QModelIndexList& list) {
         ///auto* item = getItem(index);
@@ -249,8 +257,11 @@ namespace dt {
     }
 
     void TreeModel::setupModelData(const std::filesystem::path lines, TreeItem* parent) {
+        
         for (auto& path : std::filesystem::directory_iterator(rootDir_ / lines)) {
             auto p = std::filesystem::relative(path.path(), rootDir_);
+            std::cout << actual_ << "/" << total_ << std::endl;
+            actual_++;
             if (path.is_directory()) {
                 auto* appended = parent->appendChildren({ p.filename().generic_string().c_str(),  p.generic_string().c_str() }, true);
                 setupModelData(p, appended);

@@ -152,7 +152,7 @@ Rectangle {
             FolderDialog {
                 id: gamefolderDialog
                 title: "Chose installation folder"
-                folder: "folder:/C:/Users/Sylwester/Desktop/LaunchBox"
+                folder: "folder:/C:/Users/Sylwester/Desktop/Sylio"
                 options: FolderDialog.ShowDirsOnly
                 onAccepted: {
                     gameDir = gamefolderDialog.folder.toString(

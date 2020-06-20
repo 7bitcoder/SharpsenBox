@@ -95,5 +95,7 @@ namespace dt {
         static std::filesystem::path rootDir_;
         TreeItem* rootItem;
         QVector<TreeModel*> packets;
+        size_t total_;
+        size_t actual_ = 0;
     };
 }

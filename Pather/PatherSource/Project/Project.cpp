@@ -18,10 +18,6 @@ namespace pr {
 			}
 			return { QString(), size };
 		}
-
-		std::size_t filesInDir(std::filesystem::path path) {
-			return (std::size_t)std::distance(std::filesystem::directory_iterator{ path }, std::filesystem::directory_iterator{});
-		}
 	}
 
 	void Project::generate() {
