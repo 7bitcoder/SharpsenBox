@@ -247,8 +247,7 @@ namespace dt {
         dataToInsert_.dir = std::filesystem::is_directory(dataToInsert_.path);
         dataToInsert_.folders.clear();
         dataToInsert_.depth = 0;
-        auto rel = std::filesystem::relative(dataToInsert_.path, rootDir_);
-        std::stringstream relStr(rel.generic_string());
+        std::stringstream relStr(dataToInsert_.path);
         std::string segment;
         while (std::getline(relStr, segment, '/')) {
             dataToInsert_.folders.push_back(segment);

@@ -11,6 +11,18 @@ Rectangle {
     property bool ctrl: false
     color: "transparent"
     property int packetCnt: 0
+    function getColor(val){
+        if(val === 0)
+            return "yellow"
+        else if(val === 1)
+            return "red"
+        else if(val === 2)
+            return "green"
+        else if(val === 3)
+            return "black"
+
+    }
+
     Component{
         id: element
         Rectangle{
@@ -91,7 +103,7 @@ Rectangle {
                        color: Drag.active ? "lightblue" : "transparent"
                        Text {
                            anchors.verticalCenter: parent.verticalCenter
-                           color: "black"
+                           color: getColor(treeview.model.getFileState(styleData.index))
                            text: styleData.value
                        }
 
@@ -265,7 +277,7 @@ Rectangle {
                                color: Drag.active ? "lightblue" : "transparent"
                                Text {
                                    anchors.verticalCenter: parent.verticalCenter
-                                   color: "black"
+                                   color: getColor(treeviewL.model.getFileState(styleData.index))
                                    text: styleData.value
                                }
 

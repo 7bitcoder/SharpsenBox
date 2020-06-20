@@ -9,10 +9,10 @@
 namespace dt {
     class TreeItem {
     public:
-        enum fileState {CHANGED, DELETED, ADDED, SAME};
+        enum fileState { CHANGED, DELETED, ADDED, SAME };
         explicit TreeItem(const QVector<QVariant>& data, bool isDIr, TreeItem* parent = nullptr);
         ~TreeItem();
-        
+
         int getState() { return state; }
 
         TreeItem* child(int number);
@@ -29,7 +29,6 @@ namespace dt {
         bool removeColumns(int position, int columns);
         int childNumber() const;
         bool setData(int column, const QVariant& value);
-
     private:
         fileState state;
         qint64 size;

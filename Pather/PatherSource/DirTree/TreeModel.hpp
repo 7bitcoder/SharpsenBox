@@ -46,6 +46,7 @@ namespace dt {
         int rowCount(const QModelIndex& parent = QModelIndex()) const override;
         int columnCount(const QModelIndex& parent = QModelIndex()) const override;
 
+        TreeItem* item(const QModelIndex& index) {return  static_cast<TreeItem*>(index.internalPointer());}
         Qt::ItemFlags flags(const QModelIndex& index) const override;
        // bool setData(const QModelIndex& index, const QVariant& value,
        //     int role = Qt::EditRole) override;
@@ -72,6 +73,11 @@ namespace dt {
 
         Q_INVOKABLE void remove(const QModelIndexList& list);
         Q_INVOKABLE QAbstractItemModel* getNewPacket() { auto* ptr = new TreeModel(); packets.push_back(ptr); return packets.back(); }
+
+        Q_INVOKABLE int getFileState(const QModelIndex& index) {
+            return item(index)->getState();
+        }
+
         static void setRoot(std::filesystem::path path) { rootDir_ = path; }
         static std::filesystem::path& getRoot() { return rootDir_ ; }
         QMimeData* mimeData(const QModelIndexList& indexes) const override;
