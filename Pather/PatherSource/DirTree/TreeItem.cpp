@@ -1,12 +1,54 @@
 ﻿#include <iostream>
 #include <string>
 #include "TreeItem.hpp"
+#include <filesystem>
+#include <QCryptographichash>
+#include <QFile>
+#include "Project.hpp"
 
 namespace dt {
+    namespace fs = std::filesystem;
+    namespace {
+        std::pair<QString, qint64 > fileChecksum(const QString& fileName,
+            QCryptographicHash::Algorithm hashAlgorithm) {
+            QFile f(fileName);
+            qint64 size = f.size();
+            if (f.open(QFile::ReadOnly)) {
+                QCryptographicHash hash(hashAlgorithm);
+                if (hash.addData(&f)) {
+                    return  { hash.result().toHex(), size };
+                }
+            }
+            return { QString(), size };
+        }
 
-    TreeItem::TreeItem(const QVector<QVariant>& data, TreeItem* parent)
+        std::size_t filesInDir(std::filesystem::path path) {
+            return (std::size_t)std::distance(std::filesystem::directory_iterator{ path }, std::filesystem::directory_iterator{});
+        }
+    }
+
+    TreeItem::TreeItem(const QVector<QVariant>& data, bool isDIr, TreeItem* parent)
         : itemData(data),
-        parentItem(parent) {}
+        parentItem(parent) {
+        QString path = data[1].toString();
+        auto& str = path.toStdString();
+        isDir = isDIr;
+        state = fileState::SAME;
+        if (!isDir) {
+            auto data = fileChecksum(path, QCryptographicHash::Algorithm::RealSha3_256);
+            if (data.first.isEmpty())
+                throw std::exception((std::string("Could not calculate sha for file ") + path.toStdString()).c_str());
+            sha = data.first;
+            size = data.second;
+        }
+
+        if (pr::Project::getObject().newProject()) {
+
+        } else {
+
+        }
+    
+    }
 
     TreeItem::~TreeItem() {
         qDeleteAll(childItems);
@@ -50,8 +92,8 @@ namespace dt {
         return true;
     }
 
-    TreeItem* TreeItem::appendChildren(QVector<QVariant> data) {
-            TreeItem* item = new TreeItem(data, this);
+    TreeItem* TreeItem::appendChildren(QVector<QVariant> data, bool isDir) {
+            TreeItem* item = new TreeItem(data, isDir, this);
             childItems.append(item);
             return item;
     }
@@ -62,18 +104,18 @@ namespace dt {
         return item;
     }
 
-    bool TreeItem::insertChildren(int position, int count, int columns) {
-        if (position < 0 || position > childItems.size())
-            return false;
-
-        for (int row = 0; row < count; ++row) {
-            QVector<QVariant> data(columns);
-            TreeItem* item = new TreeItem(data, this);
-            childItems.insert(position, item);
-        }
-
-        return true;
-    }
+    //bool TreeItem::insertChildren(int position, int count, int columns) {
+    //    if (position < 0 || position > childItems.size())
+    //        return false;
+    //
+    //    for (int row = 0; row < count; ++row) {
+    //        QVector<QVariant> data(columns);
+    //        TreeItem* item = new TreeItem(data, this);
+    //        childItems.insert(position, item);
+    //    }
+    //
+    //    return true;
+    //}
 
     bool TreeItem::removeChildren(int position, int count) {
         if (position < 0 || position + count > childItems.size())

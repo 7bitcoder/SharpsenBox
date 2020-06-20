@@ -6,7 +6,8 @@ add_library(Config STATIC
 target_include_directories(Config PRIVATE
     "../MainWindow" 
     "../AppBackend"
-    "../InstalationManager")
+    "../InstalationManager"
+    "../DirTree")
 
 qt5_use_modules(Config 
     Quick 

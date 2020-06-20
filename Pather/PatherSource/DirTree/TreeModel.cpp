@@ -10,11 +10,16 @@ namespace dt {
     std::filesystem::path TreeModel::rootDir_;
     TreeModel::TreeModel(bool packet, QObject* parent)
         : QAbstractItemModel(parent) {
+        if (packet)
+            init(packet);
+    }
+
+    void TreeModel::init(bool packet) {
         QVector<QVariant> rootData;
-        rootData << rootDir_.generic_string().c_str();
+        rootData << rootDir_.generic_string().c_str() << rootDir_.generic_string().c_str();
         rootItem = new TreeItem(rootData);
-        auto * ptr = rootItem->appendChildren({ rootDir_.generic_string().c_str(), rootDir_.generic_string().c_str()});
-        if(!packet)
+        auto* ptr = rootItem->appendChildren({ rootDir_.generic_string().c_str(), rootDir_.generic_string().c_str() });
+        if (!packet)
             setupModelData(rootDir_, ptr);
     }
 
@@ -192,7 +197,8 @@ namespace dt {
             if (dataToInsert_.depth == dataToInsert_.folders.size() - 1) //last element
                 parent->appendChildren(dataToInsert_.item);
             else {
-                parent->appendChildren({ element.c_str(), (rootDir_ / element).generic_string().c_str() });
+                auto p = rootDir_ / element;
+                parent->appendChildren({ element.c_str(), p.generic_string().c_str() }, std::filesystem::is_directory(p));
                 dataToInsert_.depth++;
                 addData(parent->child(parent->childCount() - 1));// last element
             }
@@ -239,12 +245,13 @@ namespace dt {
     }
 
     void TreeModel::setupModelData(const std::filesystem::path lines, TreeItem* parent) {
-        for (auto& p : std::filesystem::directory_iterator(lines)) {
-            if (p.is_directory()) {
-                auto* appended = parent->appendChildren({ p.path().filename().generic_string().c_str(),  p.path().generic_string().c_str() });
+        for (auto& path : std::filesystem::directory_iterator(lines)) {
+            auto p = std::filesystem::relative(path.path(), rootDir_);
+            if (path.is_directory()) {
+                auto* appended = parent->appendChildren({ p.filename().generic_string().c_str(),  p.generic_string().c_str() }, true);
                 setupModelData(p, appended);
             } else {
-                auto* appended = parent->appendChildren({ p.path().filename().generic_string().c_str(),  p.path().generic_string().c_str() });
+                auto* appended = parent->appendChildren({ p.filename().generic_string().c_str(),  p.generic_string().c_str() }, false);
             }
         }
     }

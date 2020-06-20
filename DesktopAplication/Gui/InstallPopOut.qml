@@ -93,7 +93,7 @@ Rectangle {
                     font.family: "Arial"
                     font.pixelSize: normalTextSize
                     selectByMouse: true
-                    onAccepted: installDirectory = text
+                    onEditingFinished: installDirectory = text
                 }
             }
             Button {

@@ -18,7 +18,7 @@ Item {
             width: 2
         }
         radius: 3
-        TextInput {
+        Text {
             id: textInput
             anchors {
                 verticalCenter: parent.verticalCenter
@@ -31,22 +31,7 @@ Item {
             text: gameDir
             font.family: "Arial"
             font.pixelSize: 14
-            selectByMouse: true
-            onAccepted: installDirectory = text
         }
-    }
-
-    MyButton {
-            onClicked: folderDialog.open()
-            text: "Chose"
-            width: 100
-            height: 30
-            anchors {
-                verticalCenter: pathDisplay.verticalCenter
-            }
-            anchors.top: parent.top
-            anchors.left: pathDisplay.right
-            anchors.leftMargin: 6
     }
 
     PatherWindows{

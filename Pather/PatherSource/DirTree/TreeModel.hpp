@@ -29,7 +29,7 @@ namespace dt {
         std::string getName() {
             return TYPENAME(TreeModel);
         }
-        void init()  {};
+        void init(bool packet);
 
 
         TreeModel(bool packet = true, QObject* parent = nullptr);

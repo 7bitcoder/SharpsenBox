@@ -8,6 +8,7 @@ Rectangle {
     id: windows
     property TreeView currentTreeview: treeview
     property TreeView fromTreeview: treeview
+    property bool ctrl: false
     color: "transparent"
     property int packetCnt: 0
     Component{
@@ -23,6 +24,16 @@ Rectangle {
          id: elementList
     }
 
+    Keys.onPressed: {
+       if(event.key === Qt.Key_Control){
+           windows.ctrl = true;
+            console .log("Asdasd")
+       }
+    }
+    Keys.onReleased: {
+       if(event.key === Qt.Key_Control)
+           windows.ctrl = false;
+    }
     Rectangle {
         anchors {
             right: parent.horizontalCenter
@@ -71,14 +82,16 @@ Rectangle {
             itemDelegate: Item {
                    Rectangle {
                        id: rect
-                       anchors.left: parent.left
-                       anchors.verticalCenter: parent.verticalCenter
-                       height: 20
-                       width: 100
-                       color: Drag.active ? "lightgreen" : "transparent"
+                       anchors{
+                           top: parent.top
+                           bottom: parent.bottom
+                           left: parent.left
+                           right: parent.right
+                       }
+                       color: Drag.active ? "lightblue" : "transparent"
                        Text {
                            anchors.verticalCenter: parent.verticalCenter
-                           color: styleData.selected ? "white" : "black"
+                           color: "black"
                            text: styleData.value
                        }
 
@@ -117,6 +130,9 @@ Rectangle {
                                 AnchorChanges {
                                     target: rect
                                     anchors.left: undefined
+                                    anchors.right: undefined
+                                    anchors.top: undefined
+                                    anchors.bottom: undefined
                                     anchors.verticalCenter: undefined
                                 }
                             }
@@ -240,14 +256,16 @@ Rectangle {
                     itemDelegate: Item {
                            Rectangle {
                                id: rectL
-                               anchors.left: parent.left
-                               anchors.verticalCenter: parent.verticalCenter
-                               height: 20
-                               width: 100
-                               color: Drag.active ? "lightgreen" : "transparent"
+                               anchors{
+                                   top: parent.top
+                                   bottom: parent.bottom
+                                   left: parent.left
+                                   right: parent.right
+                               }
+                               color: Drag.active ? "lightblue" : "transparent"
                                Text {
                                    anchors.verticalCenter: parent.verticalCenter
-                                   color: styleData.selected ? "white" : "black"
+                                   color: "black"
                                    text: styleData.value
                                }
 
@@ -284,6 +302,9 @@ Rectangle {
                                         AnchorChanges {
                                             target: rectL
                                             anchors.left: undefined
+                                            anchors.right: undefined
+                                            anchors.top: undefined
+                                            anchors.bottom: undefined
                                             anchors.verticalCenter: undefined
                                         }
                                     }

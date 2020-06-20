@@ -4,7 +4,8 @@ add_library(DirTree STATIC
     TreeModel.cpp)
 
 target_include_directories(DirTree PUBLIC
-    "../AppBackend")
+    "../AppBackend"
+    "../Project")
 
 qt5_use_modules(DirTree 
     Quick 

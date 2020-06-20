@@ -9,6 +9,8 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <qvariant.h>
+#include "Config.hpp"
+#include "Project.hpp"
 
 namespace bc {
 
@@ -23,7 +25,6 @@ namespace bc {
 	}
 
 	void Backend::registerObjects() {
-		dt::TreeModel::setRoot("C:/Users/Sylwester/Desktop/asd asdsad");
 		qmlRegisterType<dt::TreeModel>("custom.TreeModel", 1, 1, "TreeModel");
 		//uc.setupModelData( ".", nullptr);
 		//QFileSystemModel* filemodel = new QFileSystemModel;
@@ -33,7 +34,9 @@ namespace bc {
 		//filemodel->setRootPath("C:/Users/Sylwester/Desktop/TS");
 		//
 		//engine->rootContext()->setContextProperty("_TreeModel", filemodel);
+		registerObject<cf::Config>();
 		registerObject<dt::TreeModel>();
+		registerObject<pr::Project>();
 	}
 	void Backend::initializeObjects() {}
 	template <class T>

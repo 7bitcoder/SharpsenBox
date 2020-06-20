@@ -24,19 +24,15 @@ ApplicationWindow {
 
     menuBar: MenuBar {
         Menu {
-            title: "File"
+            title: "Project"
+            MenuItem { text: "New"
+            onTriggered: gameChoserLoader.source = "InstallPopOut.qml"
+            }
             MenuItem { text: "Open..." }
             MenuItem {
                 text: "Close"
                 onTriggered: Qt.quit()
             }
-        }
-
-        Menu {
-            title: "Edit"
-            MenuItem { text: "Cut" }
-            MenuItem { text: "Copy" }
-            MenuItem { text: "Paste" }
         }
     }
 
@@ -48,14 +44,10 @@ ApplicationWindow {
    //        gameDir = folderDialog.folder.toString().substring(8)
    //    }
    //}
-
-    Content {
-        id: content
-        anchors{
-            top: parent.top
-            left: parent.left
-            right: parent.right
-            bottom: parent.bottom
-        }
+    Loader {
+        id: gameChoserLoader
+        anchors.fill: parent
+        source: "Empty.qml"
     }
 }
+

@@ -6,5 +6,7 @@
 	<file>ResizingFrames.qml</file>
 	<file>TopBar.qml</file>
 	<file>MyButton.qml</file>
+	<file>InstallPopOut.qml</file>
+	<file>Empty.qml</file>
 </qresource>
 </RCC>

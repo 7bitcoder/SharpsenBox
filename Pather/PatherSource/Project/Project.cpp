@@ -1,9 +1,9 @@
-﻿#include "Generator.hpp"
+﻿#include "Project.hpp"
 #include <filesystem>
 #include <iostream>
 #include <QCryptographicHash>
 
-namespace gn {
+namespace pr {
 	namespace fs = std::filesystem;
 	namespace {
 		std::pair<QString, qint64 > fileChecksum(const QString& fileName,
@@ -24,15 +24,17 @@ namespace gn {
 		}
 	}
 
-	void Generator::generate(std::filesystem::path dir) {
-		rootDir_ = dir;
+	void Project::generate() {
 		rootObject_ = doc_.object();
-		auto total = filesInDir(dir);
+		rootObject_.insert("GameName", gameName.c_str());
+		rootObject_.insert("GameDir", gameDir_.generic_string().c_str());
+		rootObject_.insert("ProjectName", projectName.c_str());
+		rootObject_.insert("ProjectDir", projectDir.generic_string().c_str());
+
 		int index = 0;
-		for (auto& p : fs::recursive_directory_iterator(dir)) {
+		for (auto& p : fs::recursive_directory_iterator(gameDir_)) {
 			if (p.is_directory())
 				continue;
-			std::cout << index << "/" << total << " : " << p.path() << '\n';
 			insertFileData(p);
 			index++;
 		}
@@ -42,7 +44,7 @@ namespace gn {
 		file_.write(doc_.toJson());
 		file_.close();
 	}
-	void Generator::insertFileData(std::filesystem::path file) {
+	void Project::insertFileData(std::filesystem::path file) {
 		auto data = fileChecksum(file.generic_string().c_str(), QCryptographicHash::Algorithm::Sha3_256);
 		if (data.first.isEmpty())
 			throw std::exception("errorr while computing sha hash");

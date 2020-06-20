@@ -1,7 +1,16 @@
 ﻿{
-  "AppName" : "Sylio",
+  "AppName": "Sylio",
   "Ver": "0.11",
+  "AddedFiles": [
+    "Asdasdas.asd",
+    "asdasda.ddd"
+  ],
   "ChangedFiles": [
-    "Asdasdas.asd","asdasda.ddd"
+    "Asdasdas.asd",
+    "asdasda.ddd"
+  ],
+  "RemovedFiles": [
+    "Asdasdas",
+    "Asdasdasd"
   ]
 }
