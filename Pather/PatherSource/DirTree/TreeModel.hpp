@@ -13,6 +13,7 @@
 #include <iostream>
 #include <filesystem>
 #include <QHash>
+#include "setUpTreeModel.hpp"
 
 namespace dt {
     class TreeModel : public QAbstractItemModel {
@@ -31,6 +32,17 @@ namespace dt {
         }
         void init(bool packet);
 
+        // Qml properties
+        Q_PROPERTY(double percentage READ getPercent NOTIFY percentChanged);
+        Q_PROPERTY(bool available READ getAval NOTIFY avalChanged);
+
+        Q_INVOKABLE double getPercent() {
+            return percentage_;
+        }
+
+        Q_INVOKABLE double getAval() {
+            return available_;
+        }
 
         TreeModel(bool packet = true, QObject* parent = nullptr);
         ~TreeModel();
@@ -75,15 +87,23 @@ namespace dt {
         Q_INVOKABLE QAbstractItemModel* getNewPacket() { auto* ptr = new TreeModel(); packets.push_back(ptr); return packets.back(); }
 
         Q_INVOKABLE int getFileState(const QModelIndex& index) {
-            return item(index)->getState();
+            if(index.isValid())
+                return item(index)->getState();
+            return 1;
         }
 
         static void setRoot(std::filesystem::path path) { rootDir_ = path; }
         static std::filesystem::path& getRoot() { return rootDir_ ; }
         QMimeData* mimeData(const QModelIndexList& indexes) const override;
 
-        public slots:
-            void bind(const QModelIndexList& list);
+    signals:
+        void percentChanged();
+        void avalChanged();
+    public slots:
+        void bind(const QModelIndexList& list);
+        void errorChatched(QString err) {};
+        void readEnded() { endResetModel(); available_ = true; avalChanged(); }
+        void readState(double percentage) { percentage_ = percentage; percentChanged(); }
     private:
         struct data {
             TreeItem* item;
@@ -92,6 +112,8 @@ namespace dt {
             std::vector<std::string> folders;
             int depth;
         } dataToInsert_;
+
+        double percentage_;
         void merge(TreeItem* parent, TreeItem* toInsert);
         QModelIndex* rootIndex_;
         void addData(TreeItem* parent);
@@ -103,5 +125,8 @@ namespace dt {
         QVector<TreeModel*> packets;
         size_t total_;
         size_t actual_ = 0;
+
+        st::setUpModel setUp_;
+        bool available_ = false;
     };
 }

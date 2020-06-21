@@ -26,9 +26,12 @@ namespace dt {
         rootItem = new TreeItem(rootData, true);
         auto* ptr = rootItem->appendChildren({ rootDir_.generic_string().c_str(), rootDir_.generic_string().c_str() }, true);
         if (!packet) {
-            total_ = filesInDir(rootDir_);
-            actual_ = 0;
-            setupModelData(".", ptr);
+            beginResetModel();
+            connect(&setUp_, &st::setUpModel::ended, this, &TreeModel::readEnded);
+            connect(&setUp_, &st::setUpModel::stateChanged, this, &TreeModel::readState);
+            setUp_.setParent(ptr);
+            setUp_.setRoot(".");
+            setUp_.start();
         }
     }
 

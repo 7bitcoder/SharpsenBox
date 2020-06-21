@@ -1,7 +1,8 @@
 ﻿
 add_library(DirTree STATIC
     TreeItem.cpp
-    TreeModel.cpp)
+    TreeModel.cpp 
+    "setUpTreeModel.cpp")
 
 target_include_directories(DirTree PUBLIC
     "../AppBackend"
