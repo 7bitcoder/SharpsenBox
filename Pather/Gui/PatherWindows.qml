@@ -252,10 +252,7 @@ Rectangle {
                         }
                         font.pixelSize: 15
                         height: font.pixelSize
-                        text: ""
-                        Component.onCompleted: {
-                            name.text = "pcaket" + packetCnt + ".zip"
-                        }
+                        text: treeviewL.model.packetName
                     }
                     Rectangle {
                         anchors{
@@ -407,6 +404,9 @@ Rectangle {
             anchors.fill: parent
             font.pixelSize: 15
             clip: true
+            onEditingFinished: {
+                _Project.version = text;
+            }
         }
     }
     MyButton {

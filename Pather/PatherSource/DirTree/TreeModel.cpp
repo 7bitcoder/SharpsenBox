@@ -7,6 +7,7 @@
 #include <sstream>
 
 namespace dt {
+    int TreeModel::index_ = 0;
     namespace {
         std::size_t filesInDir(std::filesystem::path path) {
             return (std::size_t)std::distance(std::filesystem::recursive_directory_iterator{ path }, std::filesystem::recursive_directory_iterator{});

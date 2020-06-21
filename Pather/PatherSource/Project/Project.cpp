@@ -21,24 +21,24 @@ namespace pr {
 	}
 
 	void Project::generate() {
-		rootObject_ = doc_.object();
-		rootObject_.insert("GameName", gameName.c_str());
-		rootObject_.insert("GameDir", gameDir_.generic_string().c_str());
-		rootObject_.insert("ProjectName", projectName.c_str());
-		rootObject_.insert("ProjectDir", projectDir.generic_string().c_str());
-
-		int index = 0;
-		for (auto& p : fs::recursive_directory_iterator(gameDir_)) {
-			if (p.is_directory())
-				continue;
-			insertFileData(p);
-			index++;
-		}
-		doc_.setObject(rootObject_);
-		file_.setFileName("fileList.json");
-		file_.open(QIODevice::WriteOnly | QIODevice::Text);
-		file_.write(doc_.toJson());
-		file_.close();
+		//rootObject_ = doc_.object();
+		//rootObject_.insert("GameName", gameName.c_str());
+		//rootObject_.insert("GameDir", gameDir_.generic_string().c_str());
+		//rootObject_.insert("ProjectName", projectName.c_str());
+		//rootObject_.insert("ProjectDir", projectDir.generic_string().c_str());
+		//
+		//int index = 0;
+		//for (auto& p : fs::recursive_directory_iterator(gameDir_)) {
+		//	if (p.is_directory())
+		//		continue;
+		//	insertFileData(p);
+		//	index++;
+		//}
+		//doc_.setObject(rootObject_);
+		//file_.setFileName("fileList.json");
+		//file_.open(QIODevice::WriteOnly | QIODevice::Text);
+		//file_.write(doc_.toJson());
+		//file_.close();
 	}
 	void Project::insertFileData(std::filesystem::path file) {
 		auto data = fileChecksum(file.generic_string().c_str(), QCryptographicHash::Algorithm::Sha3_256);
@@ -50,21 +50,25 @@ namespace pr {
 		o.insert("Sha", data.first);
 		o.insert("Size", QString::number(data.second));
 		auto relative = std::filesystem::relative(file, rootDir_);
-		rootObject_.insert(relative.generic_string().c_str(), o);
+		//rootObject_.insert(relative.generic_string().c_str(), o);
 	}
 
 	void Project::save() {
 		QJsonObject ro = doc_.object();
 		ro.insert("AppName", gameName.c_str());
+		if (version_.isEmpty()) {
+			std::cout << "specify Patch version\n";
+			return;
+		}
 		ro.insert("Ver", version_);
 
 		auto packets = dt::TreeModel::getObject().getPackets();
 		QJsonObject appitems;
 		for (auto packet : packets) {
-			auto& it = appitems.insert(packet.name(), QJsonObject());
-			QJsonObject& pack = *it;
-			auto& rot = pack.insert("Files", QJsonObject());
-			QJsonObject& pack2 = *rot;
+			auto it = appitems.insert(packet->getPacketName(), QJsonObject());
+			QJsonValueRef& pack = *it;
+			auto rot = pack.insert("Files", QJsonObject());
+			QJsonValueRef& pack2 = *rot;
 			rootObject_ = &pack2;
 			insertData(packet.rootItem());
 			pack.insert("Url", "Asdasd");

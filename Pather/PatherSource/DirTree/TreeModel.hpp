@@ -24,7 +24,7 @@ namespace dt {
             static TreeModel uc(false);
             return uc;
         }
-
+        static int index_;
         // implementation IQmlObject
         void update()  {};
         std::string getName() {
@@ -33,6 +33,16 @@ namespace dt {
         void init(bool packet);
 
         // Qml properties
+        Q_PROPERTY(QString packetName WRITE setPacketName READ getPacketName);
+
+        Q_INVOKABLE void setPacketName(QString str) {
+            packetName_ = str.toStdString();
+        }
+
+        Q_INVOKABLE QString getPacketName() {
+            return packetName_.c_str();
+        }
+
         Q_PROPERTY(double percentage READ getPercent NOTIFY percentChanged);
         Q_PROPERTY(bool available READ getAval NOTIFY avalChanged);
 
@@ -130,5 +140,6 @@ namespace dt {
 
         st::setUpModel setUp_;
         bool available_ = false;
+        std::string packetName_ = std::string("packet") + std::to_string(index_++) + ".zip";
     };
 }

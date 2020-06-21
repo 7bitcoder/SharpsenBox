@@ -27,6 +27,16 @@ namespace pr {
 		void init() override {};
 		std::string getName() override { return TYPENAME(Project); };
 
+		Q_PROPERTY(QString version WRITE setVer READ getVer);
+
+		Q_INVOKABLE void setVer(QString str) {
+			version_ = str;
+		}
+
+		Q_INVOKABLE QString getVer() {
+			return version_;
+		}
+
 		Q_INVOKABLE void setGameDir(QString str) {
 			gameDir_ = str.toStdString();
 			auto& tree = dt::TreeModel::getObject();
@@ -44,6 +54,8 @@ namespace pr {
 		void insertFileData(std::filesystem::path file);
 		bool newProject() { return newProject_; }
 		void insertData(dt::TreeItem* item);
+	signals:
+		void verChanged();
 	private:
 		bool newProject_ = true;
 		QFile file_;
@@ -51,7 +63,7 @@ namespace pr {
 		QJsonDocument doc_;
 		QJsonObject* rootObject_;
 
-
+		QString version_;
 		std::filesystem::path gameDir_;
 		std::filesystem::path projectDir;
 		std::string gameName;
