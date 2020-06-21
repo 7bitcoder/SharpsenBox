@@ -3,12 +3,13 @@ import QtQuick.Controls 2.12
 
 Button {
     property string txt
+    property int size
     id: choseFolder
     y: 0
     contentItem: Text {
         text: choseFolder.text
         font.family: "Arial"
-        font.pixelSize: 22
+        font.pixelSize: choseFolder.size
         color: "white"
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter

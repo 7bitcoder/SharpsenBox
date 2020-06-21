@@ -29,6 +29,11 @@ namespace dt {
         bool removeColumns(int position, int columns);
         int childNumber() const;
         bool setData(int column, const QVariant& value);
+
+        qint64 fileSize() { return size; }
+        QString& fileSha() { return sha; }
+        QString path() { return data(1).toString(); }
+
     private:
         fileState state;
         qint64 size;

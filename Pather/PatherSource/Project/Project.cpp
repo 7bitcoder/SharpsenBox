@@ -53,4 +53,51 @@ namespace pr {
 		rootObject_.insert(relative.generic_string().c_str(), o);
 	}
 
+	void Project::save() {
+		QJsonObject ro = doc_.object();
+		ro.insert("AppName", gameName.c_str());
+		ro.insert("Ver", version_);
+
+		auto packets = dt::TreeModel::getObject().getPackets();
+		QJsonObject appitems;
+		for (auto packet : packets) {
+			auto& it = appitems.insert(packet.name(), QJsonObject());
+			QJsonObject& pack = *it;
+			auto& rot = pack.insert("Files", QJsonObject());
+			QJsonObject& pack2 = *rot;
+			rootObject_ = &pack2;
+			insertData(packet.rootItem());
+			pack.insert("Url", "Asdasd");
+			pack.insert("Size", "Asdasd");
+		}
+		ro.insert("AppComponents", appitems);
+		doc_.setObject(ro);
+		file_.setFileName("fileList.json");
+		file_.open(QIODevice::WriteOnly | QIODevice::Text);
+		file_.write(doc_.toJson());
+		file_.close();
+
+		ro.insert("GameDir", gameDir_.generic_string().c_str());
+		ro.insert("ProjectName", projectName.c_str());
+		ro.insert("ProjectDir", projectDir.generic_string().c_str());
+
+		doc_.setObject(ro);
+		file_.setFileName((projectName  + ".json").c_str());
+		file_.open(QIODevice::WriteOnly | QIODevice::Text);
+		file_.write(doc_.toJson());
+		file_.close();
+	}
+
+	void Project::insertData(dt::TreeItem* item) {
+		auto size = item->childCount();
+		for (size_t i = 0; i < size; i++) {
+			auto* child = item->child(i);
+			QJsonObject file;
+			file.insert("Size", item->fileSize());
+			file.insert("Sha", item->fileSha());
+			rootObject_->insert(item->path(), file);
+			if (child->childCount())
+				insertData(child);
+		}
+	}
 }

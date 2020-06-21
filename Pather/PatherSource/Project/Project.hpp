@@ -39,16 +39,18 @@ namespace pr {
 		Q_INVOKABLE void setProjectName(QString str) { projectName = str.toStdString(); }
 
 		Q_INVOKABLE void setUpProject() { generate(); }
-
+		void save();
 		void generate();
 		void insertFileData(std::filesystem::path file);
 		bool newProject() { return newProject_; }
+		void insertData(dt::TreeItem* item);
 	private:
 		bool newProject_ = true;
 		QFile file_;
 		std::filesystem::path rootDir_;
 		QJsonDocument doc_;
-		QJsonObject rootObject_;
+		QJsonObject* rootObject_;
+
 
 		std::filesystem::path gameDir_;
 		std::filesystem::path projectDir;

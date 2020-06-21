@@ -96,6 +96,8 @@ namespace dt {
         static std::filesystem::path& getRoot() { return rootDir_ ; }
         QMimeData* mimeData(const QModelIndexList& indexes) const override;
 
+    QVector<TreeModel*>& getPackets() { return packets; }
+
     signals:
         void percentChanged();
         void avalChanged();

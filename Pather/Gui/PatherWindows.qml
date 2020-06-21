@@ -177,6 +177,7 @@ Rectangle {
         }
         width: 200
         height: 30
+        size: 22
         onClicked: {
             if(_TreeModel.available){
                 packetModel.append({})
@@ -218,7 +219,7 @@ Rectangle {
                         console.log(windows.currentTreeview.model)
                     }
                 }
-                Rectangle{
+               Rectangle{
                     id: rect
                     anchors{
                         left: parent.left
@@ -226,21 +227,50 @@ Rectangle {
                         right: parent.right
                     }
                     color: "lightblue"
-                    implicitHeight: name.implicitHeight
-                    MouseArea{
-                        anchors.fill: parent
-                        onClicked: show = !show
+                    height: 20
+                    MyButton{
+                        id: open
+                        anchors{
+                            left: parent.left
+                            bottom: parent.bottom
+                            top: parent.top
+                            margins: 2
+                        }
+                        size: 16
+                        width: 60
+                        text: packetIt.show ? "close" : "open"
+                        onClicked: {
+                            packetIt.show = !packetIt.show
+                        }
                     }
-
                     TextInput {
                         id: name
-                        anchors.left: parent.left
-                        anchors.top: parent.top
+                        anchors {
+                            left: open.right
+                            bottom: parent.bottom
+                            top: parent.top
+                        }
                         font.pixelSize: 15
                         height: font.pixelSize
                         text: ""
                         Component.onCompleted: {
                             name.text = "pcaket" + packetCnt + ".zip"
+                        }
+                    }
+                    Rectangle {
+                        anchors{
+                            top: parent.top
+                            left: name.right
+                            leftMargin: 10
+                            right: parent.right
+                            bottom: parent.bottom
+                        }
+                        color: "lightgreen"
+                        TextInput{
+                            anchors.fill: parent
+                            text: "Url"
+                            font.pixelSize: 15
+                            clip: true
                         }
                     }
                 }
@@ -387,6 +417,7 @@ Rectangle {
         }
         width: 200
         height: 30
+        size: 22
         onClicked: {
             if(_TreeModel.available){
                 packetModel.append({})
