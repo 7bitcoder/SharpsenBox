@@ -65,14 +65,18 @@ namespace pr {
 		auto packets = dt::TreeModel::getObject().getPackets();
 		QJsonObject appitems;
 		for (auto packet : packets) {
-			auto it = appitems.insert(packet->getPacketName(), QJsonObject());
-			QJsonValueRef& pack = *it;
-			auto rot = pack.insert("Files", QJsonObject());
-			QJsonValueRef& pack2 = *rot;
-			rootObject_ = &pack2;
-			insertData(packet.rootItem());
-			pack.insert("Url", "Asdasd");
-			pack.insert("Size", "Asdasd");
+			auto& name = packet->getPacketName();
+			packer_.setup((projectDir / name.toStdString()).generic_string());
+			std::cout << "packet: " << name.toStdString() << std::endl;
+			QJsonObject root;
+			rootObject_ = &root;
+			insertData(packet->rootItemPtr());
+			QJsonObject packet;
+			packet.insert("Files", root);
+			packet.insert("Url", "Asdasd");
+			packet.insert("Size", "Asdasd");
+			appitems.insert(name, packet);
+			packer_.end();
 		}
 		ro.insert("AppComponents", appitems);
 		doc_.setObject(ro);
@@ -86,7 +90,7 @@ namespace pr {
 		ro.insert("ProjectDir", projectDir.generic_string().c_str());
 
 		doc_.setObject(ro);
-		file_.setFileName((projectName  + ".json").c_str());
+		file_.setFileName((projectName + ".json").c_str());
 		file_.open(QIODevice::WriteOnly | QIODevice::Text);
 		file_.write(doc_.toJson());
 		file_.close();
@@ -96,10 +100,13 @@ namespace pr {
 		auto size = item->childCount();
 		for (size_t i = 0; i < size; i++) {
 			auto* child = item->child(i);
+			std::cout << "file: " << child->path().toStdString() << std::endl;
 			QJsonObject file;
-			file.insert("Size", item->fileSize());
-			file.insert("Sha", item->fileSha());
-			rootObject_->insert(item->path(), file);
+			file.insert("Size", child->fileSize());
+			file.insert("Sha", child->fileSha());
+			rootObject_->insert(child->path(), file);
+			if (!child->isDirectory())
+				packer_.write((gameDir_ / child->path().toStdString()).generic_string(), child->path().toStdString());
 			if (child->childCount())
 				insertData(child);
 		}

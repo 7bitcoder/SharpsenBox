@@ -419,10 +419,7 @@ Rectangle {
         height: 30
         size: 22
         onClicked: {
-            if(_TreeModel.available){
-                packetModel.append({})
-                windows.packetCnt = windows.packetCnt + 1
-            }
+            _Project.generatePatch()
         }
         text: "Generate Patch"
     }

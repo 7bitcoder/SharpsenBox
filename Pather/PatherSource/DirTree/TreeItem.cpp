@@ -8,152 +8,152 @@
 #include "TreeModel.hpp"
 
 namespace dt {
-    namespace fs = std::filesystem;
-    namespace {
-        std::pair<QString, qint64 > fileChecksum(QString fileName,
-            QCryptographicHash::Algorithm hashAlgorithm) {
+	namespace fs = std::filesystem;
+	namespace {
+		std::pair<QString, qint64 > fileChecksum(QString fileName,
+			QCryptographicHash::Algorithm hashAlgorithm) {
 
-            QFile f(fileName);
-            qint64 size = f.size();
-            if (f.open(QFile::ReadOnly)) {
-                QCryptographicHash hash(hashAlgorithm);
-                if (hash.addData(&f)) {
-                    return  { hash.result().toHex(), size };
-                }
-            }
-            return { QString(), size };
-        }
+			QFile f(fileName);
+			qint64 size = f.size();
+			if (f.open(QFile::ReadOnly)) {
+				QCryptographicHash hash(hashAlgorithm);
+				if (hash.addData(&f)) {
+					return  { hash.result().toHex(), size };
+				}
+			}
+			return { QString(), size };
+		}
 
-        std::size_t filesInDir(std::filesystem::path path) {
-            return (std::size_t)std::distance(std::filesystem::directory_iterator{ path }, std::filesystem::directory_iterator{});
-        }
-    }
+		std::size_t filesInDir(std::filesystem::path path) {
+			return (std::size_t)std::distance(std::filesystem::directory_iterator{ path }, std::filesystem::directory_iterator{});
+		}
+	}
 
-    TreeItem::TreeItem(const QVector<QVariant>& data, bool isDIr, TreeItem* parent)
-        : itemData(data),
-        parentItem(parent) {
-        QString path = data[1].toString();
-        auto& str = path.toStdString();
-        isDir = isDIr;
-        state = fileState::SAME;
-        if (!isDir) {
-            auto path = TreeModel::getRoot();
-            path /= str;
-            auto data = fileChecksum(path.generic_string().c_str(), QCryptographicHash::Algorithm::RealSha3_256);
-            if (data.first.isEmpty())
-                throw std::exception((std::string("Could not calculate sha for file: ") + path.generic_string()).c_str());
-            sha = data.first;
-            size = data.second;
-        }
+	TreeItem::TreeItem(const QVector<QVariant>& data, bool isDIr, TreeItem* parent)
+		: itemData(data),
+		parentItem(parent) {
+		QString path = data[1].toString();
+		auto& str = path.toStdString();
+		isDir = isDIr;
+		state = fileState::SAME;
+		if (!isDir) {
+			auto path = TreeModel::getRoot();
+			path /= str;
+			auto data = fileChecksum(path.generic_string().c_str(), QCryptographicHash::Algorithm::RealSha3_256);
+			if (data.first.isEmpty())
+				throw std::exception((std::string("Could not calculate sha for file: ") + path.generic_string()).c_str());
+			sha = data.first;
+			size = data.second;
+		}
 
-        if (pr::Project::getObject().newProject()) {
+		if (pr::Project::getObject().newProject()) {
 
-        } else {
+		} else {
 
-        }
-    
-    }
+		}
 
-    TreeItem::~TreeItem() {
-        qDeleteAll(childItems);
-    }
+	}
 
-    TreeItem* TreeItem::parent() {
-        return parentItem;
-    }
+	TreeItem::~TreeItem() {
+		qDeleteAll(childItems);
+	}
 
-    TreeItem* TreeItem::child(int number) {
-        if (number < 0 || number >= childItems.size())
-            return nullptr;
-        return childItems.at(number);
-    }
+	TreeItem* TreeItem::parent() {
+		return parentItem;
+	}
 
-    int TreeItem::childCount() const {
-        return childItems.count();
-    }
+	TreeItem* TreeItem::child(int number) {
+		if (number < 0 || number >= childItems.size())
+			return nullptr;
+		return childItems.at(number);
+	}
 
-    int TreeItem::childNumber() const {
-        if (parentItem)
-            return parentItem->childItems.indexOf(const_cast<TreeItem*>(this));
-        return 0;
-    }
+	int TreeItem::childCount() const {
+		return childItems.count();
+	}
 
-    int TreeItem::columnCount() const {
-        return itemData.count();
-    }
+	int TreeItem::childNumber() const {
+		if (parentItem)
+			return parentItem->childItems.indexOf(const_cast<TreeItem*>(this));
+		return 0;
+	}
 
-    QVariant TreeItem::data(int column) const {
-        if (column < 0 || column >= itemData.size())
-            return QVariant();
-        return itemData.at(column);
-    }
+	int TreeItem::columnCount() const {
+		return itemData.count();
+	}
 
-    bool TreeItem::setData(int column, const QVariant& value) {
-        if (column < 0 || column >= itemData.size())
-            return false;
+	QVariant TreeItem::data(int column) const {
+		if (column < 0 || column >= itemData.size())
+			return QVariant();
+		return itemData.at(column);
+	}
 
-        itemData[column] = value;
-        return true;
-    }
+	bool TreeItem::setData(int column, const QVariant& value) {
+		if (column < 0 || column >= itemData.size())
+			return false;
 
-    TreeItem* TreeItem::appendChildren(QVector<QVariant> data, bool isDir) {
-            TreeItem* item = new TreeItem(data, isDir, this);
-            childItems.append(item);
-            return item;
-    }
+		itemData[column] = value;
+		return true;
+	}
 
-    TreeItem* TreeItem::appendChildren(TreeItem* item) {
-        item->parentItem = this;
-        childItems.append(item);
-        return item;
-    }
+	TreeItem* TreeItem::appendChildren(QVector<QVariant> data, bool isDir) {
+		TreeItem* item = new TreeItem(data, isDir, this);
+		childItems.append(item);
+		return item;
+	}
 
-    //bool TreeItem::insertChildren(int position, int count, int columns) {
-    //    if (position < 0 || position > childItems.size())
-    //        return false;
-    //
-    //    for (int row = 0; row < count; ++row) {
-    //        QVector<QVariant> data(columns);
-    //        TreeItem* item = new TreeItem(data, this);
-    //        childItems.insert(position, item);
-    //    }
-    //
-    //    return true;
-    //}
+	TreeItem* TreeItem::appendChildren(TreeItem* item) {
+		item->parentItem = this;
+		childItems.append(item);
+		return item;
+	}
 
-    bool TreeItem::removeChildren(int position, int count) {
-        if (position < 0 || position + count > childItems.size())
-            return false;
+	//bool TreeItem::insertChildren(int position, int count, int columns) {
+	//    if (position < 0 || position > childItems.size())
+	//        return false;
+	//
+	//    for (int row = 0; row < count; ++row) {
+	//        QVector<QVariant> data(columns);
+	//        TreeItem* item = new TreeItem(data, this);
+	//        childItems.insert(position, item);
+	//    }
+	//
+	//    return true;
+	//}
 
-        for (int row = 0; row < count; ++row)
-            delete childItems.takeAt(position);
+	bool TreeItem::removeChildren(int position, int count) {
+		if (position < 0 || position + count > childItems.size())
+			return false;
 
-        return true;
-    }
+		for (int row = 0; row < count; ++row)
+			delete childItems.takeAt(position);
 
-    TreeItem* TreeItem::unbindChildren(int position) {
-        if (position < 0 || position > childItems.size())
-            return nullptr;
+		return true;
+	}
 
-        auto* item = child(position);
-        if (!item)
-            return item;
-        item->parentItem = nullptr;
-        childItems.remove(position);
+	TreeItem* TreeItem::unbindChildren(int position) {
+		if (position < 0 || position > childItems.size())
+			return nullptr;
 
-        return item;
-    }
+		auto* item = child(position);
+		if (!item)
+			return item;
+		item->parentItem = nullptr;
+		childItems.remove(position);
 
-    bool TreeItem::insertColumns(int position, int columns) {
-        if (position < 0 || position > itemData.size())
-            return false;
+		return item;
+	}
 
-        for (int column = 0; column < columns; ++column)
-            itemData.insert(position, QVariant());
+	bool TreeItem::insertColumns(int position, int columns) {
+		if (position < 0 || position > itemData.size())
+			return false;
 
-        for (TreeItem* child : qAsConst(childItems))
-            child->insertColumns(position, columns);
+		for (int column = 0; column < columns; ++column)
+			itemData.insert(position, QVariant());
 
-        return true;
-    }
+		for (TreeItem* child : qAsConst(childItems))
+			child->insertColumns(position, columns);
+
+		return true;
+	}
 }

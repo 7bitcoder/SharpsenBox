@@ -5,6 +5,7 @@
 #include <filesystem>
 #include "IQmlObject.hpp"
 #include "TreeModel.hpp"
+#include "Packer.hpp"
 #include<unordered_map>
 
 
@@ -49,6 +50,7 @@ namespace pr {
 		Q_INVOKABLE void setProjectName(QString str) { projectName = str.toStdString(); }
 
 		Q_INVOKABLE void setUpProject() { generate(); }
+		Q_INVOKABLE void generatePatch() { save(); }
 		void save();
 		void generate();
 		void insertFileData(std::filesystem::path file);
@@ -68,5 +70,7 @@ namespace pr {
 		std::filesystem::path projectDir;
 		std::string gameName;
 		std::string projectName;
+
+		bb::Packer packer_;
 	};
 }

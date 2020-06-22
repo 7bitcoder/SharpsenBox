@@ -1,10 +1,13 @@
-﻿
+﻿find_package(libarchieve)
+conan_basic_setup(TARGETS)
+
 add_library(ProjectL STATIC
-    "Project.cpp" "Project.hpp")
+    "Project.cpp" "Project.hpp" "Packer.cpp" "Packer.hpp")
 
 target_include_directories(ProjectL PUBLIC
     "../AppBackend"
-    "../DirTree")
+    "../DirTree"
+    "../Config")
 
 qt5_use_modules(ProjectL 
     Quick 
@@ -17,4 +20,5 @@ target_link_libraries(ProjectL
     Qt5::Core
     Qt5::Quick
     Qt5::Qml
-    Qt5::QuickControls2)
+    Qt5::QuickControls2
+    CONAN_PKG::libarchive)
