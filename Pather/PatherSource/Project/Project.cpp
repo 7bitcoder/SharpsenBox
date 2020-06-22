@@ -54,6 +54,8 @@ namespace pr {
 	}
 
 	void Project::save() {
+		if (!std::filesystem::exists(projectDir / projectName))
+			std::filesystem::create_directories(projectDir / projectName);
 		QJsonObject ro = doc_.object();
 		ro.insert("AppName", gameName.c_str());
 		if (version_.isEmpty()) {
@@ -66,7 +68,7 @@ namespace pr {
 		QJsonObject appitems;
 		for (auto packet : packets) {
 			auto& name = packet->getPacketName();
-			packer_.setup((projectDir / name.toStdString()).generic_string());
+			packer_.setup((projectDir / projectName / name.toStdString()).generic_string());
 			std::cout << "packet: " << name.toStdString() << std::endl;
 			QJsonObject root;
 			rootObject_ = &root;
@@ -80,17 +82,19 @@ namespace pr {
 		}
 		ro.insert("AppComponents", appitems);
 		doc_.setObject(ro);
-		file_.setFileName("fileList.json");
+		std::filesystem::path filelist = projectDir / projectName / "fileList.json";
+		file_.setFileName(filelist.generic_string().c_str());
 		file_.open(QIODevice::WriteOnly | QIODevice::Text);
 		file_.write(doc_.toJson());
 		file_.close();
 
-		ro.insert("GameDir", gameDir_.generic_string().c_str());
+		ro.insert("AppDir", AppDir_.generic_string().c_str());
 		ro.insert("ProjectName", projectName.c_str());
 		ro.insert("ProjectDir", projectDir.generic_string().c_str());
 
 		doc_.setObject(ro);
-		file_.setFileName((projectName + ".json").c_str());
+		std::filesystem::path project = projectDir / projectName / (projectName + ".json");
+		file_.setFileName(project.generic_string().c_str());
 		file_.open(QIODevice::WriteOnly | QIODevice::Text);
 		file_.write(doc_.toJson());
 		file_.close();
@@ -105,10 +109,27 @@ namespace pr {
 			file.insert("Size", child->fileSize());
 			file.insert("Sha", child->fileSha());
 			rootObject_->insert(child->path(), file);
-			if (!child->isDirectory())
-				packer_.write((gameDir_ / child->path().toStdString()).generic_string(), child->path().toStdString());
+			packer_.write((AppDir_ / child->path().toStdString()).generic_string(), child->path().toStdString(), child->isDirectory());
 			if (child->childCount())
 				insertData(child);
 		}
+	}
+
+	Q_INVOKABLE void Project::loadProject(QString dir) {
+		QFile file;
+		//open LaunchBoxConfig file
+		file.setFileName(dir);
+		file.open(QIODevice::ReadOnly | QIODevice::Text);
+		QString val = file.readAll();
+		file.close();
+		auto& ff = val.toStdString();
+		QJsonDocument d = QJsonDocument::fromJson(val.toUtf8());
+
+		gameName = d["AppName"].toString().toStdString();
+		version_ = d["Ver"].toString();
+		AppDir_ = d["AppDir"].toString().toStdString();
+		projectName = d["ProjectName"].toString().toStdString();
+		projectDir = d["ProjectDir"].toString().toStdString();
+
 	}
 }

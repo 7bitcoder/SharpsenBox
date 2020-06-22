@@ -23,7 +23,7 @@ namespace bb {
 		// interface
 		void setUnpackFiles(files files);
 		void setup(std::string& packetName);
-		void write(std::string& file, std::string& path);
+		void write(std::string& file, std::string& path, bool dir);
 		void setInstalationDir(std::filesystem::path dir) { destinationDir_ = dir; }
 		void end();
 		void reset();

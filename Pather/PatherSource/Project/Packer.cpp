@@ -22,21 +22,23 @@ namespace bb {
 		res = archive_write_open_filename(a, packetName.c_str());
 	}
 
-	void Packer::write(std::string& file, std::string& path) {
+	void Packer::write(std::string& file, std::string& path, bool dir) {
 		stat(file.c_str(), &st);
 		entry = archive_entry_new(); // Note 2
 		archive_entry_set_pathname(entry, path.c_str());
 		archive_entry_set_size(entry, st.st_size); // Note 3
-		archive_entry_set_filetype(entry, AE_IFREG);
+		archive_entry_set_filetype(entry, dir ? AE_IFDIR : AE_IFREG);
 		archive_entry_set_perm(entry, 0644);
 		auto res = archive_write_header(a, entry);
-		fd = open(file.c_str(), O_RDONLY);
-		len = read(fd, buff, sizeof(buff));
-		while (len > 0) {
-			archive_write_data(a, buff, len);
+		if (!dir) {
+			fd = open(file.c_str(), O_RDONLY);
 			len = read(fd, buff, sizeof(buff));
+			while (len > 0) {
+				archive_write_data(a, buff, len);
+				len = read(fd, buff, sizeof(buff));
+			}
+			close(fd);
 		}
-		close(fd);
 		archive_entry_free(entry);
 	}
 
