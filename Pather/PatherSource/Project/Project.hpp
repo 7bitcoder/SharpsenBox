@@ -12,11 +12,6 @@
 
 namespace pr {
 
-	struct File {
-		QString path;
-		qint64 size;
-		QString sha;
-	};
 	class Project : public bc::IQmlObject {
 		Q_OBJECT
 	public:
@@ -51,6 +46,8 @@ namespace pr {
 		Q_INVOKABLE void setGameName(QString str) { gameName = str.toStdString(); }
 		Q_INVOKABLE void setProjectName(QString str) { projectName = str.toStdString(); }
 
+		Q_INVOKABLE void setProjectPath(QString str) { projectPath = str; }
+
 		Q_INVOKABLE void setUpProject() { generate(); }
 		Q_INVOKABLE void generatePatch() { save(); }
 		void save();
@@ -58,8 +55,7 @@ namespace pr {
 		void insertFileData(std::filesystem::path file);
 		bool newProject() { return newProject_; }
 		void insertData(dt::TreeItem* item);
-		QHash<QString, File>& getLastStatus() { return lastStatus_; }
-		Q_INVOKABLE void loadProject(QString dir);
+		Q_INVOKABLE void loadProject();
 	signals:
 		void verChanged();
 	private:
@@ -72,10 +68,11 @@ namespace pr {
 		QString version_;
 		std::filesystem::path AppDir_;
 		std::filesystem::path projectDir;
+		QString projectPath;
 		std::string gameName;
 		std::string projectName;
 
 		bb::Packer packer_;
-		QHash<QString, File> lastStatus_;
+
 	};
 }

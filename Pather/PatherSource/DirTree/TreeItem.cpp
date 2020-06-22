@@ -29,29 +29,15 @@ namespace dt {
 		}
 	}
 
-	TreeItem::TreeItem(const QVector<QVariant>& data, bool isDIr, TreeItem* parent)
+	TreeItem::TreeItem(const QVector<QVariant>& data, bool isDIr, QString& sha_, qint64 size_, TreeItem* parent)
 		: itemData(data),
 		parentItem(parent) {
 		QString path = data[1].toString();
 		auto& str = path.toStdString();
 		isDir = isDIr;
 		state = fileState::SAME;
-		if (!isDir) {
-			auto path = TreeModel::getRoot();
-			path /= str;
-			auto data = fileChecksum(path.generic_string().c_str(), QCryptographicHash::Algorithm::RealSha3_256);
-			if (data.first.isEmpty())
-				throw std::exception((std::string("Could not calculate sha for file: ") + path.generic_string()).c_str());
-			sha = data.first;
-			size = data.second;
-		}
-
-		if (pr::Project::getObject().newProject()) {
-
-		} else {
-
-		}
-
+		sha = sha_;
+		size = size_;
 	}
 
 	TreeItem::~TreeItem() {
@@ -96,8 +82,8 @@ namespace dt {
 		return true;
 	}
 
-	TreeItem* TreeItem::appendChildren(QVector<QVariant> data, bool isDir) {
-		TreeItem* item = new TreeItem(data, isDir, this);
+	TreeItem* TreeItem::appendChildren(QVector<QVariant> data, bool isDir, const QString& sha_, qint64 size_) {
+		TreeItem* item = new TreeItem(data, isDir, sha, size, this);
 		childItems.append(item);
 		return item;
 	}

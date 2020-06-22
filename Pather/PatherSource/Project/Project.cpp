@@ -115,10 +115,10 @@ namespace pr {
 		}
 	}
 
-	Q_INVOKABLE void Project::loadProject(QString dir) {
+	Q_INVOKABLE void Project::loadProject() {
 		QFile file;
 		//open LaunchBoxConfig file
-		file.setFileName(dir);
+		file.setFileName(projectPath);
 		file.open(QIODevice::ReadOnly | QIODevice::Text);
 		QString val = file.readAll();
 		file.close();

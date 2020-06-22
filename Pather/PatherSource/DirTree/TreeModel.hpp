@@ -16,6 +16,8 @@
 #include "setUpTreeModel.hpp"
 
 namespace dt {
+
+
 	class TreeModel : public QAbstractItemModel {
 		Q_OBJECT
 
@@ -95,6 +97,7 @@ namespace dt {
 
 		Q_INVOKABLE void remove(const QModelIndexList& list);
 		Q_INVOKABLE QAbstractItemModel* getNewPacket() { auto* ptr = new TreeModel(); packets.push_back(ptr); return packets.back(); }
+		Q_INVOKABLE QAbstractItemModel* getPacket() { return packets.back(); }
 
 		Q_INVOKABLE int getFileState(const QModelIndex& index) {
 			if (index.isValid())
@@ -142,5 +145,6 @@ namespace dt {
 		st::setUpModel setUp_;
 		bool available_ = false;
 		std::string packetName_ = std::string("packet") + std::to_string(index_++) + ".tar";
+		bool load_ = false;
 	};
 }

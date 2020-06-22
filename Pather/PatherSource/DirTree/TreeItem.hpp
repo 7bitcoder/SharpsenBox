@@ -10,7 +10,7 @@ namespace dt {
 	class TreeItem {
 	public:
 		enum fileState { CHANGED, DELETED, ADDED, SAME };
-		explicit TreeItem(const QVector<QVariant>& data, bool isDIr, TreeItem* parent = nullptr);
+		explicit TreeItem(const QVector<QVariant>& data, bool isDIr, QString& sha_, qint64 size_, TreeItem* parent = nullptr);
 		~TreeItem();
 
 		int getState() { return state; }
@@ -19,7 +19,7 @@ namespace dt {
 		int childCount() const;
 		int columnCount() const;
 		QVariant data(int column) const;
-		TreeItem* appendChildren(QVector<QVariant> data, bool isDir);
+		TreeItem* appendChildren(QVector<QVariant> data, bool isDir, const  QString& sha_, qint64 size_);
 		TreeItem* appendChildren(TreeItem* item);
 		//bool insertChildren(int position, int count, int columns);
 		bool insertColumns(int position, int columns);
