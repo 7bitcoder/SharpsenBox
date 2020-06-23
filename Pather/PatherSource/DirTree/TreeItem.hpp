@@ -10,10 +10,11 @@ namespace dt {
 	class TreeItem {
 	public:
 		enum fileState { CHANGED, DELETED, ADDED, SAME };
-		explicit TreeItem(const QVector<QVariant>& data, bool isDIr, QString& sha_, qint64 size_, TreeItem* parent = nullptr);
+		explicit TreeItem(const QVector<QVariant>& data, bool isDIr,const  QString& sha_, qint64 size_, TreeItem* parent = nullptr);
 		~TreeItem();
 
 		int getState() { return state; }
+		void setState(int ) {}
 
 		TreeItem* child(int number);
 		int childCount() const;

@@ -24,8 +24,8 @@ namespace dt {
     void TreeModel::init(bool packet) {
         QVector<QVariant> rootData;
         rootData << rootDir_.generic_string().c_str() << rootDir_.generic_string().c_str();
-        rootItem = new TreeItem(rootData, true);
-        auto* ptr = rootItem->appendChildren({ rootDir_.generic_string().c_str(), rootDir_.generic_string().c_str() }, true);
+        rootItem = new TreeItem(rootData, true, "", 0);
+        auto* ptr = rootItem->appendChildren({ rootDir_.generic_string().c_str(), rootDir_.generic_string().c_str() }, true, "", 0);
         if (!packet) {
             beginResetModel();
             connect(&setUp_, &st::setUpModel::ended, this, &TreeModel::readEnded);
@@ -214,7 +214,7 @@ namespace dt {
                 for (int j = 0; j <= dataToInsert_.depth; ++j) {
                     p /= dataToInsert_.folders.at(j);
                 }
-                parent->appendChildren({ element.c_str(), p.generic_string().c_str() }, std::filesystem::is_directory(p));
+                parent->appendChildren({ element.c_str(), p.generic_string().c_str() }, true, "", 0); // always dir
                 dataToInsert_.depth++;
                 addData(parent->child(parent->childCount() - 1));// last element
             }
@@ -257,20 +257,5 @@ namespace dt {
             dataToInsert_.folders.push_back(segment);
         }
         addData(rootItem->child(0));
-    }
-
-    void TreeModel::setupModelData(const std::filesystem::path lines, TreeItem* parent) {
-        
-        for (auto& path : std::filesystem::directory_iterator(rootDir_ / lines)) {
-            auto p = std::filesystem::relative(path.path(), rootDir_);
-            std::cout << actual_ << "/" << total_ << std::endl;
-            actual_++;
-            if (path.is_directory()) {
-                auto* appended = parent->appendChildren({ p.filename().generic_string().c_str(),  p.generic_string().c_str() }, true);
-                setupModelData(p, appended);
-            } else {
-                auto* appended = parent->appendChildren({ p.filename().generic_string().c_str(),  p.generic_string().c_str() }, false);
-            }
-        }
     }
 }

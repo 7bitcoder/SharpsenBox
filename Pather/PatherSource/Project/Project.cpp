@@ -71,8 +71,7 @@ namespace pr {
 			packer_.setup((projectDir / projectName / name.toStdString()).generic_string());
 			std::cout << "packet: " << name.toStdString() << std::endl;
 			QJsonObject root;
-			rootObject_ = &root;
-			insertData(packet->rootItemPtr());
+			insertData(packet->rootItemPtr(), root);
 			QJsonObject packet;
 			packet.insert("Files", root);
 			packet.insert("Url", "Asdasd");
@@ -100,18 +99,21 @@ namespace pr {
 		file_.close();
 	}
 
-	void Project::insertData(dt::TreeItem* item) {
+	void Project::insertData(dt::TreeItem* item, QJsonObject& object) {
 		auto size = item->childCount();
 		for (size_t i = 0; i < size; i++) {
 			auto* child = item->child(i);
 			std::cout << "file: " << child->path().toStdString() << std::endl;
 			QJsonObject file;
-			file.insert("Size", child->fileSize());
-			file.insert("Sha", child->fileSha());
-			rootObject_->insert(child->path(), file);
-			packer_.write((AppDir_ / child->path().toStdString()).generic_string(), child->path().toStdString(), child->isDirectory());
-			if (child->childCount())
-				insertData(child);
+			if (child->isDirectory()) {
+				insertData(child, file);
+			} else {
+				file.insert("Size", child->fileSize());
+				file.insert("Sha", child->fileSha());
+			}
+			auto fullPath = AppDir_ / child->path().toStdString();
+			object.insert(fullPath.filename().c_str(), file);
+			packer_.write(fullPath.generic_string(), child->path().toStdString(), child->isDirectory());
 		}
 	}
 
@@ -131,5 +133,68 @@ namespace pr {
 		projectName = d["ProjectName"].toString().toStdString();
 		projectDir = d["ProjectDir"].toString().toStdString();
 
+		QJsonObject AppComponents = d["AppComponents"].toObject();
+		for (auto& packet : AppComponents) {
+			QJsonObject& pack = packet.toObject();
+			auto& packets = dt::TreeModel::getObject().getPackets();
+			auto* newPacket = new dt::TreeModel(true); //packet
+			std::filesystem::path fullpath;
+			readPacket(newPacket->rootItemPtr(), pack["Files"].toObject(), fullpath);
+			packets.append(newPacket);
+		}
+	}
+
+	void Project::readPacket(dt::TreeItem* item, QJsonObject& object, std::filesystem::path& fullPath) {
+		for (auto& key : object.keys()) {
+			QJsonObject& file = object[key].toObject();
+			QJsonValueRef size = file["Size"];
+			fullPath /= key.toStdString();
+			if (size.isString() && !size.isObject()) { //file
+				auto* appended = item->appendChildren({ key,  fullPath.generic_string().c_str() }, false, file["Sha"].toString(), std::stoll(size.toString().toStdString()));
+			} else {
+				auto* appended = item->appendChildren({ key,  fullPath.generic_string().c_str() }, false, "", 0);
+				readPacket(appended, file, fullPath);
+			}
+			fullPath = fullPath.parent_path();
+		}
+	}
+
+	void Project::verify(dt::TreeItem* item) {
+		int size = item->childCount();
+		for (int i = 0; i < size; i++) {
+			auto* child = item->child(i);
+			auto& map = dt::TreeModel::getObject().getSetUpModel().getDirFiles();
+			auto& path = child->path();
+			auto it = map.find(path);
+			if (it == map.end()) {//new element
+				child->setState(dt::TreeItem::fileState::DELETED);
+			} else {
+				if (!it->dir && !child->isDirectory()) {
+					bool sizeCmp = it->size == child->fileSize(), shaCmp = it->sha == child->fileSha();
+					if (!sizeCmp || !shaCmp) {
+						child->setState(dt::TreeItem::fileState::CHANGED);
+					} else if (sizeCmp && shaCmp) {
+						child->setState(dt::TreeItem::fileState::SAME);
+					}
+
+				} else {} //error
+			}
+			if (child->isDirectory()) {
+				verify(child);
+			} else { //dir
+				int sizeP = parent->childCount();
+				std::string childS = p(child);
+				for (int j = 0; j < sizeP; ++j) {
+					if (childS == p(parent->child(j))) {
+						merge(parent->child(j), child);
+						found = true;
+					}
+				} if (!found) {
+					parent->appendChildren(child);
+				}
+			}
+		} if (found)
+			delete toInsert;
+		}
 	}
 }

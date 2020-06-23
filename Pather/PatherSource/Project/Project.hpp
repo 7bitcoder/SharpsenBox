@@ -54,7 +54,9 @@ namespace pr {
 		void generate();
 		void insertFileData(std::filesystem::path file);
 		bool newProject() { return newProject_; }
-		void insertData(dt::TreeItem* item);
+		void insertData(dt::TreeItem* item, QJsonObject& object);
+		void readPacket(dt::TreeItem* item, QJsonObject& object, std::filesystem::path& fullPath);
+		void verify(dt::TreeItem* item);
 		Q_INVOKABLE void loadProject();
 	signals:
 		void verChanged();

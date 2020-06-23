@@ -29,7 +29,7 @@ namespace dt {
 		}
 	}
 
-	TreeItem::TreeItem(const QVector<QVariant>& data, bool isDIr, QString& sha_, qint64 size_, TreeItem* parent)
+	TreeItem::TreeItem(const QVector<QVariant>& data, bool isDIr, const  QString& sha_, qint64 size_, TreeItem* parent)
 		: itemData(data),
 		parentItem(parent) {
 		QString path = data[1].toString();
@@ -83,7 +83,7 @@ namespace dt {
 	}
 
 	TreeItem* TreeItem::appendChildren(QVector<QVariant> data, bool isDir, const QString& sha_, qint64 size_) {
-		TreeItem* item = new TreeItem(data, isDir, sha, size, this);
+		TreeItem* item = new TreeItem(data, isDir, sha_, size_, this);
 		childItems.append(item);
 		return item;
 	}

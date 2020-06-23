@@ -112,6 +112,8 @@ namespace dt {
 		QVector<TreeModel*>& getPackets() { return packets; }
 		TreeItem* rootItemPtr() { return rootItem->child(0); }
 
+		st::setUpModel& getSetUpModel() { return setUp_; }
+
 	signals:
 		void percentChanged();
 		void avalChanged();
