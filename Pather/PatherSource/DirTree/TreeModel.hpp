@@ -97,7 +97,7 @@ namespace dt {
 
 		Q_INVOKABLE void remove(const QModelIndexList& list);
 		Q_INVOKABLE QAbstractItemModel* getNewPacket() { auto* ptr = new TreeModel(); packets.push_back(ptr); return packets.back(); }
-		Q_INVOKABLE QAbstractItemModel* getPacket() { return packets.back(); }
+		Q_INVOKABLE QAbstractItemModel* getPacket(int index) { return packets[index]; }
 
 		Q_INVOKABLE int getFileState(const QModelIndex& index) {
 			if (index.isValid())

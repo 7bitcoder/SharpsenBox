@@ -26,9 +26,14 @@ namespace pr {
 		std::string getName() override { return TYPENAME(Project); };
 
 		Q_PROPERTY(QString version WRITE setVer READ getVer);
+		Q_PROPERTY(int numberOfPackets  READ  getPacketNmb NOTIFY nmbChanged);
 
 		Q_INVOKABLE void setVer(QString str) {
 			version_ = str;
+		}
+
+		Q_INVOKABLE int getPacketNmb() {
+			return numberOFPacks;
 		}
 
 		Q_INVOKABLE QString getVer() {
@@ -46,7 +51,22 @@ namespace pr {
 		Q_INVOKABLE void setGameName(QString str) { gameName = str.toStdString(); }
 		Q_INVOKABLE void setProjectName(QString str) { projectName = str.toStdString(); }
 
-		Q_INVOKABLE void setProjectPath(QString str) { projectPath = str; }
+		Q_INVOKABLE void setProjectPath(QString str) { 
+			projectPath = str; 
+			QFile file;
+			//open LaunchBoxConfig file
+			file.setFileName(projectPath);
+			file.open(QIODevice::ReadOnly | QIODevice::Text);
+			QString val = file.readAll();
+			file.close();
+			auto& ff = val.toStdString();
+			d = QJsonDocument::fromJson(val.toUtf8());
+			AppDir_ = d["AppDir"].toString().toStdString();
+			auto& tree = dt::TreeModel::getObject();
+			tree.getSetUpModel().setLoad(true);
+			tree.setRoot(AppDir_);
+			tree.init(false);
+		}
 
 		Q_INVOKABLE void setUpProject() { generate(); }
 		Q_INVOKABLE void generatePatch() { save(); }
@@ -60,6 +80,7 @@ namespace pr {
 		Q_INVOKABLE void loadProject();
 	signals:
 		void verChanged();
+		void nmbChanged();
 	private:
 		bool newProject_ = true;
 		QFile file_;
@@ -74,7 +95,8 @@ namespace pr {
 		std::string gameName;
 		std::string projectName;
 
+		QJsonDocument d;
 		bb::Packer packer_;
-
+		int numberOFPacks = 0;
 	};
 }

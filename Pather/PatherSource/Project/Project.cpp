@@ -118,41 +118,38 @@ namespace pr {
 	}
 
 	Q_INVOKABLE void Project::loadProject() {
-		QFile file;
-		//open LaunchBoxConfig file
-		file.setFileName(projectPath);
-		file.open(QIODevice::ReadOnly | QIODevice::Text);
-		QString val = file.readAll();
-		file.close();
-		auto& ff = val.toStdString();
-		QJsonDocument d = QJsonDocument::fromJson(val.toUtf8());
+
 
 		gameName = d["AppName"].toString().toStdString();
 		version_ = d["Ver"].toString();
-		AppDir_ = d["AppDir"].toString().toStdString();
+		
 		projectName = d["ProjectName"].toString().toStdString();
 		projectDir = d["ProjectDir"].toString().toStdString();
 
+		auto& packets = dt::TreeModel::getObject().getPackets();
 		QJsonObject AppComponents = d["AppComponents"].toObject();
 		for (auto& packet : AppComponents) {
 			QJsonObject& pack = packet.toObject();
-			auto& packets = dt::TreeModel::getObject().getPackets();
 			auto* newPacket = new dt::TreeModel(true); //packet
 			std::filesystem::path fullpath;
 			readPacket(newPacket->rootItemPtr(), pack["Files"].toObject(), fullpath);
 			packets.append(newPacket);
 		}
+		numberOFPacks = packets.size();
+		nmbChanged();
 	}
 
 	void Project::readPacket(dt::TreeItem* item, QJsonObject& object, std::filesystem::path& fullPath) {
-		for (auto& key : object.keys()) {
-			QJsonObject& file = object[key].toObject();
+		for (auto& it = object.begin(); it < object.end(); it++) {
+			QJsonObject& file = it->toObject();
+			fullPath /= it.key().toStdString();
 			QJsonValueRef size = file["Size"];
-			fullPath /= key.toStdString();
 			if (size.isString() && !size.isObject()) { //file
-				auto* appended = item->appendChildren({ key,  fullPath.generic_string().c_str() }, false, file["Sha"].toString(), std::stoll(size.toString().toStdString()));
+				auto* appended = item->appendChildren({ it.key(),  fullPath.generic_string().c_str() }, false, file["Sha"].toString(), std::stoll(size.toString().toStdString()));
+				verify(appended);
 			} else {
-				auto* appended = item->appendChildren({ key,  fullPath.generic_string().c_str() }, false, "", 0);
+				auto* appended = item->appendChildren({ it.key(),  fullPath.generic_string().c_str() }, false, "", 0);
+				verify(appended);
 				readPacket(appended, file, fullPath);
 			}
 			fullPath = fullPath.parent_path();
@@ -161,40 +158,20 @@ namespace pr {
 
 	void Project::verify(dt::TreeItem* item) {
 		int size = item->childCount();
-		for (int i = 0; i < size; i++) {
-			auto* child = item->child(i);
-			auto& map = dt::TreeModel::getObject().getSetUpModel().getDirFiles();
-			auto& path = child->path();
-			auto it = map.find(path);
-			if (it == map.end()) {//new element
-				child->setState(dt::TreeItem::fileState::DELETED);
-			} else {
-				if (!it->dir && !child->isDirectory()) {
-					bool sizeCmp = it->size == child->fileSize(), shaCmp = it->sha == child->fileSha();
-					if (!sizeCmp || !shaCmp) {
-						child->setState(dt::TreeItem::fileState::CHANGED);
-					} else if (sizeCmp && shaCmp) {
-						child->setState(dt::TreeItem::fileState::SAME);
-					}
-
-				} else {} //error
-			}
-			if (child->isDirectory()) {
-				verify(child);
-			} else { //dir
-				int sizeP = parent->childCount();
-				std::string childS = p(child);
-				for (int j = 0; j < sizeP; ++j) {
-					if (childS == p(parent->child(j))) {
-						merge(parent->child(j), child);
-						found = true;
-					}
-				} if (!found) {
-					parent->appendChildren(child);
+		auto& map = dt::TreeModel::getObject().getSetUpModel().getDirFiles();
+		auto& path = item->path();
+		auto it = map.find(path);
+		if (it == map.end()) {//new element
+			item->setState(dt::TreeItem::fileState::DELETED);
+		} else {
+			if (!it->dir && !item->isDirectory()) {
+				bool sizeCmp = it->size == item->fileSize(), shaCmp = it->sha == item->fileSha();
+				if (!sizeCmp || !shaCmp) {
+					item->setState(dt::TreeItem::fileState::CHANGED);
+				} else if (sizeCmp && shaCmp) {
+					item->setState(dt::TreeItem::fileState::SAME);
 				}
-			}
-		} if (found)
-			delete toInsert;
+			} else {} //error
 		}
 	}
 }

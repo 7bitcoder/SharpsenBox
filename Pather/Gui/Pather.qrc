@@ -8,5 +8,6 @@
 	<file>MyButton.qml</file>
 	<file>InstallPopOut.qml</file>
 	<file>Empty.qml</file>
+	<file>OpenProject.qml</file>
 </qresource>
 </RCC>

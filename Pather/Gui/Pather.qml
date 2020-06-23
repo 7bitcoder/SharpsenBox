@@ -28,7 +28,10 @@ ApplicationWindow {
             MenuItem { text: "New"
             onTriggered: gameChoserLoader.source = "InstallPopOut.qml"
             }
-            MenuItem { text: "Open..." }
+            MenuItem { text: "Open..."
+
+            onTriggered: gameChoserLoader.source = "OpenProject.qml"
+            }
             MenuItem {
                 text: "Close"
                 onTriggered: Qt.quit()

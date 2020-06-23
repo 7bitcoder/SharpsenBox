@@ -180,7 +180,7 @@ Rectangle {
         size: 22
         onClicked: {
             if(_TreeModel.available){
-                packetModel.append({})
+                packetModel.append({modelIndex: -1})
                 windows.packetCnt = windows.packetCnt + 1
             }
         }
@@ -292,7 +292,7 @@ Rectangle {
                     height: packetIt.show ? 300 : 0
                     id: treeviewL
                     property  int dragItemIndex: -1
-                    model: _TreeModel.getNewPacket()
+                    model: modelIndex == -1 ? _TreeModel.getNewPacket() : _TreeModel.getPacket(modelIndex)
                     selectionMode: SelectionMode.ExtendedSelection
                        selection: ItemSelectionModel {
                            model: treeviewL.model
@@ -366,6 +366,11 @@ Rectangle {
 
         ListModel {
              id: packetModel
+             property int loaded: _Project.numberOfPackets
+             onLoadedChanged: {
+                 for(var i = 0; i < loaded; ++i)
+                    packetModel.append({modelIndex: i})
+             }
         }
         clip: true
         ListView {

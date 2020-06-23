@@ -21,6 +21,7 @@ namespace st {
 		void setParent(dt::TreeItem* parent) { parent_ = parent; }
 		void loadData(const std::filesystem::path lines);
 		QHash<QString, File>& getDirFiles() { return dirFiles_; }
+		void setLoad(bool val) { load = true; }
 	signals:
 		void stateChanged(double percent);
 		void ended();
