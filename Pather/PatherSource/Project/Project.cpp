@@ -108,7 +108,7 @@ namespace pr {
 			if (child->isDirectory()) {
 				insertData(child, file);
 			} else {
-				file.insert("Size", child->fileSize());
+				file.insert("Size", QString::number(child->fileSize()));
 				file.insert("Sha", child->fileSha());
 			}
 			auto fullPath = AppDir_ / child->path().toStdString();
@@ -141,11 +141,12 @@ namespace pr {
 
 	void Project::readPacket(dt::TreeItem* item, QJsonObject& object, std::filesystem::path& fullPath) {
 		for (auto& it = object.begin(); it < object.end(); it++) {
+			auto keys = object.keys();
 			QJsonObject& file = it->toObject();
 			fullPath /= it.key().toStdString();
-			QJsonValueRef size = file["Size"];
-			if (size.isString() && !size.isObject()) { //file
-				auto* appended = item->appendChildren({ it.key(),  fullPath.generic_string().c_str() }, false, file["Sha"].toString(), std::stoll(size.toString().toStdString()));
+			if (!file.isEmpty() && !file.begin()->isObject()) { //file
+				auto& size = file["Size"].toString().toStdString();
+				auto* appended = item->appendChildren({ it.key(),  fullPath.generic_string().c_str() }, false, file["Sha"].toString(), std::stoll(size));
 				verify(appended);
 			} else {
 				auto* appended = item->appendChildren({ it.key(),  fullPath.generic_string().c_str() }, false, "", 0);
@@ -172,6 +173,7 @@ namespace pr {
 					item->setState(dt::TreeItem::fileState::SAME);
 				}
 			} else {} //error
+			map.erase(it);
 		}
 	}
 }

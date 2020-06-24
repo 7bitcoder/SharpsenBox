@@ -34,8 +34,10 @@ namespace st {
 				setupModelData(root_, parent_);
 			ended();
 		} catch (std::exception& e) {
+			std::cout << e.what();
 			error(e.what());
 		} catch (...) {
+			std::cout << "Unknown Error ocured";
 			error("Unknown Error ocured");
 		}
 	}
