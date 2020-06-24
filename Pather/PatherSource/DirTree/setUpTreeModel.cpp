@@ -60,6 +60,25 @@ namespace st {
 		}
 	}
 
+	void setUpModel::setupModelData(QLinkedList<File*>::reverse_iterator& it, dt::TreeItem* parent) {
+
+		for (; it != order_.rend(); it++) {
+			auto& path = *it;
+			std::filesystem::path p = path->path.toStdString();
+			double per = actual_;
+			per /= total_;
+			stateChanged(per);
+			actual_++;
+			if (path->dir) {
+				auto* appended = parent->appendChildren({ p.filename().generic_string().c_str(),  p.generic_string().c_str() }, true, "", 0);
+				setupModelData(++it, appended);
+			} else {
+				auto* appended = parent->appendChildren({ p.filename().generic_string().c_str(),  p.generic_string().c_str() }, false, path->sha, path->size);
+				appended->setState(dt::TreeItem::fileState::ADDED);
+			}
+		}
+	}
+
 	void setUpModel::loadData(const std::filesystem::path lines) {
 
 		for (auto& path : std::filesystem::recursive_directory_iterator(dt::TreeModel::getRoot() / lines)) {
@@ -69,12 +88,17 @@ namespace st {
 			stateChanged(per);
 			actual_++;
 			if (path.is_directory()) {
-				dirFiles_.insert(p.generic_string().c_str(), { true, 0, "" });
+				auto it = dirFiles_.insert(p.generic_string().c_str(), { p.generic_string().c_str(), true, 0, "" });
+				order_.push_front(&(*it));
+				it->it = order_.begin();
 			} else {
 				auto data = fileChecksum(path.path().generic_string().c_str(), QCryptographicHash::Algorithm::RealSha3_256);
-				dirFiles_.insert(p.generic_string().c_str(), { false, data.second, data.first });
+				auto it = dirFiles_.insert(p.generic_string().c_str(), { p.generic_string().c_str(), false, data.second, data.first });
+				order_.push_front(&(*it));
+				it->it = order_.begin();
 			}
 		}
 		pr::Project::getObject().loadProject();
+		setupLoaded();
 	}
 }

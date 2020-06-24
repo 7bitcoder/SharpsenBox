@@ -173,6 +173,8 @@ namespace pr {
 					item->setState(dt::TreeItem::fileState::SAME);
 				}
 			} else {} //error
+			auto& order = dt::TreeModel::getObject().getSetUpModel().getOrder();
+			order.erase(it->it);
 			map.erase(it);
 		}
 	}
