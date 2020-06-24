@@ -51,7 +51,7 @@ namespace st {
 			stateChanged(per);
 			actual_++;
 			if (path.is_directory()) {
-				auto* appended = parent->appendChildren({ p.filename().generic_string().c_str(),  p.generic_string().c_str() }, true, "" , 0);
+				auto* appended = parent->appendChildren({ p.filename().generic_string().c_str(),  p.generic_string().c_str() }, true, "", 0);
 				setupModelData(p, appended);
 			} else {
 				auto data = fileChecksum(path.path().generic_string().c_str(), QCryptographicHash::Algorithm::RealSha3_256);
@@ -60,22 +60,23 @@ namespace st {
 		}
 	}
 
-	void setUpModel::setupModelData(QLinkedList<File*>::reverse_iterator& it, dt::TreeItem* parent) {
+	void setUpModel::setupModelData(QLinkedList<File*>::reverse_iterator& it, dt::TreeItem* parent, const std::filesystem::path& parentPath) {
 
 		for (; it != order_.rend(); it++) {
 			auto& path = *it;
 			std::filesystem::path p = path->path.toStdString();
-			double per = actual_;
-			per /= total_;
-			stateChanged(per);
-			actual_++;
+			auto& par = p.parent_path();
+			if (par != parentPath && par.parent_path() != parentPath)
+				return;
 			if (path->dir) {
 				auto* appended = parent->appendChildren({ p.filename().generic_string().c_str(),  p.generic_string().c_str() }, true, "", 0);
-				setupModelData(++it, appended);
+				setupModelData(++it, appended, p);
 			} else {
 				auto* appended = parent->appendChildren({ p.filename().generic_string().c_str(),  p.generic_string().c_str() }, false, path->sha, path->size);
 				appended->setState(dt::TreeItem::fileState::ADDED);
 			}
+			if (it == order_.rend())
+				break;
 		}
 	}
 

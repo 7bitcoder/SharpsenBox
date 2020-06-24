@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <QThread>
 #include <QObject>
 #include <QLinkedList>
@@ -19,9 +19,9 @@ namespace st {
 		void run() override;
 		void setupModelData(const std::filesystem::path, dt::TreeItem* parent);
 		void setupLoaded() {
-			setupModelData(order_.rbegin(),parent_);
+			setupModelData(order_.rbegin(), parent_, "");
 		}
-		void setupModelData(QLinkedList<File*>::reverse_iterator& it, dt::TreeItem* parent);
+		void setupModelData(QLinkedList<File*>::reverse_iterator& it, dt::TreeItem* parent, const  std::filesystem::path& parentPath);
 		void setRoot(std::filesystem::path root) { root_ = root; }
 		void setParent(dt::TreeItem* parent) { parent_ = parent; }
 		void loadData(const std::filesystem::path lines);

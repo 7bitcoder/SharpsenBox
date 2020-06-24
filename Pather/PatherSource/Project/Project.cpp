@@ -105,15 +105,17 @@ namespace pr {
 			auto* child = item->child(i);
 			std::cout << "file: " << child->path().toStdString() << std::endl;
 			QJsonObject file;
-			if (child->isDirectory()) {
-				insertData(child, file);
-			} else {
-				file.insert("Size", QString::number(child->fileSize()));
-				file.insert("Sha", child->fileSha());
+			if (child->getState() != dt::TreeItem::fileState::DELETED) {
+				if (child->isDirectory()) {
+					insertData(child, file);
+				} else {
+					file.insert("Size", QString::number(child->fileSize()));
+					file.insert("Sha", child->fileSha());
+				}
+				auto fullPath = AppDir_ / child->path().toStdString();
+				object.insert(fullPath.filename().c_str(), file);
+				packer_.write(fullPath.generic_string(), child->path().toStdString(), child->isDirectory());
 			}
-			auto fullPath = AppDir_ / child->path().toStdString();
-			object.insert(fullPath.filename().c_str(), file);
-			packer_.write(fullPath.generic_string(), child->path().toStdString(), child->isDirectory());
 		}
 	}
 
@@ -122,7 +124,7 @@ namespace pr {
 
 		gameName = d["AppName"].toString().toStdString();
 		version_ = d["Ver"].toString();
-		
+
 		projectName = d["ProjectName"].toString().toStdString();
 		projectDir = d["ProjectDir"].toString().toStdString();
 

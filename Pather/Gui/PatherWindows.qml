@@ -13,7 +13,7 @@ Rectangle {
     property int packetCnt: 0
     function getColor(val){
         if(val === 0)
-            return "yellow"
+            return "purple"
         else if(val === 1)
             return "red"
         else if(val === 2)
