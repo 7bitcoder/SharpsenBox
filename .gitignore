@@ -10,16 +10,16 @@ DesktopAplication/conanbuildinfo.cmake
 DesktopAplication/conaninfo.txt
 DesktopAplication/conanbuildinfo.txt
 
-Pather/out/
-Pather/deployLauncher.bat
-Pather/gitGui.bat
-Pather/.vs
-Pather/QtPaths.json
+Patcher/out/
+Patcher/deployLauncher.bat
+Patcher/gitGui.bat
+Patcher/.vs
+Patcher/QtPaths.json
 
-Pather/conan.lock
-Pather/conanbuildinfo.cmake
-Pather/conaninfo.txt
-Pather/conanbuildinfo.txt
+Patcher/conan.lock
+Patcher/conanbuildinfo.cmake
+Patcher/conaninfo.txt
+Patcher/conanbuildinfo.txt
 
 ServerCode/bin
 ServerCode/obj
