@@ -6,7 +6,8 @@
 #include <QJsonArray>
 
 namespace bb {
-	void AppInfoParser::parse() {
+	void AppInfoParser::parse(bool fullInstall) {
+		fullInstall_ = fullInstall;
 		start();
 	}
 	
@@ -21,22 +22,33 @@ namespace bb {
 		auto& ghj = val.toStdString();
 		file.close();
 		QJsonDocument d = QJsonDocument::fromJson(val.toUtf8());
-		QString ver = d["Ver"].toString();
+		versionToUpdate_ = d["Ver"].toString();
 		fileListUrl_ = d["FileList"].toString();
-		auto& ss = ver.toStdString();
+		auto& ss = versionToUpdate_.toStdString();
 		auto& gg = actualVersion_.toStdString();
-		if (ver != actualVersion_) { //need update
+		pathFiles_.push_back({ fileListUrl_.toStdString(), "FileList.json" });
+		if (fullInstall_) {
 			needUpdate_ = true;
-			actualVersion_ = ver;
+		} else if (versionToUpdate_ != actualVersion_) { //need update
+			needUpdate_ = true;
+			getPathUrls(d["Versioning"].toObject());
 		} else { //app is up to date
 			needUpdate_ = false;
 		}
 		parseEnded();
+	}
+	void AppInfoParser::getPathUrls(QJsonObject& pathList) {
+		for (auto it = pathList.begin(); it != pathList.end(); it++) {
+			if (it.key() < actualVersion_)
+				break;
+			pathFiles_.push_back({ it->toString().toStdString() , "Path-" + it.key().toStdString() + ".json"});
+		}
 	}
 
 	void AppInfoParser::reset() {
 		actualVersion_ = "";
 		needUpdate_ = false;
 		fileListUrl_ = "";
+		pathFiles_.clear();
 	}
 }

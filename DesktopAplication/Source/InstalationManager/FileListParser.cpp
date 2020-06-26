@@ -4,9 +4,11 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <unordered_map>
 
 namespace bb {
-	void FileListParser::parse() {
+	void FileListParser::parse(bool fullInstall) {
+		fullInstall_ = fullInstall;
 		start();
 	}
 	
@@ -26,26 +28,73 @@ namespace bb {
 		auto& gg = actualVersion_.toStdString();
 		if (ver != toUpdateVersion_) { //need update
 			//todo error
+		} else if (fullInstall_) {
+			readAllPackets();
 		} else { //app is up to date
-			readPackets
+			readPackets();
 		}
 		parseEnded();
 	}
+	
+	void FileListParser::readPackets() {
+		auto it = pathFiles_.begin();
+		auto& fileList = fileList_["Files"].toObject();
+		for (++it; it != pathFiles_.end(); it++) {
+			QString val;
+			QFile file;
+			//open LaunchBoxConfig file
+			auto path = cf::Config::getObject().getDownloadDir() / it->second;
+			file.setFileName(path.generic_string().c_str());
+			file.open(QIODevice::ReadOnly | QIODevice::Text);
+			val = file.readAll();
+			auto& ghj = val.toStdString();
+			file.close();
+			QJsonDocument d = QJsonDocument::fromJson(val.toUtf8());
+			auto changed = d["ChangedFiles"].toArray();
+			auto removed = d["RemovedFiles"].toArray();
+			auto added = d["AddedFiles"].toArray();
+			// remove
+			for (auto& rem : removed) {
+				auto str = rem.toString();
+				auto found = toDownload_.find(str);
+				if (found != toDownload_.end()) {
+					toDownload_.erase(found);
+				} else {
+					toRemove_.insert(str);
+				}
+			}
 
-	void FileListParser::getAllFiles(QJsonDocument& doc) {
-		QJsonObject appFiles = doc["AppFiles"].toObject();
-		for (auto& key : appFiles.keys()) {
-			QJsonObject value = appFiles[key].toObject();
-			qint64 size = std::stoll(value["Size"].toString().toStdString());
-			QString url = value["Url"].toString();
-			if (allFiles_.contains(key))
-				throw std::exception("Files Duplicated");
-			allFiles_.insert({ key, {url , size} });
+			// add
+			for (auto& chan : changed) {
+				auto str = chan.toString();
+				toDownload_.insert(str);
+			}
+
+			for (auto& add : added) {
+				auto str = add.toString();
+				toDownload_.insert(str);
+			}
+		}
+		auto packets = fileList_["Packets"].toObject();
+		
+		std::unordered_map<std::string, std::string> neededPackets;
+		for (auto& file : toDownload_) {
+			auto elem = fileList[file].toObject();
+			auto& pack = packets[elem["Id"].toString()].toObject();
+			neededPackets.insert({pack["Url"].toString().toStdString(), pack["Name"].toString().toStdString()});
+		}
+
+		for (auto pack : neededPackets) {
+			files_.push_back(pack);
 		}
 	}
 
-	void FileListParser::getDeltaFiles(QJsonDocument& doc) {
-
+	void FileListParser::readAllPackets() {
+		auto packets = fileList_["Packets"].toObject();
+		for (auto& pac : packets) {
+			auto& pack = pac.toObject();
+			files_.push_back({ pack["Url"].toString().toStdString(), pack["Name"].toString().toStdString() });
+		}
 	}
 
 	void FileListParser::reset() {
@@ -53,5 +102,7 @@ namespace bb {
 		files_.clear();
 		totalBytesTo_ = 0;
 		needUpdate_ = false;
+		toDownload_.clear();
+		toRemove_.clear();
 	}
 }

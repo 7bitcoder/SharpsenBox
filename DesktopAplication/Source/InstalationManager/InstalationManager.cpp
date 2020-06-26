@@ -76,11 +76,12 @@ namespace bb {
 		cleanUpper_.wait();
 	}
 
-	void InstalationManager::updateMainApp(QString version, std::filesystem::path appInfoUrl) {
+	void InstalationManager::updateMainApp(QString version, std::filesystem::path appInfoUrl, bool fullInstall) {
 		reset();
 		setTotal(0);
 		appInfoParser_.setVerToCheck(version);
 		fileListParser_.setActualVersion(version);
+		fullInstall_ = fullInstall;
 		files_ = files{ {appInfoUrl, "AppInfo.json" } };
 		downloader_.setFilestoDownload(files_);
 		stage_ = Stage::DOWNLOAD;
@@ -99,6 +100,7 @@ namespace bb {
 		fileListParser_.setActualVersion(game.version);
 		files_ = files{ {game.appInfoUrl.toStdString(), "AppInfo.json" } };
 		downloader_.setFilestoDownload(files_);
+		fullInstall_ = !game.installed;
 		stage_ = Stage::DOWNLOAD;
 		progress_ = 100;
 		LoadingBar_->setState(lb::LoadingBar::State::CHECKING);
@@ -111,7 +113,7 @@ namespace bb {
 	void InstalationManager::appInfoDownloaded() {
 		connect(&appInfoParser_, &AppInfoParser::parseEnded, this, &InstalationManager::downloadUpdateMetadata);
 		disconnect(&downloader_, &Downloader::ended, this, &InstalationManager::appInfoDownloaded);
-		appInfoParser_.parse();
+		appInfoParser_.parse(fullInstall_);
 	}
 
 	void InstalationManager::downloadUpdateMetadata() {
@@ -119,12 +121,14 @@ namespace bb {
 			reset();
 			fileListParser_.setVersionToUpdate(appInfoParser_.getVer());
 			setTotal(0);
-			files_ = files{ {appInfoParser_.getFileListUrl().toStdString(), "FileList.json" } };
+			files_ = appInfoParser_.getFiles();
 			downloader_.setFilestoDownload(files_);
+			fileListParser_.setPathFiles(files_);
 			stage_ = Stage::DOWNLOAD;
 			progress_ = 100;
 			LoadingBar_->setState(lb::LoadingBar::State::CHECKING);
 			LoadingBar_->setVisibleState(lb::LoadingBar::VisibleState::SHOWED);
+			disconnect(&appInfoParser_, &AppInfoParser::parseEnded, this, &InstalationManager::downloadUpdateMetadata);
 			connect(&downloader_, &Downloader::ended, this, &InstalationManager::metadataDownloaded);
 			connect(&downloader_, &Downloader::error, this, &InstalationManager::errorCatched); //todo przenies errory do konstruktora
 			downloader_.start();
@@ -138,26 +142,12 @@ namespace bb {
 	void InstalationManager::metadataDownloaded() {
 		disconnect(&downloader_, &Downloader::ended, this, &InstalationManager::metadataDownloaded);
 		connect(&fileListParser_, &FileListParser::parseEnded, this, &InstalationManager::fileListParseEnded);
-		fileListParser_.parse();
+		fileListParser_.parse(fullInstall_);
 	}
 
 	void InstalationManager::fileListParseEnded() {
 		disconnect(&fileListParser_, &FileListParser::parseEnded, this, &InstalationManager::fileListParseEnded);
-		install(fileListParser_.getPathFiles(), fileListParser_.getBytesToDownload(), actualGame_);
-
-		fileListParser_.setVersionToUpdate(appInfoParser_.getVer());
-		setTotal(0);
-		files_ = fileListParser_.getPathFiles();
-		downloader_.setFilestoDownload(files_);
-		stage_ = Stage::DOWNLOAD;
-		progress_ = 100;
-		LoadingBar_->setState(lb::LoadingBar::State::CHECKING);
-		LoadingBar_->setVisibleState(lb::LoadingBar::VisibleState::SHOWED);
-		connect(&downloader_, &Downloader::ended, this, &InstalationManager::metadataDownloaded);
-		connect(&downloader_, &Downloader::error, this, &InstalationManager::errorCatched); //todo przenies errory do konstruktora
-		downloader_.start();
-
-
+		install(fileListParser_.getNeededFiles(), fileListParser_.getBytesToDownload(), actualGame_);
 		updateStatus(true);
 	}
 

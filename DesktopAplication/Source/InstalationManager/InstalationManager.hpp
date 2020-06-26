@@ -44,7 +44,7 @@ namespace bb {
 		void clearDownloadDir();
 		void setTotal(qint64 tot);
 
-		void updateMainApp(QString version, std::filesystem::path appInfoUrl);
+		void updateMainApp(QString version, std::filesystem::path appInfoUrl, bool fullInstall);
 		void updateGame(cf::Game& game);
 
 
@@ -74,10 +74,10 @@ namespace bb {
 		void downloadEnded(bool cancelled);
 		void installEnded();
 		void cleanUpEnded();
+
 		void appInfoDownloaded();
 		void downloadUpdateMetadata();
 		void metadataDownloaded();
-		void appInfoParserEnded();
 		void fileListParseEnded();
 	signals:
 		void updateStatus(bool needUpdate);
@@ -86,6 +86,7 @@ namespace bb {
 	private:
 		bool onlyDownload;
 		bool cancel_;
+		bool fullInstall_;
 		files files_;
 
 		cf::Game* actualGame_ = nullptr;
