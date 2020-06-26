@@ -10,7 +10,7 @@
 #include <fstream>
 #include "TreeModel.hpp"
 
-#define BLOCK_SIZE 512000 //~500KB
+#define BLOCK_SIZE 8192 //~500KB
 struct archive;
 namespace bb {
 	class Packer {
@@ -39,6 +39,7 @@ namespace bb {
 		struct archive* a;
 		struct archive_entry* entry;
 		struct stat st;
+		std::string cmd_;
 		int len;
 		int fd;
 	};

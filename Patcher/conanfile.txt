@@ -1,6 +1,7 @@
 [requires]
 libcurl/7.52.1@bincrafters/stable
 zlib/1.2.11@conan/stable
+quazip/0.7.6@spk/stable
 libarchive/3.4.0
 
 [generators]

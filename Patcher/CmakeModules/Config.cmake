@@ -71,3 +71,5 @@ endif()
 
 
 set(PatherPath Pather)
+
+file( COPY  ${CMAKE_SOURCE_DIR}/WinRar  DESTINATION  ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/.. )

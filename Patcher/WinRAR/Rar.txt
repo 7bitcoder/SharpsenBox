@@ -1,0 +1,2644 @@
+                           Podrêcznik u¿ytkownika
+                           ~~~~~~~~~~~~~~~~~~~~~~
+                       RAR 5.90 PL wersja dla konsoli
+                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+                  =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+                   Zapraszamy do u¿ywania archiwizera RAR!
+                  -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+ Wprowadzenie
+ ~~~~~~~~~~~~
+  RAR jest aplikacj¹ konsolow¹, która umo¿liwia zarz¹dzanie archiwami z linii
+  poleceñ. RAR umo¿liwia kompresjê, szyfrowanie, odzyskiwanie danych i wiele
+  innych funkcji opisanych w tej instrukcji.
+
+  RAR obs³uguje tylko archiwa typu rar, które domyœlnie posiadaj¹ rozszerzenie
+  „.rar”. Archiwa innych typów (w tym zip) nie s¹ obs³ugiwane. Nawet jeœli
+  podczas tworzenia archiwum poda siê rozszerzenie .zip, to i tak zostanie
+  utworzone archiwum typu rar. U¿ytkownicy systemu Windows mog¹ zainstalowaæ
+  WinRARa, który obs³uguje wiele typów archiwów.
+
+  WinRAR i konsolowy RAR maj¹ podobn¹ sk³adniê linii poleceñ, lecz istniej¹
+  pewne ró¿nice. Zaleca siê u¿ywanie tego tekstowego podrêcznika u¿ytkownika
+  w przypadku u¿ywania konsolowego RARa, a w przypadku u¿ywania WinRARa -
+  pliku pomocy „winrar.chm”.
+
+ Plik konfiguracyjny
+ ~~~~~~~~~~~~~~~~~~~
+  RAR i UnRAR dla systemów Unix odczytuj¹ konfiguracjê z pliku .rarrc
+  w katalogu domowym u¿ytkownika (okreœlonym w zmiennej œrodowiskowej HOME)
+  lub w /etc.
+
+  RAR i UnRAR dla Windows odczytuj¹ konfiguracjê z pliku rar.ini,
+  znajduj¹cego siê w tym samym katalogu co rar.exe.
+
+  Plik ten mo¿e zawieraæ nastêpuj¹cy wpis:
+
+  switches=<dowolne opcje RARa oddzielone spacjami>
+
+  Na przyk³ad:
+
+  switches=-m5 -s
+
+  Istnieje równie¿ mo¿liwoœæ okreœlenia zestawów opcji dla konkretnych
+  poleceñ przy u¿yciu nastêpuj¹cej sk³adni:
+
+  switches_<polecenie>=<dowolne opcje RARa oddzielone spacjami>
+
+  Na przyk³ad:
+
+  switches_a=-m5 -s
+  switches_x=-o+
+
+
+
+ Zmienna œrodowiskowa „RAR”
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Domyœlne opcje mo¿na umieœciæ w zmiennej œrodowiskowej „RAR”.
+
+    Na przyk³ad, w systemie Unix mo¿na dopisaæ nastêpuj¹ce polecenia
+    do profilu u¿ytkownika:
+
+      RAR='-s -md1024'
+      export RAR
+
+    RAR u¿yje wartoœci tej zmiennej jako domyœlnych parametrów w linii poleceñ
+    i bêdzie tworzy³ „ci¹g³e” archiwa o rozmiarze s³ownika 1024KB.
+
+    Opcje RARa posiadaj¹ nastêpuj¹ce priorytety:
+
+       opcje w linii poleceñ                       najwy¿szy priorytet
+       opcje w zmiennej œrodowiskowej „RAR”        ni¿szy priorytet
+       opcje zapisane w pliku konfiguracyjnym      najni¿szy priorytet
+
+
+ Plik rejestracji zdarzeñ
+ ~~~~~~~~~~~~~~~~~~~~~~~~
+  Jeœli do polecenia zostanie dodana opcja -ilog w linii poleceñ lub w pliku
+  konfiguracyjnym, RAR zapisze w pliku tekstowym informacje dotycz¹ce b³êdów,
+  jeœli wyst¹pi¹ podczas wykonywania operacji na archiwach. Wiêcej informacji
+  na ten temat znajduje siê w opisie opcji -ilog.
+
+
+ Lista kolejnoœci plików dla ci¹g³ej archiwizacji - plik rarfiles.lst
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  Plik rarfiles.lst zawiera zdefiniowan¹ przez u¿ytkownika listê, która jest
+  u¿ywana przez RARa podczas dodawania plików do ci¹g³ych archiwów. Lista
+  mo¿e zawieraæ nazwy plików, symbole wieloznaczne oraz specjalny element
+  - $default. Element $default definiuje miejsce w tej liœcie dla plików,
+  które nie s¹ objête innymi pozycjami znajduj¹cymi siê na niej. Linie
+  rozpoczynaj¹ce siê od œrednika („;”) s¹ traktowane jako komentarze i nie s¹
+  brane pod uwagê podczas przetwarzania pliku.
+
+  W Windows plik ten powinien znajdowaæ siê w tym samym katalogu co RAR lub
+  w katalogu %APPDATA%\WinRAR, a w systemiach Unix - w katalogu domowym
+  u¿ytkownika lub w /etc.
+
+  Aby zwiêkszyæ wydajnoœæ i szybkoœæ kompresji:
+
+  - pliki o podobnej zawartoœci nale¿y umieszczaæ blisko siebie
+  - pliki, do których czêsto siê siêga nale¿y umieszczaæ na pocz¹tku
+
+  Normalnie pliki umieszczone wy¿ej na liœcie maj¹ wiêkszy priorytet, lecz
+  jest wyj¹tek od tej regu³y. Jeœli plik rarfiles.lst zawiera dwie takie maski
+  plików, ¿e wszystkie pliki, które pasuj¹ do pierwszej z nich pasuj¹ równie¿
+  do drugiej, to pierwsza maska bêdzie mia³a wy¿szy priorytet nawet jeœli jest
+  umieszczona ni¿ej ni¿ ta druga. Na przyk³ad, w przypadku masek *.cpp
+  i f*.cpp, ta druga (f*.cpp) ma wy¿szy priorytet, co spowoduje, ¿e np. plik
+  fraktal.cpp zostanie umieszczony w archiwum wed³ug pozycji maski f*.cpp,
+  a nie *.cpp.
+
+
+ Sk³adnia linii poleceñ RARa
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ U¿ycie
+
+    RAR <polecenie>  [ -<opcje> ]  <archiwum>  [ <@lista_plików...> ]
+        [ <pliki...> ]  [ <katalog_docelowy\> ]
+
+
+ Opis
+
+    Polecenie jest ci¹giem znaków (lub pojedynczym znakiem), które powoduje
+    wykonanie odpowiedniej operacji przez RARa. Opcje s³u¿¹ do modyfikacji
+    sposobu wykonywania tych operacji. Pozosta³e parametry to nazwa archiwum
+    oraz pliki, które maj¹ byæ dodane do lub wypakowane z archiwum.
+
+    „Lista_plików” jest plikiem tekstowym zawieraj¹cym nazwy plików
+    przeznaczonych do przetworzenia. Nazwy plików powinny rozpoczynaæ siê od
+    pierwszej kolumny. W liœcie plików mo¿na równie¿ dodawaæ komentarze
+    (umieszczone za znakami //), np. (plik backup.lst):
+
+    c:\work\doc\*.txt         //dokumenty tekstowe
+    c:\work\image\*.bmp       //rysunki i zdjêcia
+    c:\work\misc              //ró¿ne
+
+    Po przygotowaniu takiego pliku mo¿na wydaæ polecenie:
+
+       rar a backup @backup.lst
+
+    Aby RAR odczyta³ listê plików ze standardowego urz¹dzenia wejœciowego
+    (najczêœciej jest to klawiatura) nale¿y podaæ pust¹ nazwê „listy_plików”
+    (pozostawiaj¹c jedynie znak @).
+
+    W liœcie_plików dla RARa w wersji dla konsoli nazwy plików nale¿y
+    zapisywaæ w kodowaniu jednobajtowym (np. dla Windows jest to ANSI).
+    Jeœli zosta³o u¿yte inne kodowanie, nale¿y dodatkowo u¿yæ
+    opcji -sc<kodowanie>l
+
+    Podanie nazwy „listy_plików” nie wyklucza wyszczególnienia innych plików
+    przeznaczonych do przetworzenia, np.:
+
+      rar a backup @backup.lst c:\work\*.xls
+      (to polecenie spowoduje, ¿e przetworzone zostan¹ wszsytkie pliki
+       z listy_plików oraz wszystkie pliki typu .xls z katalogu c:\work)
+
+    Jeœli w poleceniu nie wyst¹pi ani lista_plików, ani nie zostan¹ podane
+    pliki przeznaczone do przetworzenia, RAR przetworzy wszystkie pliki (co
+    jest równoznaczne z podaniem *.* jako nazwy plików do przetworzenia).
+
+    Wiele poleceñ RARa, jak np. wypakowywanie, testowanie czy listowanie
+    zawartoœci, zezwala na u¿ywanie symboli wieloznacznych w nazwie archiwum.
+    Jeœli rozszerzenie nie zostanie okreœlone, RAR przyjmie ¿e chodzi o
+    archiwum .RAR - podanie „*” jako nazwy archiwum spowoduje przetworzenie
+    wszystkich archiwów RAR. Aby przetworzyæ wszystkie archiwa nie zawieraj¹ce
+    rozszerzenia, nale¿y u¿yæ maski „*.” . U¿ycie symboli wieloznacznych
+    w nazwie archiwum jest niedozwole podczas archiwizacji i usuwania plików.
+
+    W systemie UNIX symbole wieloznaczne nale¿y ujmowaæ w apostrofy lub
+    w cudzys³owy, aby nie by³y przetwarzane przez interpreter poleceñ.
+    Na przyk³ad, poni¿sze polecenie wypakuje pliki *.asm z wszystkich
+    archiwów RARa w bie¿¹cym katalogu:
+
+       rar e '*.rar' '*.asm'
+
+
+    Polecenia:
+
+    a       dodaj pliki do archiwum
+
+            Przyk³ady:
+
+            1) dodaj wszystkie pliki *.hlp z bie¿¹cego katalogu do archiwum
+               pomoc.rar
+
+                 rar a pomoc *.hlp
+
+            2) zarchiwizuj wszystkie pliki z bie¿¹cego katalogu i jego
+               podkatalogów w ci¹g³ym samorozpakowuj¹cym siê archiwum
+               podzielonym na woluminy o wielkoœci 362000 bajtów
+               ratunek.part1.exe, ratunek.part2.rar, ratunek.part3.rar, ...,
+               i dodaj do ka¿dego woluminu dane naprawcze
+
+                 rar a -r -v362 -s -sfx -rr ratunek
+
+               poniewa¿ nie zosta³y wyspecyfikowane ¿adne pliki,
+               domyœlnie zostaje przyjêty parametr * (wszystkie pliki).
+
+            3) wyj¹tkowo, jeœli argumentem jest nazwa katalogu i nazwa ta
+               nie zawiera symboli wieloznacznych ani koñcowego backslasha
+               (znaku \), do archiwum zostanie dodana ca³a zawartoœæ tego
+               katalogu i jego podkatalogów nawet jeœli nie podano opcji -r.
+
+               Nastêpuj¹ce polecenie doda wszystkie pliki (³¹cznie
+               z podkatalogami) z katalogu Bitmapy do archiwum Obrazki:
+
+                 rar a Obrazki Bitmapy
+
+            4) jeœli argumentem jest nazwa katalogu i zawiera symbole
+               wieloznaczne lub koñcowy backslash (znak \), zastosowanie maj¹
+               standardowe zasady, wed³ug których nale¿y podaæ opcjê -r
+               w celu przetwarzania podkatalogów.
+               
+               Nastêpuj¹ce polecenie doda wszystkie pliki z katalogu Bitmapy
+               (ale nie z jego podkatalogów) do archiwum Obrazki:
+
+               rar a Obrazki Bitmapy\*
+
+
+    c       dodaj komentarz archiwum
+            Komentarz jest wyœwietlany podczas przetwarzania archiwum.
+            Maksymalna d³ugoœæ komentarza to 256 KB.
+
+            Przyk³ady:
+
+            rar c distrib.rar
+
+              Komentarz mo¿e byæ te¿ wczytany z pliku przy u¿yciu opcji
+              -z[plik]. Nastêpuj¹ce polecenie dodaje komentarz z pliku
+              info.txt:
+
+            rar c -zinfo.txt dummy
+
+
+    ch      zmieñ parametry archiwum
+
+            Polecenie to jest przeznaczone do aplikowania opcji zmieniaj¹cych
+            parametry archiwum, szczególnie tych, które nie maj¹ swoich
+            odpowiedników wœród poleceñ, np: -cl, -cu, -tl.
+
+            Za pomoc¹ tego polecenia nie mo¿na rekompresowaæ, zaszyfrowaæ lub
+            odszyfrowaæ danych ani ³¹czyæ lub tworzyæ woluminów. Jeœli
+            polecenie wyst¹pi bez opcji, powoduje zwyk³e skopiowanie danych
+            bez modyfikacji.
+
+            Przyk³ad:
+
+            Ustaw czas archiwum na czas najnowszego pliku
+
+            rar ch -tl pliki.rar
+
+
+    cw      zapisz komentarz archiwum do pliku
+
+            Format pliku zale¿y od u¿ycia opcji -sc.
+
+            Je¿eli nie zostanie okreœlona nazwa pliku, komentarz zostanie
+            wypisany na wyjœciu standardowym (stdout - zwykle na ekran).
+
+            Przyk³ady:
+
+            1) rar cw arc komentarz.txt
+
+            2) rar cw -scuc arc unicode.txt
+
+            3) rar cw arc
+
+
+    d       usuñ pliki z archiwum
+
+            Jeœli to polecenie spowoduje usuniêcie wszystkich plików
+            z archiwum, puste archiwum zostanie równie¿ usuniête.
+
+
+    e       wypakuj pliki do bie¿¹cego katalogu
+
+            Wypakowuje pliki bez odtwarzania struktury katalogowej, przez co
+            wszystkie pliki zostan¹ wypakowane do tego samego katalogu.
+
+            Aby odtworzyæ strukturê katalogow¹ nale¿y u¿yæ polecenia „x”.
+
+            Przyk³ad:
+
+              rar e -or html.rar *.css css\
+
+            to spowoduje, ¿e wszystkie pliki *.css z archiwum html.rar zostan¹
+            wypakowane do katalogu „css” (bez tworzenia w nim podkatalogów),
+            a ewentualne powtarzaj¹ce siê nazwy zostan¹ automatycznie
+            zmienione.
+
+
+    f       odœwie¿ pliki w archiwum
+
+            Aktualizuje te zarchizowane pliki, które s¹ starsze ni¿ pliki
+            przeznaczone do zarchiwizowania. To polecenie nie spowoduje
+            dodania do archiwum nowych plików.
+
+
+    i[i|c|h|t]=<tekst> wyszukaj tekst w archiwach
+
+            Parametry polecenia:
+
+            i - nie uwzglêdniaj wielkoœci liter (domyœlnie)
+            c - uwzglêdnij wielkoœæ liter
+            h - wyszukaj ci¹g liczb heksadecymalnych
+            t - u¿yj kodowania ANSI, UTF-8, UTF-16 i OEM 
+                (tylko w wersji dla Windows)
+
+            Jeœli polecenie wyst¹pi bez parametrów, mo¿na u¿yæ uproszczonej
+            postaci polecenia: i<tekst> zamiast i=<tekst>
+
+            Dopuszczalne jest ³¹czenie parametru „t” z innymi parametrami; np.
+            polecenie ict=tekst spowoduje, ¿e wyszukiwanie bêdzie siê odbywaæ
+            z uwzglêdnieniem wielkoœci liter i przy u¿yciu wszystkich tablic
+            znaków.
+
+            Przyk³ady:
+
+            1. rar "ic=pierwszy poziom" -r c:\*.rar *.txt
+
+               Wyszukaj tekst „pierwszy poziom” (uwzglêdniaj¹c wielkoœæ liter)
+               w plikach *.txt w archiwach *.rar na dysku C:
+
+
+            2. rar ih=41736961203a2d2a -r e:\teksty\*.rar
+
+               Wyszukaj ci¹g liczb 41 73 69 61 20 3a 2d 2a w archiwach rar
+               w katalogu e:\teksty.
+
+
+    k       zablokuj archiwum
+
+            RAR nie mo¿e modyfikowaæ zablokowanych archiwów, wiêc zablokowanie
+            archiwum zapobiega jego przypadkowej modyfikacji przez RARa. Mo¿e
+            to byæ przydatne szczególnie w przypadku masowych operacji na grupie
+            archiwów.
+
+            To polecenie nie s³u¿y zapobie¿eniu modyfikacji archiwum przez inne
+            programy ni¿ RAR.
+
+            Przyk³ad:
+
+            rar k sejf.rar
+
+
+    l[t[a],b]  listuj zawartoœæ archiwum [z delatami[wszystkimi], tylko nazwy]
+
+            Polecenie „l” wyœwietla listê plików zawieraj¹c¹ atrybuty pliku,
+            jego rozmiar, datê, czas i nazwê - po jednej linii na ka¿dy plik.
+            Jeœli plik jest zaszyfrowany, to linia rozpoczyna siê znakiem „*”.
+
+            Polecenie „lt” wyœwietla szczegó³owe informacje o pliku w trybie
+            wieloliniowym. Wyœwietlone informacje obejmuj¹ sumê kontroln¹
+            pliku, system operacyjny, pod którego kontrol¹ plik zosta³ dodany
+            do archiwum, opcje kompresji oraz inne parametry.
+            
+            Polecenie „lta” wyœwietla szczegó³owe informacje nie tylko dla
+            plików, ale tak¿e dla danych dodatkowych, jak strumienie NTFS
+            czy dane zabezpieczeñ.
+
+            Polecenie „lb” wyœwietla tylko nazwy plików wraz ze œcie¿kami,
+            bez dodatkowych informacji.
+
+            Opcja -v dodana do polecenia „l” powoduje, ¿e wyœwietlana jest
+            informacja o wszystkich plikach wieloczêœciowego archiwum:
+            rar l -v wolumin.part1.rar
+
+            Polecenia „lt”, „lta” i „lb” s¹ równowa¿ne poleceniom „vt”, „vta”
+            oraz „vb”.
+
+
+    m[f]    przenieœ do archiwum [tylko pliki]
+
+            Przeniesienie plików i katalogów powoduje, ¿e zostan¹ one usuniête
+            z dysku po udanej kompresji. Katalogi nie zostan¹ usuniête jeœli
+            doda siê modyfikator „f” i/lub u¿yje siê opcji „-ed”.
+
+
+    p       drukuj plik na stdout (standardowe urz¹dzenie wyjœciowe).
+
+            Jeœli polecenie to zostanie u¿yte razem z opcj¹ „-inul” (opcja
+            wy³¹cza wyœwietlanie wszelkich komunikatów), RAR wydrukuje
+            na stdout tylko dane samego pliku. Mo¿e to byæ przydatne
+            w przypadku u¿ywania kana³ów przesy³owych (pipes).
+
+
+    r       napraw archiwum
+
+            Naprawianie archiwum sk³ada siê z dwóch etapów. Najpierw archiwum
+            jest przeszukiwane pod k¹tem wystêpowania danych naprawczych
+            (patrz opis polecenia „rr”). Jeœli dane naprawcze zostan¹
+            znalezione i jeœli uszkodzony obszar jest ci¹g³y i mniejszy ni¿
+            dane naprawcze, to wtedy s¹ du¿e szanse na udan¹ rekonstrukcjê
+            archiwum. Po zakoñczeniu tego etapu jest tworzone nowe archiwum
+            o nazwie fixed.nazwa_archiwum.rar, gdzie „nazwa_archiwum” jest
+            nazw¹ oryginalnego (uszkodzonego) archiwum.
+
+            Jeœli uszkodzone archiwum nie posiada danych naprawczych lub jeœli
+            uszkodzenia nie zosta³y ca³kowicie usuniête, nastêpuje drugi etap.
+            Podczas niego rekonstruowana jest tylko struktura archiwum i nie
+            ma mo¿liwoœci odzyskania plików, w których wyst¹pi³y b³êdy, lecz
+            mo¿na odzyskaæ nieuszkodzone pliki, które nie by³y dostêpne
+            ze wzglêdu na uszkodzon¹ strukturê archiwum. Jest to przydatne
+            g³ównie w przypadku nieci¹g³ych archiwów. Rekonstrukcja struktury
+            nie powiedzie siê w przypadku archiwów o zaszyfrowanych nazwach
+            plików - jest to mo¿liwe tylko wtedy, jeœli archiwum posiada
+            dane naprawcze.
+
+            Po zakoñczeniu drugiego etapu archiwum zapisywane jest pod nazw¹
+            rebuilt.nazwa_archiwum.rar, gdzie „nazwa_archiwum” jest nazw¹
+            oryginalnego archiwum.
+
+            Domyœlnie, naprawione archiwum jest zapisywane w bie¿¹cym
+            katalogu, lecz mo¿na to zmieniæ dodaj¹c na koñcu polecenia
+            œcie¿kê okreœlaj¹c¹ katalog docelowy.
+
+            Przyk³ad:
+
+            rar r zepsute.rar c:\naprawione\
+
+
+    rc      Rekonstruuje brakuj¹ce lub uszkodzone woluminy u¿ywaj¹c woluminów
+            naprawczych (pliki .rev). Jako nazwê nale¿y podaæ dowolny
+            istniej¹cy wolumin, np. „rar rc backup.part03.rar”.
+
+            Opis polecenia „rv” zawiera informacje o woluminach naprawczych.
+
+
+    rn      Zmienia nazwê pliku w archiwum.
+
+            Sk³adnia polecenia:
+
+            rar rn <archiwum> <stary1> <nowy1> ... <staryN> <nowyN>
+
+            (gdzie <stary> i <nowy> to, odpowiednio, stara i nowa nazwa pliku)
+
+            Na przyk³ad, nastêpuj¹ce polecenie:
+
+              rar rn dane.rar readme.txt readme.bak info.txt info.bak
+
+            spowoduje, ¿e w archiwum dane.rar plik readme.txt zostanie
+            przemianowany na readme.bak oraz info.txt na info.bak.
+
+            Dopuszczalne jest u¿ywanie symboli wieloznacznych w miejsce
+            parametrów <stary> i <nowy>, co umo¿liwia kompleksow¹ zmianê np.
+            rozszerzeñ plików, jak w nastêpuj¹cym przyk³adzie:
+
+              rar rn dane.rar *.txt *.bak
+
+            (spowoduje to zmianê rozszerzenia wszystkich plików *.txt
+            na *.bak)
+
+            RAR nie sprawdza, czy plik o nazwie <nowy> ju¿ istnieje
+            w archiwum, dlatego nale¿y zachowaæ ostro¿noœæ aby unikn¹æ
+            duplikacji nazw. Jest to szczególnie wa¿ne podczas u¿ywania
+            symboli wieloznacznych.
+
+
+    rr[N]   dodaj dane naprawcze
+
+            Opcjonalnie mo¿na dodaæ do archiwum pewn¹ porcjê informacji (dane
+            naprawcze). Spowoduje to niewielki wzrost rozmiaru archiwum, lecz
+            mo¿e pomóc w odzyskaniu danych w przypadku jego uszkodzenia (jeœli
+            to uszkodzenie nie jest zbyt rozleg³e). Naprawy archiwum mo¿na
+            dokonaæ poleceniem „r”.
+
+            Dane naprawcze w formacie RAR 4.x ró¿ni¹ siê od tych
+            w formacie RAR 5.0.
+
+            Dane naprawcze w formacie RAR 4.x bazuj¹ na funkcji XOR. Rozmiar
+            danych mo¿na okreœliæ jako liczbê sektorów lub jako procent
+            rozmiaru archiwum. Aby okreœliæ liczbê sektorów nale¿y do³¹czyæ j¹
+            bezpoœrednio do polecenia „rr”, np. „rr100” oznacza 100 sektorów.
+            Aby wielkoœæ danych naprawczych wyraziæ w procentach nale¿y za
+            liczb¹ umieœciæ „p” lub „%”, np. „rr5p” lub „rr5%”. Nale¿y mieæ
+            na uwadze, ¿e jeœli polecenie to bêdzie wykonywane z pliku
+            wsadowego Windows (.bat lub .cmd), trzeba u¿yæ „rr3%%” zamiast
+            „rr3%”, poniewa¿ interpreter poleceñ traktuje pojedynczy znak „%”
+            jako pocz¹tek parametru pliku wsadowego. Wygodniej zatem zamiast
+            „%” u¿yæ „p”.
+
+            Dla formatu RAR 4.x dane naprawcze sk³adaj¹ siê z 512-bajtowych
+            sektorów. Jeœli obszar uszkodznia jest ci¹g³y, to ka¿dy sektor
+            danych naprawczych pomaga w odzyskaniu 512 bajtów uszkodzonej
+            informacji. Ta wartoœæ mo¿e byæ ni¿sza w przypadku
+            wielomiejscowego uszkodzenia. Liczba sektorów danych naprawczych
+            nie mo¿e przekroczyæ 524288.
+
+            Rozmiar danych naprawczych w formacie RAR 4.x mo¿e byæ wyliczony
+            w nastêpuj¹cy sposób:
+            <rozmiar archiwum>/256 + <liczba sektorów naprawczych>*512 bajtów.
+
+            Dane naprawcze w formacie RAR 5.0 bazuj¹ na korekcji b³êdów
+            Reeda-Solomona. Ich wydajnoœæ w przypadku naprawy pojedynczego
+            uszkodzenia jest zbli¿ona do formatu RAR 4.x, umo¿liwiaj¹c
+            odzyskanie nieco mniej danych ni¿ rozmiar danych naprawczych, lecz
+            znacznie przewy¿sza format RAR 4.x w przypadku wielomiejscowego
+            uszkodzenia.
+
+            Dane naprawcze w formacie RAR 5.0 nie sk³adaj¹ siê z 512 bajtowych
+            sektorów, a rozmiar danych naprawczych mo¿na okreœliæ jedynie
+            procentowo. Nawet jeœli w poleceniu „rr” nie wyst¹pi znak „%” lub
+            „p”, to w przypadku archiwum RAR 5.0 wprowadzona wartoœæ zostanie
+            potraktowana jako procent - „rr5” i „rr5p” oznaczaj¹ rozmiar
+            danych naprawczych równy 5% rozmiaru archiwum. Ze wzglêdu na
+            dodatkowe dane faktyczny rozmiar danych naprawczych mo¿e siê nieco
+            ró¿niæ od wybranego, a ta ró¿nica jest wiêksza dla ma³ych
+            archiwów.
+            
+            Rozmiar danych naprawczych w formacie RAR 5.0 nie mo¿e przekroczyæ
+            rozmiaru oryginalnego archiwm, dlatego w parametrze polecenia „rr”
+            nie mo¿na podaæ wartoœci wiêkszej ni¿ 100%. Im obszerniejsze s¹
+            dane naprawcze tym wolniej s¹ przetwarzane zarówno podczas ich
+            tworzenia jak i naprawiania archiwum.
+            
+            Dane naprawcze formatu RAR 5.0 s¹ bardziej odporne na uszkodzenie
+            i mog¹ byæ wykorzystane nawet gdy same s¹ czêœciowo uszkodzone.
+            Nale¿y mieæ na uwadze, ¿e polecenie „r” nie naprawia samych danych
+            naprawczych, jedynie zawartoœæ zarchiwizowanych plików. Po udanej
+            naprawie mo¿e siê okazaæ konieczne utworzenie nowych danych
+            naprawczych dla zapisanych plików.
+
+            Zarówno w wersji 4.x jak i 5.0 dane naprawcze wykorzystuje siê
+            najbardziej efektywnie wtedy, gdy uszkodzone obszary nie ulegn¹
+            przesuniêciu. Jeœli podczas kopiowania za pomoc¹ specjalnego
+            programu archiwum z uszkodzonego noœnika ów program daje wybór
+            wype³nienia uszkodzonego obszaru zerami (lub inn¹ wartoœci¹) lub
+            wyciêcie go, to nale¿y wybraæ wype³nienie, poniewa¿ to umo¿liwi
+            zachowanie oryginalnej pozycji nieuszkodzonych obszarów archiwum.
+            Jednak nawet w przypadku przesuniêcia obszarów dane naprawcze
+            mog¹ pomóc odzyskaæ archiwum. RAR 5.0 lepiej sobie radzi
+            z przesuniêciami ni¿ RAR 4.x.
+
+            Jeœli polecenie „rr” nie bêdzie mia³o ¿adnego parametru, to RAR
+            ustali rozmiar danych naprawczych na 3% rozmiaru archiwum.
+
+            Przyk³ad:
+
+              rar rr5p archiwum
+
+            doda dane naprawcze o rozmiarze 5% oryginalnego archiwum
+
+
+    rv[N]   utwórz woluminy naprawcze
+
+            Woluminy naprawcze (pliki .rev) s³u¿¹ do odtwarzania brakuj¹cych
+            lub uszkodzonych woluminów w archiwum wieloczêœciowym. Polecenie
+            to ma sens tylko w przypadku archiwów wieloczêœciowych. Nale¿y
+            podaæ wtedy nazwê pierwszego woluminu takiego archiwum,
+            na przyk³ad:
+
+                    rar rv3 dane.part01.rar
+
+            Mo¿e to byæ u¿yteczne dla kopii zapasowych lub np. jeœli
+            wieloczêœciowe archiwum zosta³o wys³ane na listê dyskusyjn¹
+            i czêœæ osób nie dosta³a wszystkich czêœci - wys³anie woluminów
+            naprawczych jest wtedy bardziej op³acalne.
+
+            Ka¿dy wolumin naprawczy jest w stanie pomóc w odtworzeniu jednego
+            brakuj¹cego lub uszkodzonego zwyk³ego woluminu. Na przyk³ad, przy
+            30 woluminach, istnienie 3 woluminów naprawczych mo¿e pomóc
+            odzyskaæ dowolne 3 brakuj¹ce woluminy. Jeœli liczba brakuj¹cych
+            woluminów przekracza liczbê woluminów naprawczych, odtworzenie ich
+            nie bêdzie mo¿liwe. Ca³kowita liczba zwyk³ych woluminów
+            i woluminów naprawczych nie mo¿e przekroczyæ 255 dla archiwum
+            RAR w wersji 4.x oraz 65535 dla wersji 5.0.
+
+            Nie mo¿na modyfikowaæ oryginalnych woluminów archiwum RAR po
+            utworzeniu woluminów naprawczych. Proces naprawiania wykorzystuje
+            dane zachowane w plikach REV jak równie¿ w dostêpnych „zwyk³ych”
+            woluminach (pliki RAR). Po modyfikacji woluminów RAR polegaj¹cej
+            np. na za³o¿eniu blokady, ewentualny proces odzyskania brakuj¹cego
+            woluminu siê nie powiedzie.
+
+            Oprócz samych danych naprawczych, woluminy naprawcze w formacie
+            RAR 5.0 przechowuj¹ tak¿e sumy kontrolne plików RAR bêd¹cych
+            elementami wieloczêœciowego archiwum. Z tego powodu woluminy
+            naprawcze s¹ wiêksze ni¿ chronione przez nie zwyk³e woluminy.
+            Nale¿y mieæ to na uwadze w przypadku planowania przenoszenia
+            woluminów na noœniki zewnêtrzne - byæ mo¿e zaistnieje koniecznoœæ
+            okreœlenia rozmiaru zwyk³ego woluminu o kilka kilobajtów
+            mniejszego od pojemnoœci noœnika danych.
+
+            Opcjonalna liczba <N> okreœla liczbê woluminów naprawczych. Liczba
+            ta musi byæ mniejsza ni¿ liczba zwyk³ych woluminów. Liczba ta mo¿e
+            równie¿ okreœlaæ procent iloœci zwyk³ych woluminów, np.:
+
+                    rar rv15% dane.part01.rar
+
+            (zamiast znaku % mo¿na u¿yæ litery p)
+
+            RAR odtwarza brakuj¹ce lub uszkodzone woluminy po u¿yciu polecenia
+            „rc” lub automatycznie podczas wypakowywania, jeœli nie jest
+            w stanie odnaleŸæ nastêpnego woluminu a znajdzie odpowiedni¹
+            liczbê woluminów naprawczych.
+
+            Oryginalne uszkodzone woluminy s¹ przemianowywane na *.bad przed
+            rozpoczêciem rekonstrukcji. Na przyk³ad, wolumin.part03.rar
+            zostanie przemianowany na wolumin.part03.rar.bad.
+
+
+    s[nazwa] konwertuj archiwum na SFX
+
+            Archiwum jest ³¹czone z modu³em SFX (programem, który wypakowuje
+            pliki z do³¹czonego archiwum). Domyœlnie tym modu³em jest
+            default.sfx, lecz mo¿na okreœliæ u¿ycie innego modu³u przez
+            podanie jego nazwy w parametrze [nazwa]. W wersji dla Windows plik
+            default.sfx powinien znajdowaæ siê w tym samym katalogu
+            co rar.exe, natomiast w wersji dla Unix - w katalogu domowym
+            u¿ytkownika, w /usr/lib lub w /usr/local/lib.
+
+
+    s-      usuñ modu³ SFX z samorozpakowuj¹cego siê arechiwum
+
+            RAR tworzy nowe archiwum bez modu³u SFX, oryginalne archiwum nie
+            jest usuwane.
+
+
+    t       testuj pliki w archiwum
+
+            Polecenie to wypakowuje pliki (bez zapisywania ich na dysk) w celu
+            sprawdzenia poprawnoœci dekompresji.
+
+            Przyk³ady:
+
+                testuj wszystkie archiwa w bie¿¹cym katalogu:
+
+            rar t *
+
+                dla Unix:
+
+            rar t '*'
+
+                testuj wszystkie archiwa znajduj¹ce siê tak¿e w podkatalogach
+                pocz¹wszy od bie¿¹cego katalogu:
+
+            rar t -r *
+
+                dla Unix:
+
+            rar t -r '*'
+
+
+    u       aktualizuj pliki w archiwum
+
+            Dodaje do archiwum pliki, których tam jeszcze nie ma oraz
+            aktualizuje te, które s¹ starsze ni¿ te przeznaczone do
+            dodania.
+
+            
+    v[t,b]  listuj zawartoœæ archiwum [z detalami[wszystkimi], tylko nazwy]
+
+            Polecenie „v” wyœwietla listê plików zawieraj¹c¹ atrybuty pliku,
+            jego rozmiar, rozmiar po kompresji, stopieñ kompresji, datê, czas,
+            sumê kontroln¹ i nazwê - po jednej linii na ka¿dy plik. Jeœli plik
+            jest zaszyfrowany, to linia rozpoczyna siê znakiem „*”. Dla sumy
+            kontrolnej BLAKE2 wyœwietlane s¹ tylko dwa pierwsze oraz ostatni
+            znak.
+
+            Polecenie „vt” wyœwietla szczegó³owe informacje o pliku w trybie
+            wieloliniowym. Wyœwietlone informacje obejmuj¹ sumê kontroln¹
+            pliku, system operacyjny, pod którego kontrol¹ plik zosta³ dodany
+            do archiwum, opcje kompresji oraz inne parametry.
+            
+            Polecenie „vta” wyœwietla szczegó³owe informacje nie tylko dla
+            plików, ale tak¿e dla danych dodatkowych, jak strumienie NTFS
+            czy dane zabezpieczeñ.
+
+            Polecenie „vb” wyœwietla tylko nazwy plików wraz ze œcie¿kami,
+            bez dodatkowych informacji.
+
+            Opcja -v dodana do polecenia „v” powoduje, ¿e wyœwietlana jest
+            informacja o wszystkich plikach wieloczêœciowego archiwum:
+            rar v -v wolumin.part1.rar
+
+            Polecenia „vt”, „vta” i „vb” s¹ równowa¿ne poleceniom „lt”, „lta”
+            oraz „lb”.
+
+
+    x       wypakuj pliki zachowuj¹c strukturê katalogów
+
+            Przyk³ady:
+
+            1) wypakuj plik 10groszy.txt do bie¿¹cego katalogu bez
+               wyœwietlania komentarza archiwum
+
+               rar x -c- dyszka 10groszy.txt
+
+            2) wypakuj *.txt z archiwum dokumenty.rar do katalogu c:\dokumenty
+
+               rar x dokumenty.rar *.txt c:\dokumenty\
+
+            3) wypakuj ca³¹ zawartoœæ archiwum dokumenty.rar do bie¿¹cego katalogu
+
+               rar x dokumenty.rar
+
+
+
+    Opcje (u¿ywane w po³¹czeniu z poleceniami):
+
+
+    -?      wyœwietl pomoc dotycz¹c¹ poleceñ i opcji
+
+            Ten sam efekt da uruchomienie RARa bez podania polecenia lub gdy
+            polecenie nie zostanie rozpoznane.
+
+    --      zakoñcz analizê opcji
+
+            Po wyst¹pieniu tej opcji w linii poleceñ, RAR nie szuka dalszych
+            opcji. Mo¿e to byæ przydatne w przypadku, gdy nazwa archiwum lub
+            nazwa pliku rozpoczyna siê od znaku „-” (minus). Bez podania opcji
+            „--” taka nazwa by³aby traktowana jako opcja.
+
+            Przyk³ad:
+
+                dodaj wszystkie pliki z bie¿¹cego katalogu do ci¹g³ego
+                archiwum „-NietypowaNazwa”
+
+                rar a -s -- -NietypowaNazwa
+
+
+ 
+    -@[+]   Wy³¹cz [w³¹cz] listy plików
+
+            RAR traktuje parametry linii poleceñ zaczynaj¹ce siê od znaku „@”
+            jak listy plików, zatem domyœlnie próbuje otworzyæ plik o nazwie
+            „nazwapliku” gdy napotka parametr „@nazwapliku”, lecz jeœli
+            istnieje plik o nazwie „@nazwapliku”, RAR potraktuje go jak
+            zwyk³y plik.
+
+            Opcja -@[+] pozwala unikn¹æ niejednoznacznoœci poprzez wskazanie
+            trybu postêpowania z parametrami rozpoczynaj¹cymi siê od
+            znaku „@”.
+
+            Jeœli wyst¹pi opcja -@, wszystkie takie parametry znajduj¹ce siê
+            za ni¹ bêd¹ traktowane jak zwyk³e nazwy plików, a nie listy plików.
+
+            Jeœli wyst¹pi opcja -@+, wszsytkie takie parametry znajduj¹ce siê
+            za ni¹ bêd¹ traktowane jak listy plików.
+            
+            Opcja ta nie wp³ywa na przetwarzanie parametrów znajduj¹cych siê
+            przed ni¹.
+
+            Przyk³ad:
+
+            przetestuj plik „@home” znajduj¹cy siê w archiwum:
+
+                    rar t -@ notatki.rar @home
+    
+    
+    -ac     wyczyœæ atrybut „archiwalny” po kompresji lub wypakowaniu
+            (tylko w wersji dla Windows)
+
+            Ta opcja powoduje, ¿e po kompresji lub wypakowaniu pliku zostanie
+            z niego zdjêty atrybut „Archiwalny”. Ta opcja nie zmienia
+            atrybutów katalogów.
+
+
+    -ad[1]  do³¹cz nazwê archiwum
+
+            Ta opcja mo¿e byæ przydatna podczas rozpakowywania grupy archiwów.
+            Domyœlnie RAR umieszcza pliki z wszystkich archiwów w jednym
+            katalogu - ta opcja powoduje, ¿e dla ka¿dego archiwum zostanie
+            utworzony osobny katalog. Opcja -ad powoduje utworzenie tych
+            katalogów w katalogu docelowym. Opcja -ad1 powoduje, ¿e te
+            katalogi zostan¹ utworzone w tych samych katalogach, w których
+            znajduj¹ siê rozpakowywane archiwa. Katalog docelowy nie jest
+            brany pod uwagê w przypadku u¿ycia opcji -ad1.
+
+            Przyk³ady:
+
+            1) rar x -ad *.rar dane\
+
+               Podczas rozpakowywania RAR dla ka¿dego znalezionego archiwum
+               utworzy podkatalog w katalogu „dane”.
+
+            2) rar x -r -ad1 arch\*.rar
+
+               RAR rekurencyjnie przeszuka katalog 'arch' w poszukiwaniu
+               archiwów *.rar i dla ka¿dego znalezionego archiwum utworzy
+               podkatalog o takiej samej nazwie w miejscu jego znalezienia.
+
+
+    -ag[format]   utwórz nazwê archiwum u¿ywaj¹c bie¿¹cej daty
+
+            Do³¹cza bie¿¹c¹ datê do nazwy archiwum podczas jego tworzenia
+            lub przetwarzania. Przydatne podczas tworzenia codziennych kopii
+            zapasowych.
+
+            Format do³¹czanej daty jest okreœlony opcjonalnym parametrem
+            format lub, jeœli tego parametru nie ma, ci¹giem znaków
+            „YYYYMMDDHHMMSS”. Ci¹g formatuj¹cy mo¿e zawieraæ nastêpuj¹ce
+            znaki:
+
+                Y     rok
+                M     miesi¹c
+                MMM   miesi¹c jako tekst (styczeñ, luty, itd.)
+                W     numer tygodnia (tydzieñ rozpoczyna siê od poniedzia³ku)
+                A     numer dnia tygodnia (poniedzia³ek to 1, niedziela to 7)
+                D     dzieñ miesi¹ca
+                E     dzieñ roku
+                H     godziny
+                M     minuty (tylko jeœli wyst¹pi po symbolu godzin)
+                I     minuty (mo¿e wyst¹piæ w dowolnym miejscu) 
+                S     sekundy
+                N     numer archiwum. RAR wyszuka archiwum o podanym numerze,
+                      i jeœli je znajdzie, zwiêkszy numer i powtórzy
+                      wyszukiwanie - a¿ do wygenerowania unikalnego numeru.
+                      Znak formatuj¹cy „N” nie jest obs³ugiwany podczas
+                      tworzenia woluminów.
+
+            Ka¿dy z wymienionych znaków formatuj¹cych reprezentuje jeden znak,
+            który zostanie umieszczony w nazwie archiwum. Na przyk³ad, aby
+            umieœciæ dwuznakowy numer tygodnia nale¿y w ci¹gu formatuj¹cym
+            podaæ WW; aby umieœciæ czteroznakowy numer roku, nale¿y podaæ YYYY.
+
+            Jeœli pierwszym znakiem w ci¹gu formatuj¹cym jest „+” (plus),
+            data zostanie umieszczona przed nazw¹ archiwum.
+
+            Jeœli pierwszym znakiem w ci¹gu formatujacym jest „F”, to reszta
+            ci¹gu okreœla domyœlny format dla opcji -ag. Taka postaæ
+            (-ag<domyœlny_format>) ma sens jedynie wtedy, gdy zostanie
+            umieszczona w pliku rar.ini lub w zmiennej œrodowiskowej RAR.
+            Na przyk³ad, jeœli w zmiennej œrodowiskowej RAR zostanie umieszczona
+            opcja -agfYYYY-MMM-DD, to wywo³anie programu z opcj¹ -ag bez
+            parametru spowoduje, ¿e domyœlnie zostanie u¿yty format YYYY-MMM-DD.
+
+            Ci¹g formatuj¹cy mo¿e zawieraæ opcjonalny tekst zawarty
+            w nawiasach klamrowych { }. Taki tekst jest wstawiany bez zmian
+            do nazwy archiwum.
+
+            Wszystkie pozosta³e znaki s¹ umieszczane w nazwie archiwum bez
+            zmian.
+
+            W przypadku przetwarzania istniej¹cego archiwum nale¿y zachowaæ
+            ostro¿noœæ u¿ywaj¹c opcji -ag. W zale¿noœci od parametrów tej
+            opcji oraz czasu, jaki up³yn¹³ od ostatniej aktualizacji danego
+            archiwum, wygenerowana nazwa mo¿e siê ró¿niæ od istniej¹cej.
+            W takim przypadku RAR utworzy nowe archiwum zamiast przetworzyæ
+            istniej¹ce. Aby zachowaæ wygenerowane nazwy archiwów w celu
+            dalszego przetwarzania mo¿na u¿yæ opcji -log.
+
+
+            Przyk³ady:
+
+                1) u¿yj domyœlnego formatu YYYYMMDDHHMMSS
+
+                    RAR a -ag kopia
+
+                2) u¿yj formatu DD-MMM-YY
+
+                    RAR t -agDD-MMM-YY kopia
+
+                3) u¿yj formatu YYYYMMDDHHMM i umieœæ datê przed „kopia”
+
+                    RAR a -ag+YYYYMMDDHHMM kopia
+
+                4) u¿yj formatu YYYY-WW-A, z opisami pól
+
+                    RAR a -agYYYY{rok}-WW{tydzieñ}-A{dzieñ_tygodnia} kopia
+
+                5) u¿yj formatu YYYYMMDD wraz z numerem archiwum. Umo¿liwi
+                   to wygenerowanie unikalnych nazw nawet jeœli format
+                   YYYYMMDD jest u¿ywany kilka razy tego samego dnia
+
+                    RAR a -agYYYYMMDD-NN kopia
+
+
+    -ai     ignoruj atrybuty pliku
+
+            Gdy ta opcja zostanie u¿yta podczas wypakowywania, RAR nie
+            ustawi wypakowywanym plikom atrybutów zapisanych w archiwum.
+
+            Gdy ta opcja zostanie u¿yta podczas archiwizowania, to zamiast
+            faktycznych atrybutów zostan¹ zachowane typowe atrybuty dla plików
+            i katalogów.
+
+            W Windows dotyczy to atrybutów „Archiwalny”, „Systemowy”,
+            „Ukryty” i „Tylko do odczytu”; dla systemu Unix s¹ to
+            uprawnienia do pliku: u¿ytkownika, grupy i innych.
+
+
+    -ao     dodaj pliki z ustawionym atrybutem „archiwalny”
+            (tylko w wersji dla Windows)
+
+            Gdy ta opcja zostanie u¿yta podczas archiwizowania, to do
+            archiwum zostan¹ dodane tylko pliki posiadaj¹ce atrybut
+            „Archiwalny”. Opcja ta nie wp³ywa na katalogi, zatem wszystkie
+						przetwarzane katalogi zostan¹ dodane niezale¿nie od atrybutów.
+						Aby pomin¹æ katalogi mo¿na u¿yæ opcji -ed.
+
+            Przyk³ad:
+
+                dodaj wszystkie pliki na dysku C:, które maj¹ ustawiony
+                atrybut „archiwalny”, do archiwum f:kopia i wyczyœæ ten
+                atrybut po archiwizacji
+
+            rar a -r -ac -ao f:kopia c:\*.*
+
+
+    -ap     wska¿ œcie¿kê wewn¹trz archiwum
+
+            Podana œcie¿ka (nazwa katalogu) jest do³¹czana do nazw plików
+            podczas dodawania ich do archiwum i usuwana podczas wypakowywania.
+
+            Na przyk³ad, aby dodaæ plik „czytajto.txt” do katalogu „DOCS\PL”
+            znajduj¹cego siê w archiwum „gotowe”:
+
+            rar a -apDOCS\PL gotowe czytajto.txt
+
+            aby wypakowaæ katalog „PL” do bie¿¹cego katalogu:
+
+            rar x -apDOCS gotowe DOCS\PL\*.*
+
+
+    -as     synchronizuj zawartoœæ archiwum
+
+            Jeœli opcja ta zostanie dodana podczas archiwizacji,
+            zarchiwizowane pliki, których nie ma na liœcie dodawanych plików,
+            zostan¹ usuniête z archiwum. U¿ycie opcji -as w kombinacji z opcj¹
+            -u spowoduje zsynchronizowanie zawartoœci archiwum z zawartoœci¹
+            archiwizowanego katalogu.
+
+            Na przyk³ad polecenie:
+
+            rar a -u -as kopia sources\*.cpp
+
+            spowoduje, ¿e archiwum „kopia.rar” bêdzie zawieraæ tylko pliki
+            *.cpp z katalogu „sources”, a wszystkie pozosta³e pliki zostan¹
+            usuniête z archiwum. Jest to podobne do tworzenia nowego archiwum,
+            z jednym wa¿nym wyj¹tkiem: jeœli ¿aden z plików nie zosta³
+            zmodyfikowany od czasu ostatniej kopii zapasowej, operacja ta
+            przebiega znacznie szybciej ni¿ tworzenie nowego archiwum.
+
+
+    -cfg-   nie wczytuj pliku konfiguracyjnego ani zmiennej œrodowiskowej „RAR”
+
+
+    -cl     konwertuj nazwy na ma³e litery
+
+
+    -cu     konwertuj nazwy na wielkie litery
+
+
+    -c-     nie wyœwietlaj komentarza
+
+
+    -df     usuñ pliki po zarchiwizowaniu
+
+            Przenosi pliki do archiwum. W po³¹czeniu z poleceniem „A” dzia³a
+            tak samo jak polecenie „M”.
+
+
+    -dh     otwórz wpó³u¿ytkowane pliki
+
+            Umo¿liwia przetwarzanie plików otwartych do zapisu przez inne
+            aplikacje, ale tylko wtedy, jeœli te aplikacje zezwalaj¹
+            równoczeœnie na odczyt zablokowanych przez siebie plików
+
+            Opcja ta powinna byæ u¿ywana z rozwag¹, poniewa¿ umo¿liwia
+            archiwizowanie pliku, który w tym samym czasie jest modyfikowany
+            przez inn¹ aplikacjê.
+
+
+    -dr     przenieœ pliki do Kosza
+
+            Przenosi pliki do Kosza po ukoñczeniu archiwizacji.
+            Opcja dostêpna tylko w wersji dla Windows.
+
+            
+    -ds     nie sortuj plików podczas dodawania ich do ci¹g³ego archiwum
+
+
+    -dw     wyma¿ pliki po archiwizacji
+
+            Usuwa pliki po ukoñczeniu archiwizacji. Aby uniemo¿liwiæ ich
+            odzyskanie, przed usuniêciem pliki s¹ zamazywane, ich rozmiar
+            jest obcinany do zera a nazwy zmieniane na tymczasowe.
+
+            Takie wymazywanie jest przeznaczone do u¿ycia z dyskami twardymi
+            i mo¿e nie przynieœæ spodziewanych rezultatów w przypadku
+            dysku SSD.
+
+
+    -ed     nie dodawaj pustych katalogów
+
+            Opcja ta powoduje, ¿e katalogi nie bêd¹ dodawane do tworzonego
+            archiwum. Podczas rozpakowywania takiego archiwum RAR utworzy
+            niepuste katalogi bazuj¹c na œcie¿kach plików w nich le¿¹cych.
+            Informacje o pustych katalogach nie s¹ przechowywane. Wszelkie
+            atrybuty katalogów poza nazw¹ (prawa dostêpu, strumienie itp)
+            tak¿e zostan¹ utracone, dlatego opcji tej nale¿y u¿ywaæ tylko
+            w przypadku, gdy nie istnieje koniecznoœæ przechowywania tych
+            informacji w archiwum.
+
+            Jeœli ta opcja zostanie u¿yta z poleceniem „m” lub opcj¹ „-df”,
+            RAR nie usunie pustych katalogów.
+
+
+    -en     nie dodawaj znacznika koñca archiwum
+
+            Opcja nie jest obs³ugiwana dla archiwów RAR 5.0.
+
+            Domyœlnie RAR dodaje znacznik koñca archiwum podczas jego
+            tworzenia lub aktualizacji. Umo¿liwia to ominiêcie dodatkowych
+            danych, takich jak np. cyfrowe podpisy.
+
+            Opcja ta nie mo¿e byæ u¿ywana z woluminami, poniewa¿ znacznik
+            koñca archiwum zawiera informacje istotne dla przetwarzania
+            woluminów.
+
+
+    -ep     nie zachowuj œcie¿ek
+
+            Opcja ta powoduje, ¿e pliki zostan¹ dodane do archiwum bez
+            zachowania struktury katalogów. Mo¿e to spowodowaæ wielokrotne
+            wyst¹pienie pliku o tej samej nazwie w jednym archiwum.
+
+            Jeœli ta opcja zostanie u¿yta podczas wypakowywania plików, to
+            zarchiwizowane œcie¿ki zostan¹ pominiête i wszystkie pliki zostan¹
+            wypakowane do jednego katalogu.
+
+
+    -ep1    wyklucz katalog bazowy
+
+            Nie zachowuje ani nie odtwarza œcie¿ki podanej w linii poleceñ.
+            Opcja ta jest ignorowana, gdy w poleceniu podano symbole
+            wieloznaczne.
+
+            Przyk³ady:
+
+            1) dodaje wszystkie pliki i katalogi z katalogu tmp do archiwum
+               „test”, lecz œcie¿ka dodanych plików nie bêdzie zawieraæ „tmp\”.
+
+               rar a -ep1 -r test tmp\*
+
+               jest to odpowiednik nastêpuj¹cych operacji:
+
+               cd tmp
+               rar a -r ..\test
+               cd ..
+
+            2) wypakuj pliki pasuj¹ce do wzorca „obrazki\*” do katalogu „cel\”,
+               lecz nie odtwarzaj katalogów „obrazki”
+
+               rar x -ep1 dane obrazki\* cel\
+
+
+    -ep2    rozwiñ œcie¿ki
+
+            Powoduje, ¿e RAR zachowuje pe³ne œcie¿ki dostêpu do plików (oprócz
+            nazwy dysku oraz wiod¹cego separatora œcie¿ki) podczas archiwizacji.
+
+
+    -ep3    rozwiñ œcie¿ki w³¹cznie z liter¹ napêdu
+            (tylko w wersji dla Windows)
+
+            Ta opcja powoduje, ¿e w archiwum zapisywane s¹ pe³ne œcie¿ki
+            dostêpu do plików, ³¹cznie z liter¹ napêdu. Separator litery
+            napêdu (dwukropek) jest zastêpowany przez znak podkreœlenia.
+
+            Jeœli opcja ta zostanie u¿yta podczas wypakowywania, spowoduje
+            zamianê znaków podkreœlenia na dwukropki, przez co pliki zostan¹
+            wypakowane do pierwotnych katalogów i dysków. Jeœli przy
+            wypakowywaniu zosta³a okreœlona œcie¿ka docelowa, zostanie ona
+            zignorowana.
+
+            Opcja ta powoduje równie¿ konwersjê œcie¿ek UNC z \\serwer\udzia³
+            na __serwer\udzia³ podczas archiwizacji i odtworzenie ich
+            podczas rozpakowywania archiwum.
+
+            Za pomoc¹ tej opcji mo¿na w ³atwy sposób utworzyæ kopiê
+            bezpieczeñstwa kilku dysków w jednym archiwum, np.:
+
+              (aby utworzyæ archiwum):
+                rar a -ep3 -r kopia.rar c:\ d:\ e:\
+
+              (aby rozpakowaæ takie archiwum):
+                rar x -ep3 kopia.rar
+
+            Nale¿y zachowaæ rozwagê przy u¿yciu opcji -ep3 podczas
+            wypakowywania plików - zaleca siê u¿ywanie tej opcji tylko
+            w przypadku rozpakowywania w³asnych archiwów lub archiwów
+            pochodz¹cych z zaufanych Ÿróde³, poniewa¿ jej pomoc¹ mo¿na
+            nadpisaæ dowolny plik znajduj¹cy siê na dysku.
+
+
+    -e[+]<atr>
+            Okreœla maskê atrybutów wykluczaj¹cych lub niezbêdnych. <atr> jest
+            liczb¹ dziesiêtn¹, ósemkow¹ (poprzedzon¹ znakiem „0”) lub
+            szesnastkow¹ (poprzedzon¹ znakami „0x”). Domyœlnie, jeœli atrybuty
+            nie zostan¹ poprzedzone znakiem +, bêd¹ oznaczaæ atrybuty
+            wykluczaj¹ce. Jeœli rezultat porównania bitowego AND <atrybutów>
+            i atrybutów pliku jest niezerowy, to plik nie zostanie
+            przetworzony.
+
+            Jeœli okreœlenie atrybutów zostanie poprzedzone znakiem +, bêdzie
+            to oznaczaæ atrybuty niezbêdne - przetwarzane bêd¹ tylko te pliki,
+            które posiadaj¹ co najmniej jeden z nich
+
+            W wersji dla Windows istnieje mo¿liwoœæ aby zamiast liczby podaæ
+            atrybuty symboliczne: D, S, H, A i R odpowiednio dla: katalogów,
+            plików systemowych, plików ukrytych (hidden), plików archiwalnych
+            (archive) i plików tylko-do-odczytu (read-only). Kolejnoœæ
+            podawania atrybutów nie jest istotna.
+
+            Dopuszczalne jest u¿ycie zarówno -e<atr> i -e+<atr> w jednym
+            poleceniu.
+
+            Przyk³ady:
+            1) archiwizuj sam¹ strukturê katalogów, bez zawartoœci
+              rar a -r -e+d katalogi
+
+            2) archiwizuj pliki z wyj¹tkiem ukrytych i systemowych
+              rar a -esh pliki
+
+            3) nie wypakowuj plików tylko do odczytu (read-only):
+              rar x -er pliki
+
+
+    -f      odœwie¿ pliki
+
+            Opcja mo¿e byæ u¿yta podczas rozpakowywania lub tworzenia
+            archiwum. Polecenie „a -f” jest równowa¿ne poleceniu „f”. Opcjê
+            „-f” mo¿na te¿ u¿yæ z poleceniami „m” lub „mf”. Jeœli opcja „-f”
+            zostanie u¿yta z poleceniem „x” lub „e”, wtedy pliki na dysku
+            zostan¹ zast¹pione przez pliki wypakowane z archiwum tylko wtedy,
+            jeœli s¹ starsze ni¿ pliki w archiwum.
+
+
+    -hp[h]  szyfruj dane i nag³ówki
+
+            Ta opcja jest podobna do -p[h], lecz opcja -p szyfruje tylko dane
+            (zarchiwizowane pliki), pozostawiaj¹c pozosta³e informacje, jak
+            nazwy zarchiwizowanych plików, widoczne. Opcja -hp szyfruje
+            wszystko, to znaczy zarchiwizowane pliki, ich nazwy, rozmiary,
+            atrybuty, komentarze i inne dane. Bez podania has³a niemo¿liwe
+            staje siê w takim przypadku nawet wylistowanie zawartoœci
+            archiwum.
+
+            Przyk³ad:
+
+                rar a -hpfGzq5yKw tajne raport.txt
+
+              doda plik raport.txt do archiwum tajne.rar i zaszyfruje przy
+              u¿yciu has³a „fGzq5yKw”
+
+
+    -ht[b|c] wybierz typ sumy kontrolnej [BLAKE2,CRC32]
+
+            Spójnoœæ danych w archiwum RAR jest chroniona za pomoc¹ sum
+            kontrolnych, które s¹ wyliczane i przechowywane dla ka¿dego
+            zarchiwizowanego pliku.
+
+            Domyœlnie RAR u¿ywa sumy kontrolnej CRC32, jednak¿e archiwum
+            w formacie RAR 5.0 mo¿e równie¿ zawieraæ sumy kontrolne wyliczane
+            funkcj¹ BLAKE2sp zamiast CRC32.
+
+            Opcja -htb w³¹cza sumê kontroln¹ BLAKE2sp, a -htc - CRC32.
+            Poniewa¿ CRC32 jest u¿ywane domyœlnie, opcja -htc zwykle jest
+            potrzebna tylko do przebicia opcji zapisanej w konfiguracji.
+
+            Rozmiar sumy kontrolnej CRC32 to 32 bity (4 bajty). Choæ sposób
+            wyliczania tej sumy jest wystarczaj¹cy do wykrycia wiêkszoœci
+            b³êdów danych, to nie jest dostateczny do identyfikacji pliku.
+            Innymi s³owy, jeœli dwa pliki maj¹ tê sam¹ wartoœæ sumy CRC32,
+            to niekoniecznie maj¹ tê sam¹ zawartoœæ.
+
+            Rozmiar sumy kontrolnej BLAKE2sp to 256 bitów (32 bajty). Poniewa¿
+            jest to funkcja skrótu u¿ywana w kryptografii, praktycznie
+            gwarantuje, ¿e jeœli dwa pliki maj¹ tak¹ sam¹ sumê kontroln¹
+            BLAKE2sp, to ich zawartoœæ jest taka sama. Detekcja b³êdów danych
+            jest równie¿ lepiej obs³ugiwana ni¿ dla CRC32.
+
+            Poniewa¿ suma kontrolna BLAKE2sp jest wiêksza, archiwum jest nieco
+            wiêksze w przypadku u¿ycia opcji -htb.
+
+            Jeœli nag³ówki plików nie s¹ zaszyfrowane (nie zosta³a u¿yta opcja
+            -hp), to sumy kontrolne dla zaszyfrowanych plików w archiwum
+            RAR 5.0 s¹ modyfikowane specjalnym algorytmem bazuj¹cym na haœle
+            u¿ytym do zaszyfrowania plików. Ma to na celu uniemo¿liwienie
+            odgadniêcie zawartoœci pliku na podstawie sumy kontrolnej.
+
+            Ta opcja jest obs³ugiwana tylko dla formatu archiwum RAR 5.0,
+            dlatego do jej dzia³ania wymagane jest równie¿ u¿ycie opcji -ma.
+
+            Sumy kontrolne plików mo¿na wyœwietliæ poleceniem „vt” lub „lt”.
+
+            Przyk³ad:
+
+              rar a -ma -htb listy.rar *.lst
+
+            spowoduje dodanie do archiwum listy.rar wszystkich plików *.lst
+            oraz wyliczenie dla nich sumy kontrolnej BLAKE2sp.
+
+
+    -id[c,d,p,q]  wy³¹cz komunikaty
+
+            Opcja -idc wy³¹cza wyœwietlanie informacji o programie
+
+            Opcja -idd wy³¹cza wyœwietlanie informacji o zakoñczeniu operacji
+
+            Opcja -idp wy³¹cza procentowy wskaŸnik postêpu
+
+            Opcja -idq w³¹cza tryb „cichy”, w którym wyœwietlane s¹ tylko
+            komunikaty b³êdów oraz zapytania.
+
+            Aby u¿yæ kilku tych opcji jednoczeœnie, mo¿na po³¹czyæ
+            ich „koñcówki” w jedno, np. poprawna jest opcja -idcdp
+
+
+    -ieml[.][adres]  wyœlij archiwum poczt¹ elektroniczn¹
+
+            Opcja ta jest dostêpna tylko w wersji dla Windows.
+
+            Do³¹cza utworzone lub zaktualizowane archiwum do wiadomoœci. Aby
+            skorzystaæ z tej opcji nale¿y mieæ zainstalowanego klienta
+            pocztowego, który udostêpnia interfejs MAPI (wiêkszoœæ obecnych
+            programów pocztowych spe³nia ten warunek).
+
+            Adres mo¿na wprowadziæ bezpoœrednio w tej opcji lub pozostawiæ
+            pusty - w tym drugim przypadku program pocztowy poprosi o podanie
+            adresu. Mo¿na podaæ kilka adresów oddzielaj¹c je przecinkami lub
+            œrednikami.
+
+            Jeœli zaraz za opcj¹ -ieml zostanie umieszczona kropka, archiwum
+            zostanie usuniête po wys³aniu wiadomoœci. Jeœli opcja ta wyst¹pi
+            podczas tworzenia archiwum wieloczêœciowego, ka¿dy wolumin
+            zostanie wys³any osobno.
+
+
+    -ierr   wyœlij wszystkie komunikaty na stderr
+
+
+    -ilog[nazwa]   rejestruj b³êdy w pliku
+
+            Zapisuje komunikaty b³êdów w pliku rar.log. Jeœli opcjonalny
+            parametr „nazwa” nie zostanie okreœlony, plik dziennika zostanie
+            utworzony wed³ug nastêpuj¹cego schematu:
+            
+            Unix:    plik .rarlog w katalogu domowym u¿ytkownika
+            Windows: plik rar.log w katalogu %APPDATA%\WinRAR
+
+            Jeœli parametr „nazwa” zawiera tylko nazwê pliku, bez œcie¿ki,
+            RAR utworzy plik dziennika w katalogu okreœlonym wed³ug powy¿szego
+            schematu. Podanie nazwy wraz ze œcie¿k¹ spowoduje zmianê
+            zarówno nazwy, jak i lokalizacji pliku dziennika.
+
+            Domyœlnie plik dziennika jest zapisywany w kodowaniu UTF-16, lecz
+            mo¿na to zmieniæ za pomoc¹ opcji -sc<kodowanie>g, np. -scag (zwyk³e
+            jednobajtowe kodowanie).
+
+            Przyk³ad:
+
+              rar a -ilogc:\log\kopia.log kopia d:\dokumenty
+
+                spowoduje utworzenie (w przypadku wyst¹pienia b³êdów podczas
+                archiwizacji) pliku dziennika c:\log\kopia.log
+
+
+    -inul   wy³¹cz wszystkie komunikaty
+
+
+    -ioff[n]   wy³¹cz komputer po zakoñczeniu operacji
+
+            Opcja -ioff lub -ioff1 powoduje, ¿e po zakoñczeniu operacji
+            komputer zostanie wy³¹czony, -ioff2 - zahibernowany,
+            -ioff3 - uœpiony, a -ioff4 - zrestartowany. Dzia³anie tej opcji
+            jest uzale¿nione od tego, czy system operacyjny obs³uguje
+            odpowiednie funkcje.
+
+            Jeœli uruchomionych jest kilka instancji RARa z t¹ opcj¹,
+            to komputer zostanie wy³¹czony przez tê, która zakoñczy dzia³anie
+            jako ostatnia.
+            
+            Tylko w wersji dla Windows.
+
+
+    -isnd[-]  sterowanie dŸwiêkami powiadomieñ
+
+            Opcja -isnd w³¹cza dŸwiêki powiadomieñ, a -isnd- je wy³¹cza.
+
+
+    -iver   wyœwietl numer wersji i zakoñcz dzia³anie
+
+
+    -k      zablokuj archiwum
+
+            RAR nie mo¿e modyfikowaæ zablokowanych archiwów, wiêc zablokowanie
+            archiwum zapobiega jego przypadkowej modyfikacji przez RARa. Mo¿e
+            to byæ przydatne szczególnie w przypadku masowych operacji na grupie
+            archiwów.
+
+            Ta opcja nie s³u¿y zapobie¿eniu modyfikacji archiwum przez inne
+            programy ni¿ RAR.
+
+            Przyk³ad:
+
+            rar a -k sejf.rar dokumenty
+
+
+    -kb     zachowaj uszkodzone pliki po wypakowaniu
+
+            Domyœlnie RAR usuwa po wypakowaniu pliki, w których w czasie
+            wypakowywania wyst¹pi³ b³¹d sumy kontrolnej. Opcja -kb powoduje,
+            ¿e pliki z b³êdami sumy kontrolnej nie s¹ usuwane.
+
+    
+    -log[fmt][=nazwa]
+            Zapisuje nazwy do pliku dziennika
+
+            Ta opcja umo¿liwia zapisanie nazw przetwarzanych archiwów
+            i plików. Zachowaniem tej opcji steruje parametr „fmt”, który
+            mo¿e sk³adaæ siê z jednego lub wiêcej nastêpuj¹cych znaków:
+
+            A - zapisz nazwê archiwum. Jeœli RAR tworzy lub przetwarza
+                woluminy, zapisywane s¹ nazwy wszystkich woluminów.
+            
+            F - zapisz nazwy przetwarzanych plików. S¹ to nazwy plików
+                dodawanych do archiwum, usuwanych lub wypakowywanych
+                z archiwum, czy te¿ zawartych w archiwum (dla operacji
+                listowania zawartoœci).
+
+            P - jeœli plik dziennika o podanej nazwie istnieje, to
+                nowe dane zostan¹ do niego dopisane, zamiast tworzenia
+                nowego pliku dziennika
+
+            U - zapisz dane w formacie Unicode.
+
+            Jeœli nie wyst¹pi ani „A” ani „F”, domyœlnie zostanie przyjête „A”.
+
+            Parametr „nazwa” okreœla nazwê pliku dziennika. Od parametru „fmt”
+            musi byæ oddzielone znakiem „=”. Jeœli nazwa nie zostanie okreœlona,
+            RAR u¿yje nazwy „rarinfo.log”.
+
+            Dopuszczalne jest u¿ycie wielu opcji -log w jednym poleceniu.
+
+            Ta opcja mo¿e byæ szczególnie przydatna podczas automatycznego
+            przetwarzania archiwów o generowanych nazwach (opcje -ag i -v).
+
+            Przyk³ady:
+
+            1) zapisz nazwy utworzonych woluminów do pliku listawol.txt:
+
+               rar a -v100m -loga=listawol.txt wolumin.rar c:\dane
+
+            2) zapisz wygenerowan¹ nazwê archiwum do pliku kopia.txt
+               w formacie Unicode:
+
+               rar a -ag -logau=kopia.txt kopia.rar mojepliki\*
+
+            3) zapisz nazwy testowanych woluminów do pliku listawol.txt
+               oraz nazwy testowanych plików do pliku listaplik.txt:
+
+               rar t -log=listawol.txt -logf=listaplik.txt wolumin.part01.rar
+
+    
+    -m<n>   wybierz metodê kompresji
+
+            <n> od 0 do 5 oznacza odpowiedni¹ metodê kompresji:
+
+                -m0  brak         dodaje pliki do archiwum bez kompresji
+                -m1  najszybsza   najszybsza metoda (najmniej wydajna)
+                -m2  szybka       szybka kompresja
+                -m3  normalna     normalna (domyœlna) metoda kompresji
+                -m4  dobra        dobra kompresja (bardziej efektywna)
+                -m5  najlepsza    najlepsza kompresja (najwydajniejsza,
+                                  ale te¿ najwolniejsza)
+
+            Jeœli opcja ta nie wyst¹pi, RAR u¿yje metody -m3 (normalna
+            kompresja).
+
+  
+  -ma[4|5]  okreœl wersjê formatu archiwum
+
+            Domyœlnie RAR tworzy archiwa w formacie RAR 5.0. Aby utworzyæ
+            archiwum w formacie RAR 4.x nale¿y u¿yæ opcji -ma4. Opcji -ma5
+            lub -ma mo¿na u¿yæ aby przebiæ opcjê -ma4 zachowan¹ w pliku
+            konfiguracyjnym, aby wymusiæ u¿ycie formatu RAR 5.0.
+
+            Opcja ta jest brana pod uwagê tylko podczas tworzenia nowego
+            archiwum, a ignorowana podczas modyfikacji istniej¹cego archiwum.
+
+
+  -mc<par>  ustaw zaawansowane parametry kompresji
+
+            Opcja ta jest przeznaczona g³ównie do testów wydajnoœci
+            i eksperymentów; zwykle lepiej jest pozostawiæ te ustawienia
+            w gestii RARa. Niew³aœciwe u¿ycie tej opcji mo¿e spowodowaæ
+            powa¿ne straty w wydajnoœci, nale¿y wiêc jej u¿ywaæ z rozwag¹.
+
+            Opcja ma nastêpuj¹c¹ sk³adniê:
+
+            -mc[parametr1][:parametr2][modu³][+ lub -]
+
+            gdzie <modu³> jest liter¹ okreœlaj¹c¹ sk³adnik algorytmu
+            kompresji przeznaczony do skonfigurowania.
+
+            Wartoœci dla <modu³u>:
+
+              A - kompresja danych dŸwiêkowych
+              C - kompresja danych graficznych (true color)
+              D - kompresja delta
+              E - kompresja plików wykonywalnych x86
+              I - kompresja plików wykonywalnych Itanium
+              T - kompresja tekstu
+
+            Format archiwum RAR 5.0 obs³uguje tylko wartoœci „D” i „E”.
+
+            Znak „+” umieszczony za modu³em oznacza, ¿e RAR ma u¿yæ danego
+            algorytmu do kompresji wszystkich danych; znak „-” ca³kowicie
+            wy³¹cza dany modu³ z procesu kompresji. Jeœli po module nie bêdzie
+            ¿adnego znaku, RAR automatycznie wybierze odpowiednie modu³y
+            w zale¿noœci od kompresowanych danych oraz metody kompresji.
+
+            Opcja -mc- wy³¹cza wszystkie zaawansowane algorytmy kompresji.
+
+            <Parametr1> oraz <Parametr2> s¹ zale¿ne od tego, z jakim modu³em
+            s¹ u¿ywane:
+
+            Kompresja danych dŸwiêkowych, kompresja delta:
+
+              <Parametr1> jest liczb¹ 8-bitowych kana³ów (od 1 do 31). RAR
+              rozdziela kana³y na 8-bitowe, np.: dwa 16-bitowe kana³y zostan¹
+              potraktowane jak 4 kana³y 8-bitowe.
+
+              <Parametr2> jest ignorowany.
+
+
+            Kompresja plików wykonywalnych x86, plików wykonywalnych Itanium,
+            kompresja danych graficznych:
+
+              <Parametr1> i <Parametr2> s¹ ignorowane.
+
+
+            Kompresja tekstu:
+
+              Algorytm kompresji tekstu umo¿liwia uzyskanie lepszych
+              rezultatów podczas kompresji czystego tekstu. Nie mo¿e on jednak
+              u¿ywaæ wielu procesorów, co powoduje, ¿e jest wolniejszy
+              w porównaniu do ogólnych algorytmów kompresji w œrodowisku
+              wieloprocesorowym lub wielordzeniowym. Ponadto dekompresja
+              danych skompresowanych tym algorytmem jest wolniejsza,
+              niezale¿nie od liczby procesorów czy rdzeni. Z tego powodu
+              specjalny algorytm kompresji tekstu jest domyœlnie wy³¹czony.
+              Aby go w³¹czyæ nale¿y u¿yæ opcji -mct (RAR u¿yje tego algorytmu
+              automatycznie do odpowiednich danych). Opcja -mct+ spowoduje,
+              ¿e specjalny algorytm kompresji tekstu zostanie u¿yty dla
+              wszystkich przetwarzanych danych.
+
+              Opcja -mct mo¿e tak¿e zawieraæ parametry. Pe³na sk³adnia tej
+              opcji to -mc[parametr1][:parametr2]t[+ lub -].
+
+              <Parametr1> jest numerem algorytmu PPM (od 2 do 63). Zwykle
+              wiêksza wartoœæ zwiêksza stopieñ kompresji, lecz tylko jeœli
+              jest wystarczaj¹co du¿o pamiêci. Jeœli zabraknie pamiêci,
+              rezultat mo¿e byæ odwrotny. Wiêksze wartoœci spowalniaj¹ proces
+              kompresji i dekompresji.
+
+              <Parametr2> jest iloœci¹ (w megabajtach) pamiêci przydzielonej
+              algorytmowi (od 1 do 128). Wiêksze wartoœci mog¹ zwiêkszyæ
+              stopieñ kompresji, lecz nale¿y mieæ na uwadze, ¿e PPM u¿ywa tyle
+              samo pamiêci do kompresji jak i do dekompresji, wiêc jeœli
+              przydzieliæ za du¿o pamiêci podczas kompresji, inni u¿ytkownicy
+              mog¹ mieæ problem z dekompresji¹ takiego archiwum na komputerze,
+              który ma mniej pamiêci. Dekompresja mo¿e siê udaæ mimo to (przy
+              u¿yciu pamiêci wirtualnej), lecz mo¿e znacznie siê spowolniæ.
+
+
+            Przyk³ady:
+
+            1) opcja -mc1a+ wymusza u¿ywanie kompresji audio mono 8-bitowej
+               dla wszystkich danych
+
+            2) opcja -mc10:40t+ wymusza u¿ycie kompresji tekstu dla wszystkich
+               danych, wybiera algorytm numer 10 i przydziela mu 40 MB pamiêci
+
+            3) opcja -mc12t wybiera algorytm numer 12 dla kompresji tekstu,
+               lecz pozostawia w gestii RARa decyzjê kiedy ma jej u¿yæ
+
+            4) opcje -mct -mcd- w³¹czaj¹ kompresjê tekstu i wy³¹czaj¹
+               kompresjê delta
+
+
+    -md<n>[k,m,g]  wybierz rozmiar s³ownika
+
+            S³ownik jest specjalnym obszarem pamiêci u¿ywanym przez archiwizer
+            podczas pracy. Jeœli rozmiar kompresowanego pliku (lub wszystkich
+            plików w przypadku archiwum ci¹g³ego) jest wiêkszy ni¿ rozmiar
+            s³ownika, wtedy zwiêkszenie s³ownika spowoduje wzrost stopnia
+            kompresji, zmniejszenie prêdkoœci kompresji oraz zwiêkszenie
+            zapotrzebowania na pamiêæ.
+
+            Dla archiwów w formacie RAR 4.x rozmiar s³ownika mo¿e wynosiæ:
+            64 KB, 128 KB, 256 KB, 512 KB, 1 MB, 2 MB, 4 MB.
+
+            Dla archiwów w formacie RAR 5.0 rozmiar s³ownika mo¿e wynosiæ:
+            128 KB, 256 KB, 512 KB, 1 MB, 2 MB, 4 MB, 8 MB, 16 MB, 32 MB,
+            64 MB, 128 MB, 256 MB, 512 MB, 1 GB.
+
+            W celu okreœlenia rozmiaru mo¿na u¿ywaæ modyfikatorów „k”, „m” i
+            „g” oznaczaj¹cych, odpowiednio, kilobajty, megabajty i gigabajty,
+            np. -md64m oznacza s³ownik o rozmiarze 64 MB. Jeœli ¿aden
+            modyfikator nie zostanie podany, RAR zak³ada, ¿e by³o to „m”.
+            Oznacza to, ¿e opcje -md64m i -md64 s¹ równoznaczne.
+
+            Podczas kompresji RAR potrzebuje oko³o 6 razy wiêcej pamiêci ni¿
+            okreœlony rozmiar s³ownika, dlatego s³owniki o rozmiarach 512MB
+            i 1GB s¹ dostêpne tylko w 64-bitowej wersji RARa. Podczas
+            dekompresji RAR potrzebuje niewiele wiêcej pamiêci ni¿ rozmiar
+            s³ownika u¿yty podczas kompresji, dlatego zarówno 32- jak
+            i 64-bitowa wersja s¹ w stanie rozpakowaæ archiwum, w którym u¿yto
+            s³ownika o rozmiarze nawet 1GB.
+
+            Jeœli rozmiar wszystkich archiwizowanych plików w trybie ci¹g³ym
+            lub najwiêkszego pliku w trybie zwyk³ym jest co najmniej dwukrotnie
+            mniejszy ni¿ wybrany rozmiar s³ownika, RAR mo¿e go zmniejszyæ.
+            Dziêki temu zmniejsza siê u¿ycie pamiêci bez straty
+            na jakoœci kompresji.
+
+            Domyœlnym rozmiarem s³ownika dla archiwów RAR 4.x jest 4MB,
+            a dla archiwów RAR 5.0 - 32MB.
+
+            Przyk³ad:
+
+              rar a -s -ma -md128 lib *.dll
+
+                spowoduje utworzenie ci¹g³ego archiwum w formacie RAR 5.0
+                o s³owniku wielkoœci 128 MB.
+
+
+    -ms[lista]  okreœl pliki do archiwizacji bez kompresji
+
+            Okreœla typy plików, które bêd¹ archiwizowane bez kompresji.
+            Za pomoc¹ tej opcji mo¿na archiwizowaæ ju¿ skompresowane pliki,
+            co zwiêksza prêdkoœæ archiwizacji bez spadku stopnia kompresji.
+
+            Opcjonalna <lista> okreœla listê rozszerzeñ plików (oddzielonych
+            œrednikami). Na przyk³ad, podanie -msrar;zip;jpg spowoduje,
+            ¿e RAR zarchiwizuje bez kompresowania archiwa RAR i ZIP oraz
+            obrazki w formacie JPG. Lista mo¿e równie¿ zawieraæ symbole
+            wieloznaczne, np.: -ms*.rar;*.zip;*.jpg. Dopuszcza siê tak¿e
+            wielokrotne u¿ycie opcji -ms w jednym poleceniu, np.:
+            -msrar -mszip zamiast -msrar;zip.
+
+            W systemie Unix opcja -ms zawieraj¹ca listê rozszerzeñ musi byæ
+            ujêta w cudzys³ów. Robi siê to w celu zapobie¿enia przetwarzania
+            œrednika przez interpreter pow³oki (shell). Zamiast tego mo¿na
+            wykorzystaæ mo¿liwoœæ wielokrotnego u¿ycia opcji -ms w jednym
+            poleceniu.
+
+            Jeœli <lista> nie zostanie podana, RAR u¿yje domyœlnego zestawu
+            rozszerzeñ, który zawiera:
+
+                7z, ace, arj, bz2, cab, gz, jpeg, jpg, lha, lz, lzh, mp3,
+                rar, taz, tgz, xz, z, zip, zipx
+
+
+    -mt<w¹tki>
+            Ustawia liczbê w¹tków.
+
+            Parametr <w¹tki> mo¿e przybieraæ wartoœci od 1 do 64. Okreœla
+            po¿¹dan¹ maksymaln¹ liczbê w¹tków dla kompresji i innych funkcji
+            RARa, które mog¹ uruchamiaæ wiele w¹tków. Choæ RAR stara siê
+            trzymaæ tej wartoœci, to czasem rzeczywista liczba aktywnych
+            w¹tków mo¿e byæ wy¿sza.
+
+            Zmiana parametru <w¹tki> ma nieznaczny wp³yw na stopieñ kompresji,
+            dlatego archiwa utworzone z ró¿nymi parametrami opcji -mt nie
+            bêd¹ identyczne pomimo zachowania tych samych pozosta³ych
+            opcji kompresji.
+
+            Jeœli opcja -mt nie wystapi w poleceniu, RAR spróbuje wykryæ
+            liczbê dostêpnych procesorów i wybraæ optymaln¹ liczbê w¹tków
+            kompresji.
+
+
+    -n<plik>  Dodatkowy filtr pliku
+
+            Opcja ta powoduje, ¿e RAR na³o¿y dodatkowy filtr na pliki do
+            przetworzenia. W opcji mog¹ wyst¹piæ symbole wieloznaczne.
+            Przeczytaj opis opcji -x aby zapoznaæ siê ze sk³adni¹ symboli
+            wieloznacznych.
+            Opcja mo¿e wyst¹piæ wielokrotnie w jednym poleceniu.
+
+            Opcja ta nie zastêpuje zwyk³ych masek plików, które musz¹ siê
+            znaleŸæ w poleceniu, a jedynie stanowi dodatkowy filtr
+            ograniczaj¹cy pliki, które bêd¹ przetwarzane, co w niektórych
+            przypadkach mo¿e skróciæ (uproœciæ) polecenie, np. aby
+            zarchiwizowaæ wszystkie pliki *.txt i *.lst z katalogów „Projekt”
+            i „Info”, mo¿na wydaæ takie polecenie:
+
+              rar a -r text Projekt\*.txt Projekt\*.lst Info\*.txt Info\*.lst
+
+            lub takie, u¿ywaj¹ce opcji -n:
+
+              rar a -r -n*.txt -n*.lst text Projekt Info
+
+
+    -n@<lista>  wczytaj dodatkowe filtry z okreœlonej listy
+
+            Opcja ta ma podobne dzia³anie do -n<plik> z t¹ ró¿nic¹, ¿e filtry
+            (maski) plików do przetworzenia wczytuje z podanego pliku listy.
+            Jeœli parametr <lista> zostanie pominiêty, filtry plików zostan¹
+            wczytane ze standardowego urz¹dzenia wejœciowego (z klawiatury).
+
+            Ta opcja nie zastêpuje zwyk³ych list czy masek plików - nadal
+            nale¿y je okreœliæ w poleceniu. S³u¿y ona jedynie do dodatkowego
+            odfiltrowania plików.
+
+            Przyk³ad:
+
+            rar a -r -n@lista2.txt tekst Projekt Info @lista.txt
+
+
+    -oc     odtwórz atrybut „skompresowany” (tylko w wersji dla Windows)
+
+            Ta opcja umo¿liwia odtworzenie plikom i katalogom atrybutu
+            „skompresowany” (na dyskach NTFS). RAR zachowuje ten atrybut
+            w archiwum, ale domyœlnie go nie odtwarza.
+
+
+    -oh     Zachowaj twarde dowi¹zania jako dowi¹zania a nie pliki
+
+            Jeœli archiwizowane pliki posiadaj¹ kilka twardych dowi¹zañ, to ta
+            opcja powoduje, ¿e w archiwum oryginalny plik zostanie zapisany
+            normalnie, a jego twarde dowi¹zania jako odwo³ania do niego.
+            Podczas wypakowywania takich plików RAR bêdzie tworzy³ twarde
+            dowi¹zania zamiast zwyk³ych plików.
+
+            Nie wolno usun¹æ z archiwum ani zmieniæ nazwy pierwszego pliku
+            (tego, do którego odnosz¹ siê odwo³ania), poniewa¿ uniemo¿liwi to
+            wypakowanie plików odwo³uj¹cych siê do niego. Jeœli pierwszy plik
+            zostanie zmodyfikowany, modyfikacji ulegn¹ równie¿ pliki
+            odwo³uj¹ce siê do niego. Aby poprawnie odtworzyæ twarde dowi¹zania
+            oryginalny plik równie¿ musi byæ wypakowany w tej samej operacji.
+
+            Opcja ta jest obs³ugiwana tylko dla formatu archiwum RAR 5.0.
+
+
+    -oi[0-4][:<rozmiar>]
+            Zachowaj identyczne pliki jako referencje
+
+            Opcja -oi0 (lub -oi-) wy³¹cza przetwarzanie identycznych plików
+            co powoduje, ¿e s¹ one archiwizowane w normalny sposób. Mo¿e byæ
+            zastosowana w celu przebicia opcji -oi zapisanej w pliku
+            konfiguracyjnym.
+
+            Jeœli zastosowana zostanie opcja -oi1 (lub -oi), to RAR podda
+            analizie zawartoœæ plików przed rozpoczêciem archiwizacji. Jeœli
+            zostanie znalezionych kilka plików o identycznej zawartoœci, to
+            pierwszy z nich zostanie normalnie zarchiwizowany, natomiast
+            zamiast jego duplikatów w archiwum zostan¹ umieszczone tylko
+            odwo³ania do niego. Pozwala to zredukowaæ rozmiar archiwum, lecz
+            wprowadza pewne ograniczenia co do samego archiwum. Nie wolno
+            usun¹æ z archiwum ani zmieniæ nazwy pierwszego pliku (tego, do
+            którego odnosz¹ siê odwo³ania), poniewa¿ uniemo¿liwi to
+            wypakowanie plików odwo³uj¹cych siê do niego. Jeœli pierwszy plik
+            zostanie zmodyfikowany, modyfikacji ulegn¹ równie¿ pliki
+            odwo³uj¹ce siê do niego. Aby poprawnie wypakowaæ pliki odwo³uj¹ce
+            siê do innego pliku, to ten inny plik równie¿ musi byæ
+            wypakowany w tej samej operacji.
+
+            Zaleca siê u¿ywanie opcji -oi tylko podczas kompresji du¿ej liczby
+            identycznych plików, kiedy to archiwum nie bêdzie póŸniej
+            modyfikowane, a rozpakowywane bêdzie zawsze w ca³oœci. Jeœli
+            wszystkie identyczne pliki s¹ na tyle ma³e, ¿e mieszcz¹ siê
+            w rozmiarze s³ownika kompresji (okreœlonego opcj¹ -md<n>), to
+            lepiej jest u¿yæ opcji -s zamiast -oi.
+
+            Opcja -oi2 jest podobna do -oi1 z t¹ ró¿nic¹, ¿e przed
+            rozpoczêciem archiwizacji zostan¹ wyœwietlone nazwy szystkich
+            znalezionych indetycznych plików.
+
+            Opcje -oi3 i -oi4 umo¿liwiaj¹ u¿ycie RARa do wygenerowania listy
+            identycznych plików. Choæ w poleceniu trzeba podaæ nazwê archiwum,
+            to ¿adne archiwum z uzyciem tych opcji nie zostanie utworzone.
+            W przypadku opcji -oi3 wyœwietlane s¹ rozmiary i nazwy
+            identycznych plików, a ka¿da grupa identycznych plików jest
+            oddzielona od nastêpnej pojedyncz¹ pust¹ lini¹. Opcja -oi4
+            powoduje, ¿e RAR wyœwietla tylko nazwy plików, pomijaj¹c pierwszy
+            plik - co w efekcie daje listê samych duplikatów.
+
+            Opcjonalny parametr <rozmiar> pozwala okreœliæ minimalny rozmiar
+            pliku. Ta wartoœæ stanowi granicê, poni¿ej której RAR nie próbuje
+            nawet badaæ, czy plik ma duplikaty. Jeœli ten parametr nie
+            wyst¹pi, to RAR domyœlnie przyjmuje rozmiar 64 KB. Zbyt ma³a
+            wartoœæ tego parametru mo¿e wyd³u¿yæ czas wyszukiwania duplikatów.
+
+            Opcje -oi1 i -oi2 s¹ obs³ugiwane tylko dla formatu archiwum RAR 5.0
+
+            Przyk³ady:
+
+              rar a -oi -ma arc01
+
+            archiwizuje zawartoœæ bie¿¹cego katalogu do archiwum „arc01”,
+            a znalezione identyczne pliki zachowuje jako odwo³ania.
+
+              rar a -oi3:1000000 -r asdfg c:\zdjêcia\*.jpg
+
+            tworzy listê duplikatów plików *.jpg o rozmiarach wiêkszych
+            lub równych 1000000 bajtów znajduj¹cych siê w katalogu c:\zdjêcia
+            i jego podkatalogach.
+              
+
+    -ol[a]  przetwarzaj dowi¹zania symboliczne jako dowi¹zania [œcie¿ki absolutne]
+  
+            Ta opcja powoduje, ¿e symboliczne dowi¹zania s¹ zachowywane
+            w archiwum jako dowi¹zania i w³aœciwa zawartoœæ pliku lub katalogu
+            nie jest przechowywana. W wersji dla Windows opcja ta powoduje
+            równie¿ zachowywanie punktów ponownej analizy (reparse point).
+            Takie dowi¹zania s¹ odtwarzane podczas wypakowywania z archiwum.
+
+            Opcja ta jest obs³ugiwana dla formatu RAR 4.x i RAR 5.0
+            w systemie Unix, a w systemie Windows tylko dla formatu RAR 5.0.
+
+            W Windows, aby podczas wypakowywania odtworzyæ dowi¹zania
+            symboliczne, mo¿e byæ konieczne posiadanie uprawnieñ
+            administratora.
+
+            Jeœli opcja -ol wyst¹pi podczas archiwizacji, to RAR doda
+            wszystkie napotkane dowi¹zania niezale¿nie od tego, na jaki obiekt
+            wskazuj¹. Podczas rozpakowywania archiwum RAR domyœlnie pomija
+            dowi¹zania wskazuj¹ce na obiekty znajduj¹ce siê poza katalogiem
+            docelowym, dowi¹zania ze œcie¿kami absolutnymi, takie, które
+            posiadaj¹ wiele „..” (wskazañ na katalog nadrzêdny) oraz
+            posiadaj¹ce inne potencjalnie niebezpieczne parametry. Aby
+            wypakowaæ takie dowi¹zania, nale¿y pos³u¿yæ siê opcj¹ -ola.
+
+            Dowi¹zania wskazuj¹ce na obiekty znajduj¹ce siê poza katalogiem
+            docelowym mog¹ stanowiæ zagro¿enie bezpieczeñstwa. Nale¿y je
+            wypakowywaæ jedynie z archiwów pochodz¹cych z zaufanych Ÿróde³
+            (np. w³asne kopie bezpieczeñstwa).
+
+            Dowi¹zania symboliczne, które WinRAR uwa¿a za bezpieczne, 
+            nie podlegaj¹ ograniczeniom i s¹ wypakowywane niezale¿nie
+            od wyst¹pienia tej opcji.
+
+
+    -oni    dopuœæ potencjalnie niekompatybilne nazwy
+
+            System plików NTFS dopuszcza nazwy plików zawieraj¹ce na koñcu
+            spacje i kropki, lecz bardzo du¿o programów w Windows nie potrafi
+            prawid³owo ich przetworzyæ. Jeœli ta opcja nie zostanie u¿yta,
+            to podczas wypakowywania RAR usunie z nazw plików znajduj¹ce siê
+            na koñcu spacje i kropki. Aby nazwy pozosta³y niezmodyfikowane,
+            nale¿y u¿yæ tej opcji.
+
+            Dostêpne tylko w wersji dla Windows.
+            
+
+    -or     automatycznie zmieniaj nazwê wypakowywanego pliku jeœli plik
+            o tej samej nazwie ju¿ istnieje. Nowe nazwy przemianowanych
+            plików bêd¹ mia³y format „plik(N).txt”, gdzie „plik.txt” to
+            oryginalna nazwa pliku a „N” jest kolejnym numerem.
+
+
+    -os     zachowaj strumienie NTFS (tylko w wersji dla Windows)
+
+            Ta opcja ma znaczenie tylko dla Windows pracuj¹cych na systemie
+            plików NTFS. Umo¿liwia ona zachowywanie dodatkowych strumieni
+            danych powi¹zanych z plikami. Jest to szczególnie wa¿ne w przypadku
+            u¿ywania programów wykorzystuj¹cych takie strumienie.
+
+            Strumienie nie s¹ zachowywane dla plików u¿ywaj¹cych szyfrowania
+            NTFS (szyfrowanie na dysku).
+
+
+    -ow     Opcja ta s³u¿y do zachowywania i odtwarzania atrybutów zwi¹zanych
+            z prawami do plików.
+
+            W systemach Unix RAR zachowuje informacje o w³aœcicielu i grupie
+            pliku.
+
+            W Windows zapisywane s¹ informacje o w³aœcicielu, grupie, prawa do
+            pliku oraz informacja audytowa, lecz tylko jeœli posiadasz prawa
+            do odczytu tych informacji. Nale¿y mieæ na uwadze, ¿e w Windows
+            takie informacje dostêpne s¹ tylko w systemie plików NTFS.
+
+
+    -o[+|-] Ustawia tryb nadpisywania. Opcja mo¿e byæ u¿yta zarówno podczas
+            archiwizacji jak i wypakowywania plików. Dostêpne tryby:
+
+              -o   Zapytaj przed nadpisaniem
+                   (jest to ustawienie domyœlne dla wypakowywania)
+
+              -o+  Nadpisz wszystkie pliki
+                   (ustawienie domyœlne dla aktualizacji plików w archiwum)
+
+              -o-  Pomiñ istniej¹ce pliki
+
+
+    -p[has³o]   ustaw has³o
+    
+            Ustawia has³o <hhas³o> u¿ywane do szyfrowania plików podczas
+            archiwizacji, lub do deszyfrowania podczas wypakowywania.
+
+            Wielkoœæ liter w haœle jest istotna. Maksymalna d³ugoœæ has³a to
+            127 znaków - d³u¿sze has³a zostan¹ przyciête do tej d³ugoœci.
+            W przypadku braku has³a w linii poleceñ, RAR poprosi o jego
+            wprowadzenie. Jeœli parametr <has³o> nie jest okreœlony, to mo¿na
+            zamiast niego u¿yæ przekierowania pliku.
+
+            Przyk³ady:
+
+            1) rar a -psekret teksty.rar *.txt
+
+               dodaje pliki *.txt do archiwum „teksty” i szyfruje je has³em
+               „sekret”.
+
+            2) rar -p teksty.rar *.txt < hsl.txt
+
+               jako has³o zostanie u¿yta zawartoœæ pliku hsl.txt
+
+
+    -p-     nie pytaj o has³o
+
+            Opcja ta powoduje, ¿e RAR nie bêdzie pyta³ o has³o podczas
+            wypakowywania zaszyfrowanych plików. Tak samo bêdzie gdy poda siê
+            niew³aœciwe has³o. RAR wyœwietli wtedy komunikat o niew³aœciwym
+            haœle. Ta opcja po prostu ustawia „-” jako has³o.
+
+
+    -qo[-|+]  dodaj informacje szybkiego otwarcia [nie dodawaj|wymuœ]
+
+            W archiwum RAR informacje o pliku, jak jego nazwa, czas, rozmiar
+            i atrybuty, s¹ umieszczane bezpoœrednio przed zawartoœci¹ tego
+            pliku. To podejœcie jest bardziej odporne na uszkodzenia ni¿
+            przechowywanie wszystkich nag³ówków w jednym miejscu - bo
+            w przypadku uszkodzenia takiego zbioru nag³ówków spowodowa³oby
+            utratê zawartoœci ca³ego archiwum. Choæ ten sposób jest lepszy
+            jeœli chodzi o bezpieczeñstwo, to otwieranie archiwum
+            i odczytywanie tych nag³ówków, rozrzuconych po ca³ym archiwum,
+            zajmuje wiêcej czasu.
+
+            Aby przyspieszyæ otwieranie archiwum i nie traciæ na
+            bezpieczeñstwie danych, archiwa w formacie RAR 5.0 mog¹
+            przechowywaæ opcjonalny blok danych zawieraj¹cy same nag³ówki
+            plików. Taki blok jest umieszczany na koñcu archiwum. Oprócz tego
+            archiwum RAR 5.0 zawiera normalne nag³ówki rozrzucone po ca³ym
+            archiwum, jak do tej pory. Poniewa¿ taki blok nag³ówków jest
+            ci¹g³y, mo¿e byæ szybko odczytany. Ka¿dy nag³ówek pliku znajduj¹cy
+            siê w tym bloku jest chroniony sum¹ kontroln¹. Jeœli RAR wykryje,
+            ¿e blok szybkiego otwarcia jest uszkodzony, to bêdzie odczytywa³
+            nag³ówki rozrzucone po archiwum.
+
+            Blok szybkiego otwarcia zawiera pe³ne kopie nag³ówków plików,
+            z których ka¿dy mo¿e mieæ d³ugoœæ dochodz¹c¹ do kilkuset bajtów.
+            To oczywiœcie powoduje wzrost wielkoœci archiwum, co jest
+            najbardziej zauwa¿alne w przypadku archiwum zawieraj¹cego du¿¹
+            liczbê ma³ych plików. Domyœlnie zatem, gdy nie zostanie u¿yta
+            opcja -qo, lub zostanie ona u¿yta bez parametrów, RAR zapisuje
+            w bloku szybkiego otwarcia nag³ówki tylko relatywnie du¿ych
+            plików. Konkretna wartoœæ graniczna, od której RAR uznaje plik
+            za „du¿y”, mo¿e zale¿eæ od wersji RARa. Takie podejœcie daje
+            doœæ dobr¹ prêdkoœæ otwierania archiwum i odczytu jego zawartoœci
+            i nie powoduje zbyt du¿ego przyrostu rozmiaru. Aby uzyskaæ
+            najwiêksz¹ prêdkoœæ otwierania archiwum nie dbaj¹c o jego rozmiar,
+            mo¿na u¿yæ opcji -qo+ co spowoduje, ¿e RAR umieœci nag³ówki
+            wszystkich plików w bloku szybkiego otwarcia. Aby zaœ uzyskaæ
+            jak najmniejsze archiwum nie dbaj¹c o prêdkoœæ jego otwierania,
+            mo¿na u¿yæ opcji -qo- co spowoduje, ¿e RAR w ogóle nie utworzy
+            bloku szybkiego otwarcia.
+
+
+    -r      przeszukaj podkatalogi
+
+            Opcja mo¿e byæ u¿yta z poleceniami: „a”, „u”, „f”, „m”, „x”, „e”,
+            „t”, „p”, „v”, „l”, „c”, „cf” oraz „s”.
+
+            Jeœli zostanie u¿yta z poleceniami „a”, „u”, „f” lub „m”, zostan¹
+            przetworzone pliki znajduj¹ce siê we wszystkich podkatalogach jak
+            równie¿ w bie¿¹cym katalogu.
+
+            Jeœli zostanie u¿yta z poleceniami „x”, „e”, „t”, „p”, „v”, „l”,
+            „c”, „cf” lub „s”, zostan¹ przetworzone archiwa znajduj¹ce siê we
+            wszystkich podkatalogach jak równie¿ w bie¿¹cym katalogu.
+
+
+    -r-     nie przeszukuj podkatalogów
+
+            Nawet bez opcji -r RAR mo¿e przeszukiwaæ podkatalogi w niektórych
+            sytuacjach. Opcja -r- zapobiega tym sytuacjom.
+
+            Gdy podczas archiwizacji poda siê nazwê katalogu i ta nazwa nie
+            zawiera symboli wieloznacznych, RAR domyœlnie dodaje do archiwum
+            ca³¹ zawartoœæ tego katalogu nawet jeœli nie podano opcji -r.
+
+            Na przyk³ad, polecenie:
+            
+              rar a -r- arc jakis_katalog
+            
+            doda do archiwum jedynie pusty katalog „jakis_katalog”, bez jego
+            ewentualnej zawartoœci. 
+            
+            Z kolei polecenie:
+            
+              rar a -r- arc c:\
+            
+            zarchiwizuje zawartoœæ g³ównego katalogu na dysku C:, bez
+            uwzglêdnienia podkatalogów.
+
+
+    -r0     Podobnie do -r, lecz gdy zostanie u¿yta z poleceniami „a”, „u”,
+            „f”, „m” spowoduje przeszukanie podkatalogów tylko dla nazw
+            zawieraj¹cych symbole wieloznaczne.
+
+            Ta opcja dzia³a tylko dla nazw plików.
+
+            Przyk³ad:
+
+                rar a -r0 dokumenty.rar *.doc readme.txt
+
+            dodaje pliki *.doc z bie¿¹cego katalogu i jego podkatalogów
+            oraz plik readme.txt tylko z bie¿¹cego katalogu do archiwum
+            dokumenty.rar. W przypadku u¿ycia opcji -r, RAR poszukiwa³by
+            pliku readme.txt równie¿ w podkatalogach.
+
+
+    -ri<p>[:<z>]   ustaw priorytet i czas zaœniêcia
+
+            Opcja jest dostêpna tylko w wersji RARa dla Windows.
+
+            Ta opcja jest u¿ywana do regulacji u¿ycia czasu procesora przez
+            RARa w œrodowisku wielozadaniowym. Priorytet mo¿e przybieraæ
+            wartoœci od 0 do 15.
+
+            Jeœli <p> jest równe 0, u¿yty zostanie domyœlny priorytet.
+            1 oznacza najni¿szy a 15 - najwy¿szy mo¿liwy priorytet.
+
+            Czas zaœniêcia <z> jest liczb¹ o wartoœci od 0 do 1000
+            (w milisekundach). Jest to czas, na jaki RAR zawiesi swe dzia³anie
+            po ka¿dej operacji odczytu lub zapisu podczas archiwizacji lub
+            wypakowywania. Ustawienie czasu zaœniêcia jest przydatne gdy
+            ustawienie priorytetu nie wystarcza do zmniejszenia obci¹¿enia
+            systemu w zadowalaj¹cym stopniu.
+
+            Przyk³ad:
+
+            rar a -ri0:10 kopia *.*
+
+                uruchamia RARa z domyœlnym priorytetem i czasem zaœniêcia
+                10 ms po ka¿dym odczycie lub zapisie.
+
+
+    -rr[N]  dodaj dane naprawcze
+
+            Ta opcja jest u¿ywana podczas tworzenia lub modyfikowania archiwum
+            i powoduje dodanie do niego danych naprawczych. Patrz opis
+            polecenia „rr[N]”.
+
+
+    -rv[N]  utwórz woluminy naprawcze
+
+            Opcja ta mo¿e byæ u¿yta podczas tworzenia archiwum
+            wieloczêœciowego w celu utworzenia woluminów naprawczych. Patrz
+            opis polecenia „rv[N]”.
+
+
+    -s      utwórz ci¹g³e archiwum
+
+            Archiwum ci¹g³e jest archiwum utworzonym za pomoc¹ specjalnego
+            algorytmu, który traktuje niektóre lub wszystkie pliki w archiwum
+            jak pojedynczy strumieñ danych.
+
+            U¿ywanie tego algorytmu zwiêksza stopieñ upakowania danych,
+            szczególnie podczas archiwizowania du¿ych iloœci ma³ych plików. Ma
+            to te¿ swoje wady: wolniejsze aktualizowanie istniej¹cego
+            archiwum, wolniejszy dostêp do wybranych pojedynczych plików oraz
+            zmniejszona odpornoœæ na uszkodzenia.
+            
+           Zwykle pliki w ci¹g³ym archiwum sortowane s¹ wed³ug rozszerzenia,
+           lecz mo¿na to zmieniæ u¿ywaj¹c opcji -ds lub tworz¹c w³asny plik
+           definiuj¹cy kolejnoœæ - „rarfiles.lst”.
+            
+            Przyk³ad:
+
+            rar a -s -md512 sources.rar *.asm -r
+
+                utwórz ci¹g³e archiwum „sources.rar” przy pomocy s³ownika
+                o wielkoœci 512 KB, przeszukuj¹c wszystkie podkatalogi
+                pocz¹wszy od katalogu bie¿¹cego dodaj¹c tylko pliki *.asm
+
+
+    -s<N>   utwórz ci¹g³e grupy <N> plików
+
+            Podobnie do -s, lecz statystyki ci¹g³oœci s¹ liczone od nowa
+            po zarchiwizowaniu <N> plików. Powoduje to zwykle spadek stopnia
+            kompresji, lecz tak¿e zmniejsza ryzyko utraty danych w przypadku
+            uszkodzenia ci¹g³ego archiwum.
+
+
+    -sc<kodowanie>[obiekty]
+            Opcja ta umo¿liwia okreœlenie kodowania znaków.
+
+            Parametr „kodowanie” jest wymagany i mo¿e przyj¹æ jedn¹
+            z nastêpuj¹cych wartoœci:
+
+              U - Unicode UTF-16
+              F - Unicode UTF-8
+              A - domyœlne kodowanie jednobajtowe (w Windows jest to ANSI)
+              O - kodowanie OEM (DOS). Tylko w wersji dla Windows.
+
+            Kolejnoœæ bajtów w plikach w formacie Unicode UTF-16 jest okreœlana
+            na podstawie znacznika znajduj¹cego siê na poc¹tku takiego pliku.
+            Jeœli plik nie posiada takiego znacznika, WinRAR za³o¿y, ¿e
+            kolejnoœæ bajtów to „little endian”.
+
+            Parametr „obiekty” jest opcjonalny i mo¿e przyj¹æ jedn¹
+            z nastêpuj¹cych wartoœci:
+
+              G - plik dziennika tworzony przy u¿yciu opcji -ilog
+              L - plik listy
+              C - plik komentarza
+              R - komunikat przekierowywany do pliku lub strumienia
+                  (tylko w wersji dla Windows)
+
+            Dozwolone jest okreœlenie wiêcej ni¿ jednego obiektu, na przyk³ad
+            -scolc. Jeœli parametr „obiekty” nie zostanie wyspecyfikowany,
+            podany zestaw znaków zostanie zastosowany do wszystkich obiektów.
+
+            Opcja ta wp³ywa na przetwarzanie plików okreœlonych opcj¹
+            -z[plik], plików list oraz plików komentarzy zapisywanych przy
+            pomocy polecenia „cw”.
+
+            Przyk³ady:
+
+            1) rar a -scol dane @lista
+
+            Odczytuje nazwy zawarte w pliku „lista” u¿ywaj¹c kodowania OEM
+
+            2) rar c -scuc -zkomentarz.txt dane
+
+            Traktuje plik komentarz.txt jako tekst Unicode
+
+            3) rar cw -scuc dane komentarz.txt
+
+            Zapisuje komentarz do pliku komentarz.txt u¿ywaj¹c kodowania
+            Unicode
+
+            4) rar lb -scur dane > lista.txt
+
+            Zapisuje nazwy plików z archiwum dane.rar do pliku lista.txt
+            u¿ywaj¹c kodowania Unicode
+
+
+    -se     utwórz ci¹g³e grupy wed³ug rozszerzenia
+
+            Podobnie do -s, lecz statystyki ci¹g³oœci s¹ liczone od nowa
+            jeœli zmieni siê rozszerzenie archiwizowanego pliku. Powoduje
+            to zwykle spadek stopnia kompresji, lecz tak¿e zmniejsza ryzyko
+            utraty danych w przypadku uszkodzenia ci¹g³ego archiwum.
+
+
+    -sfx[nazwa] utwórz samorozpakowuj¹ce siê archiwum
+
+            Jeœli ta opcja zostanie u¿yta podczas tworzenia nowego archiwum,
+            zostanie utworzone samorozpakowuj¹ce siê archiwum (SFX). Domyœlnie
+            RAR u¿ywa modu³u SFX o nazwie default.sfx znajduj¹cego siê w tym
+            samym katalogu co rar.exe (w wersji dla Windows) lub, w wersji
+            dla Unix, w katalogu domowym u¿ytkownika, w /usr/lib lub
+            w /usr/local/lib. Mo¿na te¿ wskazaæ u¿ycie innego modu³u SFX
+            poprzez podanie jego nazwy w parametrze [nazwa].
+
+            Przyk³ad:
+
+            rar a -sfxwincon.sfx myinst
+
+                utwórz samorozpakowuj¹ce siê archiwum przy u¿yciu podanego
+                modu³u SFX („wincon.sfx”)
+
+
+    -si[nazwa]
+            Opcja ta powoduje, ¿e dane do kompresji zostan¹ odczytane
+            ze stdin (standardowe urz¹dzenie wejœciowe). Opcjonalny
+            parametr „nazwa” umo¿liwia nadanie nazwy, pod jak¹ odczytane dane
+            zostan¹ zachowane w archiwum; jeœli on nie zostanie podany, dane
+            zostan¹ zachowane pod nazw¹ „stdin”.
+
+            Przyk³ad:
+
+              dir c:\*.txt /s/b | rar a -sipliki_txt.txt test
+
+            spowoduje, ¿e to, co wyœwietli polecenie „dir c:\*.txt /s/b”
+            zostanie skompresowane i umieszczone jako plik „pliki_txt.txt”
+            w archiwum test.rar.
+
+
+    -sl<rozmiar>
+            Przetwarza tylko te pliki, których rozmiar jest mniejszy ni¿ ten
+            okreœlony parametrem <rozmiar>.
+            Parametr <rozmiar> podaje siê w bajtach.
+
+
+    -sm<rozmiar>
+            Przetwarza tylko te pliki, których rozmiar jest wiêkszy ni¿ ten
+            okreœlony parametrem <rozmiar>.
+            Parametr <rozmiar> podaje siê w bajtach.
+
+
+    -sv     twórz niezale¿ne ci¹g³e woluminy
+
+            Domyœlnie RAR próbuje przerwaæ ci¹g³oœæ strumienia danych tak
+            wczeœnie jak to tylko mo¿liwe po rozpoczêciu tworzenia nowego
+            woluminu, lecz tylko jeœli od ostatniego przerwania ci¹g³oœci
+            nast¹pi³a kompresja znacznej iloœci danych (kilka megabajtów).
+
+            Opcja ta zmusza RARa do zignorowania rozmiaru skompresowanych
+            danych i przerwania ci¹g³oœci strumienia danych. Zmniejsza
+            to stopieñ kompresji lecz zwiêksza szanse na wypakowanie czêœci
+            danych w przypadku uszkodzenia jednego z woluminów takiego
+            archiwum.
+
+            Czasami jednak przerwanie ci¹g³oœci nie jest mo¿liwe nawet przy
+            u¿yciu tej opcji. Na przyk³ad nie mo¿na tego zrobiæ dla jednego
+            wielkiego pliku dzielonego na woluminy. Przerwanie ci¹g³oœci jest
+            mo¿liwe tylko dla odrêbnych plików.
+
+            Opcja ta jest ignorowana w przypadku tworzenia zwyk³ych (nie
+            dzielonych) archiwów.
+
+
+    -sv-    twórz zale¿ne ci¹g³e woluminy
+
+            Wy³¹cza przerywanie ci¹g³oœci strumienia danych pomiêdzy
+            woluminami. Zwiêksza to nieco stopieñ kompresji, lecz znacznie
+            zmniejsza szanse na odzyskanie danych w przypadku uszkodzenia
+            jednego z woluminów z takiego archiwum.
+
+            Opcja ta jest ignorowana w przypadku tworzenia zwyk³ych (nie
+            dzielonych) archiwów.
+
+
+    -s-     wy³¹cz ci¹g³e archiwizowanie
+
+
+    -t      testuj pliki po zarchiwizowaniu
+
+            Opcja ta jest przydatna szczególnie z poleceniem „m” - pliki
+            zostan¹ usuniête tylko jeœli testowanie przebiegnie bezb³êdnie.
+
+
+    -ta[m,c,a,o]<data>  przetwarzaj pliki zmodyfikowane po okreœlonej dacie
+
+            Pliki dok³adnie spe³niaj¹ce okreœlony warunek czasowy
+            s¹ uwzglêdniane.
+
+            Format daty to RRRRMMDDggmmss. Mo¿na równie¿ u¿ywaæ separatorów
+            „-” lub „:” oraz pomijaæ koñcowe pola. Np. nastêpuj¹ca forma jest
+            poprawna: -ta2001-10-25. RAR zinterpretuje to jak
+            -ta20011025000000, co oznacza „pliki zmodyfikowane po godzinie
+            00:00:00 25 paŸdziernika 2001”
+
+            Aby okreœliæ typ okreœlanego czasu nale¿y u¿yæ modyfikatorów 'm',
+            'c', 'a' (odpowiednio - czas modyfikacji, utworzenia, ostatniego
+            u¿ycia), np. -tac20011025 okreœla czas utworzenia. Brak
+            modyfikatora spowoduje, ¿e zostanie przyjêty czas modyfikacji.
+
+            Opcja ta dopuszcza u¿ycie kilku modyfikatorów na raz, np.
+            -tamc20151019 okreœla czas modyfikacji i utworzenia. Zamiast tego
+            mo¿na w linii poleceñ umieœciæ tê opcjê kilkukrotnie z ró¿nymi
+            modyfikatorami. Domyœlnie filtrowanie wzglêdem daty wymaga
+            spe³nienia wszystkich warunków (jeœli podano wiêcej ni¿ jeden).
+            Aby spowodowaæ, ¿eby plik spe³niaj¹cy dowolny warunek (a nie
+            wszystkie) zosta³ uwzglêdniony, nale¿y dodaæ do opcji modyfikator
+            'o'. Na przyk³ad, u¿ycie -taco20151019 -tamo20151023 spowoduje,
+            ¿e uwzglêdnione zostan¹ pliki utworzone po 2015-10-19 lub
+            zmodyfikowane po 2015-10-23.
+
+
+    -tb[m,c,a,o]<data>  przetwarzaj pliki zmodyfikowane przed okreœlon¹ dat¹
+
+            Pliki dok³adnie spe³niaj¹ce okreœlony warunek czasowy
+            s¹ wykluczane.
+
+            Format daty jest identyczny z tym opisanym przy opcji -ta
+
+
+    -tk     zachowaj czas archiwum
+
+            Powoduje, ¿e podczas aktualizacji archiwum RAR nie zmienia jego
+            czasu.
+
+
+    -tl     ustaw czas archiwum na czas najnowszego pliku
+
+            Powoduje, ¿e podczas modyfikacji archiwum RAR ustawia czas jego
+            ostatniej modyfikacji na czas najnowszego pliku, który siê w nim
+            siê znajduje.
+
+
+    -tn[m,c,a,o]<czas> przetwarzaj pliki nowsze ni¿ podany okres czasu.
+
+            Pliki dok³adnie spe³niaj¹ce okreœlony warunek czasowy
+            s¹ uwzglêdniane.
+
+            Format okreœlenia czasu:
+
+            [<ndni>d][<ngodzin>h][<nminut>m][<nsekund>s]
+
+            Na przyk³ad, aby przetwarzaæ pliki nowsze ni¿ 15 dni nale¿y
+            pos³u¿yæ siê opcj¹ -tn15d, a nowsze ni¿ 2 godziny i 30 minut
+            -tn2h30m
+
+            Aby okreœliæ typ okreœlanego czasu nale¿y u¿yæ modyfikatorów 'm',
+            'c', 'a' (odpowiednio - czas modyfikacji, utworzenia, ostatniego
+            u¿ycia), np. -tnc2h30m okreœla czas utworzenia. Brak modyfikatora
+            spowoduje, ¿e zostanie przyjêty czas modyfikacji.
+
+            Opcja ta dopuszcza u¿ycie kilku modyfikatorów na raz, np. -tnmc30d
+            okreœla czas modyfikacji i utworzenia. Zamiast tego mo¿na w linii
+            poleceñ umieœciæ tê opcjê kilkukrotnie z ró¿nymi modyfikatorami.
+            Domyœlnie filtrowanie wzglêdem daty wymaga spe³nienia wszystkich
+            warunków (jeœli podano wiêcej ni¿ jeden). Aby spowodowaæ, ¿eby
+            plik spe³niaj¹cy dowolny warunek (a nie wszystkie) zosta³
+            uwzglêdniony, nale¿y dodaæ do opcji modyfikator 'o'. Na przyk³ad,
+            u¿ycie -tnco30d -tnmo20d spowoduje, ¿e uwzglêdnione zostan¹ pliki
+            utworzone póŸniej ni¿ 30 dni temu lub zmodyfikowane póŸniej ni¿
+            20 dni temu.
+
+
+    -to[m,c,a,o]<czas> przetwarzaj pliki starsze ni¿ podany okres czasu.
+
+            Pliki dok³adnie spe³niaj¹ce okreœlony warunek czasowy
+            s¹ wykluczane.
+
+            Format tej opcji jest analogiczny do formatu opcji -tn
+
+
+    -ts[m,c,a,p][+,-,1]  zapisz lub odtwórz czas pliku
+
+            Opcja –tsm powoduje, ¿e RAR zachowa czas modyfikacji pliku,
+            -tsc – czas utworzenia pliku a -tsa – czas ostatniego dostêpu
+            do pliku. Dopuszczalne jest u¿ycie wielu opcji w jednym poleceniu,
+            np. „-tsc -tsa”. Jeœli w opcji nie zostanie wyszczególniony ¿aden
+            ze znaków „m”, „c” lub „a”, RAR domyœlnie przyjmie,
+            ¿e wszystkie z nich zosta³y u¿yte.
+
+            Do³¹czenie znaku „+” spowoduje, ¿e dany typ czas zostanie
+            zachowany w maksymalnej precyzji. Zale¿y to od systemu operacyjnego
+            oraz systemu plików - mo¿e to byæ dok³adnoœæ rzêdu 100 nanosekund
+            w Windows, i 1 nanosekundy w systemie Unix. Do³¹czenie znaku „1”
+            spowoduje, ¿e WinRAR u¿yje 1-sekundowej precyzji. Do³¹czenie
+            znaku „-” spowoduje, ¿e dany typ czasu w ogóle nie zostanie
+            zachowany. Jeœli ¿aden ze znaków „+”, „-” lub „1” nie zostanie
+            do³¹czony, RAR domyœlnie przyjmie, ¿e zosta³ u¿yty znak „+”,
+            zatem zarówno opcja „-ts+” jak i „-ts” spowoduj¹ zachowanie
+            wszystkich trzech typów czasu z maksymaln¹ dok³adnoœci¹.
+
+            Wszystkie typy czasu dla danego pliku zachowywane s¹ z t¹ sam¹
+            precyzj¹. Jeœli zostanie podana ró¿na precyzja dla ró¿nych typów
+            czasu, np. -tsm1 -tsc+, to zastosowana zostanie jedna dla obu.
+
+            Archiwa w formacie RAR 4.x zawsze zawieraj¹ czas modyfikacji pliku,
+            dlatego u¿ycie opcji „-tsm-” w przypadku operacji na archiwum
+            RAR 4.x spowoduje zachowanie czasu modyfikacji z najni¿sz¹
+            precyzj¹ (która wynosi 2 sekundy). Zachowanie dwóch pozosta³ych
+            typów czasu mo¿na wy³¹czyæ. Archiwa w formacie RAR 5.0 umo¿liwiaj¹
+            pominiêcie wszystkich typów czasu (nawet czasu ostatniej
+            modyfikacji), w przypadku czego wypakowywane pliki otrzymaj¹
+            bie¿¹cy czas. Opcje „-tsm- -tsc- -tsa-” lub samo „-ts-” spowoduj¹,
+            ¿e w archiwum RAR 4.x zostanie zachowany tylko czas modyfikacji
+            o niskiej precyzji, natomiast w archiwum RAR 5.0 nie zostanie
+            zachowany ¿aden z nich.
+
+            Jeœli opcja „-ts” nie zostanie u¿yta, RAR zachowuje tylko czas
+            modyfikacji o wysokiej precyzji i pomija dwa pozosta³e typy czasu.
+
+            Domyœlnie RAR odtwarza tylko czas modyfikacji wypakowywanych
+            plików, nawet jeœli w archiwum zachowane s¹ te¿ inne typy czasu.
+            U¿ycie opcji „-ts” lub „-ts+” spowoduje odtworzenie ich wszystkich,
+            „-tsc” i „-tsa” odtworzenie czasu utworzenia i ostatniego
+            dostêpu, a „-tsm-” lub „-ts-” - u¿ycie bie¿¹cego czasu systemowego
+            zamiast tego zachowanego w archiwum.
+
+            W Windows podczas wypakowywania mo¿na ustawiæ wszystkie typy czasu
+            pliku (modyfikacji, utworzenia i dostêpu), w systemie
+            Unix – czas modyfikacji i dostêpu (ale nie utworzenia).
+
+            Opcja -tsp powoduje, ¿e RAR podejmuje próbê zachowania czasu
+            ostatniego dostêpu pliku Ÿród³owego podczas archiwizacji.
+            Zachowanie oznacza w tym wypadku, ¿e ten czas nie zostanie
+            zmieniony (jak to normalnie siê dzieje podczas odczytywania pliku).
+            Opcja w tej postaci nie okreœla jednak które typy czasu zostan¹
+            zachowane w archiwum - aby tego dokonaæ, musi byæ po³¹czona
+            z innymi opcjami -ts. Na przyk³ad, aby zachowaæ w archiwum czas
+            ostatniego dostêpu i jednoczeœnie nie zmieniaæ go dla pliku
+            Ÿród³owego, nale¿y u¿yæ opcji -tsa -tsp w jednym poleceniu.
+            Ta opcja mo¿e uniemo¿liwiæ otwarcie niektórych plików (mo¿na
+            je otworzyæ bez tej opcji).
+
+            RAR dla Windows obs³uguje opcjê -tsp. Nie ma jednak gwarancji, ¿e
+            zadzia³a ona równie¿ dla innych systemów operacyjnych.
+
+            Dopuszczalne jest ³¹czenie kilku opcji -ts w jedn¹, np. -tscap
+            zamiast -tsc -tsa -tsp.
+
+            Przyk³ady:
+            1) Zachowaj wszystkie typy czasu z maksymaln¹ precyzj¹
+
+              rar a -ts kopia
+
+            2) Odtwórz czas modyfikacji i ostatniego dostêpu. Opcja –tsm
+               nie jest wymagana, poniewa¿ RAR domyœlnie odtwarza czas
+               modyfikacji. Aby odtworzyæ jedynie czas ostatniego dostêpu
+               nale¿y u¿yæ opcji -tsm- -tsa
+
+              rar x -tsa kopia
+
+            3) Zachowaj czas modyfikacji i utworzenia z nisk¹ precyzj¹.
+               Zabezpiecz czas ostatniego dostêpu plików Ÿród³owych.
+
+              rar a -tsm1 -tsc1 -tsp kopia
+
+               Opcjonalnie mo¿na u¿yæ opcji w krótszej postaci: -tsm1c1p
+
+
+    -u      aktualizuj pliki
+
+            Opcja mo¿e byæ u¿yta podczas rozpakowywania lub tworzenia
+            archiwum. Polecenie „a -u” jest równowa¿ne poleceniu „u”. Opcjê
+            „-u” mo¿na te¿ u¿yæ z poleceniami „m” lub „mf”.
+
+            Jeœli opcja „-u” zostanie u¿yta z poleceniem „x” lub „e”, wtedy
+            pliki na dysku zostan¹ zast¹pione przez pliki wypakowane
+            z archiwum tylko wtedy, jeœli s¹ starsze ni¿ pliki w archiwum,
+            lecz w przeciwieñstwie do opcji „-f”, plik zostanie wypakowany
+            nawet jeœli nie posiada swojego odpowiednika na dysku.
+
+
+    -v      utwórz woluminy o rozmiarze automatycznym lub wylistuj woluminy
+
+            Opcja ta mo¿e byæ u¿yta podczas tworzenia lub listowania
+            zawartoœci woluminów.
+
+            W pierwszym przypadku powoduje, ¿e rozmiar woluminów bêdzie
+            dobierany automatycznie (ile jest wolnego miejsca na noœniku).
+            Jest to wygodne podczas tworzenia woluminów bezpoœrednio
+            na noœniku wymiennym (np. na dyskietkach). Wiêcej informacji
+            o woluminach znajduje siê w opisie nastêpnej opcji (-v<rozmiar>).
+
+            W drugim przypadku, jeœli opcja zostanie u¿yta w po³¹czeniu
+            z poleceniem „L” lub „V”, powoduje, ¿e RAR wylistuje zawartoœæ
+            wszystkich woluminów pocz¹wszy od podanego w linii poleceñ. Bez
+            tej opcji RAR wylistuje zawartoœæ tylko podanego woluminu.
+
+
+    -v<rozmiar>[k|b|f|m|M|g|G]  twórz woluminy
+
+            Tworzy woluminy o wielkoœci=<rozmiar>*1000 [*1024 | *1]
+
+            Domyœlnie opcja ta mno¿y parametr <rozmiar> przez tysi¹c (1000)
+            bajtów (nie 1024 bajtów). Aby mno¿nikiem by³ kilobajt (1024 bajty)
+            nale¿y do <rozmiar> dodaæ literê „k”; litera „b” powoduje, ¿e
+            mno¿nikiem jest 1, litera „m” - megabajt (1048576 bajtów),
+            litera „M” - milion bajtów, litera „g” - gigabajt (1073741824
+            bajtów), litera „G” - miliard bajtów. Mo¿na te¿ wybraæ jedn¹
+            z predefiniowanych wartoœci u¿ywaj¹c symbolu „f” po parametrze
+            <rozmiar>. Predefiniowane wartoœci to 360, 720, 1200, 1440
+            lub 2880. W procesie tworzenia woluminów s¹ one zastêpowane
+            odpowiednim rozmiarem dyskietki (odpowiednio 360KB, 720KB,
+            1.2MB, 1,44MB i 2,88MB).
+
+            Jeœli parametr <rozmiar> zostanie pominiêty, wielkoœci woluminów
+            zostan¹ dobrane automatycznie.
+
+            Dopuszczalne jest wpisywanie u³amków dziesiêtnych przy u¿yciu
+            kropki jako separatora dziesiêtnego. Np. -v1.5g oznacza
+            1 i pó³ gigabajta.
+
+            Opcja -v mo¿e wyst¹piæ wielokrotnie, co spowoduje okreœlenie
+            ró¿nych rozmiarów dla kolejnych woluminów. Na przyk³ad:
+
+              rar a -v100k -200k -300k archiwum
+
+            spowoduje, ¿e pierwszy wolumin bêdzie mia³ rozmiar 100KB,
+            drugi 200KB a trzeci i ka¿dy nastêpny - 300KB.
+
+            Jeœli woluminy s¹ tworzone na wyjmowalnych noœnikach
+            (dyskietkach), to po utworzeniu pierwszego woluminu RAR zada
+            pytanie:
+
+            Utworzyæ nastêpny wolumin?: Tak/Nie/Wszystkie/Anuluj
+
+            W tym momencie nale¿y zmieniæ dyskietkê. OdpowiedŸ „W”
+            („Wszystkie”) spowoduje utworzenie wszystkich woluminów bez
+            zatrzymywania.
+
+            Domyœlnie woluminy maj¹ nazwy „nazwa_archiwum.partNNN.rar”, gdzie
+            NNN jest numerem woluminu. Dla formatu archiwum RAR 4.x, przy
+            u¿yciu opcji -vn mo¿na spowodowaæ, ¿e RAR bêdzie nazywa³ woluminy
+            w starym stylu, gdzie pierwszy wolumin bêdzie mia³ rozszerzenie
+            .rar, nastêpne woluminy otrzymaj¹ kolejne rozszerzenia od .R00 do
+            .R99., póŸniej .S00, .S01, ..., .S99, ... (maksymalnie do .{99).
+            Archiwa w formacie RAR 5.0 nie obs³uguj¹ opcji -vn ani starego
+            stylu nazywania woluminów.
+
+            Podczas rozpakowywania lub testowania wieloczêœciowego archiwum,
+            wystarczy u¿yæ nazwy pierwszego woluminu. Jeœli na dysku nie ma
+            nastêpnego woluminu a dysk jest wyjmowalny, RAR wyœwietli monit:
+
+                     W³ó¿ dysk z <nazwa nastêpnego woluminu>.
+
+            Nale¿y w³o¿yæ dysk z w³aœciwym woluminem i nacisn¹æ dowolny
+            klawisz.
+
+            Jeœli podczas rozpakowywania nastêpny wolumin nie zostanie
+            znaleziony a dysk, na którym znajduje siê rozpakowywane archiwum
+            nie jest wyjmowalny, RAR zakoñczy dzia³anie wyœwietlaj¹c
+            komunikat:
+
+                     Nie mogê odnaleŸæ woluminu <nazwa woluminu>
+
+            woluminy nie mog¹ byæ modyfikowane. Polecenia „d”, „f”, „u” lub
+            „s” nie mog¹ byæ u¿ywane z archiwami wieloczêœciowymi. Polecenie
+            „a” mo¿e byæ u¿yte jedynie do utworzenia archiwum
+            wieloczêœciowego.
+
+            Mo¿liwe jest, choæ nie zdarza siê czêsto, ¿e rozmiar pliku
+            umieszczonego w archiwum wieloczêœciowym jest wiêkszy ni¿ przed
+            kompresj¹. Jest to spowodowane tym, ¿e w archiwach
+            wieloczêœciowych nie mo¿na w³¹czyæ metody „bez kompresji” (co ma
+            miejsce w jednoczêœciowych archiwach gdy rozmiar pliku
+            po kompresji roœnie).
+
+            woluminy mog¹ te¿ byæ samorozpakowuj¹ce siê. Nale¿y je tworzyæ
+            u¿ywaj¹c obu opcji „-v” i „-sfx” jednoczeœnie.
+
+            Przyk³ad:
+
+                utwórz woluminy o podanym rozmiarze:
+
+            rar a -s -v1440 floparch.rar *.*
+
+                utworzy ci¹g³e woluminy o rozmiarze 1440000 bajtów.
+
+
+    -vd     usuñ zawartoœæ dysku przed utworzeniem woluminu
+
+            Wszystkie pliki i katalogi znajduj¹ce siê na dysku docelowym
+            zostan¹ usuniête. Opcja dotyczy tylko dysków wyjmowalnych
+            - zawartoœæ twardego dysku nie mo¿e byæ usuniêta w ten sposób.
+
+
+    -ver[n]  kontrola wersji pliku
+
+            Opcja ta zmusza RARa do przechowywania poprzednich wersji pliku
+            podczas aktualizowania go w istniej¹cym archiwum. Nazwy
+            poprzednich wersji s¹ zmieniane na „nazwapliku;n”, gdzie „n” jest
+            numerem wersji.
+
+            Podczas rozpakowywania archiwum bez tej opcji, RAR wypakowuje
+            tylko ostatni¹ wersjê danego pliku (t¹, którego nazwa nie zawiera
+            numeru wersji). Lecz jeœli podaæ dok³adn¹ nazwê pliku, wraz
+            z numerem wersji, zostanie ona uwzglêdniona podczas wypakowywania.
+            Na przyk³ad „rar x archiwum” spowoduje wypakowanie tylko ostatnich
+            wersji plików, a „rar x archiwum plik.txt;5” wypakuje „plik.txt;5”
+            (jeœli znajduje siê w archiwum).
+
+            Jeœli podczas wypakowania opcja -ver zostanie u¿yta bez numeru,
+            RAR wypakuje wszystkie wersje plików - w takim przypadku numer
+            wersji nie zostanie usuniêty z nazwy. Mo¿na równie¿ wypakowaæ
+            konkretn¹ wersjê okreœlaj¹c jej numer w parametrze opcji -ver.
+            Spowoduje to, ¿e RAR wypakuje tylko podan¹ wersjê plików i usunie
+            jej numer z ich nazw. Na przyk³ad „rar x -ver5 archiwum” spowoduje
+            wypakowanie tylko pi¹tych wersji plików.
+
+            Podczas archiwizacji opcja ta powoduje okreœlenie górnego limitu
+            wersji plików przechowywanych w archiwum. Wszystkie wersje powy¿ej
+            okreœlonej zostan¹ usuniête.
+
+            Podczas archiwizacji z t¹ opcj¹ zaleca siê unikanie plików
+            o nazwach w formacie 'nazwapliku;n'. Tak nazwane pliki mog¹
+            powodowaæ powstawanie duplikatów jeœli stara wersja pliku o takiej
+            nazwie ju¿ istnieje w archiwum lub te¿ bêdzie do niego dodana
+            w póŸniejszym czasie.
+
+
+    -vn     u¿yj starego stylu nazywania woluminów
+
+            Domyœlnie woluminy maj¹ nazwy „nazwa_archiwum.partNNN.rar”, gdzie
+            NNN jest numerem woluminu. Dla formatu archiwum RAR 4.x, przy
+            u¿yciu opcji -vn mo¿na spowodowaæ, ¿e RAR bêdzie nazywa³ woluminy
+            w starym stylu, gdzie pierwszy wolumin bêdzie mia³ rozszerzenie
+            .rar, nastêpne woluminy otrzymaj¹ kolejne rozszerzenia od .R00 do
+            .R99., póŸniej .S00, .S01, ..., .S99, ... (maksymalnie do .{99).
+            Archiwa w formacie RAR 5.0 nie obs³uguj¹ opcji -vn ani starego
+            stylu nazywania woluminów.
+
+
+    -vp     pauza przed ka¿dym woluminem
+
+            Domyœlnie RAR pyta o potwierdzenie przed utworzeniem lub
+            rozpakowaniem nastêpnego woluminu tylko dla dysków wyjmowalnych.
+            Ta opcja powoduje, ¿e RAR bêdzie pyta³ o to tak¿e w przypadku
+            dysków niewyjmowalnych. Mo¿e to byæ u¿yteczne w przypadku, gdy
+            miejsce na dysku jest ograniczone i trzeba przenosiæ ka¿dy wolumin
+            zaraz po jego utworzeniu.
+
+
+    -w<k>   wybierz katalog roboczy <k>
+
+            Opcja ta s³u¿y do wskazania katalogu roboczego dla plików
+            tymczasowych.
+
+
+    -x<obiekt>  wyklucz podany obiekt (plik lub katalog).
+
+            Dopuszczalne jest u¿ycie symboli wieloznacznych zarówno dla nazw
+            plików jak i dla czêœci œcie¿ek. Opcjê „-x” mo¿na podaæ
+            wielokrotnie w jednym poleceniu.
+
+            Jeœli <obiekt> zawiera symbole wieloznaczne, to odnosz¹ siê one
+            tylko do bie¿¹cego katalogu i jego podkatalogów. Aby wykluczyæ plik
+            o okreœlonej nazwie (np. setup.exe), który mo¿e siê znajdowaæ w
+            kilku katalogach, nale¿y u¿yæ:
+
+              -x*\setup.exe.
+
+            Zamiast symbolu * mo¿na uzyæ konkretnej nazwy katalogu (jeœli
+            wykluczeniu ma ulec plik tylko z konkretnego katalogu). Jeœli opcja
+            -x zostanie u¿yta podczas wypakowywania, to ewentualny katalog
+            towarzysz¹cy nazwie pliku do wykluczenia okreœla katalog wewn¹trz
+            archiwum, a nie katalog na dysku.
+
+            Domyœlnie do symboli wieloznacznych s¹ dopasowywane nazwy tylko
+            plików. Aby okreœliæ symbolem wieloznacznym nazwê katalogu,
+            nale¿y u¿yæ specjalnej sk³adni - na koñcu nazwy nale¿y umieœciæ
+            separator nazwy katalogu (Windows: „\”, Unix: „/”). Na przyk³ad,
+            maska „*tmp*\” spowoduje wykluczenie wszystkich katalogów o nazwie
+            pasuj¹cej do wzorca „*tmp*”, a maska „*\tmp\” - wszystkich
+            katalogów o nazwie „tmp”.
+
+            Aby wykluczyæ pojedynczy katalog, nale¿y okreœliæ jego dok³adn¹
+            nazwê ze œcie¿k¹, bez u¿ywania symboli wieloznacznych. W tym
+            przypadku nie trzeba dodawaæ na koñcu nazwy separatora nazwy
+            katalogu.
+
+
+            Przyk³ady:
+
+              rar a -r -x*.jpg -x*.avi rawfiles
+
+                pliki *.jpg i *.avi nie zostan¹ dodane do archiwum rawfiles
+
+
+              rar a -r -x*\temp\ ratunekdlac c:\*
+
+                kompresuje wszystkie pliki na dysku C: poza katalogami „temp”
+                oraz plikami, które siê w nich znajduj¹
+
+
+              rar x -x*.txt dokumenty
+
+                wypakowuje z archiwum dokumenty.rar wszystkie pliki oprócz
+                plików .txt
+
+
+    -x@<lista>
+            wyklucz pliki znajduj¹ce siê na podanej <liœcie>. Jeœli <lista>
+            nie zostanie okreœlona, pliki do wykluczenia zostan¹ wczytane
+            ze standardowego urz¹dzenia wejœciowego (z klawiatury)
+
+            Przyk³ad:
+
+            rar a -x@exlist.txt arch *.exe
+
+    -y      odpowiedz „Tak” na wszystkie zapytania
+
+
+    -z[plik] wczytaj komentarz archiwum z okreœlonego pliku.
+
+            Opcji tej mo¿na u¿yæ z dowolnym poleceniem modyfikuj¹cym archiwum,
+            co spowoduje dodanie komentarza do tego archiwum.
+            Opcja ta u¿yta razem z opcj¹ -sc umo¿liwia wczytanie komentarza
+            w innym zestawie znaków (np. UNICODE).
+            Jeœli parametr [plik] nie wystapi, komentarz zostanie wczytany
+            ze standardowego urz¹dzenia wejœciowego.
+
+
+ Ograniczenia
+ ~~~~~~~~~~~~
+    Ograniczenia poleceñ:
+
+    Polecenia „d”, „u”, „f”, „c”, „cf” nie wspó³pracuj¹ z woluminami.
+
+    Polecenie „a” nie mo¿e aktualizowaæ woluminu, jedynie mo¿e s³u¿yæ
+    do utworzenia nowych woluminów.
+
+
+ Wartoœci zwracane
+ ~~~~~~~~~~~~~~~~~
+    RAR zwraca kod 0 jeœli nie wyst¹pi¹ ¿adne zak³ócenia operacji. Kod ró¿ny
+    od zera oznacza wyst¹pienie jakiegoœ b³êdu:
+
+    Wartoœæ  Opis
+
+     0       Operacja zakoñczona sukcesem.
+     1       Nie-krytyczny b³¹d.
+     2       B³¹d krytyczny.
+     3       B³êdna suma kontrolna. Dane s¹ uszkodzone.
+     4       Próba modyfikacji archiwum zablokowanego poleceniem „k”.
+     5       B³¹d zapisu.
+     6       B³¹d otwarcia pliku.
+     7       B³¹d sk³adni linii poleceñ.
+     8       Za ma³o pamiêci.
+     9       B³¹d podczas tworzenia pliku.
+    10       Nie znaleziono plików pasuj¹cych do podanego wzorca.
+    11       Nieprawid³owe has³o.
+   255       U¿ytkownik przerwa³ operacjê.
+
+ S³ownik
+ ~~~~~~~
+    Archiwum         Specjalny plik zawieraj¹cy jeden lub wiêcej plików,
+                     opcjonalnie skompresowanych i/lub zaszyfrowanych.
+
+    Kompresja        Metoda zapisu danych redukuj¹ca ich rozmiar.
+
+    Suma kontrolna   Wartoœæ obliczana dla bloku danych lub pliku
+                     umo¿liwiaj¹ca sprawdzenie jego poprawnoœci.
+
+    SFX              Archiwum z do³¹czonym modu³em (programem) s³u¿¹cym
+                     do rozpakowania tego archiwum po jego uruchomieniu.
+
+    ci¹g³e           Archiwum skompresowane przy u¿yciu specjalnej metody,
+                     która traktuje wszystkie pliki jako jeden strumieñ
+                     danych. Szczególnie sprawdza siê podczas kompresji
+                     du¿ej liczby ma³ych, podobnych do siebie plików.
+
+    wolumin          Czêœæ wieloczêœciowego archiwum. Dzielenie archiwów na
+                     woluminy umo¿liwia przechowywanie ich na wielu dyskach
+                     wyjmowalnych. Ci¹g³e woluminy rozpakowuje siê zaczynaj¹c
+                     od pierwszego woluminu.
+
+
+
+ Prawa autorskie
+
+    (c) 1993-2020 Alexander Roshal
+
+
+ T³umaczenie
+    Pawe³ Pawlak (Morris/Elysium), 1998-2020

@@ -19,6 +19,7 @@ namespace bb {
 		auto res = archive_write_add_filter_gzip(a);
 		//std::cout << archive_error_string(a);
 		res = archive_write_set_format_pax_restricted(a); // Note 1
+		res = archive_write_set_options(a, "compression-level=9");
 		res = archive_write_open_filename(a, packetName.c_str());
 	}
 

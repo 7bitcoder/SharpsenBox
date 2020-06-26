@@ -70,18 +70,21 @@ namespace pr {
 		QJsonObject fileList;
 		rootObject_ = &fileList;
 		QJsonObject packetsList;
-		packetId = 1;
+		packetId = 0;
 		for (auto packet : packets) {
 			auto& name = packet->getPacketName();
 			packer_.setup((projectDir / projectName / name.toStdString()).generic_string());
 			std::cout << "packet: " << name.toStdString() << std::endl;
 			QJsonObject root;
-			packetsList.insert(name, QString::number(packetId++));
+			QJsonObject pack;
+			pack.insert("Name", name);
+			pack.insert("Url", "---");
+			packetsList.insert(QString::number(++packetId), pack);
 			insertData(packet->rootItemPtr(), root);
 			QJsonObject packet;
 			packet.insert("Files", root);
-			packet.insert("Url", "Asdasd");
-			packet.insert("Size", "Asdasd");
+			packet.insert("Url", "---");
+			packet.insert("Size", "---");
 			appitems.insert(name, packet);
 			packer_.end();
 		}
@@ -100,6 +103,7 @@ namespace pr {
 		ro.insert("AppDir", AppDir_.generic_string().c_str());
 		ro.insert("ProjectName", projectName.c_str());
 		ro.insert("ProjectDir", projectDir.generic_string().c_str());
+		ro.insert("AppComponents", appitems);
 
 		doc_.setObject(ro);
 		std::filesystem::path project = projectDir / projectName / (projectName + ".json");
