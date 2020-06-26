@@ -80,6 +80,7 @@ namespace bb {
 		reset();
 		setTotal(0);
 		appInfoParser_.setVerToCheck(version);
+		fileListParser_.setActualVersion(version);
 		files_ = files{ {appInfoUrl, "AppInfo.json" } };
 		downloader_.setFilestoDownload(files_);
 		stage_ = Stage::DOWNLOAD;
@@ -95,6 +96,7 @@ namespace bb {
 		setTotal(0);
 		actualGame_ = &game;
 		appInfoParser_.setVerToCheck(game.version);
+		fileListParser_.setActualVersion(game.version);
 		files_ = files{ {game.appInfoUrl.toStdString(), "AppInfo.json" } };
 		downloader_.setFilestoDownload(files_);
 		stage_ = Stage::DOWNLOAD;
@@ -107,20 +109,56 @@ namespace bb {
 	}
 
 	void InstalationManager::appInfoDownloaded() {
-		connect(&appInfoParser_, &AppInfoParser::parseEnded, this, &InstalationManager::appInfoParserEnded);
+		connect(&appInfoParser_, &AppInfoParser::parseEnded, this, &InstalationManager::downloadUpdateMetadata);
 		disconnect(&downloader_, &Downloader::ended, this, &InstalationManager::appInfoDownloaded);
 		appInfoParser_.parse();
 	}
 
-	void InstalationManager::appInfoParserEnded() {
+	void InstalationManager::downloadUpdateMetadata() {
 		if (appInfoParser_.needUpdate()) {
-			install(appInfoParser_.getNeededFiles(), appInfoParser_.getBytesToDownload(), actualGame_);
-			updateStatus(true);
+			reset();
+			fileListParser_.setVersionToUpdate(appInfoParser_.getVer());
+			setTotal(0);
+			files_ = files{ {appInfoParser_.getFileListUrl().toStdString(), "FileList.json" } };
+			downloader_.setFilestoDownload(files_);
+			stage_ = Stage::DOWNLOAD;
+			progress_ = 100;
+			LoadingBar_->setState(lb::LoadingBar::State::CHECKING);
+			LoadingBar_->setVisibleState(lb::LoadingBar::VisibleState::SHOWED);
+			connect(&downloader_, &Downloader::ended, this, &InstalationManager::metadataDownloaded);
+			connect(&downloader_, &Downloader::error, this, &InstalationManager::errorCatched); //todo przenies errory do konstruktora
+			downloader_.start();
 		} else {
 			updateStatus(false);
-			if(actualGame_)
+			if (actualGame_)
 				actualGame_->updateChecked = true;
 		}
+	}
+
+	void InstalationManager::metadataDownloaded() {
+		disconnect(&downloader_, &Downloader::ended, this, &InstalationManager::metadataDownloaded);
+		connect(&fileListParser_, &FileListParser::parseEnded, this, &InstalationManager::fileListParseEnded);
+		fileListParser_.parse();
+	}
+
+	void InstalationManager::fileListParseEnded() {
+		disconnect(&fileListParser_, &FileListParser::parseEnded, this, &InstalationManager::fileListParseEnded);
+		install(fileListParser_.getPathFiles(), fileListParser_.getBytesToDownload(), actualGame_);
+
+		fileListParser_.setVersionToUpdate(appInfoParser_.getVer());
+		setTotal(0);
+		files_ = fileListParser_.getPathFiles();
+		downloader_.setFilestoDownload(files_);
+		stage_ = Stage::DOWNLOAD;
+		progress_ = 100;
+		LoadingBar_->setState(lb::LoadingBar::State::CHECKING);
+		LoadingBar_->setVisibleState(lb::LoadingBar::VisibleState::SHOWED);
+		connect(&downloader_, &Downloader::ended, this, &InstalationManager::metadataDownloaded);
+		connect(&downloader_, &Downloader::error, this, &InstalationManager::errorCatched); //todo przenies errory do konstruktora
+		downloader_.start();
+
+
+		updateStatus(true);
 	}
 
 	void InstalationManager::install(files files, qint64 tot, cf::Game* game) {

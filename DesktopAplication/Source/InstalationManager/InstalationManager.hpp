@@ -11,6 +11,7 @@
 #include "Config.hpp"
 #include "Cleanup.hpp"
 #include "AppInfoParser.hpp"
+#include "FileListParser.hpp"
 
 namespace lb {
 	class LoadingBar;
@@ -74,7 +75,10 @@ namespace bb {
 		void installEnded();
 		void cleanUpEnded();
 		void appInfoDownloaded();
+		void downloadUpdateMetadata();
+		void metadataDownloaded();
 		void appInfoParserEnded();
+		void fileListParseEnded();
 	signals:
 		void updateStatus(bool needUpdate);
 		void updateEnded(QString finalVersion);
@@ -95,6 +99,7 @@ namespace bb {
 		ArchieveInstaller installer_;
 		cu::Cleanup cleanUpper_;
 		AppInfoParser appInfoParser_;
+		FileListParser fileListParser_;
 
 		std::filesystem::path downloadDir_;
 		std::filesystem::path installDir_;

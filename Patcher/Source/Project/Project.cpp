@@ -67,11 +67,16 @@ namespace pr {
 
 		auto packets = dt::TreeModel::getObject().getPackets();
 		QJsonObject appitems;
+		QJsonObject fileList;
+		rootObject_ = &fileList;
+		QJsonObject packetsList;
+		packetId = 1;
 		for (auto packet : packets) {
 			auto& name = packet->getPacketName();
 			packer_.setup((projectDir / projectName / name.toStdString()).generic_string());
 			std::cout << "packet: " << name.toStdString() << std::endl;
 			QJsonObject root;
+			packetsList.insert(name, QString::number(packetId++));
 			insertData(packet->rootItemPtr(), root);
 			QJsonObject packet;
 			packet.insert("Files", root);
@@ -80,8 +85,12 @@ namespace pr {
 			appitems.insert(name, packet);
 			packer_.end();
 		}
-		ro.insert("AppComponents", appitems);
-		doc_.setObject(ro);
+		QJsonObject list;
+		list.insert("AppName", gameName.c_str());
+		list.insert("Ver", version_);
+		list.insert("Files", fileList);
+		list.insert("Packets", packetsList);
+		doc_.setObject(list);
 		std::filesystem::path filelist = projectDir / projectName / "fileList.json";
 		file_.setFileName(filelist.generic_string().c_str());
 		file_.open(QIODevice::WriteOnly | QIODevice::Text);
@@ -132,7 +141,7 @@ namespace pr {
 		QJsonDocument d;
 		d.setObject(ro);
 		QFile file;
-		auto path = projectDir / projectName / ("Pathch-" + version_.toStdString() + ".json");
+		auto path = projectDir / projectName / ("Patch-" + version_.toStdString() + ".json");
 		file.setFileName(path.generic_string().c_str());
 		file.open(QIODevice::WriteOnly | QIODevice::Text);
 		file.write(d.toJson());
@@ -145,16 +154,24 @@ namespace pr {
 			auto* child = item->child(i);
 			std::cout << "file: " << child->path().toStdString() << std::endl;
 			QJsonObject file;
+			QJsonObject fileList;
 			if (child->getState() != dt::TreeItem::fileState::DELETED) {
 				if (child->isDirectory()) {
 					insertData(child, file);
+					fileList.insert("Size", QString::number(0));
+					fileList.insert("Sha", "");
+					fileList.insert("Id", QString::number(packetId));
 				} else {
 					file.insert("Size", QString::number(child->fileSize()));
 					file.insert("Sha", child->fileSha());
+					fileList.insert("Size", QString::number(child->fileSize()));
+					fileList.insert("Sha", child->fileSha());
+					fileList.insert("Id", QString::number(packetId));
 				}
 				auto fullPath = AppDir_ / child->path().toStdString();
 				object.insert(fullPath.filename().c_str(), file);
 				packer_.write(fullPath.generic_string(), child->path().toStdString(), child->isDirectory());
+				rootObject_->insert(child->path(), fileList);
 			}
 			switch (child->getState()) {
 			case dt::TreeItem::fileState::ADDED:

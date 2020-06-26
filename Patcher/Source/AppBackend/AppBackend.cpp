@@ -25,15 +25,6 @@ namespace bc {
 	}
 
 	void Backend::registerObjects() {
-		qmlRegisterType<dt::TreeModel>("custom.TreeModel", 1, 1, "TreeModel");
-		//uc.setupModelData( ".", nullptr);
-		//QFileSystemModel* filemodel = new QFileSystemModel;
-		//filemodel->setFilter(QDir::Files | QDir::NoDotAndDotDot);
-		//filemodel->setNameFilterDisables(false);
-		//filemodel->supportedDragActions();
-		//filemodel->setRootPath("C:/Users/Sylwester/Desktop/TS");
-		//
-		//engine->rootContext()->setContextProperty("_TreeModel", filemodel);
 		registerObject<cf::Config>();
 		registerObject<dt::TreeModel>();
 		registerObject<pr::Project>();

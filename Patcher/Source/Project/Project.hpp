@@ -88,6 +88,7 @@ namespace pr {
 		std::filesystem::path rootDir_;
 		QJsonDocument doc_;
 		QJsonObject* rootObject_;
+		int packetId;
 
 		QString version_;
 		std::filesystem::path AppDir_;

@@ -66,7 +66,7 @@ if(AUTO_QT_LIBS)
 		COMMAND ${platform}deployqt --qmldir ${CMAKE_SOURCE_DIR}/Gui --${type} --quick ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
 		COMMENT "========= Deploying Aplication =========" 
 		USES_TERMINAL)
-		add_dependencies(deploy FileListGenerator)
+		add_dependencies(deploy Patcher)
 endif()
 
 
