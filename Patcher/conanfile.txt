@@ -1,11 +1,12 @@
 [requires]
-libcurl/7.52.1@bincrafters/stable
+OpenSSL/1.0.2@conan/stable
 zlib/1.2.11@conan/stable
-quazip/0.7.6@spk/stable
-libarchive/3.4.0
+libzip/1.5.2@bincrafters/stable
+
+
 
 [generators]
 cmake
 
 [options]
-libcurl:with_openssl=True
+libzip:with_openssl=False

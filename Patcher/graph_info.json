@@ -97,119 +97,27 @@
    "False"
   ],
   [
-   "libarchive:shared",
-   "False"
-  ],
-  [
-   "libarchive:with_acl",
+   "bzip2:build_executable",
    "True"
   ],
   [
-   "libarchive:with_bzip2",
+   "bzip2:shared",
    "False"
   ],
   [
-   "libarchive:with_cng",
-   "False"
-  ],
-  [
-   "libarchive:with_expat",
-   "False"
-  ],
-  [
-   "libarchive:with_iconv",
+   "libzip:enable_windows_crypto",
    "True"
   ],
   [
-   "libarchive:with_libb2",
+   "libzip:shared",
    "False"
   ],
   [
-   "libarchive:with_libxml2",
-   "False"
-  ],
-  [
-   "libarchive:with_lz4",
-   "False"
-  ],
-  [
-   "libarchive:with_lzma",
-   "False"
-  ],
-  [
-   "libarchive:with_lzo",
-   "False"
-  ],
-  [
-   "libarchive:with_nettle",
-   "False"
-  ],
-  [
-   "libarchive:with_openssl",
-   "False"
-  ],
-  [
-   "libarchive:with_pcreposix",
-   "False"
-  ],
-  [
-   "libarchive:with_zstd",
-   "False"
-  ],
-  [
-   "libcurl:custom_cacert",
-   "False"
-  ],
-  [
-   "libcurl:disable_threads",
-   "False"
-  ],
-  [
-   "libcurl:shared",
-   "False"
-  ],
-  [
-   "libcurl:with_largemaxwritesize",
-   "False"
-  ],
-  [
-   "libcurl:with_ldap",
-   "False"
-  ],
-  [
-   "libcurl:with_libidn",
-   "False"
-  ],
-  [
-   "libcurl:with_libmetalink",
-   "False"
-  ],
-  [
-   "libcurl:with_libpsl",
-   "False"
-  ],
-  [
-   "libcurl:with_librtmp",
-   "False"
-  ],
-  [
-   "libcurl:with_libssh2",
-   "False"
-  ],
-  [
-   "libcurl:with_nghttp2",
-   "False"
-  ],
-  [
-   "libcurl:with_openssl",
+   "libzip:with_bzip2",
    "True"
   ],
   [
-   "libcurl:with_winssl",
-   "False"
-  ],
-  [
-   "libiconv:shared",
+   "libzip:with_openssl",
    "False"
   ],
   [
