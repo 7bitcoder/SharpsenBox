@@ -70,6 +70,7 @@ namespace st {
 				return;
 			if (path->dir) {
 				auto* appended = parent->appendChildren({ p.filename().generic_string().c_str(),  p.generic_string().c_str() }, true, "", 0);
+				appended->setState(dt::TreeItem::fileState::ADDED);
 				setupModelData(++it, appended, p);
 			} else {
 				auto* appended = parent->appendChildren({ p.filename().generic_string().c_str(),  p.generic_string().c_str() }, false, path->sha, path->size);

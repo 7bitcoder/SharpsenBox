@@ -39,8 +39,10 @@ namespace bb {
 	}
 	void AppInfoParser::getPathUrls(QJsonObject& pathList) {
 		for (auto it = pathList.begin(); it != pathList.end(); it++) {
-			if (it.key() < actualVersion_)
-				break;
+			auto& ff = it.key().toStdString();
+			auto& ac = actualVersion_.toStdString();
+			if (it.key() <= actualVersion_)
+				continue;
 			pathFiles_.push_back({ it->toString().toStdString() , "Path-" + it.key().toStdString() + ".json"});
 		}
 	}

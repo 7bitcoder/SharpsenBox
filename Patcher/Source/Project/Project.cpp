@@ -244,17 +244,17 @@ namespace pr {
 		auto& map = dt::TreeModel::getObject().getSetUpModel().getDirFiles();
 		auto& path = item->path();
 		auto it = map.find(path);
-		if (it == map.end()) {//new element
+		if (it == map.end()) { // new element
 			item->setState(dt::TreeItem::fileState::DELETED);
 		} else {
-			if (!it->dir && !item->isDirectory()) {
+			if ( !it->dir && !item->isDirectory() ) {
 				bool sizeCmp = it->size == item->fileSize(), shaCmp = it->sha == item->fileSha();
 				if (!sizeCmp || !shaCmp) {
 					item->setState(dt::TreeItem::fileState::CHANGED);
 				} else if (sizeCmp && shaCmp) {
 					item->setState(dt::TreeItem::fileState::SAME);
 				}
-			} else {} //error
+			} else {} // error
 			auto& order = dt::TreeModel::getObject().getSetUpModel().getOrder();
 			order.erase(it->it);
 			map.erase(it);
