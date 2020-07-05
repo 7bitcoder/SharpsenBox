@@ -118,7 +118,6 @@ namespace bb {
 
 	void InstalationManager::downloadUpdateMetadata() {
 		if (appInfoParser_.needUpdate()) {
-			reset();
 			fileListParser_.setVersionToUpdate(appInfoParser_.getVer());
 			setTotal(0);
 			files_ = appInfoParser_.getFiles();

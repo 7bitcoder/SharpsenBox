@@ -1,10 +1,8 @@
 ﻿{
   "AppName": "Sylio",
   "Ver": "0.11",
-  "FileList": "https: //sourceforge.net/projects/sylio/files/Sylio.zip",
+  "FileList": "https://sourceforge.net/projects/sylio/files/fileList.json",
   "Versioning": {
-    "0.11": "https: //sourceforge.net/projects/sylio/files/Sylio.zip",
-    "0.12": "https: //sourceforge.net/projects/sylio/files/Sylio.zip",
-    "0.13": "https: //sourceforge.net/projects/sylio/files/Sylio.zip"
+    "0.11": "https://sourceforge.net/projects/sylio/files/Path-1.json"
   }
 }

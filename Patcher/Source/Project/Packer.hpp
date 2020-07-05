@@ -11,7 +11,7 @@
 #include "TreeModel.hpp"
 
 #define BLOCK_SIZE 8192 //~500KB
-struct archive;
+//struct zip_t;
 namespace bb {
 	class Packer {
 	public:
@@ -36,11 +36,10 @@ namespace bb {
 		dt::TreeModel* root_;
 		size_t size;
 		int res = 0;
-		struct archive* a;
-		struct archive_entry* entry;
-		struct stat st;
 		std::string cmd_;
 		int len;
 		int fd;
+
+		
 	};
 }

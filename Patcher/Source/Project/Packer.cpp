@@ -7,44 +7,42 @@
 #include <fstream>
 #include <string>
 #include <filesystem>
-#include <archive.h>
-#include <archive_entry.h>
+#include <zip.h>
 #include "Packer.hpp"
 #include "Config.hpp"
 
 namespace bb {
-
+	zip_t* zipper_;
 	void Packer::setup(std::string& packetName) {
-		a = archive_write_new();
-		auto res = archive_write_add_filter_gzip(a);
-		//std::cout << archive_error_string(a);
-		res = archive_write_set_format_pax_restricted(a); // Note 1
-		res = archive_write_set_options(a, "compression-level=9");
-		res = archive_write_open_filename(a, packetName.c_str());
+		int errorp;
+		if (std::filesystem::exists(packetName))
+			std::filesystem::remove(packetName);
+		zipper_ = zip_open(packetName.c_str(), ZIP_CREATE | ZIP_EXCL, &errorp);
+		if (zipper_ == nullptr) {
+			zip_error_t ziperror;
+			zip_error_init_with_code(&ziperror, errorp);
+			throw std::runtime_error("Failed to open output file " + packetName + ": " + zip_error_strerror(&ziperror));
+		}
 	}
 
 	void Packer::write(std::string& file, std::string& path, bool dir) {
-		stat(file.c_str(), &st);
-		entry = archive_entry_new(); // Note 2
-		archive_entry_set_pathname(entry, path.c_str());
-		archive_entry_set_size(entry, st.st_size); // Note 3
-		archive_entry_set_filetype(entry, dir ? AE_IFDIR : AE_IFREG);
-		archive_entry_set_perm(entry, 0644);
-		auto res = archive_write_header(a, entry);
-		if (!dir) {
-			fd = open(file.c_str(), O_RDONLY);
-			len = read(fd, buff, sizeof(buff));
-			while (len > 0) {
-				archive_write_data(a, buff, len);
-				len = read(fd, buff, sizeof(buff));
+		if (dir) {
+			if (zip_dir_add(zipper_, path.c_str(), ZIP_FL_ENC_UTF_8) < 0) {
+				throw std::runtime_error("Failed to add directory to zip: " + std::string(zip_strerror(zipper_)));
 			}
-			close(fd);
+		} else {
+			zip_source_t* source = zip_source_file(zipper_, file.c_str(), 0, 0);
+			if (source == nullptr) {
+				throw std::runtime_error("Failed to add file to zip: " + std::string(zip_strerror(zipper_)));
+			}
+			if (zip_file_add(zipper_, path.c_str(), source, ZIP_FL_ENC_UTF_8) < 0) {
+				zip_source_free(source);
+				throw std::runtime_error("Failed to add file to zip: " + std::string(zip_strerror(zipper_)));
+			}
 		}
-		archive_entry_free(entry);
 	}
 
 	void Packer::end() {
-		auto res = archive_write_close(a); // Note 4
-		auto ress = archive_write_free(a); // Note 5
+		zip_close(zipper_);
 	}
 }

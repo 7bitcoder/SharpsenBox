@@ -26,7 +26,7 @@ namespace bb {
 		QString ver = fileList_["Ver"].toString();
 		auto& ss = ver.toStdString();
 		auto& gg = actualVersion_.toStdString();
-		if (ver != toUpdateVersion_) { //need update
+		if ( false /*ver != toUpdateVersion_*/) { //need update
 			//todo error
 		} else if (fullInstall_) {
 			readAllPackets();
@@ -80,6 +80,7 @@ namespace bb {
 		std::unordered_map<std::string, std::string> neededPackets;
 		for (auto& file : toDownload_) {
 			auto elem = fileList[file].toObject();
+			totalBytesTo_ = std::stoll(elem["Size"].toString().toStdString());
 			auto& pack = packets[elem["Id"].toString()].toObject();
 			neededPackets.insert({pack["Url"].toString().toStdString(), pack["Name"].toString().toStdString()});
 		}

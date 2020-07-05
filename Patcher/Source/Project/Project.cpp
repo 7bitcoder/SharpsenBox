@@ -3,7 +3,7 @@
 #include <iostream>
 #include <QCryptographicHash>
 #include <QJsonArray>
-
+#include "Config.hpp"
 namespace pr {
 	namespace fs = std::filesystem;
 	namespace {
@@ -73,13 +73,11 @@ namespace pr {
 		packetId = 0;
 		for (auto packet : packets) {
 			auto& name = packet->getPacketName();
-			packer_.setup((projectDir / projectName / name.toStdString()).generic_string());
+			auto packDir = projectDir / projectName / name.toStdString();
+			packer_.setup(packDir.generic_string());
 			std::cout << "packet: " << name.toStdString() << std::endl;
 			QJsonObject root;
-			QJsonObject pack;
-			pack.insert("Name", name);
-			pack.insert("Url", "---");
-			packetsList.insert(QString::number(++packetId), pack);
+
 			insertData(packet->rootItemPtr(), root);
 			QJsonObject packet;
 			packet.insert("Files", root);
@@ -87,6 +85,13 @@ namespace pr {
 			packet.insert("Size", "---");
 			appitems.insert(name, packet);
 			packer_.end();
+
+			QJsonObject pack;
+			pack.insert("Name", name);
+			pack.insert("Url", "---");
+			auto size = std::filesystem::file_size(packDir);
+			pack.insert("Size", static_cast<qint64>(size));
+			packetsList.insert(QString::number(packetId++), pack);
 		}
 		QJsonObject list;
 		list.insert("AppName", gameName.c_str());

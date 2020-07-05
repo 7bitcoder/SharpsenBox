@@ -146,7 +146,7 @@ namespace dt {
 
 		st::setUpModel setUp_;
 		bool available_ = false;
-		std::string packetName_ = std::string("packet") + std::to_string(index_++) + ".tar.gz";
+		std::string packetName_ = std::string("packet") + std::to_string(index_++) + ".zip";
 		bool load_ = false;
 	};
 }

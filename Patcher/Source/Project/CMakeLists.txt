@@ -1,4 +1,4 @@
-﻿find_package(libarchieve)
+﻿find_package(libzip)
 conan_basic_setup(TARGETS)
 
 add_library(ProjectL STATIC
@@ -21,4 +21,4 @@ target_link_libraries(ProjectL
     Qt5::Quick
     Qt5::Qml
     Qt5::QuickControls2
-    CONAN_PKG::libarchive)
+    CONAN_PKG::libzip)
