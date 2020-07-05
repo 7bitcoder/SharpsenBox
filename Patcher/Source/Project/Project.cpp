@@ -90,7 +90,7 @@ namespace pr {
 			pack.insert("Name", name);
 			pack.insert("Url", "---");
 			auto size = std::filesystem::file_size(packDir);
-			pack.insert("Size", static_cast<qint64>(size));
+			pack.insert("Size", QString::number(static_cast<qint64>(size)));
 			packetsList.insert(QString::number(packetId++), pack);
 		}
 		QJsonObject list;

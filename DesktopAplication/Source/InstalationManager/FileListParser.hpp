@@ -13,6 +13,7 @@ namespace bb {
 		using files = std::vector<std::pair<std::filesystem::path, std::string>>;
 		void setActualVersion(QString ver) { actualVersion_ = ver; }
 		void setVersionToUpdate(QString ver) { toUpdateVersion_ = ver; }
+		QString getVersionToUpdate() { return toUpdateVersion_; }
 		void setPathFiles(files& files) { pathFiles_ = files; }
 		QString getVer() { return actualVersion_;  }
 		void parse(bool fullInstall);

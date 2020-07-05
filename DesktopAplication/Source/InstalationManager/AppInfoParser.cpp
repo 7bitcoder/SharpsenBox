@@ -29,7 +29,7 @@ namespace bb {
 		pathFiles_.push_back({ fileListUrl_.toStdString(), "FileList.json" });
 		if (fullInstall_) {
 			needUpdate_ = true;
-		} else if (versionToUpdate_ != actualVersion_) { //need update
+		} else if ( versionToUpdate_ != actualVersion_ ) { //need update
 			needUpdate_ = true;
 			getPathUrls(d["Versioning"].toObject());
 		} else { //app is up to date

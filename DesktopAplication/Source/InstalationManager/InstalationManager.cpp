@@ -118,7 +118,7 @@ namespace bb {
 
 	void InstalationManager::downloadUpdateMetadata() {
 		if (appInfoParser_.needUpdate()) {
-			fileListParser_.setVersionToUpdate(appInfoParser_.getVer());
+			fileListParser_.setVersionToUpdate(appInfoParser_.getVertoUpdate());
 			setTotal(0);
 			files_ = appInfoParser_.getFiles();
 			downloader_.setFilestoDownload(files_);
@@ -133,8 +133,11 @@ namespace bb {
 			downloader_.start();
 		} else {
 			updateStatus(false);
+			connect(&cleanUpper_, &cu::Cleanup::ended, this, &InstalationManager::cleanUpEnded);
+			connect(&cleanUpper_, &cu::Cleanup::error, this, &InstalationManager::errorCatched);
 			if (actualGame_)
 				actualGame_->updateChecked = true;
+			cleanUpper_.start();
 		}
 	}
 
@@ -189,6 +192,9 @@ namespace bb {
 		disconnectAll();
 		if (actualGame_) {
 			actualGame_->installed = true;
+			actualGame_->updateChecked = true;
+			auto check = fileListParser_.getVersionToUpdate().toStdString();
+			actualGame_->version = fileListParser_.getVersionToUpdate();
 			if (actualGame_->shortcut) {
 				QString desktopPath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
 				std::filesystem::path link = desktopPath.toUtf8().constData();
@@ -199,7 +205,6 @@ namespace bb {
 				std::string ff(path.generic_string().c_str());
 				auto res = CreateLink(path.generic_string().c_str(), path.parent_path().generic_string().c_str(), link.generic_string().c_str(), "Sylio shortcut");
 				actualGame_->shortcutPath = link.generic_string().c_str();
-				actualGame_->updateChecked = true;
 			}
 		}
 		gm::GameManager::getObject().unLock();
@@ -213,7 +218,7 @@ namespace bb {
 		if (!cancel_)
 			LoadingBar_->setState(lb::LoadingBar::State::COMPLEET);
 		LoadingBar_->setVisibleState(lb::LoadingBar::VisibleState::HIDDEN);
-		updateEnded(appInfoParser_.getVer());
+		updateEnded(appInfoParser_.getVertoUpdate());
 	}
 
 	void InstalationManager::setTotal(qint64 tot) {
@@ -235,7 +240,7 @@ namespace bb {
 	}
 
 	void InstalationManager::downloadStatus(qint64 progress, qint64 total, double speed) {
-		downloadedBytes_ = progress;
+		downloadedBytes_ += progress;
 		if (total) {
 			setProgress();
 			speed_ = speed; // B/s

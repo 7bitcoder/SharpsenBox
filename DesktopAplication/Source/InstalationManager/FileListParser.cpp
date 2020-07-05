@@ -26,7 +26,7 @@ namespace bb {
 		QString ver = fileList_["Ver"].toString();
 		auto& ss = ver.toStdString();
 		auto& gg = actualVersion_.toStdString();
-		if ( false /*ver != toUpdateVersion_*/) { //need update
+		if ( false /*ver != toUpdateVersion_ */) { //need update
 			//todo error
 		} else if (fullInstall_) {
 			readAllPackets();
@@ -80,9 +80,11 @@ namespace bb {
 		std::unordered_map<std::string, std::string> neededPackets;
 		for (auto& file : toDownload_) {
 			auto elem = fileList[file].toObject();
-			totalBytesTo_ = std::stoll(elem["Size"].toString().toStdString());
 			auto& pack = packets[elem["Id"].toString()].toObject();
-			neededPackets.insert({pack["Url"].toString().toStdString(), pack["Name"].toString().toStdString()});
+			if (!neededPackets.contains(pack["Url"].toString().toStdString())) {
+				totalBytesTo_ += std::stoll(pack["Size"].toString().toStdString());
+				neededPackets.insert({ pack["Url"].toString().toStdString(), pack["Name"].toString().toStdString() });
+			} 
 		}
 
 		for (auto pack : neededPackets) {
@@ -94,6 +96,9 @@ namespace bb {
 		auto packets = fileList_["Packets"].toObject();
 		for (auto& pac : packets) {
 			auto& pack = pac.toObject();
+			auto tt = pack["Url"].toString().toStdString();
+			auto sizeStr = pack["Size"].toString().toStdString();
+			totalBytesTo_ += std::stoll(sizeStr);
 			files_.push_back({ pack["Url"].toString().toStdString(), pack["Name"].toString().toStdString() });
 		}
 	}

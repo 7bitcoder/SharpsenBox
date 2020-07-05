@@ -11,7 +11,7 @@ namespace bb {
 	public:
 		using files = std::vector<std::pair<std::filesystem::path, std::string>>;
 		void setVerToCheck(QString ver) { actualVersion_ = ver; }
-		QString getVer() { return actualVersion_;  }
+		QString getVertoUpdate() { return versionToUpdate_;  }
 		void parse( bool fullInstall);
 		bool needUpdate() { return needUpdate_; };
 		void reset();

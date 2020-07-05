@@ -43,6 +43,7 @@ namespace bb {
 		std::string url_;
 		qint64 total_ = 0;
 		qint64 now_ = 0;
+		qint64 lastDownload_ = 0;
 		qint32 downloadSpeed_ = 0;
 		double speed_;
 		FILE* stream_ = nullptr;

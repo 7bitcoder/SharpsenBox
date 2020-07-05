@@ -30,7 +30,8 @@ namespace bb {
 		// It's here you will write the code for the progress message or bar
 		Downloader* out = (Downloader*)userData;
 		out->total_ = dltotal;
-		out->now_ = dlnow;
+		out->now_ = dlnow - out->lastDownload_;
+		out->lastDownload_ = dlnow;
 		out->emitStatus();
 		return out->checkState();
 	}
@@ -102,12 +103,16 @@ namespace bb {
 				for (size_t i = 0; !cancelled && i < files_.size(); i++) {
 					url_ = files_[i].first.generic_string().c_str();
 					auto& filename = files_[i].second;
+					lastDownload_ = 0;
 					outfile_ = (downloadDir / filename).generic_string();
 					res = curl_easy_setopt(curl, CURLOPT_URL, url_.c_str());
 					res = curl_easy_perform(curl);
 					if (CURLE_OK != res) {
 						break;
 					}
+					if (stream_)
+						fclose(stream_); /* close the local file */
+					stream_ = nullptr;
 				}
 			}
 
@@ -148,6 +153,7 @@ namespace bb {
 		url_ = "";
 		total_ = 0;
 		now_ = 0;
+		lastDownload_ = 0;
 		downloadSpeed_ = 0;
 		speed_ = 0;
 		stream_ = nullptr;
