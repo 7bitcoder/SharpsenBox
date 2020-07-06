@@ -24,7 +24,7 @@ namespace upd {
 		connect(&im, &bb::InstalationManager::errorEmit, this, &AppUpdater::errorCatched);
 		connect(&im, &bb::InstalationManager::updateEnded, this, &AppUpdater::updateInstalled);
 		state_ = State::downloading;
-		im.updateMainApp(cf.getVer(), cf.getLauncherAppInfoUrl(), cf.getVer() != "0");
+		im.updateMainApp(cf.getVer(), cf.getLauncherAppInfoUrl(), cf.getVer() == "0");
 	}
 
 	void AppUpdater::updateStatus(bool needUpdate) {
