@@ -182,6 +182,8 @@ namespace cf {
 		}
 	}
 
+	Q_INVOKABLE QString Config::getCurrentDirectory() { return "file:///" + QDir::currentPath() + "/.."; }
+
 	Q_INVOKABLE QString Config::getGamePresentationUrl(int id) {
 		auto& game = getGame(id);
 		auto& url = game.presentationUrl;

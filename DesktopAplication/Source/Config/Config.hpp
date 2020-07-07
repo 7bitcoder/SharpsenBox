@@ -66,6 +66,7 @@ namespace cf {
 		Q_INVOKABLE QString getGamePresentationUrl(int id); // get game id for game choser
 		Q_INVOKABLE QString getPresentationFile(int id);
 		Q_INVOKABLE int getDefaultGameId();
+		Q_INVOKABLE QString getCurrentDirectory();
 
 
 	private:

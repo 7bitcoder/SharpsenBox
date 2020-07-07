@@ -6,7 +6,8 @@ Rectangle {
     property int gameId
     width: gameChoser.size
     height: gameChoser.height
-    color: selected ? window.color : "transparent"
+    opacity: 0.85
+    color: selected ? "transparent" : "#292929"
     Text {
         id: sylioText
         anchors.centerIn: parent

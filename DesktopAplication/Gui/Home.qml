@@ -2,33 +2,35 @@ import QtQuick 2.12
 import QtWebEngine 1.8
 
 Item {
-    GameChoser {
-        id: gameChoser
-        anchors {
-            top: parent.top
-            left: parent.left
-            right: parent.right
-        }
-        height: 70
-        color: "#292929"
-        size: 150
-    }
-
     Rectangle {
         id: content
         property int destX: parent.x
         anchors {
-            top: gameChoser.bottom
+            top: parent.top
             bottom: parent.bottom
         }
         width: parent.width
         color: "transparent"
+
+        Loader {
+            id: gameChoserLoader
+            property int actualGame: window.selectedGame
+            property int destX: parent.x
+            anchors.fill: parent
+            source: _Config.getPresentationFile(actualGame)
+            onActualGameChanged: {
+                source = _Config.getPresentationFile(actualGame)
+                _GameManager.checkAutoUpdate(actualGame)
+
+            }
+        }
+
         Rectangle {
             id: button
             anchors {
                 left: parent.left
                 top: parent.top
-                topMargin: 10
+                topMargin: 80
                 leftMargin: 20
             }
 
@@ -69,49 +71,20 @@ Item {
                 }
             }
         }
+    }
 
-        Loader {
-            id: gameChoserLoader
-            property int actualGame: window.selectedGame
-            property int destX: parent.x
-            anchors {
-                top: button.bottom
-                left: parent.left
-                right: parent.right
-                bottom: parent.bottom
-            }
-            width: parent.width
-            source: _Config.getPresentationFile(actualGame)
-            onActualGameChanged: {
-                source = _Config.getPresentationFile(actualGame)
-                _GameManager.checkAutoUpdate(actualGame)
-                animation.stop()
-                animationOp.stop()
-                animation.start()
-                animationOp.start()
-            }
+    GameChoser {
+        id: gameChoser
+        anchors {
+            top: parent.top
+            left: parent.left
+            right: parent.right
         }
+        height: 70
+        color: "transparent"
+        size: 150
     }
 
-    NumberAnimation {
-        id: animation
-        target: content
-        property: "x"
-        from: content.destX + parent.width
-        to: content.destX
-        duration: 300
-        easing.type: Easing.OutQuart
-    }
-
-    NumberAnimation {
-        id: animationOp
-        target: content
-        property: "opacity"
-        from: 0
-        to: 1
-        duration: 300
-        easing.type: Easing.OutCubic
-    }
     //Loader {
     //    id: gameChoserLoader
     //    anchors {
