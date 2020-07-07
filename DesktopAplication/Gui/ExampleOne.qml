@@ -11,7 +11,7 @@ Item {
         id: background
         fillMode: Image.Pad
         anchors.fill: parent
-        source: _Config.getCurrentDirectory() + "/Pages/413655.jpg"
+        source: _Config.getCurrentDirectory() + "/Pages/b4023bea919bff9e42c85f091bc95f8d.jpg"
         opacity: 0.5
     }
     Rectangle {

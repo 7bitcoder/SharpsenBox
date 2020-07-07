@@ -33,6 +33,9 @@
     "GameExecPath": "./Release/Sylio.exe",
     "ShortcutPath": "",
     "PresentationUrl": "ExampleOne.qml",
+    "PresentationQml": "ExampleOne.qml",
+    "PresentationPackUrl": "",
+    "PresentationVer": "1.0",
     "AppInfoUrl": "https://sourceforge.net/projects/sylio/files/AppInfo.json/download"
   },
   "Rest4": {

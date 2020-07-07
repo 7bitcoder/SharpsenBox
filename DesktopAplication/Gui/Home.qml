@@ -21,7 +21,6 @@ Item {
             onActualGameChanged: {
                 source = _Config.getPresentationFile(actualGame)
                 _GameManager.checkAutoUpdate(actualGame)
-
             }
         }
 
