@@ -23,6 +23,9 @@ namespace cf {
 		QString execPath;
 		QString shortcutPath;
 		QString presentationUrl;
+		QString PresentationQml;
+		QString PresentationPackUrl;
+		QString PresentationVer;
 		std::unordered_map<QString, int> sha;
 
 		bool updateChecked = false;
@@ -45,6 +48,8 @@ namespace cf {
 		std::string getName() override;
 
 		// interface 
+		void insertGame(Game& game) { games_.insert({ game.id,  game }); };
+		bool gameExists(int id);
 		Game& getGame(int id);
 		QString& getVer() { return version_; }
 		void setVer(QString ver) { version_ = ver; }
@@ -52,6 +57,7 @@ namespace cf {
 		std::filesystem::path getConfigJson() { return config_ / configJson_; }
 		std::filesystem::path getConfigJsonFileName() { return configJson_; }
 		std::filesystem::path getLauncherAppInfoUrl() { return LauncherAppInfo; }
+		std::filesystem::path getGameInfoRepository() { return gameInfoRepo_; }
 
 		//QMl invoklabes
 		Q_INVOKABLE bool installed(int id) const;

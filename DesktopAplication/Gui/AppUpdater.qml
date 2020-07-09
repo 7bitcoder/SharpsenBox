@@ -50,6 +50,10 @@ ApplicationWindow {
             statusStr = "No updates found"
             exiter.start()
             break
+        case 6:
+            // updating games information
+            statusStr = "Updating games information"
+            break
         }
     }
 

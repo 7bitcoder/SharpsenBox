@@ -14,6 +14,10 @@ namespace bb {
 	class ArchieveInstaller : public  QThread {
 		Q_OBJECT
 	public:
+		struct data {
+			std::filesystem::path InstallationDir;
+			std::string fileName;
+		};
 		using files = std::vector < std::pair<std::filesystem::path, std::string>>;
 
 		ArchieveInstaller() {};
@@ -22,6 +26,7 @@ namespace bb {
 		// interface
 		void setUnpackFiles(files files);
 		void setInstalationDir(std::filesystem::path dir) { destinationDir_ = dir; }
+		void resetInstalationDir() { destinationDir_ .clear(); }
 		void run() override;
 		void reset();
 	signals:

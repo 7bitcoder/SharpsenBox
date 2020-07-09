@@ -10,7 +10,7 @@ add_executable(LaunchBox
 message(${WIN} AND ${RELEASE} asfa ${64BIT})
 
 if(WIN AND RELEASE)
-    set_target_properties(LaunchBox PROPERTIES WIN32_EXECUTABLE TRUE)
+    #set_target_properties(LaunchBox PROPERTIES WIN32_EXECUTABLE TRUE)
 endif()
 
 qt5_use_modules(LaunchBox 

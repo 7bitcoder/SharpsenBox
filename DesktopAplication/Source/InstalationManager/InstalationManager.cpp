@@ -76,13 +76,14 @@ namespace bb {
 		cleanUpper_.wait();
 	}
 
-	void InstalationManager::updateMainApp(QString version, std::filesystem::path appInfoUrl, bool fullInstall) {
+	void InstalationManager::updateMainApp(QString version, std::filesystem::path appInfoUrl,std::filesystem::path gamesRepoUrl, bool fullInstall) {
 		reset();
 		setTotal(0);
+		emitMainAppDownload = true;
 		appInfoParser_.setVerToCheck(version);
 		fileListParser_.setActualVersion(version);
 		fullInstall_ = fullInstall;
-		files_ = files{ {appInfoUrl, "AppInfo.json" } };
+		files_ = files{ {appInfoUrl, "AppInfo.json" }, {gamesRepoUrl, "Games.json"} };
 		downloader_.setFilestoDownload(files_);
 		stage_ = Stage::DOWNLOAD;
 		LoadingBar_->setState(lb::LoadingBar::State::CHECKING);
@@ -149,18 +150,27 @@ namespace bb {
 
 	void InstalationManager::fileListParseEnded() {
 		disconnect(&fileListParser_, &FileListParser::parseEnded, this, &InstalationManager::fileListParseEnded);
-		install(fileListParser_.getNeededFiles(), fileListParser_.getBytesToDownload(), actualGame_);
+		std::filesystem::path destination = actualGame_ ? actualGame_->gameDir.toStdString() : std::string("../");
+		install(fileListParser_.getNeededFiles(), fileListParser_.getBytesToDownload(), destination, actualGame_);
 		updateStatus(true);
 	}
 
-	void InstalationManager::install(files files, qint64 tot, cf::Game* game) {
+	void InstalationManager::updateGamePages( files& files) {
+		emitMainAppDownload = false;
+		if (files.size())
+			install(files, 0, "", nullptr);
+		else
+			finalize();
+	}
+
+	void InstalationManager::install(files files, qint64 tot, std::filesystem::path destination, cf::Game* game) {
 		reset();
 		setTotal(tot);
 		actualGame_ = game;
 		files_ = files;
 		downloader_.setFilestoDownload(files_);
 		installer_.setUnpackFiles(files_);
-		installDir_ = actualGame_ ? actualGame_->gameDir.toStdString() : std::string("../");
+		installDir_ = destination;
 		stage_ = Stage::DOWNLOAD;
 		LoadingBar_->setState(lb::LoadingBar::State::DOWNLOADING);
 		LoadingBar_->setVisibleState(lb::LoadingBar::VisibleState::SHOWED);
@@ -170,8 +180,6 @@ namespace bb {
 		connect(&installer_, &ArchieveInstaller::statusSignal, this, &InstalationManager::installStatus);
 		connect(&installer_, &ArchieveInstaller::ended, this, &InstalationManager::installEnded);
 		connect(&installer_, &ArchieveInstaller::error, this, &InstalationManager::errorCatched);
-		connect(&cleanUpper_, &cu::Cleanup::ended, this, &InstalationManager::cleanUpEnded);
-		connect(&cleanUpper_, &cu::Cleanup::error, this, &InstalationManager::errorCatched);
 		downloader_.start();
 		installer_.setInstalationDir(installDir_);
 	}
@@ -208,7 +216,17 @@ namespace bb {
 			}
 		}
 		gm::GameManager::getObject().unLock();
-		cleanUpper_.start();
+		finalize();
+	}
+
+	void InstalationManager::finalize() {
+		if (emitMainAppDownload) {
+			readGameInfo();
+		} else {
+			connect(&cleanUpper_, &cu::Cleanup::ended, this, &InstalationManager::cleanUpEnded);
+			connect(&cleanUpper_, &cu::Cleanup::error, this, &InstalationManager::errorCatched);
+			cleanUpper_.start();
+		}
 	}
 
 	void InstalationManager::cleanUpEnded() {

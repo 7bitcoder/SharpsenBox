@@ -59,7 +59,13 @@ namespace bb {
 				while (archive_read_next_header(a, &entry) == ARCHIVE_OK) {
 					//printf("%s\n", archive_entry_pathname(entry));
 					const char* currentFile = archive_entry_pathname(entry);
-					std::filesystem::path fullOutputPath = destinationDir_.generic_string();
+					std::filesystem::path fullOutputPath;
+					// if global destination is not set use custom fulloutput in pair
+					if (destinationDir_.empty())
+						fullOutputPath = arch.first;
+					else
+						fullOutputPath  = destinationDir_.generic_string();
+
 					if (currentFile) {
 						fullOutputPath /= currentFile;
 						fullOutputPath = fullOutputPath.generic_string();
@@ -75,10 +81,8 @@ namespace bb {
 				}
 				res = archive_read_finish(a);
 			}
-
-
 		} catch (...) {
-			res = -1;
+			res = ARCHIVE_FAILED;
 		}
 
 		if (res != ARCHIVE_OK) {

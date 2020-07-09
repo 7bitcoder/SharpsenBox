@@ -1,5 +1,6 @@
 ﻿add_library( AppUpdaterBackend STATIC
-    AppUpdater.cpp)
+    AppUpdater.cpp 
+    GameParser.cpp)
 
 target_include_directories(AppUpdaterBackend PUBLIC
     "../MainWindow" 

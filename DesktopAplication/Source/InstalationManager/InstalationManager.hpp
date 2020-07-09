@@ -44,8 +44,9 @@ namespace bb {
 		void clearDownloadDir();
 		void setTotal(qint64 tot);
 
-		void updateMainApp(QString version, std::filesystem::path appInfoUrl, bool fullInstall);
+		void updateMainApp(QString version, std::filesystem::path appInfoUrl, std::filesystem::path gamesRepoUrl, bool fullInstall);
 		void updateGame(cf::Game& game);
+		void updateGamePages(files& files);
 
 
 		double getProgress() { return progress_; }
@@ -60,12 +61,12 @@ namespace bb {
 	private:
 		virtual ~InstalationManager();
 		InstalationManager() {};
-		void install(files files, qint64 tot, cf::Game* game);
-
+		void install(files files, qint64 tot, std::filesystem::path destination, cf::Game* game);
 		void reset();
 		void disconnectAll() {};
 		void setProgress();
 		void sendDataToBar();
+		void finalize();
 	public slots:
 		void downloadStatus(qint64 progress, qint64 total, double speed);
 		void installStatus(qint64 progress);
@@ -81,12 +82,14 @@ namespace bb {
 		void fileListParseEnded();
 	signals:
 		void updateStatus(bool needUpdate);
+		void readGameInfo();
 		void updateEnded(QString finalVersion);
 		void errorEmit();
 	private:
 		bool onlyDownload;
 		bool cancel_;
 		bool fullInstall_;
+		bool emitMainAppDownload = false;
 		files files_;
 
 		cf::Game* actualGame_ = nullptr;

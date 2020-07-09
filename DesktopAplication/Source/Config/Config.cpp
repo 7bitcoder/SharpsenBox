@@ -76,6 +76,9 @@ namespace cf {
 		g.execPath = value["GameExecPath"].toString();
 		g.shortcutPath = value["ShortcutPath"].toString();
 		g.presentationUrl = value["PresentationUrl"].toString();
+		g.PresentationQml = value["PresentationQml"].toString();
+		g.PresentationPackUrl = value["PresentationPackUrl"].toString();
+		g.PresentationVer = value["PresentationVer"].toString();
 		//std::cout << g.id << g.url.toUtf8().constData() << g.version.toUtf8().constData() << g.installed;
 		return g;
 	}
@@ -106,6 +109,10 @@ namespace cf {
 		RootObject.insert("GameExecPath", game.execPath);
 		RootObject.insert("ShortcutPath", game.shortcutPath);
 		RootObject.insert("PresentationUrl", game.presentationUrl);
+
+		RootObject.insert("PresentationQml", game.PresentationQml);
+		RootObject.insert("PresentationPackUrl", game.PresentationPackUrl);
+		RootObject.insert("PresentationVer", game.PresentationVer);
 		RootObject.insert("AppInfoUrl", game.appInfoUrl);
 		return RootObject;
 	}
@@ -166,6 +173,10 @@ namespace cf {
 		throw std::exception("Bad game Id");
 	}
 
+	bool Config::gameExists(int id) {
+		return games_.contains(id);
+	}
+
 	Q_INVOKABLE int Config::getGameId() {
 		static int i = 0;
 		if(i < maxGameBarLen_ && i < sortedId_.size()) {
@@ -199,11 +210,10 @@ namespace cf {
 	Q_INVOKABLE QString Config::getPresentationFile(int id) {
 		auto& game = getGame(id);
 		auto& url = game.presentationUrl;
-		auto hh = url.toStdString();
-		if (url.startsWith("http") || url.endsWith(".html")) { // its http link or locak html file
+		if (!url.isEmpty()) { // its http link or locak html file
 			return "WebGamePage.qml";
-		} else if(url.endsWith(".qml")) { // local qml file 
-			auto full = getFullCfPath(url);
+		} else { // local qml file 
+			auto full = getFullCfPath(game.PresentationQml);
 			return full;
 		}
 	}
