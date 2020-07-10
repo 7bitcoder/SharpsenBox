@@ -101,8 +101,8 @@ namespace bb {
 
 				//curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
 				for (size_t i = 0; !cancelled && i < files_.size(); i++) {
-					url_ = files_[i].first.generic_string().c_str();
-					auto& filename = files_[i].second;
+					url_ = files_[i].url.generic_string().c_str();
+					auto& filename = files_[i].fileName;
 					lastDownload_ = 0;
 					outfile_ = (downloadDir / filename).generic_string();
 					res = curl_easy_setopt(curl, CURLOPT_URL, url_.c_str());

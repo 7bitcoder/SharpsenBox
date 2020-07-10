@@ -6,11 +6,15 @@
 #include <unordered_set>
 #include <QJsonDocument>
 
+namespace cf {
+	struct AppPack;
+}
+
 namespace bb {
 	class FileListParser :public QThread {
 		Q_OBJECT
 	public:
-		using files = std::vector<std::pair<std::filesystem::path, std::string>>;
+		using files = std::vector<cf::AppPack>;
 		void setActualVersion(QString ver) { actualVersion_ = ver; }
 		void setVersionToUpdate(QString ver) { toUpdateVersion_ = ver; }
 		QString getVersionToUpdate() { return toUpdateVersion_; }

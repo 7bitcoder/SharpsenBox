@@ -5,11 +5,15 @@
 #include <filesystem>
 #include <unordered_map>
 
+namespace cf {
+	struct AppPack;
+}
+
 namespace bb {
 	class AppInfoParser :public QThread {
 		Q_OBJECT
 	public:
-		using files = std::vector<std::pair<std::filesystem::path, std::string>>;
+		using files = std::vector< cf::AppPack >;
 		void setVerToCheck(QString ver) { actualVersion_ = ver; }
 		QString getVertoUpdate() { return versionToUpdate_;  }
 		void parse( bool fullInstall);
@@ -32,6 +36,6 @@ namespace bb {
 		bool fullInstall_ = false;
 		// fileName -> <fileUrl, size>
 		// first element is filelist
-		std::vector < std::pair<std::filesystem::path, std::string >> pathFiles_;
+		files pathFiles_;
 	};
 }

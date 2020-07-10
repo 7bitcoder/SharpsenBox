@@ -1,6 +1,6 @@
 ﻿{
-  "Ver": "0.10",
-  "AppInfoUrl": "https://srv-file12.gofile.io/download/uffLsX/AppInfo.json",
-  "GamesInfoRepository": "",
+  "Ver": "1.0",
+  "AppInfoUrl": "https://sourceforge.net/projects/gamelaunchbox/files/AppInfo.json/download",
+  "GamesInfoRepository": "https://sourceforge.net/projects/gamelaunchbox/files/Games.json/download",
   "DownloadSpeed": "0"
 }

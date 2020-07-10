@@ -37,7 +37,7 @@ ApplicationWindow {
             break
         case 3:
             //ended
-            statusStr = "Installation Complete"
+            statusStr = "Starting LaunchBox"
             exiter.start()
             break
         case 4:
@@ -52,15 +52,16 @@ ApplicationWindow {
             break
         case 6:
             // updating games information
-            statusStr = "Updating games information"
+            statusStr = "Updating game pages"
             break
         }
     }
 
     Timer {
         id: exiter
-        interval: 500
+        interval: 5000
         onTriggered: {
+            console.log("EXITING~~~~")
             Qt.quit()
         }
         repeat: false

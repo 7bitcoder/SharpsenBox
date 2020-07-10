@@ -4,7 +4,7 @@ import QtWebEngine 1.8
 
 Item {
     id: gamePresentation
-    property int actualGame: window.selectedGame
+    property int actualGameId: window.selectedGame
     property string youtubeLink: "https://www.youtube.com/embed/T5zxTI1gxOQ?&autohide=1&showinfo=0&amp;fs=0&amp;showinfo=0"
     property string descriptionString: "<h2>Sylio</h2> Simple multiplayer game, players controls snail and tries to survive as long as it is possible, using various powerups and collecting points. In game you can change music settings choose your nickname, controls and change number of rounds."
     property string platformString: "Platform:\tWindows/Linux\nSize:\t200MB"
@@ -12,7 +12,7 @@ Item {
         id: background
         fillMode: Image.Pad
         anchors.fill: parent
-        source: _Config.gameInfoDir(actualGame) + "b4023bea919bff9e42c85f091bc95f8d.jpg"
+        source: _Config.gameInfoDir(actualGameId) + "b4023bea919bff9e42c85f091bc95f8d.jpg"
         opacity: 0.5
     }
     Rectangle {

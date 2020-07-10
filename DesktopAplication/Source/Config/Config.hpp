@@ -34,6 +34,12 @@ namespace cf {
 		}
 	};
 
+	struct AppPack {
+		std::filesystem::path url;
+		std::string fileName;
+		std::filesystem::path destination;
+	};
+
 	class Config : public bc::IQmlObject {
 		Q_OBJECT
 	public:
@@ -51,6 +57,7 @@ namespace cf {
 		void insertGame(Game& game) { games_.insert({ game.id,  game }); };
 		bool gameExists(int id);
 		Game& getGame(int id);
+		std::string gameInfoDirRel(int id);
 		QString& getVer() { return version_; }
 		void setVer(QString ver) { version_ = ver; }
 		std::filesystem::path& getDownloadDir() { return downloadDir_; }
@@ -61,6 +68,7 @@ namespace cf {
 
 		//QMl invoklabes
 		Q_INVOKABLE bool installed(int id) const;
+		Q_INVOKABLE QString gameInfoDir(int id);
 		Q_INVOKABLE QUrl defaultInstallDir();
 		Q_INVOKABLE void setDownloadSpeed(qint32 dp) { downloadSpeed_ = dp; }
 		Q_INVOKABLE qint32 getDownloadSpeed() { return downloadSpeed_; }

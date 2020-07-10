@@ -177,6 +177,14 @@ namespace cf {
 		return games_.contains(id);
 	}
 
+	Q_INVOKABLE QString Config::gameInfoDir(int id) {
+		return getCurrentDirectory() + "/Games/" + getGame(id).name + "/";
+	}
+
+	std::string Config::gameInfoDirRel(int id) {
+		return std::string("../Games/") + getGame(id).name.toStdString();
+	}
+
 	Q_INVOKABLE int Config::getGameId() {
 		static int i = 0;
 		if(i < maxGameBarLen_ && i < sortedId_.size()) {
@@ -187,24 +195,11 @@ namespace cf {
 		return 0; // end
 	}
 
-	namespace {
-		QString getFullCfPath(QString url) {
-			return "file:///" + QDir::currentPath() + "/../Pages/" + url;
-		}
-	}
-
 	Q_INVOKABLE QString Config::getCurrentDirectory() { return "file:///" + QDir::currentPath() + "/.."; }
 
 	Q_INVOKABLE QString Config::getGamePresentationUrl(int id) {
 		auto& game = getGame(id);
-		auto& url = game.presentationUrl;
-		auto hh = url.toStdString();
-		if (url.startsWith("http")) { // its http link
-			return url;
-		} else { // local html file 
-			auto full = getFullCfPath(url);
-			return full;
-		}
+		return game.presentationUrl;
 	}
 
 	Q_INVOKABLE QString Config::getPresentationFile(int id) {
@@ -213,7 +208,7 @@ namespace cf {
 		if (!url.isEmpty()) { // its http link or locak html file
 			return "WebGamePage.qml";
 		} else { // local qml file 
-			auto full = getFullCfPath(game.PresentationQml);
+			auto full = gameInfoDir(game.id) + game.PresentationQml;
 			return full;
 		}
 	}

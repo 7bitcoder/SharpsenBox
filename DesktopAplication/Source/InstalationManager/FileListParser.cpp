@@ -43,7 +43,7 @@ namespace bb {
 			QString val;
 			QFile file;
 			//open LaunchBoxConfig file
-			auto path = cf::Config::getObject().getDownloadDir() / it->second;
+			auto path = cf::Config::getObject().getDownloadDir() / it->fileName;
 			file.setFileName(path.generic_string().c_str());
 			file.open(QIODevice::ReadOnly | QIODevice::Text);
 			val = file.readAll();
@@ -88,7 +88,7 @@ namespace bb {
 		}
 
 		for (auto pack : neededPackets) {
-			files_.push_back(pack);
+			files_.push_back({ pack.first, pack.second });
 		}
 	}
 

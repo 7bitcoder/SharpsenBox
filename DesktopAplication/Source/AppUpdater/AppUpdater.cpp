@@ -33,16 +33,13 @@ namespace upd {
 			//download new Laucher
 			state_ = State::downloading;
 			stateChanged();
-		} else {
-			state_ = State::noUpdateFound;
-			stateChanged();
 		}
 	}
 
 	void AppUpdater::readGameInfo() {
 		state_ = State::updatingGamesInfo;
 		stateChanged();
-		connect( this, &AppUpdater::parseEnded, &gameParser_, &GameParser::parseEnded);
+		connect( &gameParser_, &GameParser::parseEnded, this, &AppUpdater::parseEnded);
 		gameParser_.parse();
 	}
 

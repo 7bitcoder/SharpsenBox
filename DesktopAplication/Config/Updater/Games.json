@@ -2,29 +2,31 @@
   "Sylio": {
     "Id": "1",
     "Ver": "1.0",
-    "AutoUpdate": "false",
-    "Installed": "false",
-    "Shortcut": "false",
-    "GameDir": "",
     "GameExecPath": "./Release/Sylio.exe",
-    "ShortcutPath": "",
-    "Desctiption": "",
-    "YoutubeLink": "",
-    "AdditionalInfo": "",
+    "PresentationUrl": "https://youtube.pl",
+    "PresentationQml": "",
+    "PresentationPackUrl": "",
+    "PresentationVer": "1.0",
     "AppInfoUrl": "https://sourceforge.net/projects/sylio/files/AppInfo.json/download"
   },
-  "Nygger": {
+  "Rest": {
     "Id": "2",
     "Ver": "1.0",
-    "AutoUpdate": "false",
-    "Installed": "false",
-    "Shortcut": "false",
-    "GameDir": "",
     "GameExecPath": "./Release/Sylio.exe",
-    "ShortcutPath": "",
-    "Desctiption": "",
-    "YoutubeLink": "",
-    "AdditionalInfo": "",
+    "PresentationUrl": "",
+    "PresentationQml": "ExampleOne.qml",
+    "PresentationPackUrl": "https://sourceforge.net/projects/gamelaunchbox/files/Rest.zip/download",
+    "PresentationVer": "0",
+    "AppInfoUrl": "https://sourceforge.net/projects/sylio/files/AppInfo.json/download"
+  },
+  "Rest2": {
+    "Id": "3",
+    "Ver": "1.0",
+    "GameExecPath": "./Release/Sylio.exe",
+    "PresentationUrl": "",
+    "PresentationQml": "ExampleOne.qml",
+    "PresentationPackUrl": "https://sourceforge.net/projects/gamelaunchbox/files/Rest.zip/download",
+    "PresentationVer": "1.0",
     "AppInfoUrl": "https://sourceforge.net/projects/sylio/files/AppInfo.json/download"
   }
 }

@@ -20,7 +20,7 @@ namespace bb {
 	class InstalationManager : public bc::IQmlObject {
 		Q_OBJECT
 	public:
-		using files = std::vector<std::pair<std::filesystem::path, std::string>>;
+		using files = std::vector<cf::AppPack>;
 		static InstalationManager& getObject() {
 			static InstalationManager uc;
 			return uc;

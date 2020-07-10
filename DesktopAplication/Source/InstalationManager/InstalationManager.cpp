@@ -83,7 +83,7 @@ namespace bb {
 		appInfoParser_.setVerToCheck(version);
 		fileListParser_.setActualVersion(version);
 		fullInstall_ = fullInstall;
-		files_ = files{ {appInfoUrl, "AppInfo.json" }, {gamesRepoUrl, "Games.json"} };
+		files_ = files{ {appInfoUrl, "AppInfo.json" }, {gamesRepoUrl, "Games.json"}};
 		downloader_.setFilestoDownload(files_);
 		stage_ = Stage::DOWNLOAD;
 		LoadingBar_->setState(lb::LoadingBar::State::CHECKING);
@@ -133,12 +133,9 @@ namespace bb {
 			connect(&downloader_, &Downloader::error, this, &InstalationManager::errorCatched); //todo przenies errory do konstruktora
 			downloader_.start();
 		} else {
-			updateStatus(false);
-			connect(&cleanUpper_, &cu::Cleanup::ended, this, &InstalationManager::cleanUpEnded);
-			connect(&cleanUpper_, &cu::Cleanup::error, this, &InstalationManager::errorCatched);
 			if (actualGame_)
 				actualGame_->updateChecked = true;
-			cleanUpper_.start();
+			finalize();
 		}
 	}
 

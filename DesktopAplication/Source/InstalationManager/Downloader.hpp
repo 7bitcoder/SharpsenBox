@@ -9,11 +9,15 @@
 #include "IQmlObject.hpp"
 #include <filesystem>
 
+namespace cf {
+	struct AppPack;
+}
+
 namespace bb {
 	class Downloader : public  QThread {
 		Q_OBJECT
 	public:
-		using files = std::vector < std::pair<std::filesystem::path, std::string >>;
+		using files = std::vector < cf::AppPack >;
 		Downloader();
 		~Downloader() {}
 		void setOutputFile(std::string file) { outfile_ = file; }

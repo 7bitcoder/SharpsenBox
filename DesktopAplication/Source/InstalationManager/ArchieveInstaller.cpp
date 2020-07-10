@@ -47,11 +47,11 @@ namespace bb {
 			auto& downloadDir = cf::Config::getObject().getDownloadDir();
 			for (auto& arch : filesToUnpack_) {
 				a = archive_read_new();
-				auto actualUnpacking = (downloadDir / arch.second).generic_string();
+				auto actualUnpacking = (downloadDir / arch.fileName).generic_string();
 				file.open(actualUnpacking, std::ios::binary);
 				if (!file.is_open())
 					throw std::exception("Could not open file");
-				if (!std::filesystem::exists(destinationDir_.generic_string()))
+				if (!destinationDir_.empty() && !std::filesystem::exists(destinationDir_.generic_string()))
 					std::filesystem::create_directories(destinationDir_.generic_string());
 				res = archive_read_support_compression_all(a);
 				res = archive_read_support_format_all(a);
@@ -60,10 +60,12 @@ namespace bb {
 					//printf("%s\n", archive_entry_pathname(entry));
 					const char* currentFile = archive_entry_pathname(entry);
 					std::filesystem::path fullOutputPath;
-					// if global destination is not set use custom fulloutput in pair
-					if (destinationDir_.empty())
-						fullOutputPath = arch.first;
-					else
+					// if global destination is not set = games info so grab destination from config
+					if (destinationDir_.empty() && !arch.destination.empty()) {
+						fullOutputPath = arch.destination;
+						if (!fullOutputPath.empty() && !std::filesystem::exists(fullOutputPath.generic_string()))
+							std::filesystem::create_directories(fullOutputPath.generic_string());
+					} else
 						fullOutputPath  = destinationDir_.generic_string();
 
 					if (currentFile) {

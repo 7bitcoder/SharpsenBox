@@ -23,7 +23,7 @@ namespace upd {
 		QJsonDocument d = QJsonDocument::fromJson(val.toUtf8());
 		for (auto& game : d.object()) {
 			auto& gameObject = game.toObject();
-			auto id = gameObject["Id"].toInt();
+			auto id = std::stoi(gameObject["Id"].toString().toStdString());
 			if (!cf::Config::getObject().gameExists(id)) {
 				//create new
 				cf::Game game;
@@ -42,10 +42,11 @@ namespace upd {
 			auto& hadGame = cf::Config::getObject().getGame(id);
 			auto& presetationVer = gameObject["PresentationVer"].toString();
 			hadGame.presentationUrl = gameObject["PresentationUrl"].toString();
-			if (!hadGame.presentationUrl.isEmpty() && hadGame.PresentationVer != presetationVer) {
+			if (hadGame.presentationUrl.isEmpty() && hadGame.PresentationVer != presetationVer) {
 				auto& url = gameObject["PresentationPackUrl"].toString().toStdString();
-				auto& fileName = std::to_string(hadGame.id) + ".zip";
-				files_.push_back({ url, fileName });
+				auto& fileName = hadGame.name.toStdString() + ".zip";
+				std::filesystem::path destination = cf::Config::getObject().gameInfoDirRel(id);
+				files_.push_back({ url, fileName , destination });
 				toUpdate_.push_back({id, presetationVer });
 			}
 		}

@@ -4,12 +4,12 @@
 #include <QThread>
 #include <filesystem>
 #include <unordered_map>
-
+#include "Config.hpp"
 namespace upd {
 	class GameParser :public QThread {
 		Q_OBJECT
 	public:
-		using files = std::vector<std::pair<std::filesystem::path, std::string>>;
+		using files = std::vector<cf::AppPack>;
 		void parse( );
 
 		files& getFiles() { return files_; }
@@ -22,7 +22,7 @@ namespace upd {
 	private:
 		// fileName -> <fileUrl, size>
 		// first element is filelist
-		std::vector < std::pair<std::filesystem::path, std::string >> files_;
+		files files_;
 		std::vector < std::pair<int, QString>> toUpdate_;
 	};
 }

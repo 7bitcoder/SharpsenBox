@@ -8,8 +8,15 @@
 #include "IQmlObject.hpp"
 #include <filesystem>
 #include <fstream>
+
 #define BLOCK_SIZE 512000 //~500KB
+
 struct archive;
+
+namespace cf {
+	struct AppPack;
+}
+
 namespace bb {
 	class ArchieveInstaller : public  QThread {
 		Q_OBJECT
@@ -18,7 +25,7 @@ namespace bb {
 			std::filesystem::path InstallationDir;
 			std::string fileName;
 		};
-		using files = std::vector < std::pair<std::filesystem::path, std::string>>;
+		using files = std::vector < cf::AppPack >;
 
 		ArchieveInstaller() {};
 		virtual ~ArchieveInstaller() {}
