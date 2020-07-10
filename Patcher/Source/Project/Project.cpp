@@ -210,7 +210,7 @@ namespace pr {
 
 		auto& packets = dt::TreeModel::getObject().getPackets();
 		QJsonObject AppComponents = d["AppComponents"].toObject();
-		for (auto & it = AppComponents.begin(); it < AppComponents.end(); it++){
+		for (auto & it = AppComponents.begin(); it != AppComponents.end(); it++){
 			QJsonObject& pack = it->toObject();
 			auto* newPacket = new dt::TreeModel(true); //packet
 			newPacket->setPacketName(it.key());
@@ -223,7 +223,7 @@ namespace pr {
 	}
 
 	void Project::readPacket(dt::TreeItem* item, QJsonObject& object, std::filesystem::path& fullPath) {
-		for (auto& it = object.begin(); it < object.end(); it++) {
+		for (auto& it = object.begin(); it != object.end(); it++) {
 			QJsonObject& file = it->toObject();
 			fullPath /= it.key().toStdString();
 			if (!file.isEmpty() && !file.begin()->isObject()) { //file

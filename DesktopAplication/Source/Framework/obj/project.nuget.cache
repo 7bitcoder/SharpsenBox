@@ -1,8 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "LsvXW6S7OZLLC+/1sZ8eNRket+aIE/ktU28iJBuUPAe+TIwtB72QA1ExO70HrtOWmECn9yOTIxc2sTxl4UJk5g==",
+  "dgSpecHash": "vkQpAwYjYRfqzeI97/mU7emPDt1E7gNIuO4SrKgcM0JyKMb5EFQ5lA8cvHXzujP0cV8FLxUgL/OXiIlsTWFsWA==",
   "success": true,
   "projectFilePath": "C:\\Users\\Sylwester\\Desktop\\LaunchBox\\DesktopAplication\\Source\\Framework\\Launcher.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\Sylwester\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\3.1.2\\microsoft.aspnetcore.app.ref.3.1.2.nupkg.sha512"
+  ],
   "logs": []
 }

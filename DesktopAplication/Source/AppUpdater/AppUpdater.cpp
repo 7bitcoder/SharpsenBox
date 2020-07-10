@@ -28,12 +28,10 @@ namespace upd {
 		im.updateMainApp(cf.getVer(), cf.getLauncherAppInfoUrl(), cf.getGameInfoRepository(), cf.getVer() == "0");
 	}
 
-	void AppUpdater::updateStatus(bool needUpdate) {
-		if (needUpdate) {
-			//download new Laucher
-			state_ = State::downloading;
-			stateChanged();
-		}
+	void AppUpdater::updateStatus(bool downloading) {
+		//download new Laucher
+		state_ = downloading ? State::downloading : State::installing;
+		stateChanged();
 	}
 
 	void AppUpdater::readGameInfo() {

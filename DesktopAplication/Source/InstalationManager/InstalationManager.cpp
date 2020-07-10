@@ -189,6 +189,7 @@ namespace bb {
 		} else {
 			stage_ = Stage::INSTALL;
 			LoadingBar_->setState(lb::LoadingBar::State::INSTALLING);
+			updateStatus(false);
 			installer_.start();
 		}
 	}
