@@ -297,7 +297,7 @@ namespace bb {
 		downloader_.stop.clear();
 	}
 
-	void InstalationManager::init() {
+	InstalationManager::InstalationManager() {
 		downloadDir_ = cf::Config::getObject().getDownloadDir();
 		if (!std::filesystem::exists(downloadDir_)) {
 			try {

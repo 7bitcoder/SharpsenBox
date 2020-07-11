@@ -30,16 +30,6 @@ namespace lb {
 		std::string getName() override;
 		void init() override;
 
-		// Interface for other components
-		void setTotal(double tot);
-		void setActual(double act);
-		void setProgress(double prog);
-		void setSpeed(double sp);
-		void setError(int code, QString str);
-		void setState(State st);
-		void setVisibleState(VisibleState st);
-		void setUninstallMode(bool un);
-
 		void reset();
 		//QML Propetries
 		Q_PROPERTY(double speed READ getSpeed); //download speed B/s
@@ -76,7 +66,16 @@ namespace lb {
 	private:
 		virtual ~LoadingBar();
 		LoadingBar() {};
+
 	public slots:
+		void setTotal(double tot);
+		void setActual(double act);
+		void setProgress(double prog);
+		void setSpeed(double sp);
+		void setError(int code, QString str);
+		void setState(State st);
+		void setVisibleState(VisibleState st);
+		void setUninstallMode(bool un);
 	signals:
 		void stateChanged();
 		void visibleStateChanged();

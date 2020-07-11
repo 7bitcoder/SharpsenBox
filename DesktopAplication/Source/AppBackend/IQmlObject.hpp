@@ -5,7 +5,16 @@
 #define TYPENAME(TYPE) #TYPE
 
 namespace bc {
-	struct IQmlObject : public QObject {
+
+	template <class T>
+	struct IObject {
+		T& getObject() {
+			static st T;
+			return st;
+		}
+	};
+
+	struct IQmlObject: public QObject {
 		virtual std::string getName() = 0;
 		virtual void update() = 0;
 		virtual void init() = 0;

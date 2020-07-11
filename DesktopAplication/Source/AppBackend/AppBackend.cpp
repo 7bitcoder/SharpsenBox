@@ -24,9 +24,10 @@ namespace bc {
 	void Backend::registerObjects() {
 		registerObject<cf::Config>();
 		registerObject<dl::Dialog>();
-		registerObject<bb::InstalationManager>();
 		registerObject<lb::LoadingBar>();
 		registerObject<gm::GameManager>();
+		// for static object construction
+		bb::InstalationManager::getObject();
 	}
 
 	void Backend::initializeObjects() {

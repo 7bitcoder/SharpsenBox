@@ -17,7 +17,7 @@ namespace lb {
 	class LoadingBar;
 }
 namespace bb {
-	class InstalationManager : public bc::IQmlObject {
+	class InstalationManager: public QThread {
 		Q_OBJECT
 	public:
 		using files = std::vector<cf::AppPack>;
@@ -34,11 +34,6 @@ namespace bb {
 		enum  VisibleState : int {
 			HIDDEN = 0, SHOWED, MINIMALIZED
 		};
-
-		// implementation IQmlObject
-		void update() override {};
-		std::string getName() override;
-		void init() override;
 
 		// interface
 		void clearDownloadDir();
@@ -61,7 +56,7 @@ namespace bb {
 
 	private:
 		virtual ~InstalationManager();
-		InstalationManager() {};
+		InstalationManager();
 		void install(files files, qint64 tot, std::filesystem::path destination, cf::Game* game);
 		void reset();
 		void disconnectAll() {};
@@ -83,10 +78,21 @@ namespace bb {
 		void metadataDownloaded();
 		void fileListParseEnded();
 	signals:
+		// App updater
 		void updateStatus(bool needUpdate);
 		void readGameInfo();
 		void updateEnded(QString finalVersion);
 		void errorEmit();
+
+		// loadingBar
+		void setTotal(double tot);
+		void setActual(double act);
+		void setProgress(double prog);
+		void setSpeed(double sp);
+		void setError(int code, QString str);
+		void setState(State st);
+		void setVisibleState(VisibleState st);
+		void setUninstallMode(bool un);
 	private:
 		bool onlyDownload;
 		bool cancel_;
