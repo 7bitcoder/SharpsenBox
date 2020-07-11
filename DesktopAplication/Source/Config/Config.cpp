@@ -181,7 +181,7 @@ namespace cf {
 		return getCurrentDirectory() + "/Games/" + getGame(id).name + "/";
 	}
 
-	std::string Config::gameInfoDirRel(int id) {
+	std::string Config::gamePageDir(int id) {
 		return std::string("../Games/") + getGame(id).name.toStdString();
 	}
 

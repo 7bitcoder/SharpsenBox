@@ -57,7 +57,7 @@ Item {
                     anchors.fill: parent
                     onClicked: {
                         if (buttonPLay.installed) {
-                            _GameExecutor.execute(window.selectedGame)
+                            _GameManager.runGame(window.selectedGame)
                         } else {
                             window.stage = 1
                         }

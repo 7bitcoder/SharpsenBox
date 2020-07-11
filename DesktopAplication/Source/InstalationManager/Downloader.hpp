@@ -20,28 +20,35 @@ namespace bb {
 		using files = std::vector < cf::AppPack >;
 		Downloader();
 		~Downloader() {}
+
 		void setOutputFile(std::string file) { outfile_ = file; }
+		void setFilestoDownload(files file) { files_ = file; }
 		void setUrl(std::string url) { url_ = url; }
+
 		qint64 getTotal() { return total_; }
 		qint64 getProgress() { return now_; }
-		void setFilestoDownload(files file) { files_ = file; }
 
 		std::atomic_flag pause;
 		std::atomic_flag resume;
 		std::atomic_flag stop;
+
 		void run() override;
 		void reset();
+	
 	signals:
 		void statusSignal(qint64 progress, qint64 total, double speed);
 		void ended(bool cancelled);
 		void error(int);
+	
 	public slots:
+
 	private:
 		void emitStatus();
 		static size_t my_fwrite(void* buffer, size_t size, size_t nmemb, void* userdata);
 		static int progress_callback(void* clientp, long long dltotal, long long dlnow, long long ultotal, long long ulnow);
 		int checkState();
 		void checkSpeed();
+
 	private:
 		std::filesystem::path outfile_ = "";
 		std::string url_;

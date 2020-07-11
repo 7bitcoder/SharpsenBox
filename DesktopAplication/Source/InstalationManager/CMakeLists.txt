@@ -8,7 +8,8 @@ add_library(InstalationManager STATIC
     ArchieveInstaller.cpp 
     Cleanup.cpp
     AppInfoParser.cpp 
-    FileListParser.cpp)
+    FileListParser.cpp
+    GameFileRemover.cpp)
 
 target_include_directories(InstalationManager PUBLIC
     "../AppBackend"

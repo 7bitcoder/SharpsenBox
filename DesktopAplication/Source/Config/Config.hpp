@@ -4,42 +4,12 @@
 #include <QDebug>
 #include <QNetworkAccessManager>
 #include "IQmlObject.hpp"
+#include "Game.hpp"
 #include <filesystem>
 #include <vector>
 
 
 namespace cf {
-	class Game {
-	public:
-		int id;
-		bool installed;
-		bool shortcut;
-		bool autoCheck;
-		QString name;
-		QString version;
-		QString appInfoUrl;
-		QString fileName;
-		QString gameDir;
-		QString execPath;
-		QString shortcutPath;
-		QString presentationUrl;
-		QString PresentationQml;
-		QString PresentationPackUrl;
-		QString PresentationVer;
-		std::unordered_map<QString, int> sha;
-
-		bool updateChecked = false;
-		bool operator==(const Game& g) {
-			return id == g.id;
-		}
-	};
-
-	struct AppPack {
-		std::filesystem::path url;
-		std::string fileName;
-		std::filesystem::path destination;
-	};
-
 	class Config : public bc::IQmlObject {
 		Q_OBJECT
 	public:
@@ -57,9 +27,10 @@ namespace cf {
 		void insertGame(Game& game) { games_.insert({ game.id,  game }); };
 		bool gameExists(int id);
 		Game& getGame(int id);
-		std::string gameInfoDirRel(int id);
+		std::string gamePageDir(int id);
 		QString& getVer() { return version_; }
 		void setVer(QString ver) { version_ = ver; }
+
 		std::filesystem::path& getDownloadDir() { return downloadDir_; }
 		std::filesystem::path getConfigJson() { return config_ / configJson_; }
 		std::filesystem::path getConfigJsonFileName() { return configJson_; }

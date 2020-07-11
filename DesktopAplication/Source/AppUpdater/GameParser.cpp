@@ -45,7 +45,7 @@ namespace upd {
 			if (hadGame.presentationUrl.isEmpty() && hadGame.PresentationVer != presetationVer) {
 				auto& url = gameObject["PresentationPackUrl"].toString().toStdString();
 				auto& fileName = hadGame.name.toStdString() + ".zip";
-				std::filesystem::path destination = cf::Config::getObject().gameInfoDirRel(id);
+				std::filesystem::path destination = cf::Config::getObject().gamePageDir(id);
 				files_.push_back({ url, fileName , destination });
 				toUpdate_.push_back({id, presetationVer });
 			}

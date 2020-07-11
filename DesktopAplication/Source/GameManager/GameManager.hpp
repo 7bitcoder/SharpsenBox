@@ -33,6 +33,7 @@ namespace gm {
 		Q_INVOKABLE void unistallRequest(int id);
 		Q_INVOKABLE void checkAutoUpdate(int id);
 		Q_INVOKABLE void update(int id);
+		Q_INVOKABLE void runGame(int id);
 
 	public slots:
 		void uninstallation(int id);

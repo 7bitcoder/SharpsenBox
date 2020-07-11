@@ -58,6 +58,7 @@ namespace bb {
 		void pause();
 		void resume();
 		void stop();
+
 	private:
 		virtual ~InstalationManager();
 		InstalationManager() {};
@@ -67,6 +68,7 @@ namespace bb {
 		void setProgress();
 		void sendDataToBar();
 		void finalize();
+
 	public slots:
 		void downloadStatus(qint64 progress, qint64 total, double speed);
 		void installStatus(qint64 progress);
@@ -108,8 +110,8 @@ namespace bb {
 		std::filesystem::path downloadDir_;
 		std::filesystem::path installDir_;
 
-		qint64 totalBytes_ = 0; //total Bytes to download unpack all files together
-		qint64 downloadedBytes_ = 0; //Bytes downloaded
+		qint64 totalBytes_ = 0; // total Bytes to download unpack all files together
+		qint64 downloadedBytes_ = 0; // Bytes downloaded
 		qint64 unpackedBytes_ = 0; // Bytes Unpacked
 		qint64 ProgressBytes_ = 0; // dwonloaded + unpacked
 

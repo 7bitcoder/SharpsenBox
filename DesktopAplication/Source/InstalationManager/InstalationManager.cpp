@@ -80,8 +80,8 @@ namespace bb {
 		reset();
 		setTotal(0);
 		emitMainAppDownload = true;
-		appInfoParser_.setVerToCheck(version);
-		fileListParser_.setActualVersion(version);
+		appInfoParser_.setActualVer(version);
+		fileListParser_.setActualVer(version);
 		fullInstall_ = fullInstall;
 		files_ = files{ {appInfoUrl, "AppInfo.json" }, {gamesRepoUrl, "Games.json"}};
 		downloader_.setFilestoDownload(files_);
@@ -97,8 +97,8 @@ namespace bb {
 		reset();
 		setTotal(0);
 		actualGame_ = &game;
-		appInfoParser_.setVerToCheck(game.version);
-		fileListParser_.setActualVersion(game.version);
+		appInfoParser_.setActualVer(game.version);
+		fileListParser_.setActualVer(game.version);
 		files_ = files{ {game.appInfoUrl.toStdString(), "AppInfo.json" } };
 		downloader_.setFilestoDownload(files_);
 		fullInstall_ = !game.installed;
@@ -119,7 +119,7 @@ namespace bb {
 
 	void InstalationManager::downloadUpdateMetadata() {
 		if (appInfoParser_.needUpdate()) {
-			fileListParser_.setVersionToUpdate(appInfoParser_.getVertoUpdate());
+			fileListParser_.setUpdateVer(appInfoParser_.getUpdateVer());
 			setTotal(0);
 			files_ = appInfoParser_.getFiles();
 			downloader_.setFilestoDownload(files_);
@@ -199,8 +199,8 @@ namespace bb {
 		if (actualGame_) {
 			actualGame_->installed = true;
 			actualGame_->updateChecked = true;
-			auto check = fileListParser_.getVersionToUpdate().toStdString();
-			actualGame_->version = fileListParser_.getVersionToUpdate();
+			auto check = fileListParser_.getUpdateVer().toStdString();
+			actualGame_->version = fileListParser_.getUpdateVer();
 			if (actualGame_->shortcut) {
 				QString desktopPath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
 				std::filesystem::path link = desktopPath.toUtf8().constData();
@@ -234,7 +234,7 @@ namespace bb {
 		if (!cancel_)
 			LoadingBar_->setState(lb::LoadingBar::State::COMPLEET);
 		LoadingBar_->setVisibleState(lb::LoadingBar::VisibleState::HIDDEN);
-		updateEnded(appInfoParser_.getVertoUpdate());
+		updateEnded(appInfoParser_.getUpdateVer());
 	}
 
 	void InstalationManager::setTotal(qint64 tot) {

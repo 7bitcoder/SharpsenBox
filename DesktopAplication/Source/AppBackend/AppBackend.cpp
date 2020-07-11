@@ -7,9 +7,6 @@
 #include "Config.hpp"
 #include "LoadingBar.hpp"
 #include "GameManager.hpp"
-#include "GameExecutor.hpp"
-
-
 
 namespace bc {
 
@@ -17,6 +14,7 @@ namespace bc {
 		static Backend backend;
 		return backend;
 	}
+
 	void Backend::init(QQmlApplicationEngine* eng) {
 		engine = eng;
 		registerObjects();
@@ -29,12 +27,13 @@ namespace bc {
 		registerObject<bb::InstalationManager>();
 		registerObject<lb::LoadingBar>();
 		registerObject<gm::GameManager>();
-		registerObject<ge::GameExecutor>();
 	}
+
 	void Backend::initializeObjects() {
 		for (auto* object : objects_)
 			object->init();
 	}
+
 	template <class T>
 	void Backend::registerObject() {
 		auto& object = T::getObject();

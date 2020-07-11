@@ -34,8 +34,10 @@ namespace bb {
 		void setUnpackFiles(files files);
 		void setInstalationDir(std::filesystem::path dir) { destinationDir_ = dir; }
 		void resetInstalationDir() { destinationDir_ .clear(); }
+
 		void run() override;
 		void reset();
+
 	signals:
 		void statusSignal(qint64 progress);
 		void ended();

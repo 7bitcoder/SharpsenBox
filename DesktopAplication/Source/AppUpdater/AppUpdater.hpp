@@ -15,7 +15,7 @@ namespace upd {
 		Q_OBJECT
 	public:
 		enum State : int {
-			none = 0, downloading, installing, ended, error, noUpdateFound, updatingGamesInfo
+			NONE = 0, DOWNLOADING, INSTALLING, ENDED, ERROR, NO_UPDATE_FOUND, UPDATING_GAME_PAGES
 		};
 		Q_PROPERTY(QString statusStr READ getStateStr);
 		Q_PROPERTY(int progress READ getProgress);
@@ -42,7 +42,7 @@ namespace upd {
 		cf::Config& cf;
 		bb::InstalationManager& im;
 		QString statusStr_;
-		State state_ = State::none;
+		State state_ = State::NONE;
 		GameParser gameParser_;
 	};
 }

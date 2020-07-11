@@ -24,18 +24,18 @@ namespace upd {
 		connect(&im, &bb::InstalationManager::readGameInfo, this, &AppUpdater::readGameInfo);
 		connect(&im, &bb::InstalationManager::errorEmit, this, &AppUpdater::errorCatched);
 		connect(&im, &bb::InstalationManager::updateEnded, this, &AppUpdater::updateInstalled);
-		state_ = State::downloading;
+		state_ = State::DOWNLOADING;
 		im.updateMainApp(cf.getVer(), cf.getLauncherAppInfoUrl(), cf.getGameInfoRepository(), cf.getVer() == "0");
 	}
 
 	void AppUpdater::updateStatus(bool downloading) {
 		//download new Laucher
-		state_ = downloading ? State::downloading : State::installing;
+		state_ = downloading ? State::DOWNLOADING : State::INSTALLING;
 		stateChanged();
 	}
 
 	void AppUpdater::readGameInfo() {
-		state_ = State::updatingGamesInfo;
+		state_ = State::UPDATING_GAME_PAGES;
 		stateChanged();
 		connect( &gameParser_, &GameParser::parseEnded, this, &AppUpdater::parseEnded);
 		gameParser_.parse();
@@ -46,7 +46,7 @@ namespace upd {
 	}
 
 	void AppUpdater::updateInstalled(QString version) {
-		state_ = State::ended;
+		state_ = State::ENDED;
 		disconnect(&im, &bb::InstalationManager::updateStatus, this, &AppUpdater::updateStatus);
 		disconnect(&im, &bb::InstalationManager::errorEmit, this, &AppUpdater::errorCatched);
 		disconnect(&im, &bb::InstalationManager::updateEnded, this, &AppUpdater::updateInstalled);
@@ -57,7 +57,7 @@ namespace upd {
 
 	void AppUpdater::errorCatched() {
 		//auto msg = bb::InstalationManager::getObject().getErrorString();
-		state_ = State::error;
+		state_ = State::ERROR;
 		statusStr_ = im.getError();
 		stateChanged();
 	}

@@ -14,24 +14,29 @@ namespace bb {
 		Q_OBJECT
 	public:
 		using files = std::vector< cf::AppPack >;
-		void setVerToCheck(QString ver) { actualVersion_ = ver; }
-		QString getVertoUpdate() { return versionToUpdate_;  }
+		// versions
+		void setActualVer(QString ver) { actualVersion_ = ver; }
+		QString getUpdateVer() { return versionToUpdate_;  }
+
 		void parse( bool fullInstall);
 		bool needUpdate() { return needUpdate_; };
-		void reset();
+		
 		files& getFiles() { return pathFiles_; }
-		void run() override;
-		QString& getFileListUrl() {
-			return fileListUrl_;
-		}
+		QString& getFileListUrl() {	return fileListUrl_; }
+
+		void reset();
 	signals:
 		void parseEnded();
 	private:
+		void run() override;
 		void getPathUrls(QJsonObject& pathList);
+
 		QString actualVersion_;
 		QString versionToUpdate_;
+		
 		std::filesystem::path parseInfoFileName = "AppInfo.json";
 		QString fileListUrl_;
+		
 		bool needUpdate_ = false;
 		bool fullInstall_ = false;
 		// fileName -> <fileUrl, size>

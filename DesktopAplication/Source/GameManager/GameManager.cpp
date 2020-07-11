@@ -81,4 +81,15 @@ namespace gm {
 			return; //checked
 		bb::InstalationManager::getObject().updateGame(game);
 	}
+
+	Q_INVOKABLE void GameManager::runGame(int id) {
+		auto& game = cf::Config::getObject().getGame(id);
+		std::filesystem::path path = game.gameDir.toUtf8().constData();
+		path /= game.execPath.toUtf8().constData();
+		std::string cd = "cd \"";
+		cd += path.parent_path().generic_string() + "\"";
+		std::string execute = path.filename().generic_string();
+		std::string total = cd + " && " + execute;
+		system(total.c_str());
+	}
 }
