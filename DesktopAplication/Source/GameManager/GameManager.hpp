@@ -4,18 +4,16 @@
 #include <QDebug>
 #include <QThread>
 #include <QNetworkAccessManager>
-#include "IQmlObject.hpp"
+#include "IComponent.hpp"
 namespace gm {
 	class GameUninstaller;
-	class GameManager : public bc::IQmlObject {
+	class GameManager : public bc::IQmlComponent<GameManager> {
 		Q_OBJECT
 	public:
-		static GameManager& getObject() {
-			static GameManager uc;
-			return uc;
-		}
+		virtual ~GameManager() {};
+		GameManager();
 
-		// implementation IQmlObject
+		// implementation IQmlComponent
 		void update() override {};
 		std::string getName() override;
 		void init() override;
@@ -42,11 +40,6 @@ namespace gm {
 		void lockChanged();
 
 	private:
-		virtual ~GameManager() {};
-		GameManager();
-		//public slots:
-
-		//signals:
 		bool lock_ = false;
 		int Gameid_;
 		GameUninstaller* uninstaller_;

@@ -4,14 +4,15 @@
 #include <QThread>
 #include <filesystem>
 #include <unordered_set>
+#include "ImElement.hpp"
 #include <QJsonDocument>
 
 namespace cf {
 	struct AppPack;
 }
 
-namespace bb {
-	class FileListParser :public QThread {
+namespace im {
+	class FileListParser :public ImElement {
 		Q_OBJECT
 	public:
 		using files = std::vector<cf::AppPack>;
@@ -22,11 +23,11 @@ namespace bb {
 		QString getUpdateVer() { return toUpdateVersion_; }
 
 		void setPathFiles(files& files) { pathFiles_ = files; }
-		QString getVer() { return actualVersion_;  }
-		
+		QString getVer() { return actualVersion_; }
+
 		void parse(bool fullInstall);
 		bool needUpdate() { return needUpdate_; };
-		
+
 		// update files 
 		files getNeededFiles() { return files_; }
 		std::unordered_set<QString>& getFilesToDelete() { return toRemove_; };

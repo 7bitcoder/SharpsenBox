@@ -9,7 +9,8 @@ add_library(InstalationManager STATIC
     Cleanup.cpp
     AppInfoParser.cpp 
     FileListParser.cpp
-    GameFileRemover.cpp)
+    GameFileRemover.cpp 
+    UpdateInfo.cpp "ImElement.hpp")
 
 target_include_directories(InstalationManager PUBLIC
     "../AppBackend"

@@ -44,10 +44,10 @@ Rectangle {
 
     property string statusInfo: "Initialization"
     //error
-    property int errorCode: _LoadingBar.error
-    onErrorCodeChanged: {
-        if (errorCode != 0) {
-            window.info = _LoadingBar.errorString
+    property string errorStr: _LoadingBar.errorString
+    onErrorStrChanged: {
+        if (errorCode != "") {
+            window.info = errorStr
             window.stage = 2
         }
     }

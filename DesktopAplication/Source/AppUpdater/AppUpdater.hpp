@@ -3,7 +3,7 @@
 #include <QQmlApplicationEngine>
 #include <QDebug>
 #include <QNetworkAccessManager>
-#include "IQmlObject.hpp"
+#include "IComponent.hpp"
 #include "InstalationManager.hpp"
 #include <filesystem>
 #include "Config.hpp"
@@ -40,7 +40,7 @@ namespace upd {
 
 	private:
 		cf::Config& cf;
-		bb::InstalationManager& im;
+		im::InstalationManager& im;
 		QString statusStr_;
 		State state_ = State::NONE;
 		GameParser gameParser_;

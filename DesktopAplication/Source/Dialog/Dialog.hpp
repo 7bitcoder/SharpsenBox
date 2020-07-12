@@ -2,19 +2,16 @@
 #include <QObject>
 #include <QQmlApplicationEngine>
 #include <QDebug>
-#include "IQmlObject.hpp"
+#include "IComponent.hpp"
 
 namespace dl {
-	class Dialog : public bc::IQmlObject {
+	class Dialog : public  bc::IQmlComponent<Dialog> {
 		Q_OBJECT
 	public:
-		static Dialog& getObject() {
-			static Dialog uc;
-			return uc;
-		}
+		Dialog() {};
+		virtual ~Dialog() {};
 
 		// IQmlObject intefrace
-
 		std::string getName() { return TYPENAME(Dialog); }
 		void update() {}
 		void init() override {}
@@ -31,11 +28,8 @@ namespace dl {
 		//QMl invoklabes
 		Q_INVOKABLE void dialog(bool value);
 		Q_INVOKABLE bool getShowDialog() { return show_; }
-		Q_INVOKABLE QString getInfo() {	return info_; }
+		Q_INVOKABLE QString getInfo() { return info_; }
 
-	private:
-		Dialog() {};
-		virtual ~Dialog() {};
 	public slots:
 	signals:
 		void dialogTriggered(bool value);

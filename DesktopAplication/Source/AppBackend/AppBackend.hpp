@@ -3,7 +3,7 @@
 #include <QQmlApplicationEngine>
 #include <QDebug>
 #include <unordered_map>
-#include "IQmlObject.hpp"
+#include "IComponent.hpp"
 
 // Backend class - registers all objects that will be exported to qml
 namespace bc {
@@ -15,12 +15,17 @@ namespace bc {
 	private:
 		Backend() {};
 		~Backend();
-		QQmlApplicationEngine* engine;
+
 		template <class T>
-		void registerObject();
+		void qmlRegisterObject();
+
+		template <class T>
+		T& registerObject();
+
 		void registerObjects();
 		void initializeObjects();
 
-		std::vector<IQmlObject*> objects_;
+		QQmlApplicationEngine* engine;
+		std::vector<IObject*> objects_;
 	};
 }

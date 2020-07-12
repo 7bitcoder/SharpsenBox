@@ -6,12 +6,12 @@
 #include <QJsonArray>
 #include <unordered_map>
 
-namespace bb {
+namespace im {
 	void FileListParser::parse(bool fullInstall) {
 		fullInstall_ = fullInstall;
 		start();
 	}
-	
+
 	void FileListParser::run() {
 		QString val;
 		QFile file;
@@ -26,7 +26,7 @@ namespace bb {
 		QString ver = fileList_["Ver"].toString();
 		auto& ss = ver.toStdString();
 		auto& gg = actualVersion_.toStdString();
-		if ( false /*ver != toUpdateVersion_ */) { //need update
+		if (false /*ver != toUpdateVersion_ */) { //need update
 			//todo error
 		} else if (fullInstall_) {
 			readAllPackets();
@@ -35,7 +35,7 @@ namespace bb {
 		}
 		parseEnded();
 	}
-	
+
 	void FileListParser::readPackets() {
 		auto it = pathFiles_.begin();
 		auto& fileList = fileList_["Files"].toObject();
@@ -76,7 +76,7 @@ namespace bb {
 			}
 		}
 		auto packets = fileList_["Packets"].toObject();
-		
+
 		std::unordered_map<std::string, std::string> neededPackets;
 		for (auto& file : toDownload_) {
 			auto elem = fileList[file].toObject();
@@ -84,7 +84,7 @@ namespace bb {
 			if (!neededPackets.contains(pack["Url"].toString().toStdString())) {
 				totalBytesTo_ += std::stoll(pack["Size"].toString().toStdString());
 				neededPackets.insert({ pack["Url"].toString().toStdString(), pack["Name"].toString().toStdString() });
-			} 
+			}
 		}
 
 		for (auto pack : neededPackets) {

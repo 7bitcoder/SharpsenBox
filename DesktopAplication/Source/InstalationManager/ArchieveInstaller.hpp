@@ -5,9 +5,10 @@
 #include <QQmlApplicationEngine>
 #include <QDebug>
 #include <atomic>
-#include "IQmlObject.hpp"
+#include "IComponent.hpp"
 #include <filesystem>
 #include <fstream>
+#include "ImElement.hpp"
 
 #define BLOCK_SIZE 512000 //~500KB
 
@@ -17,39 +18,27 @@ namespace cf {
 	struct AppPack;
 }
 
-namespace bb {
-	class ArchieveInstaller : public  QThread {
-		Q_OBJECT
+namespace im {
+	class ArchieveInstaller : public ImElement {
 	public:
-		struct data {
-			std::filesystem::path InstallationDir;
-			std::string fileName;
-		};
-		using files = std::vector < cf::AppPack >;
-
 		ArchieveInstaller() {};
 		virtual ~ArchieveInstaller() {}
 
 		// interface
-		void setUnpackFiles(files files);
-		void setInstalationDir(std::filesystem::path dir) { destinationDir_ = dir; }
-		void resetInstalationDir() { destinationDir_ .clear(); }
+		void resetInstalationDir() { destinationDir_.clear(); }
 
-		void run() override;
-		void reset();
-
-	signals:
-		void statusSignal(qint64 progress);
-		void ended();
-		void error(int);
-	public slots:
+		// ImElement implementation
+		bool run() override;
+		void reset() override;
 
 	private:
+		void setErrorStr(int code);
 		void emitStatus();
-		static int64_t myread(archive* a, void* client_data, const void** buff);
-		static int ArchieveInstaller::myclose(archive* a, void* client_data);
+
+		static int64_t readFile(archive* a, void* client_data, const void** buff);
+		static int ArchieveInstaller::closeFile(archive* a, void* client_data);
+
 		std::filesystem::path destinationDir_;
-		files filesToUnpack_;
 		std::ifstream file;
 		std::string actualUnpacking;
 		char buff[BLOCK_SIZE];

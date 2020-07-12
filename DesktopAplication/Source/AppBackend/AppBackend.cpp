@@ -22,12 +22,14 @@ namespace bc {
 	}
 
 	void Backend::registerObjects() {
-		registerObject<cf::Config>();
-		registerObject<dl::Dialog>();
-		registerObject<lb::LoadingBar>();
-		registerObject<gm::GameManager>();
-		// for static object construction
-		bb::InstalationManager::getObject();
+		// register compoments in qml
+		qmlRegisterObject<cf::Config>();
+		qmlRegisterObject<dl::Dialog>();
+		qmlRegisterObject<lb::LoadingBar>();
+		qmlRegisterObject<gm::GameManager>();
+
+		// register components but dont expose to qml
+		registerObject<im::InstalationManager>();
 	}
 
 	void Backend::initializeObjects() {
@@ -36,9 +38,15 @@ namespace bc {
 	}
 
 	template <class T>
-	void Backend::registerObject() {
+	T& Backend::registerObject() {
 		auto& object = T::getObject();
 		objects_.push_back(&object);
+		return object;
+	}
+
+	template <class T>
+	void Backend::qmlRegisterObject() {
+		auto& object = registerObject<T>();
 		auto name = object.getName();
 		name.insert(0, "_");
 		auto cStr = name.c_str();

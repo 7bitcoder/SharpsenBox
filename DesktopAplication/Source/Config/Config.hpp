@@ -3,20 +3,18 @@
 #include <QQmlApplicationEngine>
 #include <QDebug>
 #include <QNetworkAccessManager>
-#include "IQmlObject.hpp"
+#include "IComponent.hpp"
 #include "Game.hpp"
 #include <filesystem>
 #include <vector>
 
 
 namespace cf {
-	class Config : public bc::IQmlObject {
+	class Config : public bc::IQmlComponent<Config> {
 		Q_OBJECT
 	public:
-		static Config& getObject() {
-			static Config uc;
-			return uc;
-		}
+		Config();
+		virtual ~Config();
 
 		// implementation IQmlObject
 		void update() override {};
@@ -55,8 +53,6 @@ namespace cf {
 
 
 	private:
-		Config();
-		virtual ~Config();
 		void readGames();
 		Game readGameInfo(const QJsonObject& value);
 		void writeGames();

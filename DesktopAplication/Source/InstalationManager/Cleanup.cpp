@@ -3,7 +3,7 @@
 #include "Config.hpp"
 
 
-namespace cu {
+namespace im {
 	void Cleanup::run() {
 		try {
 			auto& downloadDir = cf::Config::getObject().getDownloadDir();

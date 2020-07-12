@@ -12,12 +12,8 @@
 #include "ArchieveInstaller.hpp"
 #include "Config.hpp"
 
-namespace bb {
-	void ArchieveInstaller::setUnpackFiles(files files) {
-		filesToUnpack_ = files;
-	}
-
-	SSIZE_T ArchieveInstaller::myread(::archive* a, void* client_data, const void** buff) {
+namespace im {
+	SSIZE_T ArchieveInstaller::readFile(::archive* a, void* client_data, const void** buff) {
 		ArchieveInstaller* data = (ArchieveInstaller*)client_data;
 		*buff = data->buff;
 		data->file.read(data->buff, BLOCK_SIZE);
@@ -28,14 +24,14 @@ namespace bb {
 		return len;
 	}
 
-	int ArchieveInstaller::myclose(::archive* a, void* client_data) {
+	int ArchieveInstaller::closeFile(::archive* a, void* client_data) {
 		struct ArchieveInstaller* data = (ArchieveInstaller*)client_data;
 		if (data->file.is_open())
 			data->file.close();
 		return (ARCHIVE_OK);
 	}
 
-	void ArchieveInstaller::run() {
+	bool ArchieveInstaller::run() {
 		::archive* a;
 		::archive_entry* entry;
 		int flags;
@@ -45,19 +41,22 @@ namespace bb {
 		flags |= ARCHIVE_EXTRACT_FFLAGS;
 		try {
 			auto& downloadDir = cf::Config::getObject().getDownloadDir();
-			for (auto& arch : filesToUnpack_) {
+			auto& filesToUnpack = updateInfo_->getFiles();
+			for (auto& arch : filesToUnpack) {
 				a = archive_read_new();
 				auto actualUnpacking = (downloadDir / arch.fileName).generic_string();
+
 				file.open(actualUnpacking, std::ios::binary);
 				if (!file.is_open())
 					throw std::exception("Could not open file");
 				if (!destinationDir_.empty() && !std::filesystem::exists(destinationDir_.generic_string()))
 					std::filesystem::create_directories(destinationDir_.generic_string());
+
 				res = archive_read_support_compression_all(a);
 				res = archive_read_support_format_all(a);
-				res = archive_read_open(a, this, NULL, ArchieveInstaller::myread, ArchieveInstaller::myclose);
+				res = archive_read_open(a, this, NULL, ArchieveInstaller::readFile, ArchieveInstaller::closeFile);
+
 				while (archive_read_next_header(a, &entry) == ARCHIVE_OK) {
-					//printf("%s\n", archive_entry_pathname(entry));
 					const char* currentFile = archive_entry_pathname(entry);
 					std::filesystem::path fullOutputPath;
 					// if global destination is not set = games info so grab destination from config
@@ -66,7 +65,7 @@ namespace bb {
 						if (!fullOutputPath.empty() && !std::filesystem::exists(fullOutputPath.generic_string()))
 							std::filesystem::create_directories(fullOutputPath.generic_string());
 					} else
-						fullOutputPath  = destinationDir_.generic_string();
+						fullOutputPath = destinationDir_.generic_string();
 
 					if (currentFile) {
 						fullOutputPath /= currentFile;
@@ -78,24 +77,26 @@ namespace bb {
 							break;
 						}
 					} else {
-						int gg = 0;
+						//error with empty path
 					}
 				}
 				res = archive_read_finish(a);
 			}
+		} catch (std::filesystem::filesystem_error& e) {
+			res = -1;
 		} catch (...) {
 			res = ARCHIVE_FAILED;
 		}
 
 		if (res != ARCHIVE_OK) {
-			emit error(res);
-		} else {
-			ended();
+			setErrorStr(res);
+			return false;
 		}
+		return true;
 	}
 
 	void ArchieveInstaller::emitStatus() {
-		statusSignal(alreadyRead_);
+		im_->installStatus(alreadyRead_);
 	}
 
 	void ArchieveInstaller::reset() {
@@ -106,6 +107,23 @@ namespace bb {
 		alreadyRead_ = 0;
 		size = 0;
 		res = 0;
+	}
+
+	void ArchieveInstaller::setErrorStr(int code) {
+		switch (code) {
+		case ARCHIVE_FATAL:
+			errorStr_ = "Installing Fatal error, check memory disk space";
+			break;
+		case -1:
+			errorStr_ = "Filesystem error, check memory disk space";
+			break;
+		case ARCHIVE_EOF:
+		case ARCHIVE_WARN:
+		case ARCHIVE_FAILED:
+		default:
+			errorStr_ = "Unexpected Error ocured while installing files";
+			break;
+		}
 	}
 }
 

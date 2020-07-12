@@ -5,12 +5,12 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
-namespace bb {
+namespace im {
 	void AppInfoParser::parse(bool fullInstall) {
 		fullInstall_ = fullInstall;
 		start();
 	}
-	
+
 	void AppInfoParser::run() {
 		QString val;
 		QFile file;
@@ -29,7 +29,7 @@ namespace bb {
 		pathFiles_.push_back({ fileListUrl_.toStdString(), "FileList.json" });
 		if (fullInstall_) {
 			needUpdate_ = true;
-		} else if ( versionToUpdate_ != actualVersion_ ) { //need update
+		} else if (versionToUpdate_ != actualVersion_) { //need update
 			needUpdate_ = true;
 			getPathUrls(d["Versioning"].toObject());
 		} else { //app is up to date
@@ -43,7 +43,7 @@ namespace bb {
 			auto& ac = actualVersion_.toStdString();
 			if (it.key() <= actualVersion_)
 				continue;
-			pathFiles_.push_back({ it->toString().toStdString() , "Path-" + it.key().toStdString() + ".json"});
+			pathFiles_.push_back({ it->toString().toStdString() , "Path-" + it.key().toStdString() + ".json" });
 		}
 	}
 

@@ -4,43 +4,44 @@
 #include <QDebug>
 #include <QThread>
 #include <QNetworkAccessManager>
-#include "IQmlObject.hpp"
+#include "IComponent.hpp"
 #include "Downloader.hpp"
 #include "ArchieveInstaller.hpp"
-#include "IQmlObject.hpp"
+#include "IComponent.hpp"
 #include "Config.hpp"
 #include "Cleanup.hpp"
 #include "AppInfoParser.hpp"
 #include "FileListParser.hpp"
+#include "UpdateInfo.hpp"
+#include "ImElement.hpp"
 
 namespace lb {
 	class LoadingBar;
 }
-namespace bb {
-	class InstalationManager: public QThread {
+namespace im {
+	class InstalationManager : public QThread, public bc::IComponent<InstalationManager> {
 		Q_OBJECT
 	public:
 		using files = std::vector<cf::AppPack>;
-		static InstalationManager& getObject() {
-			static InstalationManager uc;
-			return uc;
-		}
-		enum Stage : int {
-			NONE = 0, DOWNLOAD, INSTALL
-		};
-		enum  State : int {
-			CHECKING = 0, DOWNLOADING, INSTALLING, PAUSE, ERRORD, STOPPED, COMPLEET
-		};
-		enum  VisibleState : int {
-			HIDDEN = 0, SHOWED, MINIMALIZED
-		};
+
+		virtual ~InstalationManager();
+		InstalationManager();
+
+		// implementation IQmlComponent
+		void update() override {};
+		std::string getName() override { return TYPENAME(InstalationManager); }
+		void init() override;
+
+		// interface for Downloader
+		void downloadStatus(qint64 progress, qint64 total, double speed);
 
 		// interface
+		UpdateInfo& getUpdateInfo() { return updateInfo_; }
 		void clearDownloadDir();
 		void setTotal(qint64 tot);
 
-		void updateMainApp(QString version, std::filesystem::path appInfoUrl, std::filesystem::path gamesRepoUrl, bool fullInstall);
-		void updateGame(cf::Game& game);
+		bool updateMainApp(QString version, std::filesystem::path appInfoUrl, std::filesystem::path gamesRepoUrl, bool fullInstall);
+		bool updateGame(cf::Game& game);
 		void updateGamePages(files& files);
 
 
@@ -55,8 +56,9 @@ namespace bb {
 		void stop();
 
 	private:
-		virtual ~InstalationManager();
-		InstalationManager();
+		void updateMainApp();
+		void updateGame();
+		void run() override;
 		void install(files files, qint64 tot, std::filesystem::path destination, cf::Game* game);
 		void reset();
 		void disconnectAll() {};
@@ -65,7 +67,7 @@ namespace bb {
 		void finalize();
 
 	public slots:
-		void downloadStatus(qint64 progress, qint64 total, double speed);
+
 		void installStatus(qint64 progress);
 		void TotalSize(qint64 total);
 		void errorCatched(int code);
@@ -78,43 +80,30 @@ namespace bb {
 		void metadataDownloaded();
 		void fileListParseEnded();
 	signals:
-		// App updater
+		void errorEmit(QString& errorStr);
+
+		// AppUpdater
 		void updateStatus(bool needUpdate);
 		void readGameInfo();
-		void updateEnded(QString finalVersion);
-		void errorEmit();
+		void updateEnded(QString& finalVersion);
 
 		// loadingBar
-		void setTotal(double tot);
-		void setActual(double act);
-		void setProgress(double prog);
-		void setSpeed(double sp);
-		void setError(int code, QString str);
-		void setState(State st);
-		void setVisibleState(VisibleState st);
-		void setUninstallMode(bool un);
+		void setTotalLb(double tot);
+		void setActualLb(double act);
+		void setProgressLb(double prog);
+		void setSpeedLb(double sp);
+		void setStateLb(lb::LoadingBar::State st);
+		void setVisibleStateLb(lb::LoadingBar::VisibleState st);
+		void setUninstallModeLb(bool un);
 	private:
-		bool onlyDownload;
-		bool cancel_;
-		bool fullInstall_;
-		bool emitMainAppDownload = false;
-		files files_;
-
-		cf::Game* actualGame_ = nullptr;
 		lb::LoadingBar* LoadingBar_ = nullptr;
 
-		Stage stage_ = Stage::NONE;
-		State state_ = State::CHECKING;
-		VisibleState visibleState_ = VisibleState::HIDDEN;
-
+		UpdateInfo updateInfo_;
 		Downloader downloader_;
 		ArchieveInstaller installer_;
-		cu::Cleanup cleanUpper_;
+		Cleanup cleanUpper_;
 		AppInfoParser appInfoParser_;
 		FileListParser fileListParser_;
-
-		std::filesystem::path downloadDir_;
-		std::filesystem::path installDir_;
 
 		qint64 totalBytes_ = 0; // total Bytes to download unpack all files together
 		qint64 downloadedBytes_ = 0; // Bytes downloaded

@@ -5,20 +5,18 @@
 #include <QQmlApplicationEngine>
 #include <QDebug>
 #include <atomic>
-#include "IQmlObject.hpp"
+#include "ImElement.hpp"
 #include <filesystem>
 #include <fstream>
 
-namespace cu {
-	class Cleanup : public  QThread {
+namespace im {
+	class Cleanup : public ImElement {
 		Q_OBJECT
 	public:
 
 		Cleanup() {};
 		virtual ~Cleanup() {}
 
-		// interface
-		void run() override;
 	signals:
 		void ended();
 		void error(int);

@@ -4,19 +4,14 @@
 #include <QDebug>
 #include <QThread>
 #include <QNetworkAccessManager>
-#include "IQmlObject.hpp"
+#include "IComponent.hpp"
 #include "InstalationManager.hpp"
 #include <filesystem>
 
 namespace lb {
-	class LoadingBar : public bc::IQmlObject {
+	class LoadingBar : public bc::IQmlComponent<LoadingBar> {
 		Q_OBJECT
 	public:
-		static LoadingBar& getObject() {
-			static LoadingBar uc;
-			return uc;
-		}
-
 		enum  State : int {
 			NONE = -1, CHECKING = 0, DOWNLOADING, INSTALLING, PAUSE, ERRORD, STOPPED, COMPLEET
 		};
@@ -24,6 +19,8 @@ namespace lb {
 			HIDDEN = 0, SHOWED, MINIMALIZED
 		};
 
+		virtual ~LoadingBar();
+		LoadingBar() {};
 
 		// IQmlObject implementation
 		void update() override;
@@ -40,8 +37,7 @@ namespace lb {
 		Q_PROPERTY(int state READ getState NOTIFY stateChanged);
 		Q_PROPERTY(int visibleState READ getVisibleState NOTIFY visibleStateChanged);
 
-		Q_PROPERTY(int error READ getError  NOTIFY errorChanged);
-		Q_PROPERTY(QString errorString READ getErrorString);
+		Q_PROPERTY(QString errorString READ getErrorString NOTIFY errorChanged);
 
 		Q_PROPERTY(int uninstall READ getUninstall);
 
@@ -59,20 +55,16 @@ namespace lb {
 
 		Q_INVOKABLE bool getUninstall() const;
 
-		Q_INVOKABLE void pause() const { bb::InstalationManager::getObject().pause(); };
-		Q_INVOKABLE void resume() const { bb::InstalationManager::getObject().resume(); };
-		Q_INVOKABLE void stop() const { bb::InstalationManager::getObject().stop(); };
-
-	private:
-		virtual ~LoadingBar();
-		LoadingBar() {};
+		Q_INVOKABLE void pause() const { im::InstalationManager::getObject().pause(); };
+		Q_INVOKABLE void resume() const { im::InstalationManager::getObject().resume(); };
+		Q_INVOKABLE void stop() const { im::InstalationManager::getObject().stop(); };
 
 	public slots:
 		void setTotal(double tot);
 		void setActual(double act);
 		void setProgress(double prog);
 		void setSpeed(double sp);
-		void setError(int code, QString str);
+		void setError(QString& str);
 		void setState(State st);
 		void setVisibleState(VisibleState st);
 		void setUninstallMode(bool un);
@@ -94,7 +86,6 @@ namespace lb {
 		double total_ = 0;
 		double speed_ = 0;
 		double actual_ = 0;
-		int error_ = 0;
 		QString errorStr_ = "";
 
 		bool uninstall_ = false;

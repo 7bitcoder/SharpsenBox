@@ -15,7 +15,7 @@
 #include "archive.h"
 #include "GameManager.hpp"
 
-namespace bb {
+namespace im {
 	namespace {
 		double getMB(qint64 progress) {
 			double prog = progress / 1024;//B -> KB
@@ -76,24 +76,41 @@ namespace bb {
 		cleanUpper_.wait();
 	}
 
-	void InstalationManager::updateMainApp(QString version, std::filesystem::path appInfoUrl,std::filesystem::path gamesRepoUrl, bool fullInstall) {
-		reset();
-		setTotal(0);
-		emitMainAppDownload = true;
-		appInfoParser_.setActualVer(version);
-		fileListParser_.setActualVer(version);
-		fullInstall_ = fullInstall;
-		files_ = files{ {appInfoUrl, "AppInfo.json" }, {gamesRepoUrl, "Games.json"}};
-		downloader_.setFilestoDownload(files_);
-		stage_ = Stage::DOWNLOAD;
-		LoadingBar_->setState(lb::LoadingBar::State::CHECKING);
-		LoadingBar_->setVisibleState(lb::LoadingBar::VisibleState::SHOWED);
-		connect(&downloader_, &Downloader::ended, this, &InstalationManager::appInfoDownloaded);
-		connect(&downloader_, &Downloader::error, this, &InstalationManager::errorCatched);
-		downloader_.start();
+	void InstalationManager::init() {
+		updateInfo_.init();
+		downloader_.init();
+		installer_.init();
+		cleanUpper_.init();
+		appInfoParser_.init();
+		fileListParser_.init();
 	}
 
-	void InstalationManager::updateGame(cf::Game& game) {
+	void InstalationManager::run() {
+		switch (updateInfo_.getUpdateMode()) {
+		case UpdateInfo::UpdateMode::LAUNCHBOX:
+			updateMainApp();
+		default:
+			break;
+		case UpdateInfo::UpdateMode::GAME:
+			updateGame();
+			break;
+		}
+	}
+
+	bool InstalationManager::updateMainApp(QString version, std::filesystem::path appInfoUrl, std::filesystem::path gamesRepoUrl, bool fullInstall) {
+		if (isRunning())
+			return false;
+		reset();
+		setTotal(0);
+		updateInfo_.setUpdateMode(UpdateInfo::UpdateMode::LAUNCHBOX);
+		updateInfo_.setActualVersion(version);
+		updateInfo_.setFullInstall(fullInstall);
+		updateInfo_.setFiles({ {appInfoUrl, "AppInfo.json" }, {gamesRepoUrl, "Games.json"} });
+		start();
+		return true;
+	}
+
+	bool InstalationManager::updateGame(cf::Game& game) {
 		reset();
 		setTotal(0);
 		actualGame_ = &game;
@@ -104,11 +121,16 @@ namespace bb {
 		fullInstall_ = !game.installed;
 		stage_ = Stage::DOWNLOAD;
 		progress_ = 100;
-		LoadingBar_->setState(lb::LoadingBar::State::CHECKING);
-		LoadingBar_->setVisibleState(lb::LoadingBar::VisibleState::SHOWED);
-		connect(&downloader_, &Downloader::ended, this, &InstalationManager::appInfoDownloaded);
-		connect(&downloader_, &Downloader::error, this, &InstalationManager::errorCatched); //todo przenies errory do konstruktora
-		downloader_.start();
+		setStateLb(lb::LoadingBar::State::CHECKING);
+		setVisibleStateLb(lb::LoadingBar::VisibleState::SHOWED);
+		downloader_.run();
+	}
+
+	void InstalationManager::updateMainApp() {
+		if (!downloader_.run()) {
+			auto& error = downloader_.getErrorStr();
+			errorEmit(error);
+		}
 	}
 
 	void InstalationManager::appInfoDownloaded() {
@@ -126,12 +148,9 @@ namespace bb {
 			fileListParser_.setPathFiles(files_);
 			stage_ = Stage::DOWNLOAD;
 			progress_ = 100;
-			LoadingBar_->setState(lb::LoadingBar::State::CHECKING);
-			LoadingBar_->setVisibleState(lb::LoadingBar::VisibleState::SHOWED);
-			disconnect(&appInfoParser_, &AppInfoParser::parseEnded, this, &InstalationManager::downloadUpdateMetadata);
-			connect(&downloader_, &Downloader::ended, this, &InstalationManager::metadataDownloaded);
-			connect(&downloader_, &Downloader::error, this, &InstalationManager::errorCatched); //todo przenies errory do konstruktora
-			downloader_.start();
+			setStateLb(lb::LoadingBar::State::CHECKING);
+			setVisibleStateLb(lb::LoadingBar::VisibleState::SHOWED);
+			downloader_.run();
 		} else {
 			if (actualGame_)
 				actualGame_->updateChecked = true;
@@ -152,7 +171,7 @@ namespace bb {
 		updateStatus(true);
 	}
 
-	void InstalationManager::updateGamePages( files& files) {
+	void InstalationManager::updateGamePages(files& files) {
 		emitMainAppDownload = false;
 		if (files.size())
 			install(files, 0, "", nullptr);
@@ -249,10 +268,6 @@ namespace bb {
 			progress_ = (double(ProgressBytes_) / (2 * totalBytes_)) * 99;
 			//std::cout << "progress: " << progress_ << "\n";
 		}
-	}
-
-	Q_INVOKABLE std::string InstalationManager::getName() {
-		return TYPENAME(InstalationManager);
 	}
 
 	void InstalationManager::downloadStatus(qint64 progress, qint64 total, double speed) {

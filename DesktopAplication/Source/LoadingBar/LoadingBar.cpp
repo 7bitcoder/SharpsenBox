@@ -64,8 +64,7 @@ namespace lb {
 		speed_ = sp;
 	}
 
-	void LoadingBar::setError(int code, QString str) {
-		error_ = code;
+	void LoadingBar::setError(QString& str) {
 		errorStr_ = str;
 		errorChanged();
 	}
@@ -84,7 +83,17 @@ namespace lb {
 		uninstall_ = un;
 	}
 
-	void LoadingBar::init() {}
+	void LoadingBar::init() {
+		auto* im = &im::InstalationManager::getObject();
+		connect(im, im::InstalationManager::setTotalLb, this, LoadingBar::setTotal);
+		connect(im, im::InstalationManager::setActualLb, this, LoadingBar::setActual);
+		connect(im, im::InstalationManager::setProgressLb, this, LoadingBar::setProgress);
+		connect(im, im::InstalationManager::setSpeedLb, this, LoadingBar::setSpeed);
+		connect(im, im::InstalationManager::errorEmit, this, LoadingBar::setError);
+		connect(im, im::InstalationManager::setStateLb, this, LoadingBar::setState);
+		connect(im, im::InstalationManager::setVisibleStateLb, this, LoadingBar::setVisibleState);
+		connect(im, im::InstalationManager::setUninstallModeLb, this, LoadingBar::setUninstallMode);
+	}
 
 	void LoadingBar::reset() {
 
@@ -93,8 +102,7 @@ namespace lb {
 		total_ = 0;
 		speed_ = 0;
 		actual_ = 0;
-		error_ = 0;
-		errorStr_ = "";
+		errorStr_.clear();
 
 		uninstall_ = false;
 	}
