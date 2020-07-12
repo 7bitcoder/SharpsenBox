@@ -5,20 +5,21 @@
 #include <filesystem>
 #include <unordered_map>
 #include "Config.hpp"
-namespace upd {
-	class GameParser :public QThread {
-		Q_OBJECT
+#include "IRunnable.hpp"
+
+namespace im {
+	class GameParser :public IRunnable {
 	public:
 		using files = std::vector<cf::AppPack>;
-		void parse( );
 
 		files& getFiles() { return files_; }
 		bool needUpdate() { return files_.size(); }
+
 		void updateGamesInfo();
-		void run() override;
-		void reset();
-	signals:
-		void parseEnded();
+
+		// ImElement implementation
+		bool run() override;
+		void reset() override;
 	private:
 		// fileName -> <fileUrl, size>
 		// first element is filelist

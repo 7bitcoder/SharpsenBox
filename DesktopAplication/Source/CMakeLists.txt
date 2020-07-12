@@ -1,5 +1,6 @@
 ﻿
 add_subdirectory(Config)
+#add_subdirectory(JsonParsers)
 add_subdirectory(InstalationManager)
 add_subdirectory(LoadingBar)
 add_subdirectory(GameManager)

@@ -1,12 +1,11 @@
 ﻿#pragma once 
-
 #include <iostream>
 #include <QObject>
 #include <QThread>
 #include <QQmlApplicationEngine>
 #include <QDebug>
 #include <atomic>
-#include "ImElement.hpp"
+#include "IRunnable.hpp"
 #include <filesystem>
 
 namespace cf {
@@ -14,8 +13,7 @@ namespace cf {
 }
 
 namespace im {
-	class Downloader : public ImElement {
-		Q_OBJECT
+	class Downloader : public IRunnable {
 	public:
 		using files = std::vector < cf::AppPack >;
 		Downloader();
@@ -24,10 +22,14 @@ namespace im {
 		// ImElement implementation
 		bool run() override;
 		void reset() override;
+
+
 	private:
+		enum ErrorCode : int { UNKNOWN = -200, MISSING_FILE, FILESYSTEM_ERROR };
 		static size_t writeToFile(void* buffer, size_t size, size_t nmemb, void* userdata);
 		static int progressCallback(void* clientp, long long dltotal, long long dlnow, long long ultotal, long long ulnow);
 		void closeFile();
+		bool checkDownloaded();
 
 		int checkState();
 		void emitStatus();

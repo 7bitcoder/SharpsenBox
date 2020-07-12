@@ -1,9 +1,10 @@
 ﻿
 add_library(Config STATIC
-    Config.cpp "Game.cpp")
+    Config.cpp
+    Game.cpp)
 
 
-target_include_directories(Config PRIVATE
+target_include_directories(Config PUBLIC
     "../MainWindow" 
     "../AppBackend"
     "../InstalationManager")

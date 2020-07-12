@@ -7,16 +7,19 @@ add_library(InstalationManager STATIC
     Downloader.cpp 
     ArchieveInstaller.cpp 
     Cleanup.cpp
+    GameFileRemover.cpp 
+    UpdateInfo.cpp 
     AppInfoParser.cpp 
     FileListParser.cpp
-    GameFileRemover.cpp 
-    UpdateInfo.cpp "ImElement.hpp")
+    GameParser.cpp "IInstalationManager.hpp" "IRunnable.hpp")
 
 target_include_directories(InstalationManager PUBLIC
+    "./h"
     "../AppBackend"
     "../Config"
     "../LoadingBar"
-    "../GameManager")
+    "../GameManager"
+    "../JsonParsers")
 
 qt5_use_modules(InstalationManager 
     Quick 
@@ -24,6 +27,7 @@ qt5_use_modules(InstalationManager
     Network)
 
 target_link_libraries(InstalationManager
+    #JsonParsers
     Qt5::Widgets
     Qt5::Gui
     Qt5::Core

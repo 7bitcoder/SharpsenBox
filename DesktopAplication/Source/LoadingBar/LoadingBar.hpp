@@ -5,7 +5,6 @@
 #include <QThread>
 #include <QNetworkAccessManager>
 #include "IComponent.hpp"
-#include "InstalationManager.hpp"
 #include <filesystem>
 
 namespace lb {
@@ -55,16 +54,16 @@ namespace lb {
 
 		Q_INVOKABLE bool getUninstall() const;
 
-		Q_INVOKABLE void pause() const { im::InstalationManager::getObject().pause(); };
-		Q_INVOKABLE void resume() const { im::InstalationManager::getObject().resume(); };
-		Q_INVOKABLE void stop() const { im::InstalationManager::getObject().stop(); };
+		Q_INVOKABLE void pause() const;
+		Q_INVOKABLE void resume() const;
+		Q_INVOKABLE void stop() const;
 
 	public slots:
 		void setTotal(double tot);
 		void setActual(double act);
 		void setProgress(double prog);
 		void setSpeed(double sp);
-		void setError(QString& str);
+		void setError(const QString& str);
 		void setState(State st);
 		void setVisibleState(VisibleState st);
 		void setUninstallMode(bool un);

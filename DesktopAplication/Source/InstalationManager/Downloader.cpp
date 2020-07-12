@@ -4,6 +4,8 @@
 #include <iostream>
 #include <curl/curl.h>
 #include <QElapsedTimer>
+#include "IInstalationManager.hpp"
+#include "UpdateInfo.hpp"
 
 namespace im {
 
@@ -103,7 +105,7 @@ namespace im {
 					auto& filename = files.at(i).fileName;
 					lastDownload_ = 0;
 					outfile_ = (downloadDir / filename).generic_string();
-					res = curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+					res = curl_easy_setopt(curl, CURLOPT_URL, url);
 					res = curl_easy_perform(curl);
 					if (CURLE_OK != res) {
 						break;
@@ -121,15 +123,27 @@ namespace im {
 		closeFile();
 		::curl_easy_cleanup(curl);
 		::curl_global_cleanup();
-		cancelled = false;
-
 		if (res != CURLE_OK) {
-			if (res == CURLE_OPERATION_TIMEDOUT && cancelled) {
-				return true;
-			} else {
+			if (res != CURLE_OPERATION_TIMEDOUT || !cancelled) { // cancel request
 				setErrorStr(res);
 				return false;
 			}
+		}
+		cancelled = false;
+		if (!checkDownloaded()) {
+			res = -3;
+			setErrorStr(res);
+			return false;
+		}
+		return true;
+	}
+
+	bool Downloader::checkDownloaded() {
+		auto& downloadDir = cf::Config::getObject().getDownloadDir();
+		auto& files = updateInfo_->getFiles();
+		for (auto& file : files) {
+			if (!std::filesystem::exists(downloadDir / file.fileName))
+				return false;
 		}
 		return true;
 	}
@@ -183,10 +197,13 @@ namespace im {
 		case CURLE_OPERATION_TIMEDOUT:
 			errorStr_ = "Connection timeout";
 			break;
-		case -2:
+		case MISSING_FILE:
+			errorStr_ = "Missing file, that should be downloaded";
+			break;
+		case FILESYSTEM_ERROR:
 			errorStr_ = "Filesystem error, check disk space";
 			break;
-		case -1:
+		case UNKNOWN:
 		default:
 			errorStr_ = "Unexpected error ocured while downloading data";
 			break;

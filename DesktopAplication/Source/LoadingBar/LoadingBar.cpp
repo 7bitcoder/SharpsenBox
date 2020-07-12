@@ -3,6 +3,7 @@
 #include "LoadingBar.hpp"
 #include "AppBackend.hpp"
 #include "Config.hpp"
+#include "InstalationManager.hpp"
 
 namespace lb {
 	LoadingBar::~LoadingBar() {}
@@ -36,9 +37,9 @@ namespace lb {
 		return progress_;
 	}
 
-	Q_INVOKABLE int LoadingBar::getError() const {
-		return error_;
-	}
+	Q_INVOKABLE void LoadingBar::pause() const { im::InstalationManager::getObject().pause(); };
+	Q_INVOKABLE void LoadingBar::resume() const { im::InstalationManager::getObject().resume(); };
+	Q_INVOKABLE void LoadingBar::stop() const { im::InstalationManager::getObject().stop(); };
 
 	Q_INVOKABLE QString LoadingBar::getErrorString() const {
 		return errorStr_;
@@ -64,7 +65,7 @@ namespace lb {
 		speed_ = sp;
 	}
 
-	void LoadingBar::setError(QString& str) {
+	void LoadingBar::setError(const QString& str) {
 		errorStr_ = str;
 		errorChanged();
 	}

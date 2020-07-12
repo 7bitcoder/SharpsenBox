@@ -5,7 +5,8 @@ add_library(LoadingBar STATIC
 target_include_directories(LoadingBar PUBLIC
     "../AppBackend"
     "../Config"
-    "../InstalationManager")
+    "../InstalationManager"
+    "../JsonParsers")
 
 qt5_use_modules(LoadingBar 
     Quick 

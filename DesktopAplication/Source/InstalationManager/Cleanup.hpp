@@ -5,23 +5,20 @@
 #include <QQmlApplicationEngine>
 #include <QDebug>
 #include <atomic>
-#include "ImElement.hpp"
+#include "IRunnable.hpp"
 #include <filesystem>
 #include <fstream>
 
 namespace im {
-	class Cleanup : public ImElement {
-		Q_OBJECT
+	class Cleanup : public IRunnable {
 	public:
 
 		Cleanup() {};
 		virtual ~Cleanup() {}
 
-	signals:
-		void ended();
-		void error(int);
-	public slots:
-
+		// ImElement implementation
+		bool run() override;
+		void reset() override {};
 	private:
 	};
 }

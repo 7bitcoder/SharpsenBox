@@ -7,33 +7,33 @@
 #include <unordered_map>
 
 namespace im {
-	void FileListParser::parse(bool fullInstall) {
-		fullInstall_ = fullInstall;
-		start();
-	}
+	bool FileListParser::run() {
+		try {
+			QString val;
+			QFile file;
+			//open LaunchBoxConfig file
+			auto path = cf::Config::getObject().getDownloadDir() / parseInfoFileName;
+			file.setFileName(path.generic_string().c_str());
+			file.open(QIODevice::ReadOnly | QIODevice::Text);
+			val = file.readAll();
+			auto& ghj = val.toStdString();
+			file.close();
+			fileList_ = QJsonDocument::fromJson(val.toUtf8());
+			QString ver = fileList_["Ver"].toString();
 
-	void FileListParser::run() {
-		QString val;
-		QFile file;
-		//open LaunchBoxConfig file
-		auto path = cf::Config::getObject().getDownloadDir() / parseInfoFileName;
-		file.setFileName(path.generic_string().c_str());
-		file.open(QIODevice::ReadOnly | QIODevice::Text);
-		val = file.readAll();
-		auto& ghj = val.toStdString();
-		file.close();
-		fileList_ = QJsonDocument::fromJson(val.toUtf8());
-		QString ver = fileList_["Ver"].toString();
-		auto& ss = ver.toStdString();
-		auto& gg = actualVersion_.toStdString();
-		if (false /*ver != toUpdateVersion_ */) { //need update
-			//todo error
-		} else if (fullInstall_) {
-			readAllPackets();
-		} else { //app is up to date
-			readPackets();
+			auto& ss = ver.toStdString();
+			if (false /*ver != toUpdateVersion_ */) { //need update
+				//todo error
+			} else if (updateInfo_->getFullInstall()) {
+				readAllPackets();
+			} else { //app is up to date
+				readPackets();
+			}
+		} catch (...) {
+			errorStr_ = "Error ocured while processing update fileList";
+			return false;
 		}
-		parseEnded();
+		return true;
 	}
 
 	void FileListParser::readPackets() {
@@ -104,10 +104,8 @@ namespace im {
 	}
 
 	void FileListParser::reset() {
-		actualVersion_ = "";
 		files_.clear();
 		totalBytesTo_ = 0;
-		needUpdate_ = false;
 		toDownload_.clear();
 		toRemove_.clear();
 	}

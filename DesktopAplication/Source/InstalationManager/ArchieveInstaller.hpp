@@ -8,7 +8,7 @@
 #include "IComponent.hpp"
 #include <filesystem>
 #include <fstream>
-#include "ImElement.hpp"
+#include "IRunnable.hpp"
 
 #define BLOCK_SIZE 512000 //~500KB
 
@@ -19,7 +19,7 @@ namespace cf {
 }
 
 namespace im {
-	class ArchieveInstaller : public ImElement {
+	class ArchieveInstaller : public IRunnable {
 	public:
 		ArchieveInstaller() {};
 		virtual ~ArchieveInstaller() {}
@@ -43,7 +43,7 @@ namespace im {
 		std::string actualUnpacking;
 		char buff[BLOCK_SIZE];
 		qint64 alreadyRead_ = 0;
-		size_t size;
+		size_t size = 0;
 		int res = 0;
 	};
 }

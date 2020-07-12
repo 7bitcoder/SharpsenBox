@@ -1,8 +1,8 @@
 ﻿#include "GameFileRemover.hpp"
 #include "Config.hpp"
 
-namespace gm {
-	void GameFileRemover::run() {
+namespace im {
+	bool GameFileRemover::run() {
 		try {
 			std::filesystem::path gamePath = game_->gameDir.toStdString();
 			for (auto& path : *toRemove_) {
@@ -13,7 +13,6 @@ namespace gm {
 		} catch (...) {
 
 		}
-		removeComplete();
 	}
 
 }

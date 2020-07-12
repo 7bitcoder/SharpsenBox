@@ -7,7 +7,6 @@
 #include "InstalationManager.hpp"
 #include <filesystem>
 #include "Config.hpp"
-#include "GameParser.hpp"
 
 
 namespace upd {
@@ -24,17 +23,15 @@ namespace upd {
 		Q_INVOKABLE QString getStateStr() const { return statusStr_; }
 		Q_INVOKABLE int getProgress() const { return im.getProgress(); }
 		Q_INVOKABLE int getState() const { return static_cast<int>(state_); }
+		Q_INVOKABLE void checkForUpdates();
 
 		AppUpdater();
 		virtual ~AppUpdater() {};
 	private:
 	public slots:
-		void updateInstalled(QString version);
-		void checkForUpdates();
-		void readGameInfo();
-		void parseEnded();
-		void errorCatched();
-		void updateStatus(bool needUpdate);
+		void updateInstalled(const QString& version);
+		void errorCatched(const QString& what);
+		void updateStatus(State state);
 	signals:
 		void stateChanged();
 
@@ -43,6 +40,5 @@ namespace upd {
 		im::InstalationManager& im;
 		QString statusStr_;
 		State state_ = State::NONE;
-		GameParser gameParser_;
 	};
 }

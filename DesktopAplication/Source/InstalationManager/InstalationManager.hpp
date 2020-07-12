@@ -13,13 +13,12 @@
 #include "AppInfoParser.hpp"
 #include "FileListParser.hpp"
 #include "UpdateInfo.hpp"
-#include "ImElement.hpp"
+#include "GameParser.hpp"
+#include "LoadingBar.hpp"
+#include "IInstalationManager.hpp"
 
-namespace lb {
-	class LoadingBar;
-}
 namespace im {
-	class InstalationManager : public QThread, public bc::IComponent<InstalationManager> {
+	class InstalationManager : public QThread, public bc::IComponent<InstalationManager>, public IInstalationManager {
 		Q_OBJECT
 	public:
 		using files = std::vector<cf::AppPack>;
@@ -27,16 +26,16 @@ namespace im {
 		virtual ~InstalationManager();
 		InstalationManager();
 
-		// implementation IQmlComponent
+		// implementation IComponent
 		void update() override {};
 		std::string getName() override { return TYPENAME(InstalationManager); }
 		void init() override;
 
-		// interface for Downloader
-		void downloadStatus(qint64 progress, qint64 total, double speed);
+		// implementation IInstalationManager 
+		void downloadStatus(qint64 progress, qint64 total, double speed) override;
+		void installStatus(qint64 progress) override;
+		UpdateInfo& getUpdateInfo() override { return updateInfo_; }
 
-		// interface
-		UpdateInfo& getUpdateInfo() { return updateInfo_; }
 		void clearDownloadDir();
 		void setTotal(qint64 tot);
 
@@ -59,16 +58,21 @@ namespace im {
 		void updateMainApp();
 		void updateGame();
 		void run() override;
+		void updateApp();
+		void downloadUpdate();
+		void installUpdate();
+		void updateGameInfo();
+		void updateGamePages();
 		void install(files files, qint64 tot, std::filesystem::path destination, cf::Game* game);
 		void reset();
 		void disconnectAll() {};
 		void setProgress();
 		void sendDataToBar();
-		void finalize();
+		void cleanUp();
 
 	public slots:
 
-		void installStatus(qint64 progress);
+
 		void TotalSize(qint64 total);
 		void errorCatched(int code);
 		void downloadEnded(bool cancelled);
@@ -80,12 +84,12 @@ namespace im {
 		void metadataDownloaded();
 		void fileListParseEnded();
 	signals:
-		void errorEmit(QString& errorStr);
+		void errorEmit(const QString& errorStr);
 
 		// AppUpdater
 		void updateStatus(bool needUpdate);
 		void readGameInfo();
-		void updateEnded(QString& finalVersion);
+		void updateEnded(const QString& finalVersion);
 
 		// loadingBar
 		void setTotalLb(double tot);
@@ -104,6 +108,7 @@ namespace im {
 		Cleanup cleanUpper_;
 		AppInfoParser appInfoParser_;
 		FileListParser fileListParser_;
+		GameParser gameParser_;
 
 		qint64 totalBytes_ = 0; // total Bytes to download unpack all files together
 		qint64 downloadedBytes_ = 0; // Bytes downloaded

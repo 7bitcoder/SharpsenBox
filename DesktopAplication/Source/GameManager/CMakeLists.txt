@@ -8,7 +8,8 @@ target_include_directories(GameManager PUBLIC
     "../Config"
     "../LoadingBar"
     "../InstalationManager"
-    "../Dialog")
+    "../Dialog"
+    "../JsonParsers")
 
 qt5_use_modules(GameManager 
     Quick 

@@ -11,6 +11,7 @@
 #include <archive_entry.h>
 #include "ArchieveInstaller.hpp"
 #include "Config.hpp"
+#include "UpdateInfo.hpp"
 
 namespace im {
 	SSIZE_T ArchieveInstaller::readFile(::archive* a, void* client_data, const void** buff) {
@@ -101,7 +102,6 @@ namespace im {
 
 	void ArchieveInstaller::reset() {
 		destinationDir_ = "";
-		filesToUnpack_.clear();
 		actualUnpacking = "";
 
 		alreadyRead_ = 0;

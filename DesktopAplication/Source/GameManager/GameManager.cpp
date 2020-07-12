@@ -28,7 +28,7 @@ namespace gm {
 			p /= game.name.toStdString();
 			game.gameDir = p.generic_string().c_str();
 			game.shortcut = shortcut;
-			bb::InstalationManager::getObject().updateGame(game);
+			im::InstalationManager::getObject().updateGame(game);
 		}
 	}
 	void GameManager::init() {
@@ -79,7 +79,7 @@ namespace gm {
 		auto& game = cf::Config::getObject().getGame(id);
 		if (game.updateChecked)
 			return; //checked
-		bb::InstalationManager::getObject().updateGame(game);
+		im::InstalationManager::getObject().updateGame(game);
 	}
 
 	Q_INVOKABLE void GameManager::runGame(int id) {

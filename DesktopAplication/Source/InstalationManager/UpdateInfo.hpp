@@ -6,14 +6,14 @@
 #include <atomic>
 #include <unordered_map>
 #include "Config.hpp"
-#include "InstalationManager.hpp"
+#include "IRunnable.hpp"
 
 namespace cf {
 	struct AppPack;
 }
 
 namespace im {
-	class UpdateInfo : public ImElement {
+	class UpdateInfo : public IRunnable {
 	public:
 		//class holind infomration about updating process
 		using files = std::vector< cf::AppPack >;
@@ -36,7 +36,7 @@ namespace im {
 		void setActualVersion(const QString& ver) { actualVersion_ = ver; }
 
 		QString& getUpdateVersion() { return toUpdateVersion_; }
-		void getUpdateVersion(const QString& ver) { toUpdateVersion_ = ver; }
+		void setUpdateVersion(const QString& ver) { toUpdateVersion_ = ver; }
 
 		cf::Game& getActualGame() { if (!actualGame_) throw std::exception("No Game is setUp"); return *actualGame_; }
 		void setActualGame(cf::Game& game) { actualGame_ = &game; }
@@ -51,7 +51,8 @@ namespace im {
 		bool isGameUppdating() { return getUpdateMode() == UpdateMode::GAME; }
 		bool isLBUpdating() { return getUpdateMode() == UpdateMode::LAUNCHBOX; }
 
-		void reset();
+		void reset() override;
+		bool run() override { return true; }
 
 		//controlls 
 		std::atomic_flag pause;
