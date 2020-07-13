@@ -12,7 +12,6 @@
 #include <QStandardPaths>
 #include "archive.h"
 #include "IRunnable.hpp"
-#include "ObjectRepo.hpp"
 #include "IConfig.hpp"
 #include "IGameManager.hpp"
 #include "AppInfoParser.hpp"
@@ -92,7 +91,7 @@ namespace im {
 		fileListParser_.reset(new FileListParser);
 		gameParser_.reset(new GameParser);
 
-		auto& downloadDir = bc::ObjectsRepository::getRepo().getConfig().getDownloadDir();
+		auto& downloadDir = bc::Backend::getBackend().getConfig().getDownloadDir();
 		if (!std::filesystem::exists(downloadDir)) {
 			try {
 				std::filesystem::create_directory(downloadDir);
@@ -249,7 +248,7 @@ namespace im {
 			auto res = CreateLink(path.generic_string().c_str(), path.parent_path().generic_string().c_str(), link.generic_string().c_str(), "Sylio shortcut");
 			actualGame.shortcutPath = link.generic_string().c_str();
 		}
-		bc::ObjectsRepository::getRepo().getGameManager().unLock();
+		bc::Backend::getBackend().getGameManager().unLock();
 	}
 
 	void InstalationManager::updateGamePages() {
@@ -271,7 +270,7 @@ namespace im {
 		setStateLb(lb::State::COMPLEET);
 		setVisibleStateLb(lb::VisibleState::HIDDEN);
 		updateEnded(updateInfo_->getUpdateVersion());
-		bc::ObjectsRepository::getRepo().getGameManager().unLock();
+		bc::Backend::getBackend().getGameManager().unLock();
 	}
 
 	void InstalationManager::setTotal(qint64 tot) {

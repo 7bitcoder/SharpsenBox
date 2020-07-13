@@ -2,9 +2,9 @@
     AppUpdater.cpp  "AppUpdaterStates.hpp")
 
 target_include_directories(AppUpdaterBackend PUBLIC
-    "../MainWindow" 
     "../AppBackend"
-    "../InstalationManager"
+    "../InstalationManager/h"
+    "../ObjectRepository"
     "../Config/h")
 
 qt5_use_modules(AppUpdaterBackend 

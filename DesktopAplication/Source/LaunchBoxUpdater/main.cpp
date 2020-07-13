@@ -5,6 +5,7 @@
 #include "AppUpdater.hpp"
 #include "InstalationManager.hpp"
 #include "ArchieveInstaller.hpp"
+#include "IInstalationManager.hpp"
 #include <fstream>
 #include <iostream>
 
@@ -15,8 +16,6 @@ int main(int argc, char** argv) {
 	QQmlApplicationEngine engine;
 	auto updater = new upd::AppUpdater();
 	engine.rootContext()->setContextProperty("_AppUpdater", updater);
-	auto& im = im::InstalationManager::getObject();
-	engine.rootContext()->setContextProperty("_InstalationManager", &im);
 	engine.load("qrc:/AppUpdater.qml");
 	//_sleep(10000);
 	return app.exec();

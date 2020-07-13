@@ -4,7 +4,6 @@
 #include "AppBackend.hpp"
 #include "IConfig.hpp"
 #include "IInstalationManager.hpp"
-#include "ObjectRepo.hpp"
 
 namespace lb {
 	LoadingBar::~LoadingBar() {}
@@ -86,15 +85,15 @@ namespace lb {
 	}
 
 	void LoadingBar::init() {
-		auto* im = &bc::ObjectsRepository::getRepo().getInstalationManager();
-		connect(im, &im::IInstalationManager::setTotalLb, this, &LoadingBar::setTotal);
-		connect(im, &im::IInstalationManager::setActualLb, this, &LoadingBar::setActual);
-		connect(im, &im::IInstalationManager::updateProgress, this, &LoadingBar::setProgress);
-		connect(im, &im::IInstalationManager::setSpeedLb, this, &LoadingBar::setSpeed);
-		connect(im, &im::IInstalationManager::errorEmit, this, &LoadingBar::setError);
-		connect(im, &im::IInstalationManager::setStateLb, this, &LoadingBar::setState);
-		connect(im, &im::IInstalationManager::setVisibleStateLb, this, &LoadingBar::setVisibleState);
-		connect(im, &im::IInstalationManager::setUninstallModeLb, this, &LoadingBar::setUninstallMode);
+		auto* ob = &bc::Backend::getBackend().getInstalationManager();
+		//connect(ob, &im::IInstalationManager::setTotalLb, this, &LoadingBar::setTotal);
+		//connect(ob, &im::IInstalationManager::setActualLb, this, &LoadingBar::setActual);
+		//connect(ob, &im::IInstalationManager::updateProgress, this, &LoadingBar::setProgress);
+		//connect(ob, &im::IInstalationManager::setSpeedLb, this, &LoadingBar::setSpeed);
+		//connect(ob, &im::IInstalationManager::errorEmit, this, &LoadingBar::setError);
+		//connect(ob, &im::IInstalationManager::setStateLb, this, &LoadingBar::setState);
+		//connect(ob, &im::IInstalationManager::setVisibleStateLb, this, &LoadingBar::setVisibleState);
+		//connect(ob, &im::IInstalationManager::setUninstallModeLb, this, &LoadingBar::setUninstallMode);
 	}
 
 	void LoadingBar::reset() {

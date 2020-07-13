@@ -1,6 +1,6 @@
 #include "IConfig.hpp"
 #include "Game.hpp"
-#include "ObjectRepo.hpp"
+#include "AppBackend.hpp"
 #include "GameParser.hpp"
 #include <QFile>
 #include <QJsonDocument>
@@ -13,7 +13,7 @@ namespace im {
 			QString val;
 			QFile file;
 			//open LaunchBoxConfig file
-			auto& config = bc::ObjectsRepository::getRepo().getConfig();
+			auto& config = bc::Backend::getBackend().getConfig();
 			auto& path = config.getDownloadDir() / "Games.json";
 			file.setFileName(path.generic_string().c_str());
 			file.open(QIODevice::ReadOnly | QIODevice::Text);
@@ -59,7 +59,7 @@ namespace im {
 
 	void GameParser::updateGamesInfo() {
 		for (auto& data : toUpdate_) {
-			bc::ObjectsRepository::getRepo().getConfig().getGame(data.first).PresentationVer = data.second;
+			bc::Backend::getBackend().getConfig().getGame(data.first).PresentationVer = data.second;
 		}
 	}
 

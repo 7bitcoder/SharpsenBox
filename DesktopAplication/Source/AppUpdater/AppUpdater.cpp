@@ -1,7 +1,7 @@
 ﻿#include "AppUpdater.hpp"
 #include "IConfig.hpp"
 #include "IInstalationManager.hpp"
-#include "ObjectRepo.hpp"
+#include "AppBackend.hpp"
 #include <QElapsedTimer>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -11,7 +11,7 @@
 
 namespace upd {
 
-	AppUpdater::AppUpdater() : cf_(bc::ObjectsRepository::getRepo().getConfig()), im_(bc::ObjectsRepository::getRepo().getInstalationManager()) {
+	AppUpdater::AppUpdater() : cf_(bc::Backend::getBackend().getConfig()), im_(bc::Backend::getBackend().getInstalationManager()) {
 		cf_.init();
 		im_.init();
 		auto& downloadDir = cf_.getDownloadDir();
@@ -20,10 +20,10 @@ namespace upd {
 	}
 
 	void AppUpdater::checkForUpdates() {
-		connect(&im_, &im::IInstalationManager::updateStatus, this, &AppUpdater::updateStatus);
-		connect(&im_, &im::IInstalationManager::errorEmit, this, &AppUpdater::errorCatched);
-		connect(&im_, &im::IInstalationManager::updateEnded, this, &AppUpdater::updateInstalled);
-		connect(&im_, &im::IInstalationManager::updateProgress, this, &AppUpdater::updateProgress);
+		//connect(&im_, &im::IInstalationManager::updateStatus, this, &AppUpdater::updateStatus);
+		//connect(&im_, &im::IInstalationManager::errorEmit, this, &AppUpdater::errorCatched);
+		//connect(&im_, &im::IInstalationManager::updateEnded, this, &AppUpdater::updateInstalled);
+		//connect(&im_, &im::IInstalationManager::updateProgress, this, &AppUpdater::updateProgress);
 		updateStatus(State::DOWNLOADING);
 		im_.updateMainApp(cf_.getVer(), cf_.getLauncherAppInfoUrl(), cf_.getGameInfoRepository(), cf_.getVer() == "0");
 	}

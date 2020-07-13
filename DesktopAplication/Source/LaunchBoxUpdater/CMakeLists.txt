@@ -17,6 +17,7 @@ qt5_use_modules(AppUpdater
     Network)
 
 target_link_libraries(AppUpdater
+    AppBackend
     AppUpdaterBackend
     Qt5::Widgets
     Qt5::Gui

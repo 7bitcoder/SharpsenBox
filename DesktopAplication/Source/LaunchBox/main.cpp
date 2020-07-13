@@ -9,7 +9,7 @@ int main(int argc, char** argv) {
 	//QCoreApplication::setAttribute(Qt::AA_UseSoftwareOpenGL);
 	QGuiApplication app(argc, argv);
 	QQmlApplicationEngine engine;
-	bc::Backend& backend = bc::Backend::getBakend();
+	bc::IBackend& backend = bc::Backend::getBackend();
 	backend.init(&engine);
 	engine.load("qrc:/LaunchBox.qml");
 	//_sleep(10000);

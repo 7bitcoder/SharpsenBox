@@ -4,6 +4,8 @@ add_library(Dialog STATIC
 
 target_include_directories(Dialog PUBLIC
     "../AppBackend"
+    "../AppBackend/h"
+    "../GameManager/h"
     "../Config/h"
     "h")
 

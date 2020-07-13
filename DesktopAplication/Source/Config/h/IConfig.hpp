@@ -13,7 +13,6 @@ namespace cf {
 	class Game;
 
 	struct IConfig : public  bc::IQmlComponent {
-		Q_OBJECT
 	public:
 		virtual ~IConfig() {};
 
@@ -31,20 +30,19 @@ namespace cf {
 		virtual std::filesystem::path getLauncherAppInfoUrl() = 0;
 		virtual std::filesystem::path getGameInfoRepository() = 0;
 
-		//QMl invoklabes
-		Q_INVOKABLE virtual bool installed(int id) = 0;
-		Q_INVOKABLE virtual QString gameInfoDir(int id) = 0;
-		Q_INVOKABLE virtual QUrl defaultInstallDir() = 0;
-		Q_INVOKABLE virtual void setDownloadSpeed(qint32 dp) = 0;
-		Q_INVOKABLE virtual qint32 getDownloadSpeed() = 0;
-		Q_INVOKABLE virtual void setGameAutoCheck(int id, bool val) = 0;
-		Q_INVOKABLE virtual bool getGameAutoCheck(int id) = 0;
-		Q_INVOKABLE virtual QString getGameName(int id) = 0;
-		Q_INVOKABLE virtual QString  getConfigJsonUrl() = 0;
-		Q_INVOKABLE virtual int getGameId() = 0;
-		Q_INVOKABLE virtual QString getGamePresentationUrl(int id) = 0;
-		Q_INVOKABLE virtual QString getPresentationFile(int id) = 0;
-		Q_INVOKABLE virtual int getDefaultGameId() = 0;
-		Q_INVOKABLE virtual QString getCurrentDirectory() = 0;
+		virtual  Q_INVOKABLE bool installed(int id) = 0;
+		virtual  Q_INVOKABLE QString gameInfoDir(int id) = 0;
+		virtual  Q_INVOKABLE QUrl defaultInstallDir() = 0;
+		virtual  Q_INVOKABLE void setDownloadSpeed(qint32 dp) = 0;
+		virtual  Q_INVOKABLE qint32 getDownloadSpeed() = 0;
+		virtual  Q_INVOKABLE void setGameAutoCheck(int id, bool val) = 0;
+		virtual  Q_INVOKABLE bool getGameAutoCheck(int id) = 0;
+		virtual  Q_INVOKABLE QString getGameName(int id) = 0;
+		virtual  Q_INVOKABLE QString  getConfigJsonUrl() = 0;
+		virtual  Q_INVOKABLE int getGameId() = 0;
+		virtual  Q_INVOKABLE QString getGamePresentationUrl(int id) = 0;
+		virtual  Q_INVOKABLE QString getPresentationFile(int id) = 0;
+		virtual  Q_INVOKABLE int getDefaultGameId() = 0;
+		virtual  Q_INVOKABLE QString getCurrentDirectory() = 0;
 	};
 }

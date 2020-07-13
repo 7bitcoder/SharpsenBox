@@ -55,7 +55,25 @@ namespace im {
 		void resume();
 		void stop();
 
-		void run() override;
+		void run() final;
+
+	signals:
+		void errorEmit(const QString& errorStr);
+		void updateProgress(double prog);
+
+		// AppUpdater
+		void updateStatus(upd::State needUpdate);
+		void readGameInfo();
+		void updateEnded(const QString& finalVersion);
+
+		// loadingBar
+		void setTotalLb(double tot);
+		void setActualLb(double act);
+		void setSpeedLb(double sp);
+		void setStateLb(lb::State st);
+		void setVisibleStateLb(lb::VisibleState st);
+		void setUninstallModeLb(bool un);
+
 	private:
 		void updateMainApp();
 		void updateGame();
@@ -69,22 +87,6 @@ namespace im {
 		void sendDataToBar();
 		void cleanUp();
 
-	signals:
-		void errorEmit(const QString& errorStr) final;
-		void updateProgress(double prog) final;
-
-		// AppUpdater
-		void updateStatus(upd::State needUpdate) final;
-		void readGameInfo() final;
-		void updateEnded(const QString& finalVersion) final;
-
-		// loadingBar
-		void setTotalLb(double tot) final;
-		void setActualLb(double act) final;
-		void setSpeedLb(double sp) final;
-		void setStateLb(lb::State st) final;
-		void setVisibleStateLb(lb::VisibleState st) final;
-		void setUninstallModeLb(bool un) final;
 	private:
 		std::unique_ptr<UpdateInfo> updateInfo_;
 		std::unique_ptr<Downloader> downloader_;

@@ -1,7 +1,6 @@
 ﻿
 add_library(AppBackend STATIC
-    AppBackend.cpp 
-    ObjectRepo.cpp)
+    AppBackend.cpp)
 
 target_include_directories(AppBackend PUBLIC
     "../Dialog"
@@ -11,9 +10,11 @@ target_include_directories(AppBackend PUBLIC
     "../GameManager"
     "../Dialog/h"
     "../InstalationManager/h"
+    "../ObjectRepository"
     "../Config/h"
     "../LoadingBar/h"
-    "../GameManager/h")
+    "../GameManager/h"
+    "h")
 
 qt5_use_modules(AppBackend 
     Quick 

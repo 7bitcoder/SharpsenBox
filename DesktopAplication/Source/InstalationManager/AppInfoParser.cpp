@@ -3,7 +3,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
-#include "ObjectRepo.hpp"
+#include "AppBackend.hpp"
 #include "IConfig.hpp"
 #include "UpdateInfo.hpp"
 
@@ -13,7 +13,7 @@ namespace im {
 			QString val;
 			QFile file;
 			//open LaunchBoxConfig file
-			auto path = bc::ObjectsRepository::getRepo().getConfig().getDownloadDir() / parseInfoFileName;
+			auto path = bc::Backend::getBackend().getConfig().getDownloadDir() / parseInfoFileName;
 			file.setFileName(path.generic_string().c_str());
 			file.open(QIODevice::ReadOnly | QIODevice::Text);
 			val = file.readAll();

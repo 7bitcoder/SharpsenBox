@@ -22,7 +22,6 @@ namespace im {
 	class UpdateInfo;
 
 	struct IInstalationManager : public  bc::IComponent, public QThread {
-		Q_OBJECT
 	public:
 		virtual ~IInstalationManager() {};
 
@@ -34,21 +33,5 @@ namespace im {
 		virtual void installStatus(qint64 progress) = 0;
 
 		virtual UpdateInfo& getUpdateInfo() = 0;
-	signals:
-		virtual void errorEmit(const QString& errorStr) = 0;
-		virtual void updateProgress(double prog) = 0;
-
-		// AppUpdater
-		virtual void updateStatus(upd::State needUpdate) = 0;
-		virtual void readGameInfo();
-		virtual void updateEnded(const QString& finalVersion) = 0;
-
-		// loadingBar
-		virtual void setTotalLb(double tot) = 0;
-		virtual void setActualLb(double act) = 0;
-		virtual void setSpeedLb(double sp) = 0;
-		virtual void setStateLb(lb::State st) = 0;
-		virtual void setVisibleStateLb(lb::VisibleState st) = 0;
-		virtual void setUninstallModeLb(bool un) = 0;
 	};
 }

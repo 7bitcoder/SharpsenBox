@@ -4,10 +4,12 @@ add_library(LoadingBar STATIC
 
 target_include_directories(LoadingBar PUBLIC
     "../AppBackend"
+    "../AppBackend/h"
     "../Config/h"
     "../InstalationManager/h"
     "../JsonParsers"
     "../AppUpdater"
+    "../ObjectRepository"
     "h")
 
 qt5_use_modules(LoadingBar 

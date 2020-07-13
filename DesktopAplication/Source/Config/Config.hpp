@@ -12,6 +12,7 @@
 
 namespace cf {
 	class Config final : public IConfig {
+		Q_OBJECT
 	public:
 		Config();
 		virtual ~Config();
@@ -35,21 +36,21 @@ namespace cf {
 		std::filesystem::path getLauncherAppInfoUrl() final { return LauncherAppInfo; }
 		std::filesystem::path getGameInfoRepository() final { return gameInfoRepo_; }
 
-		//QMl invoklabes
-		Q_INVOKABLE bool installed(int id) final;
-		Q_INVOKABLE QString gameInfoDir(int id)final;
-		Q_INVOKABLE QUrl defaultInstallDir()final;
-		Q_INVOKABLE void setDownloadSpeed(qint32 dp) final { downloadSpeed_ = dp; }
-		Q_INVOKABLE qint32 getDownloadSpeed() final { return downloadSpeed_; }
-		Q_INVOKABLE void setGameAutoCheck(int id, bool val) final { getGame(id).autoCheck = val; }
-		Q_INVOKABLE bool getGameAutoCheck(int id) final { bool v = getGame(id).autoCheck;	return v; }
-		Q_INVOKABLE QString getGameName(int id) final { return getGame(id).name; }
-		Q_INVOKABLE QString  getConfigJsonUrl() final { return ""; } //!!!!!!!!!
-		Q_INVOKABLE int getGameId() final; // get game id for game choser
-		Q_INVOKABLE QString getGamePresentationUrl(int id) final; // get game id for game choser
-		Q_INVOKABLE QString getPresentationFile(int id) final;
-		Q_INVOKABLE int getDefaultGameId() final;
-		Q_INVOKABLE QString getCurrentDirectory() final;
+
+		Q_INVOKABLE bool installed(int id);
+		Q_INVOKABLE QString gameInfoDir(int id);
+		Q_INVOKABLE QUrl defaultInstallDir();
+		Q_INVOKABLE void setDownloadSpeed(qint32 dp) { downloadSpeed_ = dp; }
+		Q_INVOKABLE qint32 getDownloadSpeed() { return downloadSpeed_; }
+		Q_INVOKABLE void setGameAutoCheck(int id, bool val) { getGame(id).autoCheck = val; }
+		Q_INVOKABLE bool getGameAutoCheck(int id) { bool v = getGame(id).autoCheck;	return v; }
+		Q_INVOKABLE QString getGameName(int id) { return getGame(id).name; }
+		Q_INVOKABLE QString  getConfigJsonUrl() { return ""; } //!!!!!!!!!
+		Q_INVOKABLE int getGameId(); // get game id for game choser
+		Q_INVOKABLE QString getGamePresentationUrl(int id); // get game id for game choser
+		Q_INVOKABLE QString getPresentationFile(int id);
+		Q_INVOKABLE int getDefaultGameId();
+		Q_INVOKABLE QString getCurrentDirectory();
 
 
 	private:

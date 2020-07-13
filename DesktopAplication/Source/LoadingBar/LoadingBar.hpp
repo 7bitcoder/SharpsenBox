@@ -38,38 +38,38 @@ namespace lb {
 		Q_PROPERTY(int uninstall READ getUninstall);
 
 		//QMl invoklabes
-		Q_INVOKABLE double getSpeed() const final;
-		Q_INVOKABLE double getActual() const final;
-		Q_INVOKABLE double getTotal() const final;
-		Q_INVOKABLE double getProgress() const final;
+		Q_INVOKABLE double getSpeed() const;
+		Q_INVOKABLE double getActual() const;
+		Q_INVOKABLE double getTotal() const;
+		Q_INVOKABLE double getProgress() const;
 
-		Q_INVOKABLE int getState() const final;
-		Q_INVOKABLE int getVisibleState() const final;
+		Q_INVOKABLE int getState() const;
+		Q_INVOKABLE int getVisibleState() const;
 
-		Q_INVOKABLE QString getErrorString() const final;
+		Q_INVOKABLE QString getErrorString() const;
 
-		Q_INVOKABLE bool getUninstall() const final;
+		Q_INVOKABLE bool getUninstall() const;
 
-		Q_INVOKABLE void pause() const final;
-		Q_INVOKABLE void resume() const final;
-		Q_INVOKABLE void stop() const final;
+		Q_INVOKABLE void pause() const;
+		Q_INVOKABLE void resume() const;
+		Q_INVOKABLE void stop() const;
 
 	public slots:
-		void setTotal(double tot) final;
-		void setActual(double act) final;
-		void setProgress(double prog) final;
-		void setSpeed(double sp) final;
-		void setError(const QString& str) final;
-		void setState(State st) final;
-		void setVisibleState(VisibleState st) final;
-		void setUninstallMode(bool un) final;
+		void setTotal(double tot);
+		void setActual(double act);
+		void setProgress(double prog);
+		void setSpeed(double sp);
+		void setError(const QString& str);
+		void setState(State st);
+		void setVisibleState(VisibleState st);
+		void setUninstallMode(bool un);
 	signals:
-		void stateChanged() final;
-		void visibleStateChanged() final;
+		void stateChanged();
+		void visibleStateChanged();
 
-		void errorChanged() final;
-		void notifyEnded() final;
-		void getProgress(qint64 actual) final;
+		void errorChanged();
+		void notifyEnded();
+		void getProgress(qint64 actual);
 	private:
 		State state_ = State::NONE;
 		VisibleState visibleState_ = VisibleState::HIDDEN;

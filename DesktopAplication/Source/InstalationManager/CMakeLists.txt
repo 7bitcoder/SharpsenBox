@@ -14,13 +14,15 @@ add_library(InstalationManager STATIC
     InstalationManager.cpp)
 
 target_include_directories(InstalationManager PUBLIC
-    "h"
     "../AppBackend"
+    "../AppBackend/h"
+    "../ObjectRepository"
     "../Config/h"
     "../LoadingBar/h"
     "../GameManager/h"
     "../JsonParsers"
-    "../AppUpdater")
+    "../AppUpdater"
+    "h")
 
 qt5_use_modules(InstalationManager 
     Quick 

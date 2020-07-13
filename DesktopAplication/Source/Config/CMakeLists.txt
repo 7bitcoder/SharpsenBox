@@ -4,9 +4,9 @@ add_library(Config STATIC
 
 
 target_include_directories(Config PUBLIC
-    "../MainWindow" 
     "../AppBackend"
-    "../InstalationManager"
+    "../AppBackend/h"
+    "../InstalationManager/h"
     "h")
 
 qt5_use_modules(Config 

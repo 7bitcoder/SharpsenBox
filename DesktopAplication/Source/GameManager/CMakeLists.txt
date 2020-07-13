@@ -5,12 +5,13 @@ add_library(GameManager STATIC
 
 target_include_directories(GameManager PUBLIC
     "../AppBackend"
+    "../AppBackend/h"
     "../Config/h"
     "../LoadingBar/h"
     "../InstalationManager/h"
     "../Dialog/h"
-    "../JsonParsers"
     "../AppUpdater"
+    "../JsonParsers"
     "h")
 
 qt5_use_modules(GameManager 

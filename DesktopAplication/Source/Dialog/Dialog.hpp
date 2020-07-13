@@ -6,7 +6,7 @@
 
 namespace dl {
 	class Dialog final : public IDialog {
-		Q_OBJECT
+		Q_OBJECT;
 	public:
 		Dialog() {};
 		virtual ~Dialog() {};
@@ -21,15 +21,19 @@ namespace dl {
 		void show() final { show_ = true;  showDialogChanged(); }
 		bool getValue() final { return value_; }
 
-		//QMl invoklabes
-		Q_INVOKABLE void dialog(bool value) final;
-		Q_INVOKABLE bool getShowDialog() final { return show_; }
-		Q_INVOKABLE QString getInfo() final { return info_; }
+		// QML Propetries
+		Q_PROPERTY(bool showDialog READ getShowDialog NOTIFY showDialogChanged);
+		Q_PROPERTY(QString info READ getInfo);
 
+		//QMl invoklabes
 	public slots:
+		void dialog(bool value);
+		bool getShowDialog() { return show_; }
+		QString getInfo() { return info_; }
 	signals:
-		void dialogTriggered(bool value) final;
-		void showDialogChanged() final;
+		void dialogTriggered(bool value);
+		void showDialogChanged();
+
 	private:
 		QString info_ = "";
 		bool show_ = false;
