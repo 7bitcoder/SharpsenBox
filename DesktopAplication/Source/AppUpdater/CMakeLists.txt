@@ -1,11 +1,11 @@
 ﻿add_library( AppUpdaterBackend STATIC
-    AppUpdater.cpp )
+    AppUpdater.cpp  "AppUpdaterStates.hpp")
 
 target_include_directories(AppUpdaterBackend PUBLIC
     "../MainWindow" 
     "../AppBackend"
     "../InstalationManager"
-    "../Config")
+    "../Config/h")
 
 qt5_use_modules(AppUpdaterBackend 
     Quick 

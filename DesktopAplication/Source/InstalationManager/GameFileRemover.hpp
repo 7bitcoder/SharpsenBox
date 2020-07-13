@@ -4,7 +4,7 @@
 #include <QThread>
 #include <QDebug>
 #include <filesystem>
-#include "Config.hpp"
+#include "Game.hpp"
 #include <unordered_set>
 #include "IRunnable.hpp"
 

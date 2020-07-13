@@ -3,7 +3,6 @@ find_package(libarchieve)
 conan_basic_setup(TARGETS)
 
 add_library(InstalationManager STATIC
-    InstalationManager.cpp
     Downloader.cpp 
     ArchieveInstaller.cpp 
     Cleanup.cpp
@@ -11,15 +10,17 @@ add_library(InstalationManager STATIC
     UpdateInfo.cpp 
     AppInfoParser.cpp 
     FileListParser.cpp
-    GameParser.cpp "IInstalationManager.hpp" "IRunnable.hpp")
+    GameParser.cpp 
+    InstalationManager.cpp)
 
 target_include_directories(InstalationManager PUBLIC
-    "./h"
+    "h"
     "../AppBackend"
-    "../Config"
-    "../LoadingBar"
-    "../GameManager"
-    "../JsonParsers")
+    "../Config/h"
+    "../LoadingBar/h"
+    "../GameManager/h"
+    "../JsonParsers"
+    "../AppUpdater")
 
 qt5_use_modules(InstalationManager 
     Quick 

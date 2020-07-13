@@ -2,8 +2,6 @@
 #include <string>
 #include "InstalationManager.hpp"
 #include "AppBackend.hpp"
-#include "Config.hpp"
-#include "LoadingBar.hpp"
 #include <curl/curl.h>
 #include "windows.h"
 #include "winnls.h"
@@ -13,7 +11,17 @@
 #include "shlguid.h"
 #include <QStandardPaths>
 #include "archive.h"
-#include "GameManager.hpp"
+#include "IRunnable.hpp"
+#include "ObjectRepo.hpp"
+#include "IConfig.hpp"
+#include "IGameManager.hpp"
+#include "AppInfoParser.hpp"
+#include "FileListParser.hpp"
+#include "Cleanup.hpp"
+#include "Downloader.hpp"
+#include "ArchieveInstaller.hpp"
+#include "GameParser.hpp"
+#include "UpdateInfo.hpp"
 
 namespace im {
 	namespace {
@@ -75,45 +83,62 @@ namespace im {
 #endif
 	}
 
-	InstalationManager::~InstalationManager() {
-		//downloader_.exit();
-		//downloader_.terminate();
-		//downloader_.wait();
-		//installer_.exit();
-		//installer_.terminate();
-		//installer_.wait();
-		//cleanUpper_.exit();
-		//cleanUpper_.terminate();
-		//cleanUpper_.wait();
-	}
-	namespace {
+	InstalationManager::InstalationManager() {
+		updateInfo_.reset(new UpdateInfo);
+		downloader_.reset(new Downloader);
+		installer_.reset(new ArchieveInstaller);
+		cleanUpper_.reset(new Cleanup);
+		appInfoParser_.reset(new AppInfoParser);
+		fileListParser_.reset(new FileListParser);
+		gameParser_.reset(new GameParser);
 
+		auto& downloadDir = bc::ObjectsRepository::getRepo().getConfig().getDownloadDir();
+		if (!std::filesystem::exists(downloadDir)) {
+			try {
+				std::filesystem::create_directory(downloadDir);
+			} catch (...) {
+				//todo
+			}
+		}
+	}
+
+	InstalationManager::~InstalationManager() {
+		//downloader_->exit();
+		//downloader_->terminate();
+		//downloader_->wait();
+		//installer_->exit();
+		//installer_->terminate();
+		//installer_->wait();
+		//cleanUpper_->exit();
+		//cleanUpper_->terminate();
+		//cleanUpper_->wait();
 	}
 
 	void InstalationManager::init() {
-		updateInfo_.init(*this);
-		downloader_.init(*this);
-		installer_.init(*this);
-		cleanUpper_.init(*this);
-		appInfoParser_.init(*this);
-		fileListParser_.init(*this);
+		updateInfo_->init(*this);
+		downloader_->init(*this);
+		installer_->init(*this);
+		cleanUpper_->init(*this);
+		appInfoParser_->init(*this);
+		fileListParser_->init(*this);
+		gameParser_->init(*this);
 	}
 
 	void InstalationManager::run() {
 		try {
-			switch (updateInfo_.getUpdateMode()) {
+			switch (updateInfo_->getUpdateMode()) {
 			case UpdateInfo::UpdateMode::LAUNCHBOX:
 				updateMainApp();
 			default:
 				break;
 			case UpdateInfo::UpdateMode::GAME:
-				updateGame();
+				//updateGame();
 				break;
 			}
 		} catch (std::exception& e) {
 			errorEmit(e.what());
-			setStateLb(lb::LoadingBar::State::ERRORD);
-			setVisibleStateLb(lb::LoadingBar::VisibleState::HIDDEN);
+			setStateLb(lb::State::ERRORD);
+			setVisibleStateLb(lb::VisibleState::HIDDEN);
 		} catch (...) {
 			errorEmit("Unexpected error ocured while processing");
 		}
@@ -125,10 +150,10 @@ namespace im {
 			return false;
 		reset();
 		setTotal(0);
-		updateInfo_.setUpdateMode(UpdateInfo::UpdateMode::LAUNCHBOX);
-		updateInfo_.setActualVersion(version);
-		updateInfo_.setFullInstall(fullInstall);
-		updateInfo_.setFiles({ {appInfoUrl, "AppInfo.json" }, {gamesRepoUrl, "Games.json"} });
+		updateInfo_->setUpdateMode(UpdateInfo::UpdateMode::LAUNCHBOX);
+		updateInfo_->setActualVersion(version);
+		updateInfo_->setFullInstall(fullInstall);
+		updateInfo_->setFiles({ {appInfoUrl, "AppInfo.json" }, {gamesRepoUrl, "Games.json"} });
 		start();
 		return true;
 	}
@@ -137,82 +162,82 @@ namespace im {
 		//reset();
 		//setTotal(0);
 		//actualGame_ = &game;
-		//appInfoParser_.setActualVer(game.version);
-		//fileListParser_.setActualVer(game.version);
+		//appInfoParser_->setActualVer(game.version);
+		//fileListParser_->setActualVer(game.version);
 		//files_ = files{ {game.appInfoUrl.toStdString(), "AppInfo.json" } };
-		//downloader_.setFilestoDownload(files_);
+		//downloader_->setFilestoDownload(files_);
 		//fullInstall_ = !game.installed;
 		//stage_ = Stage::DOWNLOAD;
 		//progress_ = 100;
 		//setStateLb(lb::LoadingBar::State::CHECKING);
 		//setVisibleStateLb(lb::LoadingBar::VisibleState::SHOWED);
-		//downloader_.run();
+		//downloader_->run();
 		return true;
 	}
 
 	void InstalationManager::updateMainApp() {
 		// download appInfo.json and Games.json
-		runAndCheck(downloader_);
+		runAndCheck(*downloader_);
 		// check if appInfo.json contains newer version = need update
-		runAndCheck(appInfoParser_);
-		if (appInfoParser_.needUpdate()) {
+		runAndCheck(*appInfoParser_);
+		if (appInfoParser_->needUpdate()) {
 			updateApp();
 		}
-		if (updateInfo_.isGameUppdating())
-			updateInfo_.getActualGame().updateChecked = true;
+		if (updateInfo_->isGameUppdating())
+			updateInfo_->getActualGame().updateChecked = true;
 	}
 
 	void InstalationManager::updateApp() {
 		setTotal(0);
-		updateInfo_.setUpdateVersion(appInfoParser_.getVersionToUpdate());
-		updateInfo_.setFiles(appInfoParser_.getFiles());
+		updateInfo_->setUpdateVersion(appInfoParser_->getVersionToUpdate());
+		updateInfo_->setFiles(appInfoParser_->getFiles());
 		progress_ = 100;
-		setStateLb(lb::LoadingBar::State::CHECKING);
-		setVisibleStateLb(lb::LoadingBar::VisibleState::SHOWED);
+		setStateLb(lb::State::CHECKING);
+		setVisibleStateLb(lb::VisibleState::SHOWED);
 		//download Filelist.json and Patch.json Files
-		runAndCheck(downloader_);
+		runAndCheck(*downloader_);
 		// Process fileList.json and patch files to get update packets (zip files)
-		runAndCheck(fileListParser_);
+		runAndCheck(*fileListParser_);
 
-		updateStatus(true);
+		updateStatus(upd::State::DOWNLOADING);
 		downloadUpdate();
 	}
 
 	void InstalationManager::downloadUpdate() {
 		//setUp updateInfo
-		updateInfo_.setFiles(fileListParser_.getNeededFiles());
-		setTotal(fileListParser_.getBytesToDownload());
+		updateInfo_->setFiles(fileListParser_->getNeededFiles());
+		setTotal(fileListParser_->getBytesToDownload());
 
-		setStateLb(lb::LoadingBar::State::DOWNLOADING);
-		setVisibleStateLb(lb::LoadingBar::VisibleState::SHOWED);
+		setStateLb(lb::State::DOWNLOADING);
+		setVisibleStateLb(lb::VisibleState::SHOWED);
 		// download zip packets
-		runAndCheck(downloader_);
+		runAndCheck(*downloader_);
 
 		installUpdate();
 	}
 
 	void InstalationManager::installUpdate() {
 		// set InstallDirectory
-		std::filesystem::path destination = updateInfo_.isGameUppdating() ? updateInfo_.getActualGame().gameDir.toStdString() : std::string("../");
-		updateInfo_.setInstallDir(destination);
+		std::filesystem::path destination = updateInfo_->isGameUppdating() ? updateInfo_->getActualGame().gameDir.toStdString() : std::string("../");
+		updateInfo_->setInstallDir(destination);
 
-		setStateLb(lb::LoadingBar::State::INSTALLING);
-		updateStatus(false);
+		setStateLb(lb::State::INSTALLING);
+		updateStatus(upd::State::INSTALLING);
 
 		// install downloaded packets
-		runAndCheck(installer_);
+		runAndCheck(*installer_);
 
-		if (updateInfo_.isGameUppdating())
+		if (updateInfo_->isGameUppdating())
 			updateGameInfo(); // update Game info 
 		else
 			updateGamePages(); // update Game pages metadata
 	}
 
 	void InstalationManager::updateGameInfo() {
-		auto& actualGame = updateInfo_.getActualGame();
+		auto& actualGame = updateInfo_->getActualGame();
 		actualGame.installed = true;
 		actualGame.updateChecked = true;
-		actualGame.version = updateInfo_.getUpdateVersion();
+		actualGame.version = updateInfo_->getUpdateVersion();
 		if (actualGame.shortcut) {
 			QString desktopPath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
 			std::filesystem::path link = desktopPath.toUtf8().constData();
@@ -224,29 +249,29 @@ namespace im {
 			auto res = CreateLink(path.generic_string().c_str(), path.parent_path().generic_string().c_str(), link.generic_string().c_str(), "Sylio shortcut");
 			actualGame.shortcutPath = link.generic_string().c_str();
 		}
-		gm::GameManager::getObject().unLock();
+		bc::ObjectsRepository::getRepo().getGameManager().unLock();
 	}
 
 	void InstalationManager::updateGamePages() {
-		runAndCheck(gameParser_);
-		if (gameParser_.needUpdate()) {
+		runAndCheck(*gameParser_);
+		if (gameParser_->needUpdate()) {
 			// setUp updateInfo
-			updateInfo_.setFiles(gameParser_.getFiles());
+			updateInfo_->setFiles(gameParser_->getFiles());
 			setTotal(0);
 			// download zip packets containing game pages files
-			runAndCheck(downloader_);
-			updateInfo_.setInstallDir(""); // when empty installer uses destination from file vector
-			runAndCheck(installer_);
-			gameParser_.updateGamesInfo();
+			runAndCheck(*downloader_);
+			updateInfo_->setInstallDir(""); // when empty installer uses destination from file vector
+			runAndCheck(*installer_);
+			gameParser_->updateGamesInfo();
 		}
 	}
 
 	void InstalationManager::cleanUp() {
-		runAndCheck(cleanUpper_);
-		setStateLb(lb::LoadingBar::State::COMPLEET);
-		setVisibleStateLb(lb::LoadingBar::VisibleState::HIDDEN);
-		updateEnded(updateInfo_.getUpdateVersion());
-		gm::GameManager::getObject().unLock();
+		runAndCheck(*cleanUpper_);
+		setStateLb(lb::State::COMPLEET);
+		setVisibleStateLb(lb::VisibleState::HIDDEN);
+		updateEnded(updateInfo_->getUpdateVersion());
+		bc::ObjectsRepository::getRepo().getGameManager().unLock();
 	}
 
 	void InstalationManager::setTotal(qint64 tot) {
@@ -273,7 +298,7 @@ namespace im {
 	}
 
 	void InstalationManager::sendDataToBar() {
-		setProgressLb(progress_);
+		updateProgress(progress_);
 		setActualLb(getMB(downloadedBytes_));
 		setSpeedLb(speed_);
 	}
@@ -284,11 +309,9 @@ namespace im {
 		sendDataToBar();
 	}
 
-	void InstalationManager::TotalSize(qint64 total) {}
-
 	void InstalationManager::pause() {
 		//if (stage_ == Stage::DOWNLOAD) {
-		//	downloader_.pause.clear();
+		//	downloader_->pause.clear();
 		//	state_ = State::PAUSE;
 		//	LoadingBar_->setState(lb::LoadingBar::State::PAUSE);
 		//}
@@ -296,33 +319,22 @@ namespace im {
 
 	void InstalationManager::resume() {
 		//if (stage_ == Stage::DOWNLOAD) {
-		//	downloader_.resume.clear();
+		//	downloader_->resume.clear();
 		//	LoadingBar_->setState(lb::LoadingBar::State::DOWNLOADING);
 		//}
 	}
 
 	void InstalationManager::stop() {
-		//downloader_.stop.clear();
-	}
-
-	InstalationManager::InstalationManager() {
-		auto& downloadDir = cf::Config::getObject().getDownloadDir();
-		if (!std::filesystem::exists(downloadDir)) {
-			try {
-				std::filesystem::create_directory(downloadDir);
-			} catch (...) {
-				//todo
-			}
-		}
+		//downloader_->stop.clear();
 	}
 
 	void InstalationManager::reset() {
-		updateInfo_.reset();
-		downloader_.reset();
-		installer_.reset();
-		cleanUpper_.reset();
-		appInfoParser_.reset();
-		fileListParser_.reset();
+		updateInfo_->reset();
+		downloader_->reset();
+		installer_->reset();
+		cleanUpper_->reset();
+		appInfoParser_->reset();
+		fileListParser_->reset();
 		gameParser_.reset();
 
 		totalBytes_ = 0; //total Bytes to download unpack all files together

@@ -4,7 +4,7 @@
 #include <QThread>
 #include <filesystem>
 #include <unordered_map>
-#include "Config.hpp"
+#include "Game.hpp"
 #include "IRunnable.hpp"
 
 namespace im {

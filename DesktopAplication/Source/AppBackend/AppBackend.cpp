@@ -2,11 +2,13 @@
 #include <QDebug>
 #include <QQmlContext>
 #include "AppBackend.hpp"
-#include "Dialog.hpp"
-#include "InstalationManager.hpp"
-#include "Config.hpp"
-#include "LoadingBar.hpp"
-#include "GameManager.hpp"
+#include "ObjectRepo.hpp"
+#include "IConfig.hpp"
+#include "IInstalationManager.hpp"
+#include "IGameManager.hpp"
+#include "IDialog.hpp"
+#include "IGameManager.hpp"
+#include "ILoadingBar.hpp"
 
 namespace bc {
 
@@ -23,30 +25,28 @@ namespace bc {
 
 	void Backend::registerObjects() {
 		// register compoments in qml
-		qmlRegisterObject<cf::Config>();
-		qmlRegisterObject<dl::Dialog>();
-		qmlRegisterObject<lb::LoadingBar>();
-		qmlRegisterObject<gm::GameManager>();
+		auto& repo = ObjectsRepository::getRepo();
+		qmlRegisterObject(repo.getConfig());
+		qmlRegisterObject(repo.getDialog());
+		qmlRegisterObject(repo.getLoadingBar());
+		qmlRegisterObject(repo.getGameManager());
 
 		// register components but dont expose to qml
-		registerObject<im::InstalationManager>();
+		registerObject(repo.getInstalationManager());
 	}
 
 	void Backend::initializeObjects() {
-		for (auto* object : objects_)
+		for (IComponent* object : objects_)
 			object->init();
 	}
 
-	template <class T>
-	T& Backend::registerObject() {
-		auto& object = T::getObject();
+	IComponent& Backend::registerObject(IComponent& object) {
 		objects_.push_back(&object);
 		return object;
 	}
 
-	template <class T>
-	void Backend::qmlRegisterObject() {
-		auto& object = registerObject<T>();
+	void Backend::qmlRegisterObject(IQmlComponent& object) {
+		registerObject(object);
 		auto name = object.getName();
 		name.insert(0, "_");
 		auto cStr = name.c_str();

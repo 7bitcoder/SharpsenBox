@@ -20,7 +20,7 @@ namespace im {
 		files& getFiles() { return pathFiles_; }
 		QString& getVersionToUpdate() { return versionToUpdate_; }
 
-		// ImElement implementation
+		// IRunnable implementation
 		bool run() override;
 		void reset() override;
 	private:

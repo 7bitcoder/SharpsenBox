@@ -2,8 +2,9 @@
 #include <string>
 #include "LoadingBar.hpp"
 #include "AppBackend.hpp"
-#include "Config.hpp"
-#include "InstalationManager.hpp"
+#include "IConfig.hpp"
+#include "IInstalationManager.hpp"
+#include "ObjectRepo.hpp"
 
 namespace lb {
 	LoadingBar::~LoadingBar() {}
@@ -37,9 +38,9 @@ namespace lb {
 		return progress_;
 	}
 
-	Q_INVOKABLE void LoadingBar::pause() const { im::InstalationManager::getObject().pause(); };
-	Q_INVOKABLE void LoadingBar::resume() const { im::InstalationManager::getObject().resume(); };
-	Q_INVOKABLE void LoadingBar::stop() const { im::InstalationManager::getObject().stop(); };
+	Q_INVOKABLE void LoadingBar::pause() const {} //bc::ObjectsRepository::getRepo().getInstalationManager().pause();};
+	Q_INVOKABLE void LoadingBar::resume() const {}// bc::ObjectsRepository::getRepo().getInstalationManager().resume(); };
+	Q_INVOKABLE void LoadingBar::stop() const {}//bc::ObjectsRepository::getRepo().getInstalationManager().stop(); };
 
 	Q_INVOKABLE QString LoadingBar::getErrorString() const {
 		return errorStr_;
@@ -85,15 +86,15 @@ namespace lb {
 	}
 
 	void LoadingBar::init() {
-		auto* im = &im::InstalationManager::getObject();
-		connect(im, im::InstalationManager::setTotalLb, this, LoadingBar::setTotal);
-		connect(im, im::InstalationManager::setActualLb, this, LoadingBar::setActual);
-		connect(im, im::InstalationManager::setProgressLb, this, LoadingBar::setProgress);
-		connect(im, im::InstalationManager::setSpeedLb, this, LoadingBar::setSpeed);
-		connect(im, im::InstalationManager::errorEmit, this, LoadingBar::setError);
-		connect(im, im::InstalationManager::setStateLb, this, LoadingBar::setState);
-		connect(im, im::InstalationManager::setVisibleStateLb, this, LoadingBar::setVisibleState);
-		connect(im, im::InstalationManager::setUninstallModeLb, this, LoadingBar::setUninstallMode);
+		auto* im = &bc::ObjectsRepository::getRepo().getInstalationManager();
+		connect(im, &im::IInstalationManager::setTotalLb, this, &LoadingBar::setTotal);
+		connect(im, &im::IInstalationManager::setActualLb, this, &LoadingBar::setActual);
+		connect(im, &im::IInstalationManager::updateProgress, this, &LoadingBar::setProgress);
+		connect(im, &im::IInstalationManager::setSpeedLb, this, &LoadingBar::setSpeed);
+		connect(im, &im::IInstalationManager::errorEmit, this, &LoadingBar::setError);
+		connect(im, &im::IInstalationManager::setStateLb, this, &LoadingBar::setState);
+		connect(im, &im::IInstalationManager::setVisibleStateLb, this, &LoadingBar::setVisibleState);
+		connect(im, &im::IInstalationManager::setUninstallModeLb, this, &LoadingBar::setUninstallMode);
 	}
 
 	void LoadingBar::reset() {

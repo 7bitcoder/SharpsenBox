@@ -1,10 +1,14 @@
+#pragma once
 #include "FileListParser.hpp"
-#include "Config.hpp"
+#include "ObjectRepo.hpp"
+#include "IConfig.hpp"
+#include "Game.hpp"
 #include <QFile>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
 #include <unordered_map>
+#include "UpdateInfo.hpp"
 
 namespace im {
 	bool FileListParser::run() {
@@ -12,7 +16,7 @@ namespace im {
 			QString val;
 			QFile file;
 			//open LaunchBoxConfig file
-			auto path = cf::Config::getObject().getDownloadDir() / parseInfoFileName;
+			auto path = bc::ObjectsRepository::getRepo().getConfig().getDownloadDir() / parseInfoFileName;
 			file.setFileName(path.generic_string().c_str());
 			file.open(QIODevice::ReadOnly | QIODevice::Text);
 			val = file.readAll();
@@ -43,7 +47,7 @@ namespace im {
 			QString val;
 			QFile file;
 			//open LaunchBoxConfig file
-			auto path = cf::Config::getObject().getDownloadDir() / it->fileName;
+			auto path = bc::ObjectsRepository::getRepo().getConfig().getDownloadDir() / it->fileName;
 			file.setFileName(path.generic_string().c_str());
 			file.open(QIODevice::ReadOnly | QIODevice::Text);
 			val = file.readAll();

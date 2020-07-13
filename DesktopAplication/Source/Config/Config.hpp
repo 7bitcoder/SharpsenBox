@@ -5,51 +5,51 @@
 #include <QNetworkAccessManager>
 #include "IComponent.hpp"
 #include "Game.hpp"
+#include "IConfig.hpp"
 #include <filesystem>
 #include <vector>
 
 
 namespace cf {
-	class Config : public bc::IQmlComponent<Config> {
-		Q_OBJECT
+	class Config final : public IConfig {
 	public:
 		Config();
 		virtual ~Config();
 
 		// implementation IQmlObject
-		void update() override {};
-		void init() override;
-		std::string getName() override;
+		void update() final {};
+		void init() final;
+		std::string getName() final;
 
 		// interface 
-		void insertGame(Game& game) { games_.insert({ game.id,  game }); };
-		bool gameExists(int id);
-		Game& getGame(int id);
-		std::string gamePageDir(int id);
-		QString& getVer() { return version_; }
-		void setVer(QString ver) { version_ = ver; }
+		void insertGame(Game& game) final { games_.insert({ game.id,  game }); };
+		bool gameExists(int id) final;
+		Game& getGame(int id) final;
+		std::string gamePageDir(int id) final;
+		QString& getVer()final { return version_; }
+		void setVer(QString ver) final { version_ = ver; }
 
-		std::filesystem::path& getDownloadDir() { return downloadDir_; }
-		std::filesystem::path getConfigJson() { return config_ / configJson_; }
-		std::filesystem::path getConfigJsonFileName() { return configJson_; }
-		std::filesystem::path getLauncherAppInfoUrl() { return LauncherAppInfo; }
-		std::filesystem::path getGameInfoRepository() { return gameInfoRepo_; }
+		std::filesystem::path& getDownloadDir() final { return downloadDir_; }
+		std::filesystem::path getConfigJson() final { return config_ / configJson_; }
+		std::filesystem::path getConfigJsonFileName() final { return configJson_; }
+		std::filesystem::path getLauncherAppInfoUrl() final { return LauncherAppInfo; }
+		std::filesystem::path getGameInfoRepository() final { return gameInfoRepo_; }
 
 		//QMl invoklabes
-		Q_INVOKABLE bool installed(int id) const;
-		Q_INVOKABLE QString gameInfoDir(int id);
-		Q_INVOKABLE QUrl defaultInstallDir();
-		Q_INVOKABLE void setDownloadSpeed(qint32 dp) { downloadSpeed_ = dp; }
-		Q_INVOKABLE qint32 getDownloadSpeed() { return downloadSpeed_; }
-		Q_INVOKABLE void setGameAutoCheck(int id, bool val) { getGame(id).autoCheck = val; }
-		Q_INVOKABLE bool getGameAutoCheck(int id) { bool v = getGame(id).autoCheck;	return v; }
-		Q_INVOKABLE QString getGameName(int id) { return getGame(id).name; }
-		Q_INVOKABLE QString  getConfigJsonUrl() { return ""; } //!!!!!!!!!
-		Q_INVOKABLE int getGameId(); // get game id for game choser
-		Q_INVOKABLE QString getGamePresentationUrl(int id); // get game id for game choser
-		Q_INVOKABLE QString getPresentationFile(int id);
-		Q_INVOKABLE int getDefaultGameId();
-		Q_INVOKABLE QString getCurrentDirectory();
+		Q_INVOKABLE bool installed(int id) final;
+		Q_INVOKABLE QString gameInfoDir(int id)final;
+		Q_INVOKABLE QUrl defaultInstallDir()final;
+		Q_INVOKABLE void setDownloadSpeed(qint32 dp) final { downloadSpeed_ = dp; }
+		Q_INVOKABLE qint32 getDownloadSpeed() final { return downloadSpeed_; }
+		Q_INVOKABLE void setGameAutoCheck(int id, bool val) final { getGame(id).autoCheck = val; }
+		Q_INVOKABLE bool getGameAutoCheck(int id) final { bool v = getGame(id).autoCheck;	return v; }
+		Q_INVOKABLE QString getGameName(int id) final { return getGame(id).name; }
+		Q_INVOKABLE QString  getConfigJsonUrl() final { return ""; } //!!!!!!!!!
+		Q_INVOKABLE int getGameId() final; // get game id for game choser
+		Q_INVOKABLE QString getGamePresentationUrl(int id) final; // get game id for game choser
+		Q_INVOKABLE QString getPresentationFile(int id) final;
+		Q_INVOKABLE int getDefaultGameId() final;
+		Q_INVOKABLE QString getCurrentDirectory() final;
 
 
 	private:

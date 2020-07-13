@@ -5,8 +5,8 @@
 #include <filesystem>
 #include <atomic>
 #include <unordered_map>
-#include "Config.hpp"
 #include "IRunnable.hpp"
+#include "Game.hpp"
 
 namespace cf {
 	struct AppPack;

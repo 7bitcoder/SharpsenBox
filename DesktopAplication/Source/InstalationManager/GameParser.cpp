@@ -1,4 +1,6 @@
-#include "Config.hpp"
+#include "IConfig.hpp"
+#include "Game.hpp"
+#include "ObjectRepo.hpp"
 #include "GameParser.hpp"
 #include <QFile>
 #include <QJsonDocument>
@@ -11,7 +13,8 @@ namespace im {
 			QString val;
 			QFile file;
 			//open LaunchBoxConfig file
-			auto path = cf::Config::getObject().getDownloadDir() / "Games.json";
+			auto& config = bc::ObjectsRepository::getRepo().getConfig();
+			auto& path = config.getDownloadDir() / "Games.json";
 			file.setFileName(path.generic_string().c_str());
 			file.open(QIODevice::ReadOnly | QIODevice::Text);
 			val = file.readAll();
@@ -21,7 +24,7 @@ namespace im {
 			for (auto& game : d.object()) {
 				auto& gameObject = game.toObject();
 				auto id = std::stoi(gameObject["Id"].toString().toStdString());
-				if (!cf::Config::getObject().gameExists(id)) {
+				if (!config.gameExists(id)) {
 					//create new
 					cf::Game game;
 					game.id = id;
@@ -34,15 +37,15 @@ namespace im {
 					game.PresentationPackUrl = gameObject["PresentationPackUrl"].toString();
 					game.PresentationQml = gameObject["PresentationQml"].toString();
 
-					cf::Config::getObject().insertGame(game);
+					config.insertGame(game);
 				}
-				auto& hadGame = cf::Config::getObject().getGame(id);
+				auto& hadGame = config.getGame(id);
 				auto& presetationVer = gameObject["PresentationVer"].toString();
 				hadGame.presentationUrl = gameObject["PresentationUrl"].toString();
 				if (hadGame.presentationUrl.isEmpty() && hadGame.PresentationVer != presetationVer) {
 					auto& url = gameObject["PresentationPackUrl"].toString().toStdString();
 					auto& fileName = hadGame.name.toStdString() + ".zip";
-					std::filesystem::path destination = cf::Config::getObject().gamePageDir(id);
+					std::filesystem::path destination = config.gamePageDir(id);
 					files_.push_back({ url, fileName , destination });
 					toUpdate_.push_back({ id, presetationVer });
 				}
@@ -56,7 +59,7 @@ namespace im {
 
 	void GameParser::updateGamesInfo() {
 		for (auto& data : toUpdate_) {
-			cf::Config::getObject().getGame(data.first).PresentationVer = data.second;
+			bc::ObjectsRepository::getRepo().getConfig().getGame(data.first).PresentationVer = data.second;
 		}
 	}
 

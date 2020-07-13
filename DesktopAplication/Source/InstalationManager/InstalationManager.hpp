@@ -5,20 +5,23 @@
 #include <QThread>
 #include <QNetworkAccessManager>
 #include "IComponent.hpp"
-#include "Downloader.hpp"
-#include "ArchieveInstaller.hpp"
-#include "IComponent.hpp"
-#include "Config.hpp"
-#include "Cleanup.hpp"
-#include "AppInfoParser.hpp"
-#include "FileListParser.hpp"
-#include "UpdateInfo.hpp"
-#include "GameParser.hpp"
-#include "LoadingBar.hpp"
+#include "Game.hpp"
+#include "IConfig.hpp"
+#include "LoadingBarStates.hpp"
+#include "AppUpdaterStates.hpp"
 #include "IInstalationManager.hpp"
+#include <memory>
 
 namespace im {
-	class InstalationManager : public QThread, public bc::IComponent<InstalationManager>, public IInstalationManager {
+	class UpdateInfo;
+	class Downloader;
+	class ArchieveInstaller;
+	class Cleanup;
+	class AppInfoParser;
+	class FileListParser;
+	class GameParser;
+
+	class InstalationManager final : public IInstalationManager {
 		Q_OBJECT
 	public:
 		using files = std::vector<cf::AppPack>;
@@ -27,21 +30,19 @@ namespace im {
 		InstalationManager();
 
 		// implementation IComponent
-		void update() override {};
-		std::string getName() override { return TYPENAME(InstalationManager); }
-		void init() override;
+		void update() final {};
+		std::string getName() final { return TYPENAME(InstalationManager); }
+		void init() final;
 
 		// implementation IInstalationManager 
-		void downloadStatus(qint64 progress, qint64 total, double speed) override;
-		void installStatus(qint64 progress) override;
-		UpdateInfo& getUpdateInfo() override { return updateInfo_; }
+		void downloadStatus(qint64 progress, qint64 total, double speed) final;
+		void installStatus(qint64 progress) final;
+		UpdateInfo& getUpdateInfo() final { return *updateInfo_; }
 
-		void clearDownloadDir();
 		void setTotal(qint64 tot);
 
-		bool updateMainApp(QString version, std::filesystem::path appInfoUrl, std::filesystem::path gamesRepoUrl, bool fullInstall);
-		bool updateGame(cf::Game& game);
-		void updateGamePages(files& files);
+		bool updateMainApp(QString version, std::filesystem::path appInfoUrl, std::filesystem::path gamesRepoUrl, bool fullInstall) final;
+		bool updateGame(cf::Game& game) final;
 
 
 		double getProgress() { return progress_; }
@@ -54,61 +55,44 @@ namespace im {
 		void resume();
 		void stop();
 
+		void run() override;
 	private:
 		void updateMainApp();
 		void updateGame();
-		void run() override;
 		void updateApp();
 		void downloadUpdate();
 		void installUpdate();
 		void updateGameInfo();
 		void updateGamePages();
-		void install(files files, qint64 tot, std::filesystem::path destination, cf::Game* game);
 		void reset();
-		void disconnectAll() {};
 		void setProgress();
 		void sendDataToBar();
 		void cleanUp();
 
-	public slots:
-
-
-		void TotalSize(qint64 total);
-		void errorCatched(int code);
-		void downloadEnded(bool cancelled);
-		void installEnded();
-		void cleanUpEnded();
-
-		void appInfoDownloaded();
-		void downloadUpdateMetadata();
-		void metadataDownloaded();
-		void fileListParseEnded();
 	signals:
-		void errorEmit(const QString& errorStr);
+		void errorEmit(const QString& errorStr) final;
+		void updateProgress(double prog) final;
 
 		// AppUpdater
-		void updateStatus(bool needUpdate);
-		void readGameInfo();
-		void updateEnded(const QString& finalVersion);
+		void updateStatus(upd::State needUpdate) final;
+		void readGameInfo() final;
+		void updateEnded(const QString& finalVersion) final;
 
 		// loadingBar
-		void setTotalLb(double tot);
-		void setActualLb(double act);
-		void setProgressLb(double prog);
-		void setSpeedLb(double sp);
-		void setStateLb(lb::LoadingBar::State st);
-		void setVisibleStateLb(lb::LoadingBar::VisibleState st);
-		void setUninstallModeLb(bool un);
+		void setTotalLb(double tot) final;
+		void setActualLb(double act) final;
+		void setSpeedLb(double sp) final;
+		void setStateLb(lb::State st) final;
+		void setVisibleStateLb(lb::VisibleState st) final;
+		void setUninstallModeLb(bool un) final;
 	private:
-		lb::LoadingBar* LoadingBar_ = nullptr;
-
-		UpdateInfo updateInfo_;
-		Downloader downloader_;
-		ArchieveInstaller installer_;
-		Cleanup cleanUpper_;
-		AppInfoParser appInfoParser_;
-		FileListParser fileListParser_;
-		GameParser gameParser_;
+		std::unique_ptr<UpdateInfo> updateInfo_;
+		std::unique_ptr<Downloader> downloader_;
+		std::unique_ptr<ArchieveInstaller> installer_;
+		std::unique_ptr<Cleanup> cleanUpper_;
+		std::unique_ptr<AppInfoParser> appInfoParser_;
+		std::unique_ptr<FileListParser> fileListParser_;
+		std::unique_ptr<GameParser> gameParser_;
 
 		qint64 totalBytes_ = 0; // total Bytes to download unpack all files together
 		qint64 downloadedBytes_ = 0; // Bytes downloaded

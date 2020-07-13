@@ -1,5 +1,7 @@
 ﻿#include "AppUpdater.hpp"
-#include "Config.hpp"
+#include "IConfig.hpp"
+#include "IInstalationManager.hpp"
+#include "ObjectRepo.hpp"
 #include <QElapsedTimer>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -9,21 +11,21 @@
 
 namespace upd {
 
-	AppUpdater::AppUpdater() : cf(cf::Config::getObject()), im(im::InstalationManager::getObject()) {
-		cf.init();
-		im.init();
-		auto& downloadDir = cf.getDownloadDir();
+	AppUpdater::AppUpdater() : cf_(bc::ObjectsRepository::getRepo().getConfig()), im_(bc::ObjectsRepository::getRepo().getInstalationManager()) {
+		cf_.init();
+		im_.init();
+		auto& downloadDir = cf_.getDownloadDir();
 		if (!std::filesystem::exists(downloadDir))
 			std::filesystem::create_directory(downloadDir);
 	}
 
 	void AppUpdater::checkForUpdates() {
-		auto& im = im::InstalationManager::getObject();
-		connect(&im, &im::InstalationManager::updateStatus, this, &AppUpdater::updateStatus);
-		connect(&im, &im::InstalationManager::errorEmit, this, &AppUpdater::errorCatched);
-		connect(&im, &im::InstalationManager::updateEnded, this, &AppUpdater::updateInstalled);
+		connect(&im_, &im::IInstalationManager::updateStatus, this, &AppUpdater::updateStatus);
+		connect(&im_, &im::IInstalationManager::errorEmit, this, &AppUpdater::errorCatched);
+		connect(&im_, &im::IInstalationManager::updateEnded, this, &AppUpdater::updateInstalled);
+		connect(&im_, &im::IInstalationManager::updateProgress, this, &AppUpdater::updateProgress);
 		updateStatus(State::DOWNLOADING);
-		im.updateMainApp(cf.getVer(), cf.getLauncherAppInfoUrl(), cf.getGameInfoRepository(), cf.getVer() == "0");
+		im_.updateMainApp(cf_.getVer(), cf_.getLauncherAppInfoUrl(), cf_.getGameInfoRepository(), cf_.getVer() == "0");
 	}
 
 	void AppUpdater::updateStatus(State state) {
@@ -33,11 +35,20 @@ namespace upd {
 
 	void AppUpdater::updateInstalled(const QString& version) {
 		updateStatus(State::ENDED);
-		cf.setVer(version);
+		cf_.setVer(version);
 	}
 
 	void AppUpdater::errorCatched(const QString& what) {
 		statusStr_ = what;
 		updateStatus(State::ERROR);
 	}
+
+	void AppUpdater::updateProgress(double progress) {
+		progress_ = progress;
+		progressChanged();
+	}
+
+	Q_INVOKABLE QString AppUpdater::getStateStr() { return statusStr_; }
+	Q_INVOKABLE int AppUpdater::getProgress() { return progress_; }
+	Q_INVOKABLE int AppUpdater::getState() { return static_cast<int>(state_); }
 }

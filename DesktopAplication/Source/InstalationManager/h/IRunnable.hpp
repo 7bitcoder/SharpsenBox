@@ -3,9 +3,7 @@
 #include "IInstalationManager.hpp"
 
 namespace im {
-	class IInstalationManager;
 	class UpdateInfo;
-
 	struct IRunnable {
 		virtual ~IRunnable() {};
 

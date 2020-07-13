@@ -148,7 +148,7 @@ namespace cf {
 	//	return progress_;
 	//}
 
-	Q_INVOKABLE bool Config::installed(int id) const {
+	Q_INVOKABLE bool Config::installed(int id) {
 		auto it = games_.find(id);
 		if (it != games_.end())
 			return it->second.installed;
@@ -187,7 +187,7 @@ namespace cf {
 
 	Q_INVOKABLE int Config::getGameId() {
 		static int i = 0;
-		if(i < maxGameBarLen_ && i < sortedId_.size()) {
+		if (i < maxGameBarLen_ && i < sortedId_.size()) {
 			int id = sortedId_.at(i++);
 			return id;
 		}

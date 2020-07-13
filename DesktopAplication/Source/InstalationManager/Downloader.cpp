@@ -1,5 +1,6 @@
 ﻿#include "Downloader.hpp"
-#include "Config.hpp"
+#include "ObjectRepo.hpp"
+#include "IConfig.hpp"
 #include <stdio.h>
 #include <iostream>
 #include <curl/curl.h>
@@ -35,7 +36,7 @@ namespace im {
 	}
 
 	void Downloader::checkSpeed() {
-		auto sp = cf::Config::getObject().getDownloadSpeed();
+		auto sp = bc::ObjectsRepository::getRepo().getConfig().getDownloadSpeed();
 		if (downloadSpeed_ != sp) {
 			downloadSpeed_ = sp;
 			curl_easy_setopt(curl, CURLOPT_MAX_RECV_SPEED_LARGE, downloadSpeed_ * 1024); //KB/s -> B/s
@@ -90,7 +91,7 @@ namespace im {
 				//curl_easy_setopt(curl, CURLOPT_TIMEOUT_MS, 20'000L);
 				//res = curl_easy_setopt(curl, CURLOPT_USERNAME, "public");
 				//res = curl_easy_setopt(curl, CURLOPT_PASSWORD, "1234");
-				auto& downloadDir = cf::Config::getObject().getDownloadDir();
+				auto& downloadDir = bc::ObjectsRepository::getRepo().getConfig().getDownloadDir();
 
 
 				curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
@@ -139,7 +140,7 @@ namespace im {
 	}
 
 	bool Downloader::checkDownloaded() {
-		auto& downloadDir = cf::Config::getObject().getDownloadDir();
+		auto& downloadDir = bc::ObjectsRepository::getRepo().getConfig().getDownloadDir();
 		auto& files = updateInfo_->getFiles();
 		for (auto& file : files) {
 			if (!std::filesystem::exists(downloadDir / file.fileName))

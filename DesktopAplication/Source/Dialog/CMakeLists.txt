@@ -3,7 +3,9 @@ add_library(Dialog STATIC
     Dialog.cpp)
 
 target_include_directories(Dialog PUBLIC
-"../AppBackend")
+    "../AppBackend"
+    "../Config/h"
+    "h")
 
 qt5_use_modules(Dialog 
     Quick 

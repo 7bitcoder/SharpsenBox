@@ -1,10 +1,12 @@
 ﻿#include "GameUninstaller.hpp"
-#include "Config.hpp"
+#include "IConfig.hpp"
+#include "ObjectRepo.hpp"
+#include "Game.hpp"
 
 namespace gm {
 	void GameUninstaller::setId(int id) {
 		id_ = id;
-		auto& game = cf::Config::getObject().getGame(id_);
+		auto& game = bc::ObjectsRepository::getRepo().getConfig().getGame(id_);
 		gameDir_ = game.gameDir.toStdString();
 		shortcut_ = game.shortcut;
 		if (shortcut_)

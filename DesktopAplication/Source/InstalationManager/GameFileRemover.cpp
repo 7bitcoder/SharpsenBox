@@ -1,5 +1,6 @@
 ﻿#include "GameFileRemover.hpp"
-#include "Config.hpp"
+#include "IConfig.hpp"
+#include "Game.hpp"
 
 namespace im {
 	bool GameFileRemover::run() {
@@ -11,8 +12,9 @@ namespace im {
 					std::filesystem::remove(filePath);
 			}
 		} catch (...) {
-
+			return false;
 		}
+		return true;
 	}
 
 }

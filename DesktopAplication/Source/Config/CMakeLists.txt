@@ -1,13 +1,13 @@
 ﻿
 add_library(Config STATIC
-    Config.cpp
-    Game.cpp)
+    Config.cpp)
 
 
 target_include_directories(Config PUBLIC
     "../MainWindow" 
     "../AppBackend"
-    "../InstalationManager")
+    "../InstalationManager"
+    "h")
 
 qt5_use_modules(Config 
     Quick 

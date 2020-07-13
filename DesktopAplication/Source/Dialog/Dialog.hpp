@@ -2,38 +2,34 @@
 #include <QObject>
 #include <QQmlApplicationEngine>
 #include <QDebug>
-#include "IComponent.hpp"
+#include "IDialog.hpp"
 
 namespace dl {
-	class Dialog : public  bc::IQmlComponent<Dialog> {
+	class Dialog final : public IDialog {
 		Q_OBJECT
 	public:
 		Dialog() {};
 		virtual ~Dialog() {};
 
 		// IQmlObject intefrace
-		std::string getName() { return TYPENAME(Dialog); }
-		void update() {}
-		void init() override {}
+		std::string getName() final { return TYPENAME(Dialog); }
+		void update() final {}
+		void init() final {}
 
 		// interface
-		void setInfo(QString str) { info_ = str; }
-		void show() { show_ = true;  showDialogChanged(); }
-		bool getValue() { return value_; }
-
-		// QML Propetries
-		Q_PROPERTY(bool showDialog READ getShowDialog NOTIFY showDialogChanged);
-		Q_PROPERTY(QString info READ getInfo);
+		void setInfo(QString str) final { info_ = str; }
+		void show() final { show_ = true;  showDialogChanged(); }
+		bool getValue() final { return value_; }
 
 		//QMl invoklabes
-		Q_INVOKABLE void dialog(bool value);
-		Q_INVOKABLE bool getShowDialog() { return show_; }
-		Q_INVOKABLE QString getInfo() { return info_; }
+		Q_INVOKABLE void dialog(bool value) final;
+		Q_INVOKABLE bool getShowDialog() final { return show_; }
+		Q_INVOKABLE QString getInfo() final { return info_; }
 
 	public slots:
 	signals:
-		void dialogTriggered(bool value);
-		void showDialogChanged();
+		void dialogTriggered(bool value) final;
+		void showDialogChanged() final;
 	private:
 		QString info_ = "";
 		bool show_ = false;

@@ -1,12 +1,13 @@
 #include "Cleanup.hpp"
 #include <filesystem>
-#include "Config.hpp"
+#include "ObjectRepo.hpp"
+#include "IConfig.hpp"
 
 
 namespace im {
 	bool Cleanup::run() {
 		try {
-			auto& downloadDir = cf::Config::getObject().getDownloadDir();
+			auto& downloadDir = bc::ObjectsRepository::getRepo().getConfig().getDownloadDir();
 			for (auto& p : std::filesystem::recursive_directory_iterator(downloadDir)) {
 				auto& path = p.path();
 				std::filesystem::remove_all(path);

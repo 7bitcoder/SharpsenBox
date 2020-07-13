@@ -10,7 +10,8 @@
 #include <archive.h>
 #include <archive_entry.h>
 #include "ArchieveInstaller.hpp"
-#include "Config.hpp"
+#include "IConfig.hpp"
+#include "ObjectRepo.hpp"
 #include "UpdateInfo.hpp"
 
 namespace im {
@@ -41,7 +42,7 @@ namespace im {
 		flags |= ARCHIVE_EXTRACT_ACL;
 		flags |= ARCHIVE_EXTRACT_FFLAGS;
 		try {
-			auto& downloadDir = cf::Config::getObject().getDownloadDir();
+			auto& downloadDir = bc::ObjectsRepository::getRepo().getConfig().getDownloadDir();
 			auto& filesToUnpack = updateInfo_->getFiles();
 			for (auto& arch : filesToUnpack) {
 				a = archive_read_new();
