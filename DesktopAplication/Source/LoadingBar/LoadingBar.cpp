@@ -70,12 +70,12 @@ namespace lb {
 		errorChanged();
 	}
 
-	void LoadingBar::setState(State st) {
+	void LoadingBar::setState(lb::State st) {
 		state_ = st;
 		stateChanged();
 	}
 
-	void LoadingBar::setVisibleState(VisibleState st) {
+	void LoadingBar::setVisibleState(lb::VisibleState st) {
 		visibleState_ = st;
 		visibleStateChanged();
 	}
@@ -85,15 +85,15 @@ namespace lb {
 	}
 
 	void LoadingBar::init() {
-		auto* ob = &bc::Backend::getBackend().getInstalationManager();
-		//connect(ob, &im::IInstalationManager::setTotalLb, this, &LoadingBar::setTotal);
-		//connect(ob, &im::IInstalationManager::setActualLb, this, &LoadingBar::setActual);
-		//connect(ob, &im::IInstalationManager::updateProgress, this, &LoadingBar::setProgress);
-		//connect(ob, &im::IInstalationManager::setSpeedLb, this, &LoadingBar::setSpeed);
-		//connect(ob, &im::IInstalationManager::errorEmit, this, &LoadingBar::setError);
-		//connect(ob, &im::IInstalationManager::setStateLb, this, &LoadingBar::setState);
-		//connect(ob, &im::IInstalationManager::setVisibleStateLb, this, &LoadingBar::setVisibleState);
-		//connect(ob, &im::IInstalationManager::setUninstallModeLb, this, &LoadingBar::setUninstallMode);
+		auto* ob = dynamic_cast<QObject*> (&bc::Backend::getBackend().getInstalationManager());
+		QObject::connect(ob, SIGNAL(setTotalLb(double)), this, SLOT(setTotal(double)));
+		QObject::connect(ob, SIGNAL(setActualLb(double)), this, SLOT(setActual(double)));
+		QObject::connect(ob, SIGNAL(updateProgress(double)), this, SLOT(setProgress(double)));
+		QObject::connect(ob, SIGNAL(setSpeedLb(double)), this, SLOT(setSpeed(double)));
+		QObject::connect(ob, SIGNAL(errorEmit(const QString&)), this, SLOT(setError(const QString&)));
+		QObject::connect(ob, SIGNAL(setStateLb(lb::State)), this, SLOT(setState(lb::State)));
+		QObject::connect(ob, SIGNAL(setVisibleStateLb(lb::VisibleState)), this, SLOT(setVisibleState(lb::VisibleState)));
+		QObject::connect(ob, SIGNAL(setUninstallModeLb(bool)), this, SLOT(setUninstallMode(bool)));
 	}
 
 	void LoadingBar::reset() {

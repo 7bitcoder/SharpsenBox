@@ -117,12 +117,6 @@ namespace cf {
 		return RootObject;
 	}
 
-	void Config::init() {}
-
-	std::string Config::getName() {
-		return TYPENAME(Config);
-	}
-
 	Config::~Config() {
 		QFile file;
 

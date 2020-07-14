@@ -60,8 +60,8 @@ namespace lb {
 		void setProgress(double prog);
 		void setSpeed(double sp);
 		void setError(const QString& str);
-		void setState(State st);
-		void setVisibleState(VisibleState st);
+		void setState(lb::State st);
+		void setVisibleState(lb::VisibleState st);
 		void setUninstallMode(bool un);
 	signals:
 		void stateChanged();

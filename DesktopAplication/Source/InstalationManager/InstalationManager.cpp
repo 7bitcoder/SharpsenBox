@@ -90,6 +90,18 @@ namespace im {
 		appInfoParser_.reset(new AppInfoParser);
 		fileListParser_.reset(new FileListParser);
 		gameParser_.reset(new GameParser);
+	}
+
+	InstalationManager::~InstalationManager() {}
+
+	void InstalationManager::init() {
+		updateInfo_->init(*this);
+		downloader_->init(*this);
+		installer_->init(*this);
+		cleanUpper_->init(*this);
+		appInfoParser_->init(*this);
+		fileListParser_->init(*this);
+		gameParser_->init(*this);
 
 		auto& downloadDir = bc::Backend::getBackend().getConfig().getDownloadDir();
 		if (!std::filesystem::exists(downloadDir)) {
@@ -101,28 +113,6 @@ namespace im {
 		}
 	}
 
-	InstalationManager::~InstalationManager() {
-		//downloader_->exit();
-		//downloader_->terminate();
-		//downloader_->wait();
-		//installer_->exit();
-		//installer_->terminate();
-		//installer_->wait();
-		//cleanUpper_->exit();
-		//cleanUpper_->terminate();
-		//cleanUpper_->wait();
-	}
-
-	void InstalationManager::init() {
-		updateInfo_->init(*this);
-		downloader_->init(*this);
-		installer_->init(*this);
-		cleanUpper_->init(*this);
-		appInfoParser_->init(*this);
-		fileListParser_->init(*this);
-		gameParser_->init(*this);
-	}
-
 	void InstalationManager::run() {
 		try {
 			switch (updateInfo_->getUpdateMode()) {
@@ -131,7 +121,7 @@ namespace im {
 			default:
 				break;
 			case UpdateInfo::UpdateMode::GAME:
-				//updateGame();
+				updateGame();
 				break;
 			}
 		} catch (std::exception& e) {
@@ -158,19 +148,19 @@ namespace im {
 	}
 
 	bool InstalationManager::updateGame(cf::Game& game) {
-		//reset();
-		//setTotal(0);
-		//actualGame_ = &game;
-		//appInfoParser_->setActualVer(game.version);
-		//fileListParser_->setActualVer(game.version);
-		//files_ = files{ {game.appInfoUrl.toStdString(), "AppInfo.json" } };
-		//downloader_->setFilestoDownload(files_);
-		//fullInstall_ = !game.installed;
-		//stage_ = Stage::DOWNLOAD;
-		//progress_ = 100;
-		//setStateLb(lb::LoadingBar::State::CHECKING);
-		//setVisibleStateLb(lb::LoadingBar::VisibleState::SHOWED);
-		//downloader_->run();
+		if (isRunning())
+			return false;
+		reset();
+		setTotal(0);
+		updateInfo_->setUpdateMode(UpdateInfo::UpdateMode::GAME);
+		updateInfo_->setActualGame(game);
+		updateInfo_->setActualVersion(game.version);
+		updateInfo_->setFullInstall(!game.installed);
+		updateInfo_->setFiles({ {game.appInfoUrl.toStdString(), "AppInfo.json" } });
+		progress_ = 100;
+		setStateLb(lb::State::CHECKING);
+		setVisibleStateLb(lb::VisibleState::SHOWED);
+		start();
 		return true;
 	}
 
@@ -181,9 +171,20 @@ namespace im {
 		runAndCheck(*appInfoParser_);
 		if (appInfoParser_->needUpdate()) {
 			updateApp();
+			updateGamePages(); // update Game pages metadata
 		}
-		if (updateInfo_->isGameUppdating())
-			updateInfo_->getActualGame().updateChecked = true;
+	}
+
+	void InstalationManager::updateGame() {
+		// download game appInfo.json
+		runAndCheck(*downloader_);
+		// check if appInfo.json contains newer version = need update
+		runAndCheck(*appInfoParser_);
+		if (appInfoParser_->needUpdate()) {
+			updateApp();
+			updateGameInfo(); // update Game info 
+		}
+		updateInfo_->getActualGame().updateChecked = true;
 	}
 
 	void InstalationManager::updateApp() {
@@ -193,7 +194,7 @@ namespace im {
 		progress_ = 100;
 		setStateLb(lb::State::CHECKING);
 		setVisibleStateLb(lb::VisibleState::SHOWED);
-		//download Filelist.json and Patch.json Files
+		// download Filelist.json and Patch.json Files
 		runAndCheck(*downloader_);
 		// Process fileList.json and patch files to get update packets (zip files)
 		runAndCheck(*fileListParser_);
@@ -203,7 +204,7 @@ namespace im {
 	}
 
 	void InstalationManager::downloadUpdate() {
-		//setUp updateInfo
+		// setUp updateInfo
 		updateInfo_->setFiles(fileListParser_->getNeededFiles());
 		setTotal(fileListParser_->getBytesToDownload());
 
@@ -225,11 +226,6 @@ namespace im {
 
 		// install downloaded packets
 		runAndCheck(*installer_);
-
-		if (updateInfo_->isGameUppdating())
-			updateGameInfo(); // update Game info 
-		else
-			updateGamePages(); // update Game pages metadata
 	}
 
 	void InstalationManager::updateGameInfo() {

@@ -2,6 +2,7 @@
 #include <QObject>
 #include <QQmlApplicationEngine>
 #include <QDebug>
+#include <iostream>
 #include "IDialog.hpp"
 
 namespace dl {

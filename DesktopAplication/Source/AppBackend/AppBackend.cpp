@@ -52,5 +52,12 @@ namespace bc {
 	im::IInstalationManager& Backend::getInstalationManager() { return *installationManager_; }
 
 	Backend::~Backend() {}
-	Backend::Backend() {}
+
+	Backend::Backend() {
+		config_.reset(new cf::Config);
+		dialog_.reset(new dl::Dialog);
+		lodingBar_.reset(new lb::LoadingBar);
+		gameManager_.reset(new gm::GameManager);
+		installationManager_.reset(new im::InstalationManager);
+	}
 }

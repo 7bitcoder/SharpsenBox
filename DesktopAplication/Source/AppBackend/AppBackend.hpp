@@ -33,7 +33,7 @@ namespace bc {
 
 		void registerObjects();
 		void initializeObjects();
-		QQmlApplicationEngine* engine;
+		QQmlApplicationEngine* engine = nullptr;
 		std::vector<IComponent*> objects_;
 
 		// components

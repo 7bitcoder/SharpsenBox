@@ -37,6 +37,9 @@ namespace gm {
 
 	public slots:
 		void uninstallation(int id);
+	signals:
+		void lockChanged();
+
 
 	private:
 		bool lock_ = false;

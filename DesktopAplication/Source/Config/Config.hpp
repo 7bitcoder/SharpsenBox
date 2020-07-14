@@ -19,8 +19,8 @@ namespace cf {
 
 		// implementation IQmlObject
 		void update() final {};
-		void init() final;
-		std::string getName() final;
+		void init() final {};
+		std::string getName() final { return TYPENAME(Config); }
 
 		// interface 
 		void insertGame(Game& game) final { games_.insert({ game.id,  game }); };
