@@ -11,7 +11,6 @@
 #include <archive_entry.h>
 #include "ArchieveInstaller.hpp"
 #include "IConfig.hpp"
-#include "AppBackend.hpp"
 #include "UpdateInfo.hpp"
 
 namespace im {
@@ -42,7 +41,7 @@ namespace im {
 		flags |= ARCHIVE_EXTRACT_ACL;
 		flags |= ARCHIVE_EXTRACT_FFLAGS;
 		try {
-			auto& downloadDir = bc::Backend::getBackend().getConfig().getDownloadDir();
+			auto& downloadDir = bc::Get<cf::IConfig>::get().getDownloadDir();
 			auto& filesToUnpack = updateInfo_->getFiles();
 			for (auto& arch : filesToUnpack) {
 				a = archive_read_new();

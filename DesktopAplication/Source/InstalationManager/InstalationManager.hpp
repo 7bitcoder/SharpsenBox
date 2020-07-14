@@ -8,9 +8,14 @@
 #include "Game.hpp"
 #include "IConfig.hpp"
 #include "LoadingBarStates.hpp"
-#include "AppUpdaterStates.hpp"
 #include "IInstalationManager.hpp"
 #include <memory>
+
+namespace upd {
+	enum State : int {
+		NONE = 0, DOWNLOADING, INSTALLING, ENDED, ERROR, NO_UPDATE_FOUND, UPDATING_GAME_PAGES
+	};
+}
 
 namespace im {
 	class UpdateInfo;
@@ -21,7 +26,7 @@ namespace im {
 	class FileListParser;
 	class GameParser;
 
-	class InstalationManager final : public IInstalationManager {
+	class InstalationManager final : public IInstalationManager, public bc::Get<im::IInstalationManager> {
 		Q_OBJECT
 	public:
 		using files = std::vector<cf::AppPack>;

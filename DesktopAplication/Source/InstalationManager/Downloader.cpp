@@ -1,6 +1,6 @@
 ﻿#include "Downloader.hpp"
-#include "AppBackend.hpp"
 #include "IConfig.hpp"
+#include "IComponent.hpp"
 #include <stdio.h>
 #include <iostream>
 #include <curl/curl.h>
@@ -36,7 +36,7 @@ namespace im {
 	}
 
 	void Downloader::checkSpeed() {
-		auto sp = bc::Backend::getBackend().getConfig().getDownloadSpeed();
+		auto sp = bc::Get<cf::IConfig>::get().getDownloadSpeed();
 		if (downloadSpeed_ != sp) {
 			downloadSpeed_ = sp;
 			curl_easy_setopt(curl, CURLOPT_MAX_RECV_SPEED_LARGE, downloadSpeed_ * 1024); //KB/s -> B/s
@@ -91,7 +91,7 @@ namespace im {
 				//curl_easy_setopt(curl, CURLOPT_TIMEOUT_MS, 20'000L);
 				//res = curl_easy_setopt(curl, CURLOPT_USERNAME, "public");
 				//res = curl_easy_setopt(curl, CURLOPT_PASSWORD, "1234");
-				auto& downloadDir = bc::Backend::getBackend().getConfig().getDownloadDir();
+				auto& downloadDir = bc::Get<cf::IConfig>::get().getDownloadDir();
 
 
 				curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
@@ -140,7 +140,7 @@ namespace im {
 	}
 
 	bool Downloader::checkDownloaded() {
-		auto& downloadDir = bc::Backend::getBackend().getConfig().getDownloadDir();
+		auto& downloadDir = bc::Get<cf::IConfig>::get().getDownloadDir();
 		auto& files = updateInfo_->getFiles();
 		for (auto& file : files) {
 			if (!std::filesystem::exists(downloadDir / file.fileName))

@@ -1,7 +1,6 @@
 ﻿#include <iostream>
 #include <string>
 #include "InstalationManager.hpp"
-#include "AppBackend.hpp"
 #include <curl/curl.h>
 #include "windows.h"
 #include "winnls.h"
@@ -21,6 +20,10 @@
 #include "ArchieveInstaller.hpp"
 #include "GameParser.hpp"
 #include "UpdateInfo.hpp"
+
+namespace bc {
+	im::IInstalationManager* bc::Get< im::IInstalationManager>::component_ = nullptr;
+}
 
 namespace im {
 	namespace {
@@ -82,7 +85,7 @@ namespace im {
 #endif
 	}
 
-	InstalationManager::InstalationManager() {
+	InstalationManager::InstalationManager() : Get<im::IInstalationManager>(this) {
 		updateInfo_.reset(new UpdateInfo);
 		downloader_.reset(new Downloader);
 		installer_.reset(new ArchieveInstaller);
@@ -103,7 +106,7 @@ namespace im {
 		fileListParser_->init(*this);
 		gameParser_->init(*this);
 
-		auto& downloadDir = bc::Backend::getBackend().getConfig().getDownloadDir();
+		auto& downloadDir = bc::Get<cf::IConfig>::get().getDownloadDir();
 		if (!std::filesystem::exists(downloadDir)) {
 			try {
 				std::filesystem::create_directory(downloadDir);
@@ -157,9 +160,9 @@ namespace im {
 		updateInfo_->setActualVersion(game.version);
 		updateInfo_->setFullInstall(!game.installed);
 		updateInfo_->setFiles({ {game.appInfoUrl.toStdString(), "AppInfo.json" } });
-		progress_ = 100;
-		setStateLb(lb::State::CHECKING);
-		setVisibleStateLb(lb::VisibleState::SHOWED);
+		//progress_ = 100;
+		//emit setStateLb(lb::State::CHECKING);
+		//emit setVisibleStateLb(lb::VisibleState::SHOWED);
 		start();
 		return true;
 	}
@@ -176,6 +179,9 @@ namespace im {
 	}
 
 	void InstalationManager::updateGame() {
+		progress_ = 100;
+		emit setStateLb(lb::State::CHECKING);
+		emit setVisibleStateLb(lb::VisibleState::SHOWED);
 		// download game appInfo.json
 		runAndCheck(*downloader_);
 		// check if appInfo.json contains newer version = need update
@@ -244,7 +250,7 @@ namespace im {
 			auto res = CreateLink(path.generic_string().c_str(), path.parent_path().generic_string().c_str(), link.generic_string().c_str(), "Sylio shortcut");
 			actualGame.shortcutPath = link.generic_string().c_str();
 		}
-		bc::Backend::getBackend().getGameManager().unLock();
+		bc::Get<gm::IGameManager>::get().unLock();
 	}
 
 	void InstalationManager::updateGamePages() {
@@ -266,7 +272,7 @@ namespace im {
 		setStateLb(lb::State::COMPLEET);
 		setVisibleStateLb(lb::VisibleState::HIDDEN);
 		updateEnded(updateInfo_->getUpdateVersion());
-		bc::Backend::getBackend().getGameManager().unLock();
+		bc::Get<gm::IGameManager>::get().unLock();
 	}
 
 	void InstalationManager::setTotal(qint64 tot) {

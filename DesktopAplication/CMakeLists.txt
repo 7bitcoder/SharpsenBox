@@ -5,7 +5,7 @@
 cmake_minimum_required (VERSION 3.8)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-message("asdadsas----------- ${CMAKE_TOOLCHAIN_FILE}")
+
 project ("LaunchBox")
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/CmakeModules")
 include(Config)

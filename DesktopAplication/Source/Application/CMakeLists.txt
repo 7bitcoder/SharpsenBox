@@ -1,0 +1,2 @@
+﻿add_subdirectory(AppBackend)
+add_subdirectory(App)
