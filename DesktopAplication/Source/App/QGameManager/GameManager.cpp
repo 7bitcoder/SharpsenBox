@@ -34,7 +34,18 @@ namespace gm {
 		}
 	}
 	void GameManager::init() {
+		im_.init();
+		lb_ = &bc::Component<lb::ILoadingBar>::get();
 		connect(uninstaller_, &GameUninstaller::uninstalationComplete, this, &GameManager::uninstallation);
+
+		connect(&im_, &im::UpdateManager::errorEmit, this, &GameManager::errorEmit);
+		connect(&im_, &im::UpdateManager::updateProgress, this, &GameManager::updateProgress);
+		connect(&im_, &im::UpdateManager::setTotalLb, this, &GameManager::setTotalLb);
+		connect(&im_, &im::UpdateManager::setActualLb, this, &GameManager::setActualLb);
+		connect(&im_, &im::UpdateManager::setSpeedLb, this, &GameManager::setSpeedLb);
+		connect(&im_, &im::UpdateManager::setStateLb, this, &GameManager::setStateLb);
+		connect(&im_, &im::UpdateManager::setVisibleStateLb, this, &GameManager::setVisibleStateLb);
+		connect(&im_, &im::UpdateManager::setUninstallModeLb, this, &GameManager::setUninstallModeLb);
 	};
 
 	Q_INVOKABLE void GameManager::unistallRequest(int id) {
@@ -91,4 +102,14 @@ namespace gm {
 		std::string total = cd + " && " + execute;
 		system(total.c_str());
 	}
+
+	void GameManager::errorEmit(const QString& errorStr) { lb_->setError(errorStr); }
+	void GameManager::updateProgress(double prog) { lb_->setProgress(prog); }
+
+	void GameManager::setTotalLb(double tot) { lb_->setTotal(tot); }
+	void GameManager::setActualLb(double act) { lb_->setActual(act); }
+	void GameManager::setSpeedLb(double sp) { lb_->setSpeed(sp); }
+	void GameManager::setStateLb(im::State st) { lb_->setState(st); }
+	void GameManager::setVisibleStateLb(im::VisibleState st) { lb_->setVisibleState(st); }
+	void GameManager::setUninstallModeLb(bool un) { lb_->setUninstallMode(un); }
 }

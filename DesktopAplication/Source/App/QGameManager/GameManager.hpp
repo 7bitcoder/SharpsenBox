@@ -5,6 +5,7 @@
 #include <QThread>
 #include <QNetworkAccessManager>
 #include "IGameManager.hpp"
+#include "ILoadingBar.hpp"
 #include "UpdateManager.hpp"
 
 namespace gm {
@@ -38,6 +39,15 @@ namespace gm {
 
 	public slots:
 		void uninstallation(int id);
+		void errorEmit(const QString& errorStr);
+		void updateProgress(double prog);
+
+		void setTotalLb(double tot);
+		void setActualLb(double act);
+		void setSpeedLb(double sp);
+		void setStateLb(im::State st);
+		void setVisibleStateLb(im::VisibleState st);
+		void setUninstallModeLb(bool un);
 	signals:
 		void lockChanged();
 
@@ -47,5 +57,6 @@ namespace gm {
 		int Gameid_;
 		GameUninstaller* uninstaller_;
 		im::UpdateManager im_;
+		lb::ILoadingBar* lb_;
 	};
 }

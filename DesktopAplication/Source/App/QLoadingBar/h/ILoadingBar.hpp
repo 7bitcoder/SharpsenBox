@@ -5,6 +5,7 @@
 #include <QThread>
 #include <QNetworkAccessManager>
 #include "IComponent.hpp"
+#include "IUpdateManager.hpp"
 #include <filesystem>
 
 namespace lb {

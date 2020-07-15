@@ -175,8 +175,8 @@ namespace im {
 
 	void UpdateManager::updateGame() {
 		progress_ = 100;
-		emit setStateLb(im::State::CHECKING);
-		emit setVisibleStateLb(im::VisibleState::SHOWED);
+		setStateLb(im::State::CHECKING);
+		setVisibleStateLb(im::VisibleState::SHOWED);
 		// download game appInfo.json
 		runAndCheck(*downloader_);
 		// check if appInfo.json contains newer version = need update

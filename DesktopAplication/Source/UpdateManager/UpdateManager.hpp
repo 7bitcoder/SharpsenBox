@@ -19,7 +19,7 @@ namespace im {
 	class FileListParser;
 	class GameParser;
 
-	class UpdateManager : public IUpdateManager {
+	class UpdateManager : public QThread, public IUpdateManager {
 		Q_OBJECT
 	public:
 		using files = std::vector<cf::AppPack>;

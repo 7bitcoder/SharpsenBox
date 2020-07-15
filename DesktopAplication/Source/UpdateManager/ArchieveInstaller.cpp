@@ -26,7 +26,7 @@ namespace im {
 	}
 
 	int ArchieveInstaller::closeFile(::archive* a, void* client_data) {
-		struct ArchieveInstaller* data = (ArchieveInstaller*)client_data;
+		class ArchieveInstaller* data = (ArchieveInstaller*)client_data;
 		if (data->file.is_open())
 			data->file.close();
 		return (ARCHIVE_OK);
