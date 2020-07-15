@@ -8,9 +8,6 @@
 #include <algorithm>
 #include <QDir>
 
-namespace bc {
-	cf::IConfig* bc::Get< cf::IConfig >::component_ = nullptr;
-}
 namespace cf {
 
 	namespace {
@@ -18,7 +15,7 @@ namespace cf {
 		QString writeBool(bool f) { return f ? "1" : "0"; }
 	}
 
-	Config::Config() :bc::Get<IConfig>(this) {
+	Config::Config() {
 		if (!std::filesystem::exists(config_))
 			std::filesystem::create_directories(config_);
 		if (!std::filesystem::exists(getConfigJson()))

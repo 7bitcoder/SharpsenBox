@@ -4,10 +4,8 @@ add_library(Config STATIC
 
 
 target_include_directories(Config PUBLIC
-    "../AppBackend"
-    "../AppBackend/h"
-    "../InstalationManager/h"
-    "../Component"
+    "../Component/h"
+    "../UpdateManager/h"
     "h")
 
 qt5_use_modules(Config 

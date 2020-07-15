@@ -1,3 +1,4 @@
 ﻿    
-add_subdirectory(AppUpdater)
-add_subdirectory(App)
+#add_subdirectory(Backend)
+add_subdirectory(Updater)
+add_subdirectory(Application)

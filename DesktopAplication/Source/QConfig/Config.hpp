@@ -11,7 +11,7 @@
 
 
 namespace cf {
-	class Config final : public IConfig, public bc::Get<IConfig> {
+	class Config final : public IConfig {
 		Q_OBJECT
 	public:
 		Config();

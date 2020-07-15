@@ -12,7 +12,7 @@ namespace cf {
 	class Config;
 	class Game;
 
-	struct IConfig : public  bc::IQmlComponent {
+	struct IConfig : public  bc::IComponent {
 	public:
 		virtual ~IConfig() {};
 
