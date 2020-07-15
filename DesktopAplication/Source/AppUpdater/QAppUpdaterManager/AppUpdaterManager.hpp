@@ -1,18 +1,25 @@
 ﻿#pragma once
 #include <QObject>
 #include <QQmlApplicationEngine>
+#include <QString>
 #include <QDebug>
 #include <QNetworkAccessManager>
 #include "IComponent.hpp"
 #include "IConfig.hpp"
 #include "UpdateManager.hpp"
+#include "IAppUpdaterManager.hpp"
 #include <filesystem>
+#include <string>
 
 
 namespace upd {
-	class AppUpdater : public QObject {
+	class AppUpdaterManager : public IAppUpdaterManager {
 		Q_OBJECT
 	public:
+
+		std::string getName() override { return TYPENAME(IAppUpdaterManager); }
+		void init() override {}
+		void update() override {}
 
 		Q_PROPERTY(QString statusStr READ getStateStr);
 		Q_PROPERTY(int progress READ getProgress NOTIFY progressChanged);
@@ -23,8 +30,8 @@ namespace upd {
 		Q_INVOKABLE int getState();
 		Q_INVOKABLE void checkForUpdates();
 
-		AppUpdater();
-		virtual ~AppUpdater() {};
+		AppUpdaterManager();
+		virtual ~AppUpdaterManager() {};
 	private:
 	public slots:
 		void updateInstalled(const QString& version);

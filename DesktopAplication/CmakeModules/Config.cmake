@@ -60,17 +60,11 @@ if(NOT EXISTS ${UpdaterPath})
 	file(MAKE_DIRECTORY ${UpdaterPath})
 endif()
 
-set(PatherPath ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/../Pather)
-if(NOT EXISTS ${UpdaterPath})
-	file(MAKE_DIRECTORY ${UpdaterPath})
-endif()
-
 if(AUTO_QT_LIBS)
 	add_custom_target(deploy ALL
 		WORKING_DIRECTORY ${QtLib}/bin 
 		COMMAND ${platform}deployqt --qmldir ${CMAKE_SOURCE_DIR}/Gui --${type} --quick ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
 		COMMAND ${platform}deployqt --qmldir ${CMAKE_SOURCE_DIR}/Gui --${type} --quick ${UpdaterPath}
-		COMMAND ${platform}deployqt --qmldir ${CMAKE_SOURCE_DIR}/Gui --${type} --quick ${PatherPath}
 		COMMENT "========= Deploying Aplication =========" 
 		USES_TERMINAL)
 		add_dependencies(deploy LaunchBox)

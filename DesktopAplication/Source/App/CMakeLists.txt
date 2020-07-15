@@ -1,4 +1,4 @@
 ﻿add_subdirectory(QLoadingBar)
 add_subdirectory(QGameManager)
 add_subdirectory(QDialog)
-add_subdirectory(Application)
+add_subdirectory(App)

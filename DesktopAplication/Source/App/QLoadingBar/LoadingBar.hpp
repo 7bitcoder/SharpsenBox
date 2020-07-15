@@ -23,6 +23,14 @@ namespace lb {
 		std::string getName() final;
 		void init() final;
 
+		void setTotal(double tot) final;
+		void setActual(double act) final;
+		void setProgress(double prog) final;
+		void setSpeed(double sp) final;
+		void setError(const QString& str) final;
+		void setState(im::State st) final;
+		void setVisibleState(im::VisibleState st) final;
+		void setUninstallMode(bool un) final;
 		void reset() final;
 		//QML Propetries
 		Q_PROPERTY(double speed READ getSpeed); //download speed B/s
@@ -54,15 +62,7 @@ namespace lb {
 		Q_INVOKABLE void resume() const;
 		Q_INVOKABLE void stop() const;
 
-	public slots:
-		void setTotal(double tot);
-		void setActual(double act);
-		void setProgress(double prog);
-		void setSpeed(double sp);
-		void setError(const QString& str);
-		void setState(im::State st);
-		void setVisibleState(im::VisibleState st);
-		void setUninstallMode(bool un);
+
 	signals:
 		void stateChanged();
 		void visibleStateChanged();

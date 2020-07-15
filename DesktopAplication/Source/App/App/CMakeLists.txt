@@ -24,7 +24,6 @@ target_link_libraries(LaunchBox
     Dialog
     GameManager
     LoadingBar
-    UpdateManager
     Config
     Qt5::Widgets
     Qt5::Gui

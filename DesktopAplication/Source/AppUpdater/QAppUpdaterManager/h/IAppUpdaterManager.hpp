@@ -2,17 +2,16 @@
 #include <QObject>
 #include <QQmlApplicationEngine>
 #include <QDebug>
-#include <QThread>
 #include <QNetworkAccessManager>
 #include "IComponent.hpp"
+#include "IConfig.hpp"
 #include <filesystem>
 
-namespace lb {
-	struct ILoadingBar : public bc::IComponent {
-	public:
-		virtual ~ILoadingBar() {};
-		ILoadingBar() {};
 
-		virtual void reset() = 0;
+namespace upd {
+	struct IAppUpdaterManager : public bc::IComponent {
+	public:
+		virtual ~IAppUpdaterManager() {};
+	private:
 	};
 }

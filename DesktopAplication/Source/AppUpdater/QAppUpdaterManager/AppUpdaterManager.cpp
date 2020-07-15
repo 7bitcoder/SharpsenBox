@@ -1,4 +1,4 @@
-﻿#include "Updater.hpp"
+﻿#include "AppUpdaterManager.hpp"
 #include "IConfig.hpp"
 #include "IComponent.hpp"
 #include <QElapsedTimer>
@@ -10,7 +10,7 @@
 
 namespace upd {
 
-	AppUpdater::AppUpdater() : cf_(bc::Component<cf::IConfig>::get()) {
+	AppUpdaterManager::AppUpdaterManager() : cf_(bc::Component<cf::IConfig>::get()) {
 		cf_.init();
 		im_.init();
 		auto& downloadDir = cf_.getDownloadDir();
@@ -18,7 +18,7 @@ namespace upd {
 			std::filesystem::create_directory(downloadDir);
 	}
 
-	void AppUpdater::checkForUpdates() {
+	void AppUpdaterManager::checkForUpdates() {
 		//connect(&im_, &im::IInstalationManager::updateStatus, this, &AppUpdater::updateStatus);
 		//connect(&im_, &im::IInstalationManager::errorEmit, this, &AppUpdater::errorCatched);
 		//connect(&im_, &im::IInstalationManager::updateEnded, this, &AppUpdater::updateInstalled);
@@ -27,27 +27,27 @@ namespace upd {
 		im_.updateMainApp(cf_.getVer(), cf_.getLauncherAppInfoUrl(), cf_.getGameInfoRepository(), cf_.getVer() == "0");
 	}
 
-	void AppUpdater::updateStatus(im::State state) {
+	void AppUpdaterManager::updateStatus(im::State state) {
 		state_ = state;
 		stateChanged();
 	}
 
-	void AppUpdater::updateInstalled(const QString& version) {
+	void AppUpdaterManager::updateInstalled(const QString& version) {
 		updateStatus(im::State::COMPLEET);
 		cf_.setVer(version);
 	}
 
-	void AppUpdater::errorCatched(const QString& what) {
+	void AppUpdaterManager::errorCatched(const QString& what) {
 		statusStr_ = what;
 		updateStatus(im::State::ERRORD);
 	}
 
-	void AppUpdater::updateProgress(double progress) {
+	void AppUpdaterManager::updateProgress(double progress) {
 		progress_ = progress;
 		progressChanged();
 	}
 
-	Q_INVOKABLE QString AppUpdater::getStateStr() { return statusStr_; }
-	Q_INVOKABLE int AppUpdater::getProgress() { return progress_; }
-	Q_INVOKABLE int AppUpdater::getState() { return static_cast<int>(state_); }
+	Q_INVOKABLE QString AppUpdaterManager::getStateStr() { return statusStr_; }
+	Q_INVOKABLE int AppUpdaterManager::getProgress() { return progress_; }
+	Q_INVOKABLE int AppUpdaterManager::getState() { return static_cast<int>(state_); }
 }

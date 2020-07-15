@@ -25,7 +25,6 @@ qt5_use_modules(UpdateManager
     Network)
 
 target_link_libraries(UpdateManager
-    #JsonParsers
     Qt5::Widgets
     Qt5::Gui
     Qt5::Core
