@@ -124,8 +124,8 @@ namespace im {
 			}
 		} catch (std::exception& e) {
 			errorEmit(e.what());
-			setStateLb(im::State::ERRORD);
-			setVisibleStateLb(im::VisibleState::HIDDEN);
+			emitState(im::IUpdateManager::State::ERRORD);
+			emitVisibleState(im::IUpdateManager::VisibleState::HIDDEN);
 		} catch (...) {
 			errorEmit("Unexpected error ocured while processing");
 		}
@@ -156,9 +156,8 @@ namespace im {
 		updateInfo_->setFullInstall(!game.installed);
 		updateInfo_->setFiles({ {game.appInfoUrl.toStdString(), "AppInfo.json" } });
 		//progress_ = 100;
-		//emit setStateLb(lb::State::CHECKING);
-		//emit setVisibleStateLb(lb::VisibleState::SHOWED);
-		start();
+		//emit emitState(lb::State::CHECKING);
+		//emit emitVisibleState(lb::VisibleState::SHOWED);
 		return true;
 	}
 
@@ -175,8 +174,8 @@ namespace im {
 
 	void UpdateManager::updateGame() {
 		progress_ = 100;
-		setStateLb(im::State::CHECKING);
-		setVisibleStateLb(im::VisibleState::SHOWED);
+		emitState(im::IUpdateManager::State::CHECKING);
+		emitVisibleState(im::IUpdateManager::VisibleState::SHOWED);
 		// download game appInfo.json
 		runAndCheck(*downloader_);
 		// check if appInfo.json contains newer version = need update
@@ -189,18 +188,18 @@ namespace im {
 	}
 
 	void UpdateManager::updateApp() {
-		setTotal(0);
+		setTotal(3);
 		updateInfo_->setUpdateVersion(appInfoParser_->getVersionToUpdate());
 		updateInfo_->setFiles(appInfoParser_->getFiles());
 		progress_ = 100;
-		setStateLb(im::State::CHECKING);
-		setVisibleStateLb(im::VisibleState::SHOWED);
+		emitState(im::IUpdateManager::State::CHECKING);
+		emitVisibleState(im::IUpdateManager::VisibleState::SHOWED);
 		// download Filelist.json and Patch.json Files
 		runAndCheck(*downloader_);
 		// Process fileList.json and patch files to get update packets (zip files)
 		runAndCheck(*fileListParser_);
 
-		updateStatus(im::State::DOWNLOADING);
+		updateStatus(im::IUpdateManager::State::DOWNLOADING);
 		downloadUpdate();
 	}
 
@@ -209,8 +208,8 @@ namespace im {
 		updateInfo_->setFiles(fileListParser_->getNeededFiles());
 		setTotal(fileListParser_->getBytesToDownload());
 
-		setStateLb(im::State::DOWNLOADING);
-		setVisibleStateLb(im::VisibleState::SHOWED);
+		emitState(im::IUpdateManager::State::DOWNLOADING);
+		emitVisibleState(im::IUpdateManager::VisibleState::SHOWED);
 		// download zip packets
 		runAndCheck(*downloader_);
 
@@ -222,8 +221,8 @@ namespace im {
 		std::filesystem::path destination = updateInfo_->isGameUppdating() ? updateInfo_->getActualGame().gameDir.toStdString() : std::string("../");
 		updateInfo_->setInstallDir(destination);
 
-		setStateLb(im::State::INSTALLING);
-		updateStatus(im::State::INSTALLING);
+		emitState(im::IUpdateManager::State::INSTALLING);
+		updateStatus(im::IUpdateManager::State::INSTALLING);
 
 		// install downloaded packets
 		runAndCheck(*installer_);
@@ -264,8 +263,8 @@ namespace im {
 
 	void UpdateManager::cleanUp() {
 		runAndCheck(*cleanUpper_);
-		setStateLb(im::State::COMPLEET);
-		setVisibleStateLb(im::VisibleState::HIDDEN);
+		emitState(im::IUpdateManager::State::COMPLEET);
+		emitVisibleState(im::IUpdateManager::VisibleState::HIDDEN);
 		updateEnded(updateInfo_->getUpdateVersion());
 		//bc::Component<gm::IGameManager>::get().unLock();
 	}

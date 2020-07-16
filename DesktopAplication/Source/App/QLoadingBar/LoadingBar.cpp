@@ -19,11 +19,11 @@ namespace lb {
 	}
 
 	Q_INVOKABLE int LoadingBar::getState() const {
-		return state_;
+		return static_cast<int>(state_);
 	}
 
 	Q_INVOKABLE int LoadingBar::getVisibleState() const {
-		return visibleState_;
+		return static_cast<int>(visibleState_);
 	}
 
 	Q_INVOKABLE double LoadingBar::getActual() const {
@@ -71,12 +71,12 @@ namespace lb {
 		errorChanged();
 	}
 
-	void LoadingBar::setState(im::State st) {
+	void LoadingBar::setState(im::IUpdateManager::State st) {
 		state_ = st;
 		stateChanged();
 	}
 
-	void LoadingBar::setVisibleState(im::VisibleState st) {
+	void LoadingBar::setVisibleState(im::IUpdateManager::VisibleState st) {
 		visibleState_ = st;
 		visibleStateChanged();
 	}

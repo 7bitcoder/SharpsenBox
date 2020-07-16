@@ -12,14 +12,14 @@ namespace cf {
 namespace im {
 	class UpdateInfo;
 
-	enum  State : int {
-		NONE = -1, CHECKING = 0, DOWNLOADING, INSTALLING, PAUSE, ERRORD, STOPPED, COMPLEET, UPDATING_GAME_PAGES
-	};
-	enum  VisibleState : int {
-		HIDDEN = 0, SHOWED, MINIMALIZED
-	};
-
 	struct IUpdateManager {
+		enum class State : int {
+			NONE = -1, CHECKING = 0, DOWNLOADING, INSTALLING, PAUSE, ERRORD, STOPPED, COMPLEET, UPDATING_GAME_PAGES
+		};
+		enum class VisibleState : int {
+			HIDDEN = 0, SHOWED, MINIMALIZED
+		};
+
 		virtual ~IUpdateManager() {};
 
 		virtual bool updateMainApp(QString version, std::filesystem::path appInfoUrl, std::filesystem::path gamesRepoUrl, bool fullInstall) = 0;

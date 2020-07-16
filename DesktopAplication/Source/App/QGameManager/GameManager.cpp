@@ -5,6 +5,7 @@
 #include "IConfig.hpp"
 #include "Game.hpp"
 #include "GameUninstaller.hpp"
+#include "IUpdateManager.hpp"
 #include "ILoadingBar.hpp"
 #include "IDialog.hpp"
 
@@ -30,7 +31,9 @@ namespace gm {
 			p /= game.name.toStdString();
 			game.gameDir = p.generic_string().c_str();
 			game.shortcut = shortcut;
-			im_.updateGame(game);
+
+			if (im_.updateGame(game))
+				im_.start();
 		}
 	}
 	void GameManager::init() {
@@ -109,7 +112,6 @@ namespace gm {
 	void GameManager::setTotalLb(double tot) { lb_->setTotal(tot); }
 	void GameManager::setActualLb(double act) { lb_->setActual(act); }
 	void GameManager::setSpeedLb(double sp) { lb_->setSpeed(sp); }
-	void GameManager::setStateLb(im::State st) { lb_->setState(st); }
-	void GameManager::setVisibleStateLb(im::VisibleState st) { lb_->setVisibleState(st); }
+
 	void GameManager::setUninstallModeLb(bool un) { lb_->setUninstallMode(un); }
 }

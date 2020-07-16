@@ -28,8 +28,8 @@ namespace lb {
 		void setProgress(double prog) final;
 		void setSpeed(double sp) final;
 		void setError(const QString& str) final;
-		void setState(im::State st) final;
-		void setVisibleState(im::VisibleState st) final;
+		void setState(im::IUpdateManager::State st) final;
+		void setVisibleState(im::IUpdateManager::VisibleState st) final;
 		void setUninstallMode(bool un) final;
 		void reset() final;
 		//QML Propetries
@@ -71,8 +71,8 @@ namespace lb {
 		void notifyEnded();
 		void getProgress(qint64 actual);
 	private:
-		im::State state_ = im::State::NONE;
-		im::VisibleState visibleState_ = im::VisibleState::HIDDEN;
+		im::IUpdateManager::State state_ = im::IUpdateManager::State::NONE;
+		im::IUpdateManager::VisibleState visibleState_ = im::IUpdateManager::VisibleState::HIDDEN;
 
 		//synhronize mutex
 		std::mutex mx_;

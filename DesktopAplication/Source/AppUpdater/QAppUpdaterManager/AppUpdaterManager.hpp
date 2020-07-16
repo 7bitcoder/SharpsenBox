@@ -37,7 +37,7 @@ namespace upd {
 		void updateInstalled(const QString& version);
 		void updateProgress(double progress);
 		void errorCatched(const QString& what);
-		void updateStatus(im::State state);
+		void updateStatus(im::IUpdateManager::State state);
 	signals:
 		void stateChanged();
 		void progressChanged();
@@ -46,7 +46,7 @@ namespace upd {
 		cf::IConfig& cf_;
 		im::UpdateManager im_;
 		QString statusStr_;
-		im::State state_ = im::State::NONE;
+		im::IUpdateManager::State state_ = im::IUpdateManager::State::NONE;
 
 		double progress_;
 	};

@@ -45,8 +45,8 @@ namespace gm {
 		void setTotalLb(double tot);
 		void setActualLb(double act);
 		void setSpeedLb(double sp);
-		void setStateLb(im::State st);
-		void setVisibleStateLb(im::VisibleState st);
+		void setStateLb(int st) { lb_->setState(im::IUpdateManager::State(st)); }
+		void setVisibleStateLb(int st) { lb_->setVisibleState(im::IUpdateManager::VisibleState(st)); }
 		void setUninstallModeLb(bool un);
 	signals:
 		void lockChanged();

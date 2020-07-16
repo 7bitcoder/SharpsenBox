@@ -23,23 +23,23 @@ namespace upd {
 		//connect(&im_, &im::IInstalationManager::errorEmit, this, &AppUpdater::errorCatched);
 		//connect(&im_, &im::IInstalationManager::updateEnded, this, &AppUpdater::updateInstalled);
 		//connect(&im_, &im::IInstalationManager::updateProgress, this, &AppUpdater::updateProgress);
-		updateStatus(im::State::DOWNLOADING);
+		updateStatus(im::IUpdateManager::State::DOWNLOADING);
 		im_.updateMainApp(cf_.getVer(), cf_.getLauncherAppInfoUrl(), cf_.getGameInfoRepository(), cf_.getVer() == "0");
 	}
 
-	void AppUpdaterManager::updateStatus(im::State state) {
+	void AppUpdaterManager::updateStatus(im::IUpdateManager::State state) {
 		state_ = state;
 		stateChanged();
 	}
 
 	void AppUpdaterManager::updateInstalled(const QString& version) {
-		updateStatus(im::State::COMPLEET);
+		updateStatus(im::IUpdateManager::State::COMPLEET);
 		cf_.setVer(version);
 	}
 
 	void AppUpdaterManager::errorCatched(const QString& what) {
 		statusStr_ = what;
-		updateStatus(im::State::ERRORD);
+		updateStatus(im::IUpdateManager::State::ERRORD);
 	}
 
 	void AppUpdaterManager::updateProgress(double progress) {
