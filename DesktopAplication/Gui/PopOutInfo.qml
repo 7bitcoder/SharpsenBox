@@ -53,7 +53,7 @@ Rectangle {
                 width: 100
                 text: "Ok"
                 onClicked: {
-                    window.stage = 0
+                    _Dialog.dialog(false) //empty becouse info
                 }
 
                 contentItem: Text {

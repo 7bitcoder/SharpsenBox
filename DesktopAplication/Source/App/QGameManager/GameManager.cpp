@@ -55,6 +55,7 @@ namespace gm {
 	Q_INVOKABLE void GameManager::unistallRequest(int id) {
 		Gameid_ = id;
 		auto& dialog = bc::Component < dl::IDialog > ::get();
+		dialog.setType(dl::IDialog::DIALOG);
 		dialog.setCallback([this](bool val) {this->uninstall(val); });
 		dialog.setInfo(QString("Are you sure you want to remove ") + bc::Component <cf::IConfig>::get().getGameName(id));
 		dialog.show();
@@ -71,7 +72,6 @@ namespace gm {
 			uninstaller_->setId(Gameid_);
 			uninstaller_->start();
 		} else {} //nothing
-		auto& dialog = bc::Component < dl::IDialog > ::get();
 	}
 
 	void GameManager::uninstallation(int id) {

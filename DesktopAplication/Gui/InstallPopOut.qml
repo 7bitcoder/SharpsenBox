@@ -183,7 +183,7 @@ Rectangle {
                     _GameManager.installGame(installbar.gameId,
                                              installbar.installDirectory,
                                              createShortcut.enabled)
-                    window.stage = 0
+                    _Dialog.dialog(true)
                 }
                 contentItem: Text {
                     text: install.text
@@ -218,7 +218,7 @@ Rectangle {
                 width: 100
                 text: "Cancel"
                 onClicked: {
-                    window.stage = 0
+                    _Dialog.dialog(false)
                 }
 
                 contentItem: Text {

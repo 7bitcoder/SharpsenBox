@@ -59,7 +59,7 @@ Item {
                         if (buttonPLay.installed) {
                             _GameManager.runGame(window.selectedGame)
                         } else {
-                            window.stage = 1
+                            _GameManager.installGame(window.selectedGame)
                         }
                     }
                 }

@@ -18,19 +18,11 @@ ApplicationWindow {
     property point startMousePos
     property point startWindowPos
     property size startWindowSize
-    property int stage: 0
+    property int dialogStage: _Dialog.dialogType
 
     // to gameChoser
     property int selectedGame: _Config.getDefaultGameId()
     property string info: ""
-
-    property bool dialogTrigger: _Dialog.showDialog
-    onDialogTriggerChanged: {
-        if (dialogTrigger) {
-            stage = 3
-            info = _Dialog.info
-        }
-    }
 
     function absoluteMousePos(mouseArea) {
         var windowAbs = mouseArea.mapToItem(null, mouseArea.mouseX,
@@ -71,7 +63,7 @@ ApplicationWindow {
             bottom: parent.bottom
         }
         property bool sw: false
-        property int stage: window.stage
+        property int stage: window.dialogStage
 
         onStageChanged: {
             switch (stage) {

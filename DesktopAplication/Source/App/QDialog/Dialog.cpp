@@ -9,11 +9,11 @@ namespace dl {
 	Dialog::Dialog() {}
 	Q_INVOKABLE void Dialog::dialog(bool value) {
 		value_ = value;
-		show_ = false;
-		showDialogChanged();
-		if(callback_)
+		if(callback_ && type_ != Type::INFO)
 			callback_(value);
 		resetCallback();
+		type_ = NONE;
+		showDialog();
 	}
 
 	void Dialog::resetCallback() {

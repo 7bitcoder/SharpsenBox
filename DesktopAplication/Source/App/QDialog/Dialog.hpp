@@ -19,30 +19,31 @@ namespace dl {
 		void init() final {}
 
 		// interface
+		void setType(Type t) { type_ = t; }
 		void setInfo(QString str) final { info_ = str; }
-		void show() final { show_ = true;  showDialogChanged(); }
+		void show() final { showDialog(); }
 		bool getValue() final { return value_; }
 
-		void setCallback(const std::function<void(bool)>& cb) { callback_ = cb; }
+		void setCallback(const std::function<void(bool)>& cb) final { callback_ = cb; }
 
 		// QML Propetries
-		Q_PROPERTY(bool showDialog READ getShowDialog NOTIFY showDialogChanged);
+		Q_PROPERTY(bool dialogType READ getDialogType NOTIFY showDialog);
 		Q_PROPERTY(QString info READ getInfo);
 
 		//QMl invoklabes
 	public slots:
 		void dialog(bool value);
-		bool getShowDialog() { return show_; }
+		bool getDialogType() { return type_; }
 		QString getInfo() { return info_; }
 	signals:
 		void dialogTriggered(bool value);
-		void showDialogChanged();
+		void showDialog();
 
 	private:
 		void resetCallback();
 	private:
 		QString info_ = "";
-		bool show_ = false;
+		Type type_ = NONE;
 		bool value_ = false;
 		std::function<void(bool)> callback_ = nullptr;
 	};
