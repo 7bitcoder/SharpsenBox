@@ -1,5 +1,6 @@
 ﻿#include <iostream>
 #include <string>
+#include <functional>
 #include "GameManager.hpp"
 #include "IComponent.hpp"
 #include "IConfig.hpp"
@@ -54,6 +55,7 @@ namespace gm {
 	Q_INVOKABLE void GameManager::unistallRequest(int id) {
 		Gameid_ = id;
 		auto& dialog = bc::Component < dl::IDialog > ::get();
+		dialog.setCallback([this](bool val) {this->uninstall(val); });
 		dialog.setInfo(QString("Are you sure you want to remove ") + bc::Component <cf::IConfig>::get().getGameName(id));
 		dialog.show();
 	}

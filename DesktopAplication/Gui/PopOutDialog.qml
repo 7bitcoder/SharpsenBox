@@ -12,8 +12,14 @@ Rectangle {
     color: "transparent"
     Rectangle {
         anchors.fill: parent
-        opacity: 0.5
+        opacity: 0.9
         color: "grey"
+        MouseArea {
+            anchors.fill: parent
+            hoverEnabled: true
+            scrollGestureEnabled : true
+            onWheel: {}
+        }
     }
     MouseArea {
         anchors.fill: parent

@@ -52,7 +52,7 @@ namespace im {
 		void resume();
 		void stop();
 
-		// becouse connection signal -> sot doesnt work for direct enum idk why
+		// becouse connection signal -> sot doesnt work for direct enum, idk why
 		void emitState(im::IUpdateManager::State st) {
 			emit setStateLb(static_cast<int>(st));
 		}

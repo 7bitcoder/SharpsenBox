@@ -12,7 +12,6 @@ Rectangle {
     color: "transparent"
     Rectangle {
         anchors.fill: parent
-        opacity: 0.5
         color: "grey"
     }
     MouseArea {

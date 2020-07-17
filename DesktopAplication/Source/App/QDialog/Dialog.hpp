@@ -23,6 +23,8 @@ namespace dl {
 		void show() final { show_ = true;  showDialogChanged(); }
 		bool getValue() final { return value_; }
 
+		void setCallback(const std::function<void(bool)>& cb) { callback_ = cb; }
+
 		// QML Propetries
 		Q_PROPERTY(bool showDialog READ getShowDialog NOTIFY showDialogChanged);
 		Q_PROPERTY(QString info READ getInfo);
@@ -37,8 +39,11 @@ namespace dl {
 		void showDialogChanged();
 
 	private:
+		void resetCallback();
+	private:
 		QString info_ = "";
 		bool show_ = false;
 		bool value_ = false;
+		std::function<void(bool)> callback_ = nullptr;
 	};
 }

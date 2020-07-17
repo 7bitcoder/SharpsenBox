@@ -11,6 +11,12 @@ namespace dl {
 		value_ = value;
 		show_ = false;
 		showDialogChanged();
-		bc::Component < gm::IGameManager>::get().uninstall(value);
+		if(callback_)
+			callback_(value);
+		resetCallback();
+	}
+
+	void Dialog::resetCallback() {
+		callback_ = nullptr;
 	}
 }
