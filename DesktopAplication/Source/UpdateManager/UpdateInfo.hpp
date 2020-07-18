@@ -38,9 +38,9 @@ namespace im {
 		QString& getUpdateVersion() { return toUpdateVersion_; }
 		void setUpdateVersion(const QString& ver) { toUpdateVersion_ = ver; }
 
-		cf::Game& getActualGame() { if (!actualGame_) throw std::exception("No Game is setUp"); return *actualGame_; }
-		void setActualGame(cf::Game& game) { actualGame_ = &game; }
-		void setActualGame(cf::Game* game) { actualGame_ = game; }
+		cf::Game& getActualGame() { return actualGame_; }
+		void setActualGame(cf::Game& game) { actualGame_ = game; }
+		void setActualGame(cf::Game* game) { actualGame_ = *game; }
 
 		std::filesystem::path& getDownloadDir() { return downloadDir_; }
 		void setDownloadDir(const std::filesystem::path& dir) { downloadDir_ = dir; }
@@ -67,7 +67,7 @@ namespace im {
 		QString actualVersion_;
 		QString toUpdateVersion_;
 
-		cf::Game* actualGame_ = nullptr;
+		cf::Game actualGame_;
 
 		std::filesystem::path downloadDir_;
 		std::filesystem::path installDir_;

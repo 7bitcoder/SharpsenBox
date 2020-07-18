@@ -43,14 +43,6 @@ Rectangle {
     property string speedAvgStr: "0"
 
     property string statusInfo: "Initialization"
-    //error
-    property string errorStr: _LoadingBar.errorString
-    onErrorStrChanged: {
-        if (errorCode != "") {
-            window.info = errorStr
-            window.stage = 2
-        }
-    }
 
     Timer {
         id: info

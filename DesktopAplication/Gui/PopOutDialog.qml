@@ -8,7 +8,7 @@ Rectangle {
     implicitWidth: 800
     property int gameId: 1
     property int normalTextSize: 15
-    property string info: window.info
+    property string info: _Dialog.getInfo()
     color: "transparent"
     Rectangle {
         anchors.fill: parent
@@ -61,7 +61,6 @@ Rectangle {
                 text: "Cancel"
                 onClicked: {
                     _Dialog.dialog(false)
-                    window.stage = 0
                 }
 
                 contentItem: Text {

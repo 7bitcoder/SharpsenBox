@@ -22,7 +22,6 @@ ApplicationWindow {
 
     // to gameChoser
     property int selectedGame: _Config.getDefaultGameId()
-    property string info: ""
 
     function absoluteMousePos(mouseArea) {
         var windowAbs = mouseArea.mapToItem(null, mouseArea.mouseX,
@@ -68,38 +67,63 @@ ApplicationWindow {
         onStageChanged: {
             switch (stage) {
             case 0:
-                active = false
-                source = ""
+                if(source != ""){
+                    hide()
+                } else {
+                    active = false
+                    source = ""
+                }
                 break
             case 1:
                 active = true
-                source = "InstallPopOut.qml"
+                source = "PopOutInfo.qml"
+                show()
                 break
             case 2:
                 active = true
-                source = "PopOutInfo.qml"
+                source = "InstallPopOut.qml"
+                show()
                 break
             case 3:
                 active = true
                 source = "PopOutDialog.qml"
+                show()
                 break
             }
         }
         active: false
         source: ""
-        onSourceChanged: {
-            popAnim.stop()
-            popAnim.start()
+        function show(){
+            showAnim.stop()
+            showAnim.start()
+        }
+        function hide(){
+            hideAnim.stop()
+            hideAnim.start()
         }
 
         NumberAnimation {
-            id: popAnim
+            id: showAnim
             target: popInfo.item
             property: "opacity"
             from: 0
             to: 1
-            duration: 200
+            duration: 100
             easing.type: Easing.OutCubic
+        }
+        NumberAnimation {
+            id: hideAnim
+            target: popInfo.item
+            property: "opacity"
+            from: 1
+            to: 0
+            duration: 100
+            easing.type: Easing.OutCubic
+            onRunningChanged: {
+                if (!hideAnim.running) { // onEnd
+                    popInfo.source = ""
+                }
+            }
         }
     }
     BottomBar {

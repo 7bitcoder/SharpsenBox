@@ -180,7 +180,7 @@ Rectangle {
                 width: 100
                 text: "Install"
                 onClicked: {
-                    _GameManager.installGame(installbar.gameId,
+                    _GameManager.setInstallProperties(installbar.gameId,
                                              installbar.installDirectory,
                                              createShortcut.enabled)
                     _Dialog.dialog(true)

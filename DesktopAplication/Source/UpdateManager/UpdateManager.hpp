@@ -38,7 +38,9 @@ namespace im {
 
 		void setTotal(qint64 tot);
 
-		bool updateMainApp(QString version, std::filesystem::path appInfoUrl, std::filesystem::path gamesRepoUrl, bool fullInstall);
+		bool installMainApp(QString version, std::filesystem::path appInfoUrl, std::filesystem::path gamesRepoUrl);
+		bool updateMainApp(QString version, std::filesystem::path appInfoUrl, std::filesystem::path gamesRepoUrl);
+		bool installGame(cf::Game& game, const QString& gamePath, bool shortcut);
 		bool updateGame(cf::Game& game);
 
 

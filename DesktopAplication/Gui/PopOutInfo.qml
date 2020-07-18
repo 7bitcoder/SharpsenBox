@@ -8,11 +8,18 @@ Rectangle {
     implicitWidth: 800
     property int gameId: 1
     property int normalTextSize: 15
-    property string info: window.info
+    property string info: _Dialog.getInfo()
     color: "transparent"
     Rectangle {
         anchors.fill: parent
+        opacity: 0.9
         color: "grey"
+        MouseArea {
+            anchors.fill: parent
+            hoverEnabled: true
+            scrollGestureEnabled : true
+            onWheel: {}
+        }
     }
     MouseArea {
         anchors.fill: parent

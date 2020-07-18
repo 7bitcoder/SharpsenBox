@@ -132,15 +132,48 @@ namespace im {
 		cleanUp();
 	}
 
-	bool UpdateManager::updateMainApp(QString version, std::filesystem::path appInfoUrl, std::filesystem::path gamesRepoUrl, bool fullInstall) {
+	bool UpdateManager::installMainApp(QString version, std::filesystem::path appInfoUrl, std::filesystem::path gamesRepoUrl) {
 		if (isRunning())
 			return false;
 		reset();
 		setTotal(0);
 		updateInfo_->setUpdateMode(UpdateInfo::UpdateMode::LAUNCHBOX);
 		updateInfo_->setActualVersion(version);
-		updateInfo_->setFullInstall(fullInstall);
+		updateInfo_->setFullInstall(true);
 		updateInfo_->setFiles({ {appInfoUrl, "AppInfo.json" }, {gamesRepoUrl, "Games.json"} });
+		start();
+		return true;
+	}
+
+	bool UpdateManager::updateMainApp(QString version, std::filesystem::path appInfoUrl, std::filesystem::path gamesRepoUrl) {
+		if (isRunning())
+			return false;
+		reset();
+		setTotal(0);
+		updateInfo_->setUpdateMode(UpdateInfo::UpdateMode::LAUNCHBOX);
+		updateInfo_->setActualVersion(version);
+		updateInfo_->setFullInstall(false);
+		updateInfo_->setFiles({ {appInfoUrl, "AppInfo.json" }, {gamesRepoUrl, "Games.json"} });
+		start();
+		return true;
+	}
+
+	bool UpdateManager::installGame(cf::Game& game, const QString& gamePath, bool shortcut) {
+		if (isRunning())
+			return false;
+		reset();
+		setTotal(0);
+		updateInfo_->setUpdateMode(UpdateInfo::UpdateMode::GAME);
+		updateInfo_->setActualGame(game);
+		auto& actualGame = updateInfo_->getActualGame();
+		actualGame.gameDir = gamePath;
+		actualGame.shortcut = shortcut;
+		updateInfo_->setActualVersion(game.version);
+		updateInfo_->setFullInstall(!game.installed);
+		updateInfo_->setFiles({ {game.appInfoUrl.toStdString(), "AppInfo.json" } });
+		//progress_ = 100;
+		//emit emitState(lb::State::CHECKING);
+		//emit emitVisibleState(lb::VisibleState::SHOWED);
 		start();
 		return true;
 	}
@@ -158,6 +191,7 @@ namespace im {
 		//progress_ = 100;
 		//emit emitState(lb::State::CHECKING);
 		//emit emitVisibleState(lb::VisibleState::SHOWED);
+		start();
 		return true;
 	}
 

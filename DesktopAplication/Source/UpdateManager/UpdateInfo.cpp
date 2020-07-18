@@ -8,8 +8,6 @@ namespace im {
 		actualVersion_.clear();
 		toUpdateVersion_.clear();
 
-		actualGame_ = nullptr;
-
 		downloadDir_.clear();
 		installDir_.clear();
 	}

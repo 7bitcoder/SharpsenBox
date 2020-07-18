@@ -27,13 +27,12 @@ namespace dl {
 		void setCallback(const std::function<void(bool)>& cb) final { callback_ = cb; }
 
 		// QML Propetries
-		Q_PROPERTY(bool dialogType READ getDialogType NOTIFY showDialog);
-		Q_PROPERTY(QString info READ getInfo);
+		Q_PROPERTY(int dialogType READ getDialogType NOTIFY showDialog);
 
 		//QMl invoklabes
 	public slots:
 		void dialog(bool value);
-		bool getDialogType() { return type_; }
+		int getDialogType() { return static_cast<int>(type_); }
 		QString getInfo() { return info_; }
 	signals:
 		void dialogTriggered(bool value);

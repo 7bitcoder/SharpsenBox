@@ -2,6 +2,7 @@
 #include <string>
 #include "LoadingBar.hpp"
 #include "IComponent.hpp"
+#include "IDialog.hpp"
 #include "IConfig.hpp"
 
 
@@ -42,10 +43,6 @@ namespace lb {
 	Q_INVOKABLE void LoadingBar::resume() const {}// bc::ObjectsRepository::getRepo().getInstalationManager().resume(); };
 	Q_INVOKABLE void LoadingBar::stop() const {}//bc::ObjectsRepository::getRepo().getInstalationManager().stop(); };
 
-	Q_INVOKABLE QString LoadingBar::getErrorString() const {
-		return errorStr_;
-	}
-
 	Q_INVOKABLE bool LoadingBar::getUninstall() const {
 		return uninstall_;
 	}
@@ -67,8 +64,10 @@ namespace lb {
 	}
 
 	void LoadingBar::setError(const QString& str) {
-		errorStr_ = str;
-		errorChanged();
+		auto& dialog = bc::Component<dl::IDialog>::get();
+		dialog.setType(dl::IDialog::Type::INFO);
+		dialog.setInfo(str);
+		dialog.show();
 	}
 
 	void LoadingBar::setState(im::IUpdateManager::State st) {
@@ -94,7 +93,6 @@ namespace lb {
 		total_ = 0;
 		speed_ = 0;
 		actual_ = 0;
-		errorStr_.clear();
 
 		uninstall_ = false;
 	}

@@ -24,7 +24,10 @@ namespace upd {
 		//connect(&im_, &im::IInstalationManager::updateEnded, this, &AppUpdater::updateInstalled);
 		//connect(&im_, &im::IInstalationManager::updateProgress, this, &AppUpdater::updateProgress);
 		updateStatus(im::IUpdateManager::State::DOWNLOADING);
-		im_.updateMainApp(cf_.getVer(), cf_.getLauncherAppInfoUrl(), cf_.getGameInfoRepository(), cf_.getVer() == "0");
+		if (cf_.getVer() == "0") // needInstallation
+			im_.installMainApp(cf_.getVer(), cf_.getLauncherAppInfoUrl(), cf_.getGameInfoRepository());
+		else //just update
+			im_.updateMainApp(cf_.getVer(), cf_.getLauncherAppInfoUrl(), cf_.getGameInfoRepository());
 	}
 
 	void AppUpdaterManager::updateStatus(im::IUpdateManager::State state) {

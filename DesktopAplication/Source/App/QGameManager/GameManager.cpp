@@ -19,22 +19,29 @@ namespace gm {
 	GameManager::GameManager() : uninstaller_(new GameUninstaller) {};
 
 
-	Q_INVOKABLE void GameManager::installGame(int id, QString path, bool shortcut) {
+	Q_INVOKABLE void GameManager::installGameRequest(int id) {
 		if (!lock_) {
 			lock();
-			auto& game = bc::Component <cf::IConfig>::get().getGame(id);
-			std::string gg = path.toStdString();
+			auto callback = [id, this](bool val) {
+				if (val) {
+					auto& game = bc::Component <cf::IConfig>::get().getGame(id);
+					std::string gg = path_.toStdString();
 #ifdef _WIN32
-			if (gg.starts_with("/"))
-				gg = gg.substr(1);
+					if (gg.starts_with("/"))
+						gg = gg.substr(1);
 #endif 
-			std::filesystem::path p = gg;
-			p /= game.name.toStdString();
-			game.gameDir = p.generic_string().c_str();
-			game.shortcut = shortcut;
-
-			if (im_.updateGame(game))
-				im_.start();
+					std::filesystem::path p = gg;
+					p /= game.name.toStdString();
+					im_.installGame(game, p.generic_string().c_str(), shortcut_);
+				} else {
+					unLock();
+				}
+			};
+			auto& dialog = bc::Component<dl::IDialog>::get();
+			dialog.setType(dl::IDialog::INSTALL);
+			dialog.setCallback(callback);
+			dialog.setInfo("");
+			dialog.show();
 		}
 	}
 	void GameManager::init() {
@@ -53,7 +60,7 @@ namespace gm {
 	};
 
 	Q_INVOKABLE void GameManager::unistallRequest(int id) {
-		Gameid_ = id;
+		gameId_ = id;
 		auto& dialog = bc::Component < dl::IDialog > ::get();
 		dialog.setType(dl::IDialog::DIALOG);
 		dialog.setCallback([this](bool val) {this->uninstall(val); });
@@ -69,7 +76,7 @@ namespace gm {
 			//lb.setUninstallMode(true);
 			//lb.setState(lb::State::CHECKING);
 			//lb.setVisibleState(lb::VisibleState::SHOWED);
-			uninstaller_->setId(Gameid_);
+			uninstaller_->setId(gameId_);
 			uninstaller_->start();
 		} else {} //nothing
 	}
@@ -93,8 +100,8 @@ namespace gm {
 
 	Q_INVOKABLE void GameManager::update(int id) {
 		auto& game = bc::Component <cf::IConfig>::get().getGame(id);
-		if (game.updateChecked)
-			return; //checked
+		if (!game.updateChecked)
+			im_.updateGame(game);
 	}
 
 	Q_INVOKABLE void GameManager::runGame(int id) {

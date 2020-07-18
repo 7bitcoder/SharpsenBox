@@ -25,12 +25,14 @@ namespace gm {
 		void lock() final { lock_ = true; lockChanged(); }
 		void unLock() final { lock_ = false; lockChanged(); }
 		void uninstall(bool dialogValue) final;
+		void installGame(bool value);
 
 		// Qml properties
 		Q_PROPERTY(int lock READ getLock NOTIFY lockChanged);
 
 		// QMl invokables
-		Q_INVOKABLE void installGame(int id, QString path, bool shortcut);
+		Q_INVOKABLE void installGameRequest(int id);
+		Q_INVOKABLE void setInstallProperties(int id, QString path, bool shortcut) { gameId_ = id; shortcut_ = shortcut_; path_ = path; };
 		Q_INVOKABLE bool getLock() { return lock_; }
 		Q_INVOKABLE void unistallRequest(int id);
 		Q_INVOKABLE void checkAutoUpdate(int id);
@@ -54,7 +56,9 @@ namespace gm {
 
 	private:
 		bool lock_ = false;
-		int Gameid_;
+		int gameId_;
+		QString path_;
+		bool shortcut_;
 		GameUninstaller* uninstaller_;
 		im::UpdateManager im_;
 		lb::ILoadingBar* lb_;

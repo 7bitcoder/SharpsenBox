@@ -41,8 +41,6 @@ namespace lb {
 		Q_PROPERTY(int state READ getState NOTIFY stateChanged);
 		Q_PROPERTY(int visibleState READ getVisibleState NOTIFY visibleStateChanged);
 
-		Q_PROPERTY(QString errorString READ getErrorString NOTIFY errorChanged);
-
 		Q_PROPERTY(int uninstall READ getUninstall);
 
 		//QMl invoklabes
@@ -53,8 +51,6 @@ namespace lb {
 
 		Q_INVOKABLE int getState() const;
 		Q_INVOKABLE int getVisibleState() const;
-
-		Q_INVOKABLE QString getErrorString() const;
 
 		Q_INVOKABLE bool getUninstall() const;
 
@@ -67,7 +63,6 @@ namespace lb {
 		void stateChanged();
 		void visibleStateChanged();
 
-		void errorChanged();
 		void notifyEnded();
 		void getProgress(qint64 actual);
 	private:
@@ -81,7 +76,6 @@ namespace lb {
 		double total_ = 0;
 		double speed_ = 0;
 		double actual_ = 0;
-		QString errorStr_ = "";
 
 		bool uninstall_ = false;
 	};

@@ -59,7 +59,7 @@ Item {
                         if (buttonPLay.installed) {
                             _GameManager.runGame(window.selectedGame)
                         } else {
-                            _GameManager.installGame(window.selectedGame)
+                            _GameManager.installGameRequest(window.selectedGame)
                         }
                     }
                 }
