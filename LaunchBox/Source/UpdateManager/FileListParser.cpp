@@ -10,7 +10,7 @@
 #include "UpdateInfo.hpp"
 
 namespace im {
-	bool FileListParser::run() {
+	void FileListParser::run() {
 		try {
 			QString val;
 			QFile file;
@@ -33,10 +33,8 @@ namespace im {
 				readPackets();
 			}
 		} catch (...) {
-			errorStr_ = "Error ocured while processing update fileList";
-			return false;
+			error("Error ocured while processing update fileList");
 		}
-		return true;
 	}
 
 	void FileListParser::readPackets() {

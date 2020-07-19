@@ -20,7 +20,7 @@ namespace im {
 		~Downloader() {}
 
 		// ImElement implementation
-		bool run() override;
+		void run() override;
 		void reset() override;
 
 
@@ -35,7 +35,7 @@ namespace im {
 		void emitStatus();
 		void checkSpeed();
 
-		void setErrorStr(int code);
+		std::string getErrorStr(int code);
 	private:
 		std::filesystem::path outfile_ = "";
 		qint64 total_ = 0;

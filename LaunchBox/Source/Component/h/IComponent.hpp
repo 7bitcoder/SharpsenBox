@@ -19,7 +19,7 @@ namespace bc {
 	protected:
 		Component() {}
 		virtual ~Component() {}
-		static I* iComponent_;
+		inline static I* iComponent_ = nullptr;
 	};
 
 	template<class I, class O>

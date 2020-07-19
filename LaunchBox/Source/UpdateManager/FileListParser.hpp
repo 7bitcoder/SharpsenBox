@@ -22,7 +22,7 @@ namespace im {
 		qint64 getBytesToDownload() { return totalBytesTo_; }
 
 		// ImElement implementation
-		bool run() override;
+		void run() override;
 		void reset() override;
 
 	private:

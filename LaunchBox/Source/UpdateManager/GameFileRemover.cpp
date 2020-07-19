@@ -3,7 +3,7 @@
 #include "Game.hpp"
 
 namespace im {
-	bool GameFileRemover::run() {
+	void GameFileRemover::run() {
 		try {
 			std::filesystem::path gamePath = game_->gameDir.toStdString();
 			for (auto& path : *toRemove_) {
@@ -12,9 +12,8 @@ namespace im {
 					std::filesystem::remove(filePath);
 			}
 		} catch (...) {
-			return false;
+			error("Error ocured while removing Game files");
 		}
-		return true;
 	}
 
 }

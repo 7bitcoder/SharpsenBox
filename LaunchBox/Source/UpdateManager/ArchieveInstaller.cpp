@@ -32,7 +32,7 @@ namespace im {
 		return (ARCHIVE_OK);
 	}
 
-	bool ArchieveInstaller::run() {
+	void ArchieveInstaller::run() {
 		::archive* a;
 		::archive_entry* entry;
 		int flags;
@@ -41,6 +41,7 @@ namespace im {
 		flags |= ARCHIVE_EXTRACT_ACL;
 		flags |= ARCHIVE_EXTRACT_FFLAGS;
 		try {
+			destinationDir_ = updateInfo_->getInstallDir();
 			auto& downloadDir = bc::Component<cf::IConfig>::get().getDownloadDir();
 			auto& filesToUnpack = updateInfo_->getFiles();
 			for (auto& arch : filesToUnpack) {
@@ -90,10 +91,8 @@ namespace im {
 		}
 
 		if (res != ARCHIVE_OK) {
-			setErrorStr(res);
-			return false;
+			error(getErrorStr(res));
 		}
-		return true;
 	}
 
 	void ArchieveInstaller::emitStatus() {
@@ -109,21 +108,19 @@ namespace im {
 		res = 0;
 	}
 
-	void ArchieveInstaller::setErrorStr(int code) {
+	std::string ArchieveInstaller::getErrorStr(int code) {
 		switch (code) {
 		case ARCHIVE_FATAL:
-			errorStr_ = "Installing Fatal error, check memory disk space";
-			break;
+			return "Installing Fatal error, check memory disk space";
 		case -1:
-			errorStr_ = "Filesystem error, check memory disk space";
-			break;
+			return "Filesystem error, check memory disk space";
 		case ARCHIVE_EOF:
 		case ARCHIVE_WARN:
 		case ARCHIVE_FAILED:
 		default:
-			errorStr_ = "Unexpected Error ocured while installing files";
-			break;
+			return "Unexpected Error ocured while installing files";
 		}
+		return "";
 	}
 }
 

@@ -21,7 +21,7 @@ namespace im {
 		QString& getVersionToUpdate() { return versionToUpdate_; }
 
 		// IRunnable implementation
-		bool run() override;
+		void run() override;
 		void reset() override;
 	private:
 		void getPathUrls(QJsonObject& pathList);

@@ -32,6 +32,7 @@ namespace gm {
 #endif 
 					std::filesystem::path p = gg;
 					p /= game.name.toStdString();
+					bc::Component <lb::ILoadingBar>::get().reset();
 					im_.installGame(game, p.generic_string().c_str(), shortcut_);
 				} else {
 					unLock();
@@ -100,8 +101,10 @@ namespace gm {
 
 	Q_INVOKABLE void GameManager::update(int id) {
 		auto& game = bc::Component <cf::IConfig>::get().getGame(id);
-		if (!game.updateChecked)
+		if (!game.updateChecked) {
+			bc::Component <lb::ILoadingBar>::get().reset();
 			im_.updateGame(game);
+		}
 	}
 
 	Q_INVOKABLE void GameManager::runGame(int id) {

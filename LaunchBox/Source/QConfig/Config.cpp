@@ -13,36 +13,47 @@ namespace cf {
 	namespace {
 		bool readBool(const QJsonValue& val) { return val.toString() == "1"; }
 		QString writeBool(bool f) { return f ? "1" : "0"; }
+
+		QString readJsonFile(const QString& filePath) {
+			QString val;
+			QFile file;
+			//open LaunchBoxConfig file
+			file.setFileName(filePath);
+			file.open(QIODevice::ReadOnly | QIODevice::Text);
+			val = file.readAll();
+			file.close();
+			return val;
+		}
 	}
 
 	Config::Config() {
-		if (!std::filesystem::exists(config_))
-			std::filesystem::create_directories(config_);
-		if (!std::filesystem::exists(getConfigJson()))
-			;//problem
-		QString val;
-		QFile file;
-		//open LaunchBoxConfig file
-		file.setFileName(getConfigJson().generic_string().c_str());
-		file.open(QIODevice::ReadOnly | QIODevice::Text);
-		val = file.readAll();
-		file.close();
-		auto& ff = val.toStdString();
-		QJsonDocument d = QJsonDocument::fromJson(val.toUtf8());
+		try {
+			if (!std::filesystem::exists(config_))
+				std::filesystem::create_directories(config_);
+			if (!std::filesystem::exists(getConfigJson()))
+				;//problem
+			QString val = readJsonFile(getConfigJson().generic_string().c_str());
+			auto& ff = val.toStdString();
+			QJsonDocument d = QJsonDocument::fromJson(val.toUtf8());
 
-		// Read settings
-		version_ = d["Ver"].toString();
-		downloadSpeed_ = std::stoi(d["DownloadSpeed"].toString().toStdString());
-		gameInfoRepo_ = d["GamesInfoRepository"].toString().toStdString();
-		LauncherAppInfo = d["AppInfoUrl"].toString().toStdString();
+			// Read settings
+			version_ = d["Ver"].toString();
+			downloadSpeed_ = std::stoi(d["DownloadSpeed"].toString().toStdString());
+			gameInfoRepo_ = d["GamesInfoRepository"].toString().toStdString();
+			LauncherAppInfo = d["AppInfoUrl"].toString().toStdString();
 
-		std::cout << "version: " << version_.toUtf8().constData();
-		readGames();
+			std::cout << "version: " << version_.toUtf8().constData();
+			readGames();
 
-		for (auto& keys : games_) {
-			sortedId_.push_back(keys.first);
+			for (auto& keys : games_) {
+				sortedId_.push_back(keys.first);
+			}
+			std::sort(sortedId_.begin(), sortedId_.end(), std::less<int>());
+		} catch (std::exception& e) {
+
+		} catch (...) {
+
 		}
-		std::sort(sortedId_.begin(), sortedId_.end(), std::less<int>());
 	}
 
 	void Config::readGames() {
@@ -72,6 +83,7 @@ namespace cf {
 		g.autoCheck = readBool(value["AutoUpdate"]);
 		g.version = value["Ver"].toString();
 		g.appInfoUrl = value["AppInfoUrl"].toString();
+		auto& str = g.appInfoUrl.toStdString();
 		g.gameDir = value["GameDir"].toString();
 		g.execPath = value["GameExecPath"].toString();
 		g.shortcutPath = value["ShortcutPath"].toString();

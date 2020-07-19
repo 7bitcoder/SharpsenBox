@@ -28,11 +28,11 @@ namespace im {
 		void resetInstalationDir() { destinationDir_.clear(); }
 
 		// ImElement implementation
-		bool run() override;
+		void run() override;
 		void reset() override;
 
 	private:
-		void setErrorStr(int code);
+		std::string getErrorStr(int code);
 		void emitStatus();
 
 		static int64_t readFile(archive* a, void* client_data, const void** buff);

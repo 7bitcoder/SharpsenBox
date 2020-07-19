@@ -10,11 +10,6 @@ namespace bc {
 
 	void Backend::init() { register_.init(); }
 
-	CREATE_PTR(cf::IConfig);
-	CREATE_PTR(dl::IDialog);
-	CREATE_PTR(lb::ILoadingBar);
-	CREATE_PTR(gm::IGameManager);
-
 	void Backend::registerComponents() {
 		register_.createAndRegister<cf::IConfig, cf::Config>();
 		register_.createAndRegister<dl::IDialog, dl::Dialog>();

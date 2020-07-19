@@ -17,7 +17,7 @@ namespace im {
 		virtual ~Cleanup() {}
 
 		// ImElement implementation
-		bool run() override;
+		void run() override;
 		void reset() override {};
 	private:
 	};

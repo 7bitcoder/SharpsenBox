@@ -22,16 +22,6 @@
 
 namespace im {
 	namespace {
-		void error(const std::string& what) { throw std::exception(what.c_str()); }
-
-		void error(const QString& what) { throw std::exception(what.toStdString().c_str()); }
-
-		void runAndCheck(IRunnable& runnabe) {
-			runnabe.reset();
-			if (!runnabe.run()) {
-				error(runnabe.getErrorStr());
-			}
-		}
 
 		double getMB(qint64 progress) {
 			double prog = progress / 1024;//B -> KB
@@ -129,7 +119,9 @@ namespace im {
 		} catch (...) {
 			errorEmit("Unexpected error ocured while processing");
 		}
-		cleanUp();
+		try {
+			cleanUp();
+		} catch (...) {}// if cleanup fail its fine
 	}
 
 	bool UpdateManager::installMainApp(QString version, std::filesystem::path appInfoUrl, std::filesystem::path gamesRepoUrl) {
@@ -165,12 +157,14 @@ namespace im {
 		setTotal(0);
 		updateInfo_->setUpdateMode(UpdateInfo::UpdateMode::GAME);
 		updateInfo_->setActualGame(game);
+		auto& gg = game.appInfoUrl.toStdString();
 		auto& actualGame = updateInfo_->getActualGame();
 		actualGame.gameDir = gamePath;
 		actualGame.shortcut = shortcut;
 		updateInfo_->setActualVersion(game.version);
 		updateInfo_->setFullInstall(!game.installed);
 		updateInfo_->setFiles({ {game.appInfoUrl.toStdString(), "AppInfo.json" } });
+		auto& hh = updateInfo_->getFiles().at(0);
 		//progress_ = 100;
 		//emit emitState(lb::State::CHECKING);
 		//emit emitVisibleState(lb::VisibleState::SHOWED);
@@ -187,6 +181,7 @@ namespace im {
 		updateInfo_->setActualGame(game);
 		updateInfo_->setActualVersion(game.version);
 		updateInfo_->setFullInstall(!game.installed);
+
 		updateInfo_->setFiles({ {game.appInfoUrl.toStdString(), "AppInfo.json" } });
 		//progress_ = 100;
 		//emit emitState(lb::State::CHECKING);
@@ -197,9 +192,9 @@ namespace im {
 
 	void UpdateManager::updateMainApp() {
 		// download appInfo.json and Games.json
-		runAndCheck(*downloader_);
+		downloader_->run();
 		// check if appInfo.json contains newer version = need update
-		runAndCheck(*appInfoParser_);
+		appInfoParser_->run();
 		if (appInfoParser_->needUpdate()) {
 			updateApp();
 			updateGamePages(); // update Game pages metadata
@@ -211,14 +206,17 @@ namespace im {
 		emitState(im::IUpdateManager::State::CHECKING);
 		emitVisibleState(im::IUpdateManager::VisibleState::SHOWED);
 		// download game appInfo.json
-		runAndCheck(*downloader_);
+		auto& hh = updateInfo_->getFiles().at(0);
+		downloader_->run();
 		// check if appInfo.json contains newer version = need update
-		runAndCheck(*appInfoParser_);
+		appInfoParser_->run();
 		if (appInfoParser_->needUpdate()) {
 			updateApp();
 			updateGameInfo(); // update Game info 
 		}
-		updateInfo_->getActualGame().updateChecked = true;
+		auto& actual = updateInfo_->getActualGame();
+		actual.updateChecked = true;
+		bc::Component<cf::IConfig>::get().getGame(actual.id) = actual; // insert actual game in config
 	}
 
 	void UpdateManager::updateApp() {
@@ -229,12 +227,13 @@ namespace im {
 		emitState(im::IUpdateManager::State::CHECKING);
 		emitVisibleState(im::IUpdateManager::VisibleState::SHOWED);
 		// download Filelist.json and Patch.json Files
-		runAndCheck(*downloader_);
+		downloader_->run();
 		// Process fileList.json and patch files to get update packets (zip files)
-		runAndCheck(*fileListParser_);
+		fileListParser_->run();
 
 		updateStatus(im::IUpdateManager::State::DOWNLOADING);
 		downloadUpdate();
+		installUpdate();
 	}
 
 	void UpdateManager::downloadUpdate() {
@@ -245,9 +244,7 @@ namespace im {
 		emitState(im::IUpdateManager::State::DOWNLOADING);
 		emitVisibleState(im::IUpdateManager::VisibleState::SHOWED);
 		// download zip packets
-		runAndCheck(*downloader_);
-
-		installUpdate();
+		downloader_->run();
 	}
 
 	void UpdateManager::installUpdate() {
@@ -259,7 +256,7 @@ namespace im {
 		updateStatus(im::IUpdateManager::State::INSTALLING);
 
 		// install downloaded packets
-		runAndCheck(*installer_);
+		installer_->run();
 	}
 
 	void UpdateManager::updateGameInfo() {
@@ -282,21 +279,21 @@ namespace im {
 	}
 
 	void UpdateManager::updateGamePages() {
-		runAndCheck(*gameParser_);
+		gameParser_->run();
 		if (gameParser_->needUpdate()) {
 			// setUp updateInfo
 			updateInfo_->setFiles(gameParser_->getFiles());
 			setTotal(0);
 			// download zip packets containing game pages files
-			runAndCheck(*downloader_);
+			downloader_->run();
 			updateInfo_->setInstallDir(""); // when empty installer uses destination from file vector
-			runAndCheck(*installer_);
+			installer_->run();
 			gameParser_->updateGamesInfo();
 		}
 	}
 
 	void UpdateManager::cleanUp() {
-		runAndCheck(*cleanUpper_);
+		cleanUpper_->run();
 		emitState(im::IUpdateManager::State::COMPLEET);
 		emitVisibleState(im::IUpdateManager::VisibleState::HIDDEN);
 		updateEnded(updateInfo_->getUpdateVersion());
@@ -365,6 +362,7 @@ namespace im {
 		appInfoParser_->reset();
 		fileListParser_->reset();
 		gameParser_.reset();
+
 
 		totalBytes_ = 0; //total Bytes to download unpack all files together
 		downloadedBytes_ = 0; //Bytes downloaded

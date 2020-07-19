@@ -7,7 +7,8 @@
 #include <QJsonArray>
 
 namespace im {
-	bool GameParser::run() {
+	void GameParser::run() {
+		reset();
 		try {
 			QString val;
 			QFile file;
@@ -50,10 +51,8 @@ namespace im {
 				}
 			}
 		} catch (...) {
-			errorStr_ = "Unexpected error ocured while processing gamePages update";
-			return false;
+			error("Unexpected error ocured while processing gamePages update");
 		}
-		return true;
 	}
 
 	void GameParser::updateGamesInfo() {

@@ -16,7 +16,7 @@ namespace im {
 		GameFileRemover() = default;
 
 		// ImElement implementation
-		bool run() override;
+		void run() override;
 		void reset() override;
 	private:
 		cf::Game* game_;

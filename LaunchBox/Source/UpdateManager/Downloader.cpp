@@ -67,7 +67,7 @@ namespace im {
 		im_->downloadStatus(now_, total_, speed_);
 	}
 
-	bool Downloader::run() {
+	void Downloader::run() {
 		try {
 			// clear flags etc 
 			::curl_global_init(CURL_GLOBAL_DEFAULT);
@@ -102,11 +102,11 @@ namespace im {
 				auto& files = updateInfo_->getFiles();
 				auto size = files.size();
 				for (size_t i = 0; !cancelled && i < size; i++) {
-					auto url = files[i].url.generic_string().c_str();
+					auto& url = files.at(i).url.generic_string();
 					auto& filename = files.at(i).fileName;
 					lastDownload_ = 0;
 					outfile_ = (downloadDir / filename).generic_string();
-					res = curl_easy_setopt(curl, CURLOPT_URL, url);
+					res = curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 					res = curl_easy_perform(curl);
 					if (CURLE_OK != res) {
 						break;
@@ -126,17 +126,14 @@ namespace im {
 		::curl_global_cleanup();
 		if (res != CURLE_OK) {
 			if (res != CURLE_OPERATION_TIMEDOUT || !cancelled) { // cancel request
-				setErrorStr(res);
-				return false;
+				error(getErrorStr(res));
 			}
 		}
 		cancelled = false;
 		if (!checkDownloaded()) {
 			res = -3;
-			setErrorStr(res);
-			return false;
+			error(getErrorStr(res));
 		}
-		return true;
 	}
 
 	bool Downloader::checkDownloaded() {
@@ -167,47 +164,37 @@ namespace im {
 		cancelled = false;
 	}
 
-	void Downloader::setErrorStr(int code) {
+	std::string Downloader::getErrorStr(int code) {
 		switch (code) {
 		case CURLE_URL_MALFORMAT:
-			errorStr_ = "Wrong file request";
-			break;
+			return "Wrong file request";
 		case CURLE_REMOTE_ACCESS_DENIED:
 		case CURLE_FTP_ACCEPT_FAILED:
 		case CURLE_FTP_WEIRD_PASS_REPLY:
 		case CURLE_FTP_ACCEPT_TIMEOUT:
 		case CURLE_GOT_NOTHING:
-			errorStr_ = "Server error ocured";
-			break;
+			return "Server error ocured";
 		case CURLE_RECV_ERROR:
-			errorStr_ = "Receiving data error";
-			break;
+			return "Receiving data error";
 		case CURLE_COULDNT_RESOLVE_HOST:
-			errorStr_ = "Could not reach server";
-			break;
+			return "Could not reach server";
 		case CURLE_COULDNT_CONNECT:
 		case CURLE_FTP_CANT_GET_HOST:
-			errorStr_ = "Could not connect to Server";
-			break;
+			return "Could not connect to Server";
 		case CURLE_OUT_OF_MEMORY:
-			errorStr_ = "Out of memeory, could not allocate memory for downloaded files";
-			break;
+			return "Out of memeory, could not allocate memory for downloaded files";
 		case CURLE_WRITE_ERROR:
-			errorStr_ = "Could not save files on disk";
-			break;
+			return  "Could not save files on disk";
 		case CURLE_OPERATION_TIMEDOUT:
-			errorStr_ = "Connection timeout";
-			break;
+			return  "Connection timeout";
 		case MISSING_FILE:
-			errorStr_ = "Missing file, that should be downloaded";
-			break;
+			return  "Missing file, that should be downloaded";
 		case FILESYSTEM_ERROR:
-			errorStr_ = "Filesystem error, check disk space";
-			break;
+			return  "Filesystem error, check disk space";
 		case UNKNOWN:
 		default:
-			errorStr_ = "Unexpected error ocured while downloading data";
-			break;
+			return "Unexpected error ocured while downloading data";
 		}
+		return "";
 	}
 }

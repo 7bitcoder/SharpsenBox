@@ -7,20 +7,17 @@ namespace im {
 	struct IRunnable {
 		virtual ~IRunnable() {};
 
-		virtual bool run() = 0;
+		virtual void run() = 0;
 		virtual void reset() = 0;
-
-		QString getErrorStr() {
-			return errorStr_;
-		}
 
 		void init(IUpdateManager& im) {
 			im_ = &im;
 			updateInfo_ = &im.getUpdateInfo();
 		}
 
+		void error(const std::string& what) { throw std::exception(what.c_str()); }
+
 		IUpdateManager* im_ = nullptr;
 		UpdateInfo* updateInfo_ = nullptr;
-		QString errorStr_;
 	};
 }

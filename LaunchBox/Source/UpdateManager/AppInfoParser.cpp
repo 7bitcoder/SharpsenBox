@@ -7,7 +7,7 @@
 #include "UpdateInfo.hpp"
 
 namespace im {
-	bool AppInfoParser::run() {
+	void AppInfoParser::run() {
 		try {
 			QString val;
 			QFile file;
@@ -36,10 +36,8 @@ namespace im {
 			//} catch (std::exception& e) {
 
 		} catch (...) {
-			errorStr_ = "Unexpected error ocured while reading update file";
-			return false;
+			error("Unexpected error ocured while reading update file");
 		}
-		return true;
 	}
 	void AppInfoParser::getPathUrls(QJsonObject& pathList) {
 		for (auto it = pathList.begin(); it != pathList.end(); it++) {

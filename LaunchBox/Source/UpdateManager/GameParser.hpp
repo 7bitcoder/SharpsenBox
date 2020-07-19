@@ -18,7 +18,7 @@ namespace im {
 		void updateGamesInfo();
 
 		// ImElement implementation
-		bool run() override;
+		void run() override;
 		void reset() override;
 	private:
 		// fileName -> <fileUrl, size>

@@ -4,7 +4,7 @@
 
 
 namespace im {
-	bool Cleanup::run() {
+	void Cleanup::run() {
 		try {
 			auto& downloadDir = bc::Component<cf::IConfig>::get().getDownloadDir();
 			for (auto& p : std::filesystem::recursive_directory_iterator(downloadDir)) {
@@ -12,9 +12,7 @@ namespace im {
 				std::filesystem::remove_all(path);
 			}
 		} catch (...) {
-			errorStr_ = "Error ocured while removing temporary files";
-			return false;
+			error("Error ocured while removing temporary files");
 		}
-		return true;
 	}
 }

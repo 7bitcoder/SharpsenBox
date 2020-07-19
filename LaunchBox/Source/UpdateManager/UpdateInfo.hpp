@@ -52,7 +52,7 @@ namespace im {
 		bool isLBUpdating() { return getUpdateMode() == UpdateMode::LAUNCHBOX; }
 
 		void reset() override;
-		bool run() override { return true; }
+		void run() override {}
 
 		//controlls 
 		std::atomic_flag pause;
