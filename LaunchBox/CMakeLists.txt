@@ -18,7 +18,8 @@ find_package(Qt5 REQUIRED COMPONENTS
 	Widgets 
 	Gui 
 	Quick 
-	Qml 
+	Qml
+	Test
 	QuickControls2 
 	Network)
 

@@ -1,31 +1,5 @@
-﻿#include <QtTest/QTest>
+﻿#include "AppInfoParser.hpp"
 
-namespace im {
-	class MyFirstTest : public QObject {
-		Q_OBJECT
+class AppInfoTest : public QObject {
 
-	private:
-		bool myCondition() {
-			return true;
-		}
-
-	private slots:
-		void initTestCase() {
-			qDebug("Called before everything else.");
-		}
-
-		void myFirstTest() {
-			QVERIFY(true); // check that a condition is satisfied
-			QCOMPARE(1, 1); // compare two values
-		}
-
-		void mySecondTest() {
-			QVERIFY(myCondition());
-			QVERIFY(1 != 2);
-		}
-
-		void cleanupTestCase() {
-			qDebug("Called after myFirstTest and mySecondTest.");
-		}
-	};
-}
+};
