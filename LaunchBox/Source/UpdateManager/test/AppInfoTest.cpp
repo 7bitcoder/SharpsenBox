@@ -1,5 +1,3 @@
-﻿#include "AppInfoParser.hpp"
+﻿#define CATCH_CONFIG_MAIN
+#include <catch.hpp>
 
-class AppInfoTest : public QObject {
-
-};

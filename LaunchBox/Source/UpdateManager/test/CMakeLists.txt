@@ -1,25 +1,24 @@
-﻿
-find_package(GTest)
-#conan_basic_setup(TARGETS)
+﻿find_package(Catch2)
+conan_basic_setup()
 
-include(GoogleTest)
 enable_testing(true)
-
-# As moc files are generated in the binary dir, tell CMake
-# to always look for includes there:
 
 add_executable(UpdateManagerTest
     AppInfoTest.cpp)
 
 add_test(AppInfoTest AppInfoTest)
 
+qt5_use_modules(UpdateManagerTest 
+    Quick 
+    Core 
+    Network)
+
 target_link_libraries(UpdateManagerTest
     UpdateManager
     Qt5::Widgets
     Qt5::Gui
     Qt5::Core
-    Qt5::Test
-    CONAN_PKG::gtest)
+    CONAN_PKG::Catch2)
 
 target_include_directories(UpdateManagerTest PUBLIC
     "../../QConfig/h"
@@ -27,7 +26,3 @@ target_include_directories(UpdateManagerTest PUBLIC
     "../../Component/h"
     "../h"
     "..")
-
-gtest_discover_tests(UpdateManagerTest)
-
-

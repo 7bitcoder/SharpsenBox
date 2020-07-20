@@ -97,14 +97,6 @@
    "False"
   ],
   [
-   "gtest:build_gmock",
-   "False"
-  ],
-  [
-   "gtest:shared",
-   "False"
-  ],
-  [
    "libarchive:shared",
    "False"
   ],
