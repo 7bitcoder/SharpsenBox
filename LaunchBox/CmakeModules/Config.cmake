@@ -81,3 +81,5 @@ set(UpdaterPath Updater)
 set(LaunchBoxPath LaunchBox)
 
 set(PatherPath Pather)
+
+set(TestPath Tests)
