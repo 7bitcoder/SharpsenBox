@@ -1,10 +1,11 @@
-﻿find_package(Catch2)
-conan_basic_setup()
+﻿find_package(GTest)
+#conan_basic_setup()
 
 enable_testing(true)
 
 add_executable(UpdateManagerTest
-    AppInfoTest.cpp)
+    AppInfoTest.cpp
+    main.cpp)
 
 add_test(AppInfoTest AppInfoTest)
 
@@ -18,7 +19,7 @@ target_link_libraries(UpdateManagerTest
     Qt5::Widgets
     Qt5::Gui
     Qt5::Core
-    CONAN_PKG::Catch2)
+    CONAN_PKG::gtest)
 
 target_include_directories(UpdateManagerTest PUBLIC
     "../../QConfig/h"

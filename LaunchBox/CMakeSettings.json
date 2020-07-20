@@ -38,6 +38,11 @@
           "name": "AUTO_QT_LIBS",
           "value": "False",
           "type": "BOOL"
+        },
+        {
+          "name": "BUILD_TESTS",
+          "value": "True",
+          "type": "BOOL"
         }
       ]
     }

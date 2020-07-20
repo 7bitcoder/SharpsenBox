@@ -11,7 +11,7 @@ add_library(UpdateManager STATIC
     AppInfoParser.cpp 
     FileListParser.cpp
     GameParser.cpp 
-    UpdateManager.cpp "test/AppInfoTest.cpp" "test/main.cpp")
+    UpdateManager.cpp)
 
 target_include_directories(UpdateManager PUBLIC
     "../QConfig/h"
