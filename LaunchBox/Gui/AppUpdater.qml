@@ -17,12 +17,13 @@ ApplicationWindow {
         return Qt.point(windowAbs.x + window.x, windowAbs.y + window.y)
     }
 
-    property int status: _AppUpdater.updateState
+    property int status: _AppUpdaterManager.updateState
     property string statusStr: "Searching for updates"
     property int progress: 0
 
     onStatusChanged: {
         switch (status) {
+        case -1:
         case 0:
             //none
             statusStr = "Searching for updates"
@@ -35,14 +36,14 @@ ApplicationWindow {
             // installing
             statusStr = "Installing update"
             break
-        case 3:
+        case 6:
             //ended
             statusStr = "Starting LaunchBox"
             exiter.start()
             break
         case 4:
             //error
-            statusStr = "Error ocured:\n" + _AppUpdater.statusStr
+            statusStr = "Error ocured:\n" + _AppUpdaterManager.statusStr
             exiter.start()
             break
         case 5:
@@ -50,7 +51,7 @@ ApplicationWindow {
             statusStr = "No updates found"
             exiter.start()
             break
-        case 6:
+        case 7:
             // updating games information
             statusStr = "Updating game pages"
             break
@@ -72,7 +73,7 @@ ApplicationWindow {
         id: infoTim
         interval: 1000
         onTriggered: {
-            _AppUpdater.checkForUpdates()
+            _AppUpdaterManager.checkForUpdates()
         }
         repeat: false
         running: true
@@ -82,7 +83,7 @@ ApplicationWindow {
         id: barUpdater
         interval: 50
         onTriggered: {
-            window.progress = _AppUpdater.progress
+            window.progress = _AppUpdaterManager.progress
             if (window.progress != 0 && !barStatusBackground.visible) {
                 barStatusBackground.visible = true
             }

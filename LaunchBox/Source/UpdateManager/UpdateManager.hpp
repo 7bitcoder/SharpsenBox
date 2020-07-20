@@ -54,21 +54,12 @@ namespace im {
 		void resume();
 		void stop();
 
-		// becouse connection signal -> sot doesnt work for direct enum, idk why
-		void emitState(im::IUpdateManager::State st) {
-			emit setStateLb(static_cast<int>(st));
-		}
-
-		void emitVisibleState(im::IUpdateManager::VisibleState st) {
-			emit setVisibleStateLb(static_cast<int>(st));
-		}
-
 	signals:
 		void errorEmit(const QString& errorStr);
 		void updateProgress(double prog);
 
 		// AppUpdater
-		void updateStatus(im::IUpdateManager::State needUpdate);
+		void updateSt(int);
 		void readGameInfo();
 		void updateEnded(const QString& Version);
 
@@ -82,6 +73,11 @@ namespace im {
 		void gameUpdateEnded();
 
 	private:
+		// becouse connection signal -> sot doesnt work for direct enum, idk why
+		void emitState(im::IUpdateManager::State st) { setStateLb(static_cast<int>(st)); }
+		void emitVisibleState(im::IUpdateManager::VisibleState st) { setVisibleStateLb(static_cast<int>(st)); }
+		void updateStatus(im::IUpdateManager::State state) { updateSt(static_cast<int>(state)); }
+
 		void run() override;
 
 		void updateMainApp();

@@ -197,6 +197,9 @@ namespace im {
 		appInfoParser_->run();
 		if (appInfoParser_->needUpdate()) {
 			updateApp();
+		}
+		gameParser_->run();
+		if (gameParser_->needUpdate()) {
 			updateGamePages(); // update Game pages metadata
 		}
 	}
@@ -216,11 +219,11 @@ namespace im {
 		}
 		auto& actual = updateInfo_->getActualGame();
 		actual.updateChecked = true;
-		gameUpdateEnded(); 
+		gameUpdateEnded();
 	}
 
 	void UpdateManager::updateApp() {
-		setTotal(3);
+		setTotal(0);
 		updateInfo_->setUpdateVersion(appInfoParser_->getVersionToUpdate());
 		updateInfo_->setFiles(appInfoParser_->getFiles());
 		progress_ = 100;
@@ -279,22 +282,21 @@ namespace im {
 	}
 
 	void UpdateManager::updateGamePages() {
-		gameParser_->run();
-		if (gameParser_->needUpdate()) {
-			// setUp updateInfo
-			updateInfo_->setFiles(gameParser_->getFiles());
-			setTotal(0);
-			// download zip packets containing game pages files
-			downloader_->run();
-			updateInfo_->setInstallDir(""); // when empty installer uses destination from file vector
-			installer_->run();
-			gameParser_->updateGamesInfo();
-		}
+		updateStatus(im::IUpdateManager::State::UPDATING_GAME_PAGES);
+		// setUp updateInfo
+		updateInfo_->setFiles(gameParser_->getFiles());
+		setTotal(0);
+		// download zip packets containing game pages files
+		downloader_->run();
+		updateInfo_->setInstallDir(""); // when empty installer uses destination from file vector
+		installer_->run();
+		gameParser_->updateGamesInfo();
 	}
 
 	void UpdateManager::cleanUp() {
 		cleanUpper_->run();
 		emitState(im::IUpdateManager::State::COMPLEET);
+		updateStatus(im::IUpdateManager::State::COMPLEET);
 		emitVisibleState(im::IUpdateManager::VisibleState::HIDDEN);
 		updateEnded(updateInfo_->getUpdateVersion());
 		//bc::Component<gm::IGameManager>::get().unLock();
@@ -361,7 +363,7 @@ namespace im {
 		cleanUpper_->reset();
 		appInfoParser_->reset();
 		fileListParser_->reset();
-		gameParser_.reset();
+		gameParser_->reset();
 
 
 		totalBytes_ = 0; //total Bytes to download unpack all files together

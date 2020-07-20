@@ -1,6 +1,7 @@
 ﻿#include "AppUpdaterManager.hpp"
 #include "IConfig.hpp"
 #include "IComponent.hpp"
+#include "UpdateManager.hpp"
 #include <QElapsedTimer>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -19,10 +20,10 @@ namespace upd {
 	}
 
 	void AppUpdaterManager::checkForUpdates() {
-		//connect(&im_, &im::IInstalationManager::updateStatus, this, &AppUpdater::updateStatus);
-		//connect(&im_, &im::IInstalationManager::errorEmit, this, &AppUpdater::errorCatched);
-		//connect(&im_, &im::IInstalationManager::updateEnded, this, &AppUpdater::updateInstalled);
-		//connect(&im_, &im::IInstalationManager::updateProgress, this, &AppUpdater::updateProgress);
+		connect(&im_, &im::UpdateManager::updateSt, this, &AppUpdaterManager::updateSt);
+		connect(&im_, &im::UpdateManager::errorEmit, this, &AppUpdaterManager::errorCatched);
+		connect(&im_, &im::UpdateManager::updateEnded, this, &AppUpdaterManager::updateInstalled);
+		connect(&im_, &im::UpdateManager::updateProgress, this, &AppUpdaterManager::updateProgress);
 		updateStatus(im::IUpdateManager::State::DOWNLOADING);
 		if (cf_.getVer() == "0") // needInstallation
 			im_.installMainApp(cf_.getVer(), cf_.getLauncherAppInfoUrl(), cf_.getGameInfoRepository());
@@ -30,8 +31,12 @@ namespace upd {
 			im_.updateMainApp(cf_.getVer(), cf_.getLauncherAppInfoUrl(), cf_.getGameInfoRepository());
 	}
 
+	void AppUpdaterManager::updateSt(int state) {
+		updateStatus(static_cast<im::IUpdateManager::State>(state));
+	}
+
 	void AppUpdaterManager::updateStatus(im::IUpdateManager::State state) {
-		state_ = state;
+		state_ = static_cast<im::IUpdateManager::State>(state);
 		stateChanged();
 	}
 

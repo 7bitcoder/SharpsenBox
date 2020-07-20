@@ -18,7 +18,7 @@
         },
         {
           "name": "BUILD_TESTS",
-          "value": "True",
+          "value": "False",
           "type": "BOOL"
         }
       ]

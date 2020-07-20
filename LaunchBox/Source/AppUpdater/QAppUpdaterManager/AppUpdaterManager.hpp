@@ -17,7 +17,7 @@ namespace upd {
 		Q_OBJECT
 	public:
 
-		std::string getName() override { return TYPENAME(IAppUpdaterManager); }
+		std::string getName() override { return TYPENAME(AppUpdaterManager); }
 		void init() override {}
 		void update() override {}
 
@@ -37,12 +37,13 @@ namespace upd {
 		void updateInstalled(const QString& version);
 		void updateProgress(double progress);
 		void errorCatched(const QString& what);
-		void updateStatus(im::IUpdateManager::State state);
+		void updateSt(int status);
 	signals:
 		void stateChanged();
 		void progressChanged();
 
 	private:
+		void updateStatus(im::IUpdateManager::State state);
 		cf::IConfig& cf_;
 		im::UpdateManager im_;
 		QString statusStr_;

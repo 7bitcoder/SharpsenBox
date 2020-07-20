@@ -32,7 +32,7 @@ namespace im {
 					game.autoCheck = game.installed = game.shortcut = false;
 					game.execPath = gameObject["GameExecPath"].toString();
 					game.presentationUrl = gameObject["PresentationUrl"].toString();
-					//game.PresentationVer = gameObject["PresentationVer"].toString(); for update purpose
+					//game.PresentationVer = gameObject["PresentationVer"].toString();
 					game.appInfoUrl = gameObject["AppInfoUrl"].toString();
 					game.PresentationPackUrl = gameObject["PresentationPackUrl"].toString();
 					game.PresentationQml = gameObject["PresentationQml"].toString();
