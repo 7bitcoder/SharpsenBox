@@ -79,6 +79,7 @@ namespace im {
 		void setStateLb(int st);
 		void setVisibleStateLb(int st);
 		void setUninstallModeLb(bool un);
+		void gameUpdateEnded();
 
 	private:
 		void run() override;

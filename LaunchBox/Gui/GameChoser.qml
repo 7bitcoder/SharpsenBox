@@ -14,6 +14,7 @@ Rectangle {
         sylio.selected = false
     }
     //buttons settings/color/opavity etc
+    property color background: "#292929"
     property color normal: "#808080"
     property real clicked: 0.3
     property real hovered: 1
@@ -29,7 +30,39 @@ Rectangle {
          id: gameBarModel
     }
 
+    Rectangle {
+        color: gameChoser.background
+        opacity: 0.85
+        height: parent.height
+        anchors{
+            top: parent.top
+            left: parent.left
+            right: leftTerm.right
+        }
+    }
+
+    Component {
+        id: leftTerm
+        Rectangle {
+            color: gameChoser.background
+            opacity: 0.85
+            height: parent.height
+            width: 20
+        }
+    }
+
+    Component {
+        id: rightTerm
+        Rectangle {
+            color: gameChoser.background
+            opacity: 0.85
+            height: parent.height
+            width: 20
+        }
+    }
+
     ListView {
+        id: gameBar
         anchors {
             top: parent.top
             left: parent.left
@@ -38,23 +71,20 @@ Rectangle {
         clip: true
         height: parent.height
         model: gameBarModel
-        id: gameBar
         delegate: gameBLock
         orientation: ListView.Horizontal
+        //header: leftTerm
+        //footer: rightTerm
     }
 
     Component.onCompleted: {
-        console.log("here")
         while (true) {
             var gameId = _Config.getGameId()
             //end
-            console.log("gameID " + gameId)
             if (gameId === 0){
-                console.log("break")
                 break
             }
             gameBarModel.append({ gId: gameId })
-            console.log("size" + gameBarModel.count)
         }
     }
 }

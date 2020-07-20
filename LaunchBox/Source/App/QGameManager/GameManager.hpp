@@ -24,7 +24,7 @@ namespace gm {
 		// inferface
 		void lock() final { lock_ = true; lockChanged(); }
 		void unLock() final { lock_ = false; lockChanged(); }
-		void uninstall(bool dialogValue) final;
+		bool uninstall(bool dialogValue) final;
 		void installGame(bool value);
 
 		// Qml properties
@@ -50,11 +50,13 @@ namespace gm {
 		void setStateLb(int st) { lb_->setState(im::IUpdateManager::State(st)); }
 		void setVisibleStateLb(int st) { lb_->setVisibleState(im::IUpdateManager::VisibleState(st)); }
 		void setUninstallModeLb(bool un);
+		void gameUpdateEnded();
 	signals:
 		void lockChanged();
 
 
 	private:
+		bool checkProcess();
 		bool lock_ = false;
 		int gameId_;
 		QString path_;

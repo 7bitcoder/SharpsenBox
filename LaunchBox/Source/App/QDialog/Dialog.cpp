@@ -9,10 +9,13 @@ namespace dl {
 	Dialog::Dialog() {}
 	Q_INVOKABLE void Dialog::dialog(bool value) {
 		value_ = value;
+		bool dontHide = false;
 		if(callback_ && type_ != Type::INFO)
-			callback_(value);
-		resetCallback();
-		type_ = NONE;
+			dontHide = callback_(value);
+		if (!dontHide) {
+			resetCallback();
+			type_ = NONE;
+		}
 		showDialog();
 	}
 

@@ -7,7 +7,7 @@ Rectangle {
     width: gameChoser.size
     height: gameChoser.height
     opacity: 0.85
-    color: selected ? "transparent" : "#292929"
+    color: selected ? "transparent" : gameChoser.background
     Text {
         id: sylioText
         anchors.centerIn: parent

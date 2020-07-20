@@ -170,7 +170,6 @@ Rectangle {
             anim.stop()
             bottomBar.barColor = "red"
             bottomBar.statusInfo = "Installation terminated"
-            console.log("asdasd==========" + bottomBar.statusInfo)
         } else if (state === completed) {
             prog.stop()
             percentage.stop()

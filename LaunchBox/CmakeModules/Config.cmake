@@ -6,6 +6,7 @@ set( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin )
 set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib )
 
 option(AUTO_QT_LIBS "Runs Qt ulility program to automaticly add qt/qml libraries to bin folder" OFF)
+option(BUILD_TESTS "Build tests" OFF)
 
 # set basic platrofm variables
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)

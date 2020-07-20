@@ -11,7 +11,7 @@ add_library(UpdateManager STATIC
     AppInfoParser.cpp 
     FileListParser.cpp
     GameParser.cpp 
-    UpdateManager.cpp)
+    UpdateManager.cpp "test/AppInfoTest.cpp" "test/main.cpp")
 
 target_include_directories(UpdateManager PUBLIC
     "../QConfig/h"
@@ -30,3 +30,8 @@ target_link_libraries(UpdateManager
     Qt5::Core
     CONAN_PKG::libcurl
     CONAN_PKG::libarchive)
+
+
+if(BUILD_TESTS)
+    add_subdirectory(test)
+endif()

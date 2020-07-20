@@ -50,20 +50,15 @@ namespace cf {
 			}
 			std::sort(sortedId_.begin(), sortedId_.end(), std::less<int>());
 		} catch (std::exception& e) {
-
+			throw; // todo use issue logger
 		} catch (...) {
-
+			throw;
 		}
 	}
 
 	void Config::readGames() {
-		QString val;
-		QFile file;
-		//open LaunchBoxConfig file
-		file.setFileName((config_ / gamesFileName_).generic_string().c_str());
-		file.open(QIODevice::ReadOnly | QIODevice::Text);
-		val = file.readAll();
-		file.close();
+		
+		QString val = readJsonFile((config_ / gamesFileName_).generic_string().c_str());
 
 		QJsonDocument d = QJsonDocument::fromJson(val.toUtf8());
 		QJsonObject json = d.object();
@@ -83,7 +78,6 @@ namespace cf {
 		g.autoCheck = readBool(value["AutoUpdate"]);
 		g.version = value["Ver"].toString();
 		g.appInfoUrl = value["AppInfoUrl"].toString();
-		auto& str = g.appInfoUrl.toStdString();
 		g.gameDir = value["GameDir"].toString();
 		g.execPath = value["GameExecPath"].toString();
 		g.shortcutPath = value["ShortcutPath"].toString();

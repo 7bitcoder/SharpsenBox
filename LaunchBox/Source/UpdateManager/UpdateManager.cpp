@@ -216,7 +216,7 @@ namespace im {
 		}
 		auto& actual = updateInfo_->getActualGame();
 		actual.updateChecked = true;
-		bc::Component<cf::IConfig>::get().getGame(actual.id) = actual; // insert actual game in config
+		gameUpdateEnded(); 
 	}
 
 	void UpdateManager::updateApp() {

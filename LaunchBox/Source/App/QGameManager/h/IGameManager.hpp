@@ -15,7 +15,7 @@ namespace gm {
 		// inferface
 		virtual void lock() = 0;
 		virtual void unLock() = 0;
-		virtual void uninstall(bool dialogValue) = 0;
+		virtual bool uninstall(bool dialogValue) = 0;
 
 		virtual	void lockChanged() = 0;
 	};
