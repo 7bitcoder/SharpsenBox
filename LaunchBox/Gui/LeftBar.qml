@@ -11,6 +11,7 @@ Rectangle {
             leftMargin: 30
         }
         // readonly enum values
+        property int fontSize: 22
         property int home_: 1
         property int settings_: 2
         property int account_: 3
@@ -68,7 +69,7 @@ Rectangle {
             }
             Image {
                 id: homeImage
-                source: "content/house.png"
+                source: "Icons/house.png"
                 height: 30
                 width: 30
                 opacity: parent.op
@@ -81,7 +82,8 @@ Rectangle {
                     leftMargin: 20
                 }
                 text: qsTr("Home")
-                font.pointSize: 15
+                font.pixelSize: accessButtons.fontSize
+                font.family: latoFont.name
                 color: "white"
                 opacity: parent.op
             }
@@ -152,7 +154,7 @@ Rectangle {
 
             Image {
                 id: accountImage
-                source: "content/person.png"
+                source: "Icons/person.png"
                 height: 30
                 width: 30
                 opacity: parent.op
@@ -165,7 +167,8 @@ Rectangle {
                     leftMargin: 20
                 }
                 text: qsTr("Account")
-                font.pointSize: 15
+                font.family: latoFont.name
+                font.pixelSize: accessButtons.fontSize
                 color: "white"
                 opacity: parent.op
             }
@@ -233,7 +236,7 @@ Rectangle {
             }
             Image {
                 id: settingsImage
-                source: "content/cog.png"
+                source: "Icons/cog.png"
                 height: 30
                 width: 30
                 opacity: parent.op
@@ -246,7 +249,8 @@ Rectangle {
                     leftMargin: 20
                 }
                 text: qsTr("Settings")
-                font.pointSize: 15
+                font.pixelSize: accessButtons.fontSize
+                font.family: latoFont.name
                 color: "white"
                 opacity: parent.op
             }

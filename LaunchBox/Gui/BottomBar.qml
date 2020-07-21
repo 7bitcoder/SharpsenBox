@@ -198,7 +198,7 @@ Rectangle {
            actual = 0
            total = 0
            speed = 0
-           speedAv = 0
+           speedAvg = 0
 
            actualStr = "0"
            totalStr = "0"
@@ -332,7 +332,7 @@ Rectangle {
             property real opac: 0.6
             Image {
                 anchors.fill: parent
-                source: "content/play-button.png"
+                source: "Icons/play-button.png"
                 visible: parent.play
                 opacity: parent.opac
                 Behavior on opacity {
@@ -343,7 +343,7 @@ Rectangle {
             }
             Image {
                 anchors.fill: parent
-                source: "content/pause-button.png"
+                source: "Icons/pause-button.png"
                 visible: !parent.play
                 opacity: parent.opac
                 Behavior on opacity {
@@ -379,7 +379,7 @@ Rectangle {
             height: parent.size
             Image {
                 id: stopImag
-                source: "content/plain-square.png"
+                source: "Icons/plain-square.png"
                 anchors.fill: parent
                 opacity: 0.6
                 Behavior on opacity {
@@ -434,7 +434,7 @@ Rectangle {
             radius: parent.radius
             BorderImage {
                 id: loader
-                source: "content/loader.png"
+                source: "Icons/loader.png"
                 x: parent.x
                 y: parent.y
                 height: parent.height
@@ -463,8 +463,8 @@ Rectangle {
             top: loadingBar.bottom
             topMargin: 9
         }
-        font.family: "Arial"
-        font.pointSize: 12
+        font.family: latoFont.name
+        font.pixelSize: 12
         color: "white"
         text: bottomBar.statusInfo
     }
@@ -475,8 +475,8 @@ Rectangle {
             top: loadingBar.bottom
             topMargin: 9
         }
-        font.family: "Arial"
-        font.pointSize: 12
+        font.family: latoFont.name
+        font.pixelSize: 12
         color: "white"
         text: percenStr
         visible: bottomBar.state !== bottomBar.none && bottomBar.state !== bottomBar.checking

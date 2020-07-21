@@ -62,8 +62,6 @@ namespace im {
 		void updateProgress(double prog);
 
 		// AppUpdater
-		void updateSt(int);
-		void readGameInfo();
 		void updateEnded(const QString& Version);
 
 		// loadingBar
@@ -81,8 +79,6 @@ namespace im {
 		// becouse connection signal -> sot doesnt work for direct enum, idk why
 		void emitState(im::IUpdateManager::State st) { setStateLb(static_cast<int>(st)); }
 		void emitVisibleState(im::IUpdateManager::VisibleState st) { setVisibleStateLb(static_cast<int>(st)); }
-		void updateStatus(im::IUpdateManager::State state) { updateSt(static_cast<int>(state)); }
-
 		void run() override;
 
 		void updateMainApp();

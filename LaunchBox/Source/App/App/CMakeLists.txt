@@ -45,10 +45,7 @@ target_include_directories(LaunchBox PUBLIC
     "../QGameManager"
     "../QGameManager/h"
     "../QLoadingBar"
-    "../QLoadingBar/h"
-    
-    
-    )
+    "../QLoadingBar/h")
 
 
 install(TARGETS LaunchBox DESTINATION ${LaunchBoxPath}/bin)

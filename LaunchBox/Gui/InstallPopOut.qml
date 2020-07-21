@@ -47,7 +47,7 @@ Rectangle {
                     topMargin: 10
                     left: parent.left
                 }
-                font.family: "Arial"
+                font.family: latoFont.name
                 font.pixelSize: 25
                 color: "black"
                 text: "Chose installation paremeters"
@@ -60,7 +60,7 @@ Rectangle {
                     left: parent.left
                 }
                 text: "Folder: "
-                font.family: "Arial"
+                font.family: latoFont.name
                 font.pixelSize: installbar.normalTextSize
             }
             FolderDialog {
@@ -97,7 +97,7 @@ Rectangle {
                     }
                     clip: true
                     text: installDirectory
-                    font.family: "Arial"
+                    font.family: latoFont.name
                     font.pixelSize: normalTextSize
                     selectByMouse: true
                     onEditingFinished: installDirectory = text
@@ -115,7 +115,7 @@ Rectangle {
                 onClicked: folderDialog.open()
                 contentItem: Text {
                     text: choseFolder.text
-                    font.family: "Arial"
+                    font.family: latoFont.name
                     font.pixelSize: 22
                     color: "white"
                     horizontalAlignment: Text.AlignHCenter
@@ -146,7 +146,7 @@ Rectangle {
                 clip: true
                 text: "Full Path: " + installDirectory + "/" + _Config.getGameName(
                           gameId)
-                font.family: "Arial"
+                font.family: latoFont.name
                 font.pixelSize: installbar.normalTextSize
                 wrapMode: Text.WrapAnywhere
             }
@@ -160,7 +160,7 @@ Rectangle {
             }
             Text {
                 text: "Create Desktop Shortcut"
-                font.family: "Arial"
+                font.family: latoFont.name
                 font.pixelSize: normalTextSize
                 anchors {
                     verticalCenter: createShortcut.verticalCenter
@@ -187,7 +187,7 @@ Rectangle {
                 }
                 contentItem: Text {
                     text: install.text
-                    font.family: "Arial"
+                    font.family: latoFont.name
                     font.pixelSize: 22
                     color: "white"
                     horizontalAlignment: Text.AlignHCenter
@@ -223,7 +223,7 @@ Rectangle {
 
                 contentItem: Text {
                     text: cancel.text
-                    font.family: "Arial"
+                    font.family: latoFont.name
                     font.pixelSize: 22
                     color: "white"
                     horizontalAlignment: Text.AlignHCenter

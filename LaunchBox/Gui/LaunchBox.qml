@@ -29,6 +29,8 @@ ApplicationWindow {
         return Qt.point(windowAbs.x + window.x, windowAbs.y + window.y)
     }
 
+    FontLoader { id: latoFont; source: "Font/Lato-Regular.ttf" }
+
     TopBar {
         id: topBar
         anchors {
@@ -128,7 +130,7 @@ ApplicationWindow {
     }
     BottomBar {
         id: bottomBar
-        len: 60
+        len: 58
         visible: true
         //progress: 50
         anchors {

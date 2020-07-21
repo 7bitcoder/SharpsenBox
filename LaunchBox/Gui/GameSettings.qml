@@ -29,7 +29,7 @@ Rectangle {
             }
             text: name
             color: "white"
-            font.family: "Arial"
+            font.family: latoFont.name
             font.pixelSize: 20
         }
         MouseArea {
@@ -69,7 +69,7 @@ Rectangle {
 
             contentItem: Text {
                 text: checkFilesIntegrity.text
-                font.family: "Arial"
+                font.family: latoFont.name
                 font.pixelSize: 22
                 color: "white"
                 horizontalAlignment: Text.AlignHCenter
@@ -106,7 +106,7 @@ Rectangle {
 
             contentItem: Text {
                 text: uninstall.text
-                font.family: "Arial"
+                font.family: latoFont.name
                 font.pixelSize: 22
                 color: "white"
                 horizontalAlignment: Text.AlignHCenter
@@ -141,7 +141,7 @@ Rectangle {
         clip: true
         Text {
             text: "Automatically check for updates"
-            font.family: "Arial"
+            font.family: latoFont.name
             font.pixelSize: 20
             color: "white"
             anchors {

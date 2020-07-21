@@ -38,9 +38,10 @@ namespace im {
 	}
 
 	void FileListParser::readPackets() {
-		auto it = pathFiles_.begin();
+		auto& pathFiles = updateInfo_->getFiles(); // path files 1st is file list so skip it
+		auto it = pathFiles.begin();
 		auto& fileList = fileList_["Files"].toObject();
-		for (++it; it != pathFiles_.end(); it++) {
+		for (++it; it != pathFiles.end(); it++) {
 			QString val;
 			QFile file;
 			//open LaunchBoxConfig file

@@ -1,5 +1,15 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource prefix="/">
     <file>AppUpdater.qml</file>
+	<file>Font/Lato-Black.ttf</file>
+	<file>Font/Lato-BlackItalic.ttf</file>
+	<file>Font/Lato-Bold.ttf</file>
+	<file>Font/Lato-BoldItalic.ttf</file>
+	<file>Font/Lato-Italic.ttf</file>
+	<file>Font/Lato-Light.ttf</file>
+	<file>Font/Lato-LightItalic.ttf</file>
+	<file>Font/Lato-Regular.ttf</file>
+	<file>Font/Lato-Thin.ttf</file>
+	<file>Font/Lato-ThinItalic.ttf</file>
 </qresource>
 </RCC>

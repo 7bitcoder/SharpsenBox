@@ -36,7 +36,7 @@ Item {
                         left: parent.left
                     }
                     text: "Launcher Settings"
-                    font.family: "Arial"
+                    font.family: latoFont.name
                     color: "white"
                     font.pixelSize: 25
                 }
@@ -51,7 +51,7 @@ Item {
                     id: speedInfo
                     text: qsTr(
                               "Maximum download speed, 0 is treat as unlimited")
-                    font.family: "Arial"
+                    font.family: latoFont.name
                     font.pixelSize: 20
                     color: "white"
                 }
@@ -82,7 +82,7 @@ Item {
                         }
                         clip: true
                         text: _Config.getDownloadSpeed()
-                        font.family: "Arial"
+                        font.family: latoFont.name
                         color: "white"
                         font.pixelSize: 20
                         selectByMouse: true
@@ -111,7 +111,7 @@ Item {
                         }
                         clip: true
                         text: "KB/s"
-                        font.family: "Arial"
+                        font.family: latoFont.name
                         color: "White"
                         font.pixelSize: 20
                     }
@@ -125,7 +125,7 @@ Item {
                         clip: true
                         visible: text != ""
                         text: ""
-                        font.family: "Arial"
+                        font.family: latoFont.name
                         color: "red"
                         font.pixelSize: 15
                     }
@@ -142,7 +142,7 @@ Item {
                 }
                 Text {
                     text: "Run launcher at system startup"
-                    font.family: "Arial"
+                    font.family: latoFont.name
                     font.pixelSize: 20
                     color: "white"
                     anchors {
@@ -160,7 +160,7 @@ Item {
                         left: parent.left
                     }
                     text: "Games Settings"
-                    font.family: "Arial"
+                    font.family: latoFont.name
                     color: "white"
                     font.pixelSize: 25
                 }

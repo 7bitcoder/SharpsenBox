@@ -197,6 +197,7 @@ namespace im {
 
 	void UpdateManager::updateMainApp() {
 		// download appInfo.json and Games.json
+		emitState(im::IUpdateManager::State::CHECKING);
 		downloader_->run();
 		// check if appInfo.json contains newer version = need update
 		appInfoParser_->run();
@@ -239,7 +240,6 @@ namespace im {
 		// Process fileList.json and patch files to get update packets (zip files)
 		fileListParser_->run();
 
-		updateStatus(im::IUpdateManager::State::DOWNLOADING);
 		downloadUpdate();
 		installUpdate();
 	}
@@ -263,8 +263,6 @@ namespace im {
 		updateInfo_->setInstallDir(destination);
 
 		emitState(im::IUpdateManager::State::INSTALLING);
-		updateStatus(im::IUpdateManager::State::INSTALLING);
-
 		// install downloaded packets
 		installer_->run();
 	}
@@ -289,7 +287,7 @@ namespace im {
 	}
 
 	void UpdateManager::updateGamePages() {
-		updateStatus(im::IUpdateManager::State::UPDATING_GAME_PAGES);
+		emitState(im::IUpdateManager::State::UPDATING_GAME_PAGES);
 		// setUp updateInfo
 		updateInfo_->setFiles(gameParser_->getFiles());
 		setTotal(0);
@@ -303,7 +301,6 @@ namespace im {
 	void UpdateManager::cleanUp(im::IUpdateManager::State finalState, const QString& errorWhat) {
 		cleanUpper_->run();
 		emitState(finalState);
-		updateStatus(finalState);
 		if (finalState == im::IUpdateManager::State::ERRORD && !errorWhat.isEmpty())
 			errorEmit(errorWhat);
 		emitVisibleState(im::IUpdateManager::VisibleState::HIDDEN);

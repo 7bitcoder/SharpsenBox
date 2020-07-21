@@ -42,7 +42,7 @@ namespace cf {
 			gameInfoRepo_ = d["GamesInfoRepository"].toString().toStdString();
 			LauncherAppInfo = d["AppInfoUrl"].toString().toStdString();
 
-			std::cout << "version: " << version_.toUtf8().constData();
+			std::cout << "version: " << version_.toStdString();
 			readGames();
 
 			for (auto& keys : games_) {

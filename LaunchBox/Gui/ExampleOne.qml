@@ -36,8 +36,8 @@ Item {
             width: 200
             wrapMode: Text.WordWrap
             color: "white"
-            font.family: "Arial"
-            font.pointSize: 15
+            font.family: latoFont.name
+            font.pixelSize: 15
         }
 
         Text {
@@ -51,8 +51,8 @@ Item {
             }
             width: 200
             color: "white"
-            font.family: "Arial"
-            font.pointSize: 12
+            font.family: latoFont.name
+            font.pixelSize: 12
         }
 
         Item {

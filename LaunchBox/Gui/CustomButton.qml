@@ -9,8 +9,8 @@ Rectangle {
         property bool pressed: false
         anchors.centerIn: parent
         text: "Install"
-        font.family: "Arial"
-        font.pointSize: 25
+        font.family: latoFont.name
+        font.pixelSize: 25
         color: "#AAAAAA"
         MouseArea {
             hoverEnabled: true

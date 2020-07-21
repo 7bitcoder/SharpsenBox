@@ -16,15 +16,23 @@
 	<file>ResizingFrames.qml</file>
 	<file>LeftBar.qml</file>
 	<file>WebGamePage.qml</file>
-	<file>content/person.png</file>
-	<file>content/cog.png</file>
-	<file>content/house.png</file>
-	<file>content/sea.gif</file>
-	<file>content/loader.png</file>
-	<file>content/startVideo.jpg</file>
-	<file>content/plain-square.png</file>
-	<file>content/pause-button.png</file>
-	<file>content/play-button.png</file>
+	<file>Icons/person.png</file>
+	<file>Icons/cog.png</file>
+	<file>Icons/house.png</file>
+	<file>Icons/loader.png</file>
+	<file>Icons/plain-square.png</file>
+	<file>Icons/pause-button.png</file>
+	<file>Icons/play-button.png</file>
+	<file>Font/Lato-Black.ttf</file>
+	<file>Font/Lato-BlackItalic.ttf</file>
+	<file>Font/Lato-Bold.ttf</file>
+	<file>Font/Lato-BoldItalic.ttf</file>
+	<file>Font/Lato-Italic.ttf</file>
+	<file>Font/Lato-Light.ttf</file>
+	<file>Font/Lato-LightItalic.ttf</file>
+	<file>Font/Lato-Regular.ttf</file>
+	<file>Font/Lato-Thin.ttf</file>
+	<file>Font/Lato-ThinItalic.ttf</file>
 	<file>clear.html</file>
 </qresource>
 </RCC>

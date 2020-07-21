@@ -21,6 +21,7 @@ Item {
             onActualGameChanged: {
                 source = _Config.getPresentationFile(actualGame)
                 _GameManager.checkAutoUpdate(actualGame)
+                button.installed = _Config.installed(actualGame)
             }
         }
 
@@ -32,31 +33,28 @@ Item {
                 topMargin: 80
                 leftMargin: 20
             }
-
+            property bool lock: _GameManager.lock
+            property bool installed: _Config.installed(window.selectedGame)
+            onLockChanged: {
+                installed = _Config.installed(window.selectedGame)
+            }
             width: 120
             height: 60
             color: "transparent"
             Text {
                 id: buttonPLay
-                property bool lock: _GameManager.lock
-                property bool installed: _Config.installed(window.selectedGame)
-                property bool realLock: false
-                onLockChanged: {
-                    installed = _Config.installed(window.selectedGame)
-                }
-
                 anchors.centerIn: parent
-                text: installed ? "Play" : "Install"
-                font.family: "Arial"
-                font.pointSize: 25
-                color: lock ? "#404040" : pressArea.pressed ? "#707070" : pressArea.containsMouse ? "white" : "#AAAAAA"
+                text: button.installed ? "Play" : "Install"
+                font.family: latoFont.name
+                font.pixelSize: 35
+                color: button.lock ? "#404040" : pressArea.pressed ? "#707070" : pressArea.containsMouse ? "white" : "#AAAAAA"
                 MouseArea {
                     id: pressArea
-                    visible: !parent.lock
+                    visible: !button.lock
                     hoverEnabled: true
                     anchors.fill: parent
                     onClicked: {
-                        if (buttonPLay.installed) {
+                        if (button.installed) {
                             _GameManager.runGame(window.selectedGame)
                         } else {
                             _GameManager.installGameRequest(window.selectedGame)
@@ -83,43 +81,4 @@ Item {
         color: "transparent"
         size: 150
     }
-
-    //Loader {
-    //    id: gameChoserLoader
-    //    anchors {
-    //        top: gameChoser.bottom
-    //        //left: parent.left
-    //        //right: parent.right
-    //        bottom: parent.bottom
-    //    }
-    //    property int destX: parent.x
-    //    width: parent.width
-    //    source: window.gameBarS
-    //    onSourceChanged: {
-    //        animation.stop()
-    //        animationOp.stop()
-    //        animation.start()
-    //        animationOp.start()
-    //    }
-    //
-    //    NumberAnimation {
-    //        id: animation
-    //        target: gameChoserLoader.item
-    //        property: "x"
-    //        from: gameChoserLoader.destX + gameChoserLoader.width
-    //        to: gameChoserLoader.destX
-    //        duration: 300
-    //        easing.type: Easing.OutQuart
-    //    }
-    //
-    //    NumberAnimation {
-    //        id: animationOp
-    //        target: gameChoserLoader.item
-    //        property: "opacity"
-    //        from: 0
-    //        to: 1
-    //        duration: 300
-    //        easing.type: Easing.OutCubic
-    //    }
-    //}
 }

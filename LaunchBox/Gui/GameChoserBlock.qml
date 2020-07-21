@@ -12,8 +12,8 @@ Rectangle {
         id: sylioText
         anchors.centerIn: parent
         text: _Config.getGameName(gId)
-        font.family: "Arial"
-        font.pointSize: 25
+        font.family: latoFont.name
+        font.pixelSize: 35
         color: blockMouse.containsMouse ? "white" : gameChoser.normal
         Behavior on color {
             ColorAnimation {

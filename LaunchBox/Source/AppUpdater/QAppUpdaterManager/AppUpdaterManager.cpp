@@ -25,7 +25,7 @@ namespace upd {
 	}
 
 	void AppUpdaterManager::checkForUpdates() {
-		connect(&im_, &im::UpdateManager::updateSt, this, &AppUpdaterManager::updateSt);
+		connect(&im_, &im::UpdateManager::setStateLb, this, &AppUpdaterManager::updateSt);
 		connect(&im_, &im::UpdateManager::errorEmit, this, &AppUpdaterManager::errorCatched);
 		connect(&im_, &im::UpdateManager::updateEnded, this, &AppUpdaterManager::updateInstalled);
 		connect(&im_, &im::UpdateManager::updateProgress, this, &AppUpdaterManager::updateProgress);

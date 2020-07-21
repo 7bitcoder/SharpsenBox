@@ -17,6 +17,8 @@ ApplicationWindow {
         return Qt.point(windowAbs.x + window.x, windowAbs.y + window.y)
     }
 
+    FontLoader { id: latoFont; source: "Font/Lato-Regular.ttf" }
+
     property int status: _AppUpdaterManager.updateState
     property string statusStr: "Searching for updates"
     property int progress: 0
@@ -27,33 +29,40 @@ ApplicationWindow {
         case 0:
             //none
             statusStr = "Searching for updates"
+            barStatusBackground.visible = false
             break
         case 1:
             //downloading
             statusStr = "Downloading update"
+            barStatusBackground.visible = true
             break
         case 2:
             // installing
             statusStr = "Installing update"
+            barStatusBackground.visible = true
             break
         case 6:
             //ended
             statusStr = "Starting LaunchBox"
+            barStatusBackground.visible = false
             exiter.start()
             break
         case 4:
             //error
             statusStr = "Error ocured:\n" + _AppUpdaterManager.statusStr
+            barStatusBackground.visible = false
             exiter.start()
             break
         case 5:
             //noUpdateFound
             statusStr = "No updates found"
+            barStatusBackground.visible = false
             exiter.start()
             break
         case 7:
             // updating games information
             statusStr = "Updating game pages"
+            barStatusBackground.visible = false
             break
         }
     }
@@ -62,7 +71,6 @@ ApplicationWindow {
         id: exiter
         interval: 5000
         onTriggered: {
-            console.log("EXITING~~~~")
             Qt.quit()
         }
         repeat: false
@@ -82,12 +90,6 @@ ApplicationWindow {
     Timer {
         id: barUpdater
         interval: 50
-        onTriggered: {
-            window.progress = _AppUpdaterManager.progress
-            if (window.progress != 0 && !barStatusBackground.visible) {
-                barStatusBackground.visible = true
-            }
-        }
         repeat: true
         running: true
     }
@@ -105,7 +107,7 @@ ApplicationWindow {
                 horizontalCenter: parent.horizontalCenter
             }
             text: statusStr //_AppUpdater.statusStr
-            font.family: "Arial"
+            font.family: latoFont.name
             font.pixelSize: 20
             verticalAlignment: Text.AlignVCenter
             color: "#AAAAAA"

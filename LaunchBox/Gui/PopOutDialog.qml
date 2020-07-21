@@ -42,7 +42,7 @@ Rectangle {
             Text {
                 id: infromation
                 anchors.centerIn: parent
-                font.family: "Arial"
+                font.family: latoFont.name
                 font.pixelSize: 25
                 color: "black"
                 text: popInfo.info
@@ -65,7 +65,7 @@ Rectangle {
 
                 contentItem: Text {
                     text: cancel.text
-                    font.family: "Arial"
+                    font.family: latoFont.name
                     font.pixelSize: 22
                     color: "white"
                     horizontalAlignment: Text.AlignHCenter
@@ -103,7 +103,7 @@ Rectangle {
 
                 contentItem: Text {
                     text: ok.text
-                    font.family: "Arial"
+                    font.family: latoFont.name
                     font.pixelSize: 22
                     color: "white"
                     horizontalAlignment: Text.AlignHCenter

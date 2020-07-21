@@ -23,6 +23,9 @@ namespace im {
 			versionToUpdate_ = d["Ver"].toString();
 			auto& actualVersion = updateInfo_->getActualVersion();
 
+			auto& tt = actualVersion.toStdString();
+			auto& gg = versionToUpdate_.toStdString();
+
 			auto fileListUrl = d["FileList"].toString();
 			pathFiles_.push_back({ fileListUrl.toStdString(), "FileList.json" });
 			if (updateInfo_->getFullInstall()) {
