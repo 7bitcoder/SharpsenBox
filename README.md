@@ -25,7 +25,9 @@ Now upload files on the internet, remember to have always valid links
 
 ### LaunchBox
 Becouse LaunchBox is self updating it contains 3 programs:
-* Launcher spall program (on Windows is written in C#) that runs Updater and
+* Updater - program thah updates LaunchBox and Game pages if needed
+* LaunchBox - main program
+* Launcher small program (on Windows is written in C#) that first runs Updater and after its exection LauchBox
 ## Options
 ### If you want to deploy your game witch LaunchBox you have 3 options
 #### Clone reposotory and modify code. 
