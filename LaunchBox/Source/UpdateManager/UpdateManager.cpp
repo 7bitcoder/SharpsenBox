@@ -115,7 +115,7 @@ namespace im {
 				break;
 			}
 			finalState = im::IUpdateManager::State::COMPLEET;
-		} catch(AbortException& e) {
+		} catch (AbortException& e) {
 			finalState = im::IUpdateManager::State::STOPPED;
 		} catch (std::exception& e) {
 			finalState = im::IUpdateManager::State::ERRORD;
@@ -213,6 +213,7 @@ namespace im {
 		progress_ = 100;
 		emitState(im::IUpdateManager::State::CHECKING);
 		emitVisibleState(im::IUpdateManager::VisibleState::SHOWED);
+		sendDataToBar();
 		// download game appInfo.json
 		auto& hh = updateInfo_->getFiles().at(0);
 		downloader_->run();
@@ -245,8 +246,10 @@ namespace im {
 
 	void UpdateManager::downloadUpdate() {
 		// setUp updateInfo
+		progress_ = 0;
 		updateInfo_->setFiles(fileListParser_->getNeededFiles());
 		setTotal(fileListParser_->getBytesToDownload());
+		sendDataToBar();
 
 		emitState(im::IUpdateManager::State::DOWNLOADING);
 		emitVisibleState(im::IUpdateManager::VisibleState::SHOWED);

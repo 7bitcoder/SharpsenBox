@@ -128,7 +128,7 @@ ApplicationWindow {
     }
     BottomBar {
         id: bottomBar
-        len: 55
+        len: 60
         visible: true
         //progress: 50
         anchors {

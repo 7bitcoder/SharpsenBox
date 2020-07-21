@@ -193,6 +193,21 @@ Rectangle {
            bottomBar.barColor = "green"
            prog.stop()
            break;
+       case none:
+           progress = 0
+           actual = 0
+           total = 0
+           speed = 0
+           speedAv = 0
+
+           actualStr = "0"
+           totalStr = "0"
+           speedStr = "0"
+           percenStr = "0"
+           speedAvgStr = "0"
+
+           statusInfo: "Initialization"
+           break;
        default:
            break;
         }
@@ -464,6 +479,7 @@ Rectangle {
         font.pointSize: 12
         color: "white"
         text: percenStr
+        visible: bottomBar.state !== bottomBar.none && bottomBar.state !== bottomBar.checking
     }
     //minimalize mouse area
     MouseArea {

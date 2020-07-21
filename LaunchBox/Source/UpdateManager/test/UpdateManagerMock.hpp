@@ -19,6 +19,11 @@ namespace im {
 		void installStatus(qint64 progress) {};
 
 		UpdateInfo& getUpdateInfo() { return ui_; };
+
+
+		void paused() {};
+		void resumed() {};
+		void stop() {};
 	private:
 
 		UpdateInfo ui_;
