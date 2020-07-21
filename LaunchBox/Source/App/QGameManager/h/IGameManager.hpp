@@ -7,7 +7,6 @@
 #include "IComponent.hpp"
 
 namespace gm {
-	class GameUninstaller;
 	struct IGameManager : bc::IComponent {
 	public:
 		virtual ~IGameManager() {};
@@ -18,5 +17,9 @@ namespace gm {
 		virtual bool uninstall(bool dialogValue) = 0;
 
 		virtual	void lockChanged() = 0;
+
+		virtual void pause() = 0;
+		virtual void resume() = 0;
+		virtual void stop() = 0;
 	};
 }

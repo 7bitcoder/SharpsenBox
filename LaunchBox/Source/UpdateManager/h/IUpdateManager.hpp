@@ -33,5 +33,9 @@ namespace im {
 
 		virtual UpdateInfo& getUpdateInfo() = 0;
 
+		virtual void paused() = 0;
+		virtual void resumed() = 0;
+		virtual void stop() = 0;
+
 	};
 }

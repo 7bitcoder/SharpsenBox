@@ -19,6 +19,11 @@ namespace upd {
 			std::filesystem::create_directory(downloadDir);
 	}
 
+	AppUpdaterManager:: ~AppUpdaterManager() {
+		im_.terminate();
+		im_.wait();
+	}
+
 	void AppUpdaterManager::checkForUpdates() {
 		connect(&im_, &im::UpdateManager::updateSt, this, &AppUpdaterManager::updateSt);
 		connect(&im_, &im::UpdateManager::errorEmit, this, &AppUpdaterManager::errorCatched);

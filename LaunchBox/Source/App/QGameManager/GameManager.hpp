@@ -13,7 +13,7 @@ namespace gm {
 	class GameManager final :public IGameManager {
 		Q_OBJECT
 	public:
-		virtual ~GameManager() {};
+		virtual ~GameManager();
 		GameManager();
 
 		// implementation IQmlComponent
@@ -26,6 +26,10 @@ namespace gm {
 		void unLock() final { lock_ = false; lockChanged(); }
 		bool uninstall(bool dialogValue) final;
 		void installGame(bool value);
+
+		void pause() final;
+		void resume() final;
+		void stop() final;
 
 		// Qml properties
 		Q_PROPERTY(int lock READ getLock NOTIFY lockChanged);
@@ -47,10 +51,12 @@ namespace gm {
 		void setTotalLb(double tot);
 		void setActualLb(double act);
 		void setSpeedLb(double sp);
-		void setStateLb(int st) { lb_->setState(im::IUpdateManager::State(st)); }
-		void setVisibleStateLb(int st) { lb_->setVisibleState(im::IUpdateManager::VisibleState(st)); }
+		void setStateLb(int st);
+		void setVisibleStateLb(int st);
 		void setUninstallModeLb(bool un);
-		void gameUpdateEnded();
+
+		void paused() { lb_->paused(); };
+		void resumed() { lb_->resumed(); };
 	signals:
 		void lockChanged();
 

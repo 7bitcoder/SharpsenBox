@@ -102,6 +102,8 @@ namespace im {
 	}
 
 	void UpdateManager::run() {
+		im::IUpdateManager::State finalState = im::IUpdateManager::State::NONE;
+		QString what;
 		try {
 			switch (updateInfo_->getUpdateMode()) {
 			case UpdateInfo::UpdateMode::LAUNCHBOX:
@@ -112,15 +114,18 @@ namespace im {
 				updateGame();
 				break;
 			}
+			finalState = im::IUpdateManager::State::COMPLEET;
+		} catch(AbortException& e) {
+			finalState = im::IUpdateManager::State::STOPPED;
 		} catch (std::exception& e) {
-			errorEmit(e.what());
-			emitState(im::IUpdateManager::State::ERRORD);
-			emitVisibleState(im::IUpdateManager::VisibleState::HIDDEN);
+			finalState = im::IUpdateManager::State::ERRORD;
+			what = e.what();
 		} catch (...) {
-			errorEmit("Unexpected error ocured while processing");
+			finalState = im::IUpdateManager::State::ERRORD;
+			what = "Unexpected error ocured while processing";
 		}
 		try {
-			cleanUp();
+			cleanUp(finalState, what);
 		} catch (...) {}// if cleanup fail its fine
 	}
 
@@ -219,7 +224,6 @@ namespace im {
 		}
 		auto& actual = updateInfo_->getActualGame();
 		actual.updateChecked = true;
-		gameUpdateEnded();
 	}
 
 	void UpdateManager::updateApp() {
@@ -293,10 +297,12 @@ namespace im {
 		gameParser_->updateGamesInfo();
 	}
 
-	void UpdateManager::cleanUp() {
+	void UpdateManager::cleanUp(im::IUpdateManager::State finalState, const QString& errorWhat) {
 		cleanUpper_->run();
-		emitState(im::IUpdateManager::State::COMPLEET);
-		updateStatus(im::IUpdateManager::State::COMPLEET);
+		emitState(finalState);
+		updateStatus(finalState);
+		if (finalState == im::IUpdateManager::State::ERRORD && !errorWhat.isEmpty())
+			errorEmit(errorWhat);
 		emitVisibleState(im::IUpdateManager::VisibleState::HIDDEN);
 		updateEnded(updateInfo_->getUpdateVersion());
 		//bc::Component<gm::IGameManager>::get().unLock();
@@ -338,22 +344,15 @@ namespace im {
 	}
 
 	void UpdateManager::pause() {
-		//if (stage_ == Stage::DOWNLOAD) {
-		//	downloader_->pause.clear();
-		//	state_ = State::PAUSE;
-		//	LoadingBar_->setState(lb::LoadingBar::State::PAUSE);
-		//}
+		updateInfo_->pause.clear();
 	}
 
 	void UpdateManager::resume() {
-		//if (stage_ == Stage::DOWNLOAD) {
-		//	downloader_->resume.clear();
-		//	LoadingBar_->setState(lb::LoadingBar::State::DOWNLOADING);
-		//}
+		updateInfo_->resume.clear();
 	}
 
 	void UpdateManager::stop() {
-		//downloader_->stop.clear();
+		updateInfo_->stop.clear();
 	}
 
 	void UpdateManager::reset() {

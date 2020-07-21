@@ -31,7 +31,7 @@ namespace upd {
 		Q_INVOKABLE void checkForUpdates();
 
 		AppUpdaterManager();
-		virtual ~AppUpdaterManager() {};
+		virtual ~AppUpdaterManager();
 	private:
 	public slots:
 		void updateInstalled(const QString& version);

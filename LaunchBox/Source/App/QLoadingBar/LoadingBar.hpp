@@ -32,6 +32,8 @@ namespace lb {
 		void setVisibleState(im::IUpdateManager::VisibleState st) final;
 		void setUninstallMode(bool un) final;
 		void reset() final;
+		void paused() final;
+		void resumed() final;
 		//QML Propetries
 		Q_PROPERTY(double speed READ getSpeed); //download speed B/s
 		Q_PROPERTY(double actual READ getActual); //actual downloaded MB
@@ -42,21 +44,23 @@ namespace lb {
 		Q_PROPERTY(int visibleState READ getVisibleState NOTIFY visibleStateChanged);
 
 		Q_PROPERTY(int uninstall READ getUninstall);
+		Q_PROPERTY(bool pauseResume READ getPauseResume NOTIFY pauseResumeChanged);
 
 		//QMl invoklabes
-		Q_INVOKABLE double getSpeed() const;
-		Q_INVOKABLE double getActual() const;
-		Q_INVOKABLE double getTotal() const;
-		Q_INVOKABLE double getProgress() const;
+		Q_INVOKABLE double getSpeed() ;
+		Q_INVOKABLE double getActual() ;
+		Q_INVOKABLE double getTotal() ;
+		Q_INVOKABLE double getProgress() ;
 
-		Q_INVOKABLE int getState() const;
-		Q_INVOKABLE int getVisibleState() const;
+		Q_INVOKABLE int getState() ;
+		Q_INVOKABLE int getVisibleState() ;
 
-		Q_INVOKABLE bool getUninstall() const;
+		Q_INVOKABLE bool getUninstall() ;
 
-		Q_INVOKABLE void pause() const;
-		Q_INVOKABLE void resume() const;
-		Q_INVOKABLE void stop() const;
+		Q_INVOKABLE void pause() ;
+		Q_INVOKABLE void resume() ;
+		Q_INVOKABLE void stop() ;
+		Q_INVOKABLE bool getPauseResume() { return pauseResume_; }
 
 
 	signals:
@@ -65,18 +69,20 @@ namespace lb {
 
 		void notifyEnded();
 		void getProgress(qint64 actual);
+		void pauseResumeChanged();
 	private:
 		im::IUpdateManager::State state_ = im::IUpdateManager::State::NONE;
 		im::IUpdateManager::VisibleState visibleState_ = im::IUpdateManager::VisibleState::HIDDEN;
 
-		//synhronize mutex
-		std::mutex mx_;
+		im::IUpdateManager::State lastState_ = im::IUpdateManager::State::NONE; // when pausing hold last state in this variable for resume
+
 		//qml properties
 		double progress_ = 0;
 		double total_ = 0;
 		double speed_ = 0;
 		double actual_ = 0;
 
+		bool pauseResume_ = false;
 		bool uninstall_ = false;
 	};
 }

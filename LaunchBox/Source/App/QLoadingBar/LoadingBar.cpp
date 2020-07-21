@@ -4,6 +4,7 @@
 #include "IComponent.hpp"
 #include "IDialog.hpp"
 #include "IConfig.hpp"
+#include "IGameManager.hpp"
 
 
 namespace lb {
@@ -15,35 +16,36 @@ namespace lb {
 		return TYPENAME(LoadingBar);
 	}
 
-	Q_INVOKABLE double LoadingBar::getSpeed() const {
+	Q_INVOKABLE double LoadingBar::getSpeed()  {
 		return speed_;
 	}
 
-	Q_INVOKABLE int LoadingBar::getState() const {
+	Q_INVOKABLE int LoadingBar::getState()  {
 		return static_cast<int>(state_);
 	}
 
-	Q_INVOKABLE int LoadingBar::getVisibleState() const {
+	Q_INVOKABLE int LoadingBar::getVisibleState()  {
+
 		return static_cast<int>(visibleState_);
 	}
 
-	Q_INVOKABLE double LoadingBar::getActual() const {
+	Q_INVOKABLE double LoadingBar::getActual()  {
 		return actual_;
 	}
 
-	Q_INVOKABLE double LoadingBar::getTotal() const {
+	Q_INVOKABLE double LoadingBar::getTotal()  {
 		return total_;
 	}
 
-	Q_INVOKABLE double LoadingBar::getProgress() const {
+	Q_INVOKABLE double LoadingBar::getProgress()  {
 		return progress_;
 	}
 
-	Q_INVOKABLE void LoadingBar::pause() const {} //bc::ObjectsRepository::getRepo().getInstalationManager().pause();};
-	Q_INVOKABLE void LoadingBar::resume() const {}// bc::ObjectsRepository::getRepo().getInstalationManager().resume(); };
-	Q_INVOKABLE void LoadingBar::stop() const {}//bc::ObjectsRepository::getRepo().getInstalationManager().stop(); };
+	Q_INVOKABLE void LoadingBar::pause()  { bc::Component<gm::IGameManager>::get().pause(); };
+	Q_INVOKABLE void LoadingBar::resume()  { bc::Component<gm::IGameManager>::get().resume(); }
+	Q_INVOKABLE void LoadingBar::stop()  { bc::Component<gm::IGameManager>::get().stop(); }
 
-	Q_INVOKABLE bool LoadingBar::getUninstall() const {
+	Q_INVOKABLE bool LoadingBar::getUninstall()  {
 		return uninstall_;
 	}
 
@@ -84,16 +86,34 @@ namespace lb {
 		uninstall_ = un;
 	}
 
+	void LoadingBar::paused() {
+		lastState_ = state_;
+		setState(im::IUpdateManager::State::PAUSE);
+		pauseResume_ = true;
+		pauseResumeChanged();
+	}
+
+	void LoadingBar::resumed() {
+		if(lastState_ != im::IUpdateManager::State::NONE)
+			setState(lastState_);
+		pauseResume_ = false;
+		pauseResumeChanged();
+	}
+	
 	void LoadingBar::init() {}
 
 	void LoadingBar::reset() {
 
-		//qml properties
 		progress_ = 0;
 		total_ = 0;
 		speed_ = 0;
 		actual_ = 0;
-
 		uninstall_ = false;
+		pauseResume_ = false;
+	
+		setState(im::IUpdateManager::State::NONE);
+		lastState_ = im::IUpdateManager::State::NONE;
+		resumed(); // to reset pause resume button to pause state
+		visibleState_ = im::IUpdateManager::VisibleState::HIDDEN;
 	}
 }

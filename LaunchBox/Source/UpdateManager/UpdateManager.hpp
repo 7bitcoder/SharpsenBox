@@ -27,7 +27,7 @@ namespace im {
 		virtual ~UpdateManager();
 		UpdateManager();
 
-		void update() {};
+		void update(){};
 		std::string getName() { return TYPENAME(UpdateManager); }
 		void init();
 
@@ -52,7 +52,10 @@ namespace im {
 
 		void pause();
 		void resume();
-		void stop();
+
+		void paused() final { pausedSignal(); };
+		void resumed() final { resumedSignal(); }
+		void stop() final;
 
 	signals:
 		void errorEmit(const QString& errorStr);
@@ -70,7 +73,9 @@ namespace im {
 		void setStateLb(int st);
 		void setVisibleStateLb(int st);
 		void setUninstallModeLb(bool un);
-		void gameUpdateEnded();
+
+		void pausedSignal();
+		void resumedSignal();
 
 	private:
 		// becouse connection signal -> sot doesnt work for direct enum, idk why
@@ -90,7 +95,7 @@ namespace im {
 		void reset();
 		void setProgress();
 		void sendDataToBar();
-		void cleanUp();
+		void cleanUp(im::IUpdateManager::State finalState, const QString& errorWhat);
 
 	private:
 		std::unique_ptr<UpdateInfo> updateInfo_;

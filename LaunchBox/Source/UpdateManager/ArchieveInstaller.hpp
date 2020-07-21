@@ -32,6 +32,7 @@ namespace im {
 		void reset() override;
 
 	private:
+		bool checkState();
 		std::string getErrorStr(int code);
 		void emitStatus();
 
@@ -45,5 +46,7 @@ namespace im {
 		qint64 alreadyRead_ = 0;
 		size_t size = 0;
 		int res = 0;
+
+		bool cancelled_ = false;
 	};
 }

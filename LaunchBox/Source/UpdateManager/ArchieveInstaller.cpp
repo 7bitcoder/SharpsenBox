@@ -22,7 +22,30 @@ namespace im {
 		data->alreadyRead_ += len;
 		//std::cout << data->alreadyRead << "/" << data->size << "\n";
 		data->emitStatus();
+		if (!data->checkState()) {
+			return -1;
+		}
 		return len;
+	}
+
+	bool ArchieveInstaller::checkState() {
+		if (!updateInfo_->pause.test_and_set()) {
+			im_->paused();
+			while(1) {// wait for
+				QThread::currentThread()->usleep(1000);
+				if (!updateInfo_->resume.test_and_set()) {
+					im_->resumed();
+					break;
+				} else if (!updateInfo_->stop.test_and_set() || cancelled_) {
+					return false;
+				}
+			}
+		} else if (!updateInfo_->stop.test_and_set() || cancelled_) {
+			std::cout << "cancel\n";
+			cancelled_ = true;
+			return false;
+		}
+		return true;
 	}
 
 	int ArchieveInstaller::closeFile(::archive* a, void* client_data) {
@@ -89,7 +112,8 @@ namespace im {
 		} catch (...) {
 			res = ARCHIVE_FAILED;
 		}
-
+		if (cancelled_)
+			throw AbortException();
 		if (res != ARCHIVE_OK) {
 			error(getErrorStr(res));
 		}
@@ -106,6 +130,7 @@ namespace im {
 		alreadyRead_ = 0;
 		size = 0;
 		res = 0;
+		cancelled_ = false;
 	}
 
 	std::string ArchieveInstaller::getErrorStr(int code) {

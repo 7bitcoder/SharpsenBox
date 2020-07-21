@@ -10,6 +10,9 @@ namespace im {
 
 		downloadDir_.clear();
 		installDir_.clear();
+		pause.test_and_set();
+		stop.test_and_set();
+		resume.test_and_set();
 	}
 
 	UpdateInfo::UpdateInfo() {

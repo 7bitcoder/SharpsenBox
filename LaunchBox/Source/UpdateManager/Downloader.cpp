@@ -50,14 +50,17 @@ namespace im {
 			if (res == CURLE_OK)
 				;//emit ok 
 			std::cout << "pause2\n";
+			im_->paused();
 		} else if (!updateInfo_->resume.test_and_set()) {
 			res = curl_easy_pause(curl, CURLPAUSE_CONT);
 			if (res == CURLE_OK)
 				;//emit ok 
+			im_->resumed();
 		} else if (!updateInfo_->stop.test_and_set() || cancelled) {
 			std::cout << "cancel\n";
 			cancelled = true;
 			curl_easy_setopt(curl, CURLOPT_TIMEOUT_MS, 1L);
+			return -10;
 		}
 		return 0;
 	}
@@ -124,11 +127,14 @@ namespace im {
 		closeFile();
 		::curl_easy_cleanup(curl);
 		::curl_global_cleanup();
+		if (cancelled)
+			throw AbortException();
 		if (res != CURLE_OK) {
 			if (res != CURLE_OPERATION_TIMEDOUT || !cancelled) { // cancel request
 				error(getErrorStr(res));
 			}
 		}
+
 		cancelled = false;
 		if (!checkDownloaded()) {
 			res = -3;

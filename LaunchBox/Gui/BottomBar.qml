@@ -125,7 +125,8 @@ Rectangle {
 
     property bool hideLock: false
     onStateChanged: {
-        if (state === checking) {
+        switch(state){
+        case checking:
             prog.stop()
             percentage.stop()
             speedTimer.stop()
@@ -135,15 +136,19 @@ Rectangle {
             bottomBar.progress = 100
             if (_LoadingBar.uninstall) {
                 bottomBar.statusInfo = "Uninstalling"
+            } else {
+                bottomBar.statusInfo = "Searching for updates"
             }
-        } else if (state === downloading) {
+            break;
+        case downloading:
             prog.start()
             percentage.start()
             speedTimer.start()
             bottomBar.barColor = "orange"
             loader.visible = false
             anim.stop()
-        } else if (state === installing) {
+            break
+        case installing:
             prog.stop()
             percentage.start()
             speedTimer.stop()
@@ -151,38 +156,45 @@ Rectangle {
             loader.visible = true
             anim.start()
             bottomBar.barColor = "orange"
-        } else if (state === pause) {
+            break;
+        case pause:
             prog.stop()
             percentage.stop()
             speedTimer.stop()
             anim.stop()
             bottomBar.barColor = "yellow"
-        } else if (state === error) {
+            break;
+        case error:
             prog.stop()
             percentage.stop()
             speedTimer.stop()
             anim.stop()
             bottomBar.barColor = "red"
-        } else if (state === stopped) {
+            break;
+        case stopped:
             prog.stop()
             percentage.stop()
             speedTimer.stop()
             anim.stop()
             bottomBar.barColor = "red"
-            bottomBar.statusInfo = "Installation terminated"
-        } else if (state === completed) {
-            prog.stop()
-            percentage.stop()
-            speedTimer.stop()
-            progress = 100
-            percenStr = "100%"
-            anim.stop()
-            loader.visible = false
-            if (_LoadingBar.uninstall)
-                bottomBar.statusInfo = "Uninstallation complete"
-            else
-                bottomBar.statusInfo = "Instalation complete"
-            bottomBar.barColor = "green"
+            bottomBar.statusInfo = "Update cancelled"
+            break;
+       case completed:
+           percentage.stop()
+           speedTimer.stop()
+           progress = 100
+           percenStr = "100%"
+           anim.stop()
+           loader.visible = false
+           if (_LoadingBar.uninstall)
+               bottomBar.statusInfo = "Uninstallation complete"
+           else
+               bottomBar.statusInfo = "Instalation complete"
+           bottomBar.barColor = "green"
+           prog.stop()
+           break;
+       default:
+           break;
         }
     }
 
@@ -300,13 +312,7 @@ Rectangle {
             }
             width: parent.size
             height: parent.size
-            property bool play: false
-            onPlayChanged: {
-                if (play)
-                    _LoadingBar.pause()
-                else
-                    _LoadingBar.resume()
-            }
+            property bool play: _LoadingBar.pauseResume
 
             property real opac: 0.6
             Image {
@@ -335,7 +341,10 @@ Rectangle {
                 hoverEnabled: true
                 anchors.fill: parent
                 onClicked: {
-                    parent.play = !parent.play
+                    if (goPause.play)
+                        _LoadingBar.resume()
+                    else
+                        _LoadingBar.pause()
                 }
                 onEntered: goPause.opac = 1
                 onExited: goPause.opac = 0.6

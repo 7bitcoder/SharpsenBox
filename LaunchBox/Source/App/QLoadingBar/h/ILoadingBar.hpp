@@ -23,5 +23,7 @@ namespace lb {
 		virtual void setUninstallMode(bool un) = 0;
 
 		virtual void reset() = 0;
+		virtual void paused() = 0;
+		virtual void resumed() = 0;
 	};
 }

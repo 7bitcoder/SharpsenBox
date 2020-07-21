@@ -6,6 +6,7 @@ target_include_directories(LoadingBar PUBLIC
     "../JsonParsers"
     "../AppUpdater"
     "../QDialog/h"
+    "../QGameManager/h"
     "../../UpdateManager/h"
     "../../QConfig/h"
     "../../Component/h"

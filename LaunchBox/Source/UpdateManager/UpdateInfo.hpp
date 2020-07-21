@@ -13,6 +13,8 @@ namespace cf {
 }
 
 namespace im {
+	class AbortException : public std::exception {};
+
 	class UpdateInfo : public IRunnable {
 	public:
 		//class holind infomration about updating process
