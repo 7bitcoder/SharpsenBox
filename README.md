@@ -90,7 +90,7 @@ Patcher generates 4 components:
 }
 ```
 
-System  uses also two files that muse be edited manually
+System  uses also one file that muse be edited manually
 * AppInfo.json - Contains main information about game such as current version, link to fileList, and patch files. Update current version of game and add link to new patch file in Versioning section
 ```javascript
 {
@@ -104,7 +104,32 @@ System  uses also two files that muse be edited manually
   }
 }
 ```
-* Games.json - file that contains intofmation about all your games published in LaunchBox
+
+
+
+Now upload files on the internet, remember to have always valid links
+
+## LaunchBox
+Becouse LaunchBox is self updating it contains 3 programs:
+* Updater - program thah updates LaunchBox and Game pages if needed
+* LaunchBox - main program
+* Launcher small program (on Windows is written in C#) that first runs Updater and after its exection LauchBox
+### Updater
+![system](ScreenShots/Updater.png)
+### LaunchBox
+![system](ScreenShots/LaunchBox.png)
+### Updating Details
+User clicks on Launcher -> Updater is executed. First it loads data from files stored in Config folder:
+1. LaunchBoxInfo.json - basic information about LaunchBox, your job is to change GamesInfoRepository (Games.json). Leave AppInfoUrl unchanged becouse this link allows to update LaunchBox (link to my repository with newest version of LaunchBox).
+```javascript
+{
+  "Ver": "1.0",
+  "AppInfoUrl": "https://onedrive.live.com/download?cid=607F7FD0AF3C1C7E&resid=607F7FD0AF3C1C7E%211883&authkey=AGqaPM6gtR-4R0Y",
+  "GamesInfoRepository": "your link to Games.json",
+  "DownloadSpeed": "0"
+}
+```
+2. Games.json - Information about your games published in LaunchBox
 ```javascript
 {
   "Sylio": {
@@ -139,25 +164,29 @@ System  uses also two files that muse be edited manually
   }
 }
 ```
+Now updater downloads Appinfo.json, and Games.json, Updater parses Appinfo and if its needed updates LaunchBox, after that Updater parses Games.json, to check if never games are added to LaunchBox, and updates game pages. Here i need to clarify how u can present your game in launchBox, you have two options first is just to paste valid url in PresentationUrl slot (if u have game website), LaunchBox will just load that link as webBrowser and shows on game page, second options is to write your own qml page (qml is verry simple) if its too hard u can use my example (exampleOne.qml) in LaunchBox/Gui folder. I suggest you to use second option becoude webGameEngine works verry slow, and it will be propably hard to fit my design pattern with website. if you use second option u need to specify presentationPackUrl, it is valid link to zip file that should contain files with main qml file. Also u need to specify PresentationQMl as main qml that will be dynamicly loaded by LaunchBox. when u will need to change this presentation page just increment PresentationVer in Games.json file stored on the internet. When while updating versions differ Updater downloads this zip packet and restore it for LaunchBox. 
 
-
-Now upload files on the internet, remember to have always valid links
-
-## LaunchBox
-Becouse LaunchBox is self updating it contains 3 programs:
-* Updater - program thah updates LaunchBox and Game pages if needed
-* LaunchBox - main program
-* Launcher small program (on Windows is written in C#) that first runs Updater and after its exection LauchBox
-### Updater
-![system](ScreenShots/Updater.png)
-### LaunchBox
-![system](ScreenShots/LaunchBox.png)
-### Updating Details
-
+When LaunchBox is up to date and game pages are updated, Launcher executes LaunchBox, user can intstall or update game (when installing LaunchBox just downloads all packets without parsing patch files). When Update process starts, LaunchBox downloads AppInfo.json by url specified in Games.json, it parses AppInfo to get version if it differs from actual than update process relly starts fileList.json is beeing downloaded next with patch files (links are specified in AppInfo.json), now Aplication parses information to get which packets must be downloaded to udate game. Next these packets are downloaded and unpacked to game directory, removed files (specified in patch files) are removed from game directory, and update is done. LaunchBox also can pause update process and abort, uninstallation is supported. 
 ## Options
 ### If you want to deploy your game witch LaunchBox you have 3 options
 #### Clone reposotory and modify code. 
 It was my first Project witch qml so code is spaghetti. I used Qt framework with Curl
-# Libraries
-## Curl - use conan to install
-## QT - path in qt paths
+# Frameworks/Libaries/Tools
+* [Qt](https://www.qt.io/) Gui framework
+* [Curl](https://curl.haxx.se/libcurl/c/libcurl.html) Library used to download files
+* [LibArchieve](https://www.libarchive.org/) Library used to zip/unzip packets
+* [LibZip](https://libzip.org/) Library used to zip/unzip packets
+* [Conan](https://conan.io/) C++ library repository
+* [Cmake](https://cmake.org/) C++ build tool
+* [VisualStudio](https://visualstudio.microsoft.com/pl/free-developer-offers/) IDE
+
+# License
+
+Distributed under the MIT License. See `LICENSE` for more information.
+
+
+# Author
+
+Sylwester Dawida </br>
+Poland, AGH </br>
+2020
