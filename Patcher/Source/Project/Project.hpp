@@ -76,7 +76,7 @@ namespace pr {
 		void insertFileData(std::filesystem::path file);
 		bool newProject() { return newProject_; }
 		void insertData(dt::TreeItem* item, QJsonObject& object);
-		void readPacket(dt::TreeItem* item, QJsonObject& object, dt::TreeItem* root);
+		void readPacket(dt::TreeItem* item, QJsonObject& object, dt::TreeItem* root, std::filesystem::path path);
 		void verify(dt::TreeItem* item);
 		Q_INVOKABLE void loadProject();
 	signals:

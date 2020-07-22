@@ -215,45 +215,81 @@ namespace pr {
 			auto* newPacket = new dt::TreeModel(true); //packet
 			newPacket->setPacketName(it.key());
 			dt::TreeItem* item = dt::TreeModel::getObject().rootItemPtr();
-			readPacket(newPacket->rootItemPtr(), pack["Files"].toObject(), item);
+			std::filesystem::path p;
+			readPacket(newPacket->rootItemPtr(), pack["Files"].toObject(), item, p);
 			packets.append(newPacket);
 		}
 		numberOFPacks = packets.size();
 		nmbChanged();
 	}
 
-	void Project::readPacket(dt::TreeItem* item, QJsonObject& object, dt::TreeItem* root) {
+	namespace {
+		void addDeleted(QJsonObject& object, dt::TreeItem* root, std::filesystem::path path) {
+			for (auto& it = object.begin(); it != object.end(); it++) {
+				QJsonObject& pack = it->toObject();
+				if (!pack.isEmpty() && !pack.begin()->isObject()) { // for sure object is file
+					auto size = std::stoll(pack["Size"].toString().toStdString());
+					auto& sha = pack["Sha"].toString();
+					auto* appended = root->appendChildren({ it.key(),  (path / it.key().toStdString()).c_str() }, false, sha, size);
+					appended->setState(dt::TreeItem::fileState::DELETED);
+				} else {
+					auto* appended = root->appendChildren({ it.key(),  (path / it.key().toStdString()).c_str() }, true, "", 0);
+					appended->setState(dt::TreeItem::fileState::DELETED);
+					addDeleted(pack, appended, path / it.key().toStdString());
+				}
+			}
+		}
+	}
+
+	void Project::readPacket(dt::TreeItem* item, QJsonObject& object, dt::TreeItem* root, std::filesystem::path path) {
 		auto size = root->childCount();
 		for (size_t i = 0; i < size; i++) {
-			auto* child = item->child(i);
+			auto* child = root->child(i);
 			if (!child->checked() && !child->isDirectory()) { // item is unchecked file
 				auto fileName = child->fileName();
 				auto it = object.find(fileName);
 				if (it != object.end()) { // found object in packet
 					QJsonObject& file = it->toObject();
 					if (!file.isEmpty() && !file.begin()->isObject()) { // for sure object is file
-						auto& size = file["Size"].toString().toStdString();
+						auto size = std::stoll(file["Size"].toString().toStdString());
 						auto& sha = file["Sha"].toString();
-						auto* appended = item->appendChildren({ it.key(),  fullPath.generic_string().c_str() }, false, , std::stoll(size));
-						verify(appended);
+						auto* appended = item->appendChildren({ it.key(),  child->path() }, false, sha, size);
+						bool sizeCmp = size == child->fileSize(), shaCmp = sha == child->fileSha();
+						if (!sizeCmp || !shaCmp) {
+							appended->setState(dt::TreeItem::fileState::CHANGED);
+						} else if (sizeCmp && shaCmp) {
+							appended->setState(dt::TreeItem::fileState::SAME);
+						} else {
+							//problem
+						}
+						child->markRemove();
+					} else {
+						std::cout << "file: "; //todo
+						throw std::exception();
 					}
-					child->
+					child->check(); // mark as checked
+					object.erase(it);
+				} else { // not found = new file apered
+
+				}
+
+			} else if (child->isDirectory()) {
+				auto fileName = child->fileName();
+				auto it = object.find(fileName);
+				if (it != object.end()) { // found object in packet					
+					QJsonObject& file = it->toObject();
+					if (!file.isEmpty()) {
+						auto* appended = item->appendChildren({ it.key(),  child->path() }, true, "", 0);
+						appended->setState(dt::TreeItem::fileState::SAME);
+						readPacket(child, file, appended, path / fileName.toStdString());
+					}
+					object.erase(it);
+					child->markRemove();
+					child->check(); // mark as checked
 				}
 			}
 		}
-		for (auto& it = object.begin(); it != object.end(); it++) {
-			QJsonObject& file = it->toObject();
-			if (!file.isEmpty() && !file.begin()->isObject()) { //file
-				auto& size = file["Size"].toString().toStdString();
-				auto* appended = item->appendChildren({ it.key(),  fullPath.generic_string().c_str() }, false, file["Sha"].toString(), std::stoll(size));
-				verify(appended);
-			} else {
-				auto* appended = item->appendChildren({ it.key(),  fullPath.generic_string().c_str() }, true, "", 0);
-				verify(appended);
-				readPacket(appended, file, fullPath);
-			}
-			fullPath = fullPath.parent_path();
-		}
+		addDeleted(object, item, path);
 	}
 
 	void Project::verify(dt::TreeItem* item) {
