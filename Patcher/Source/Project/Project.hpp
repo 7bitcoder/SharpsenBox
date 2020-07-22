@@ -51,8 +51,8 @@ namespace pr {
 		Q_INVOKABLE void setGameName(QString str) { gameName = str.toStdString(); }
 		Q_INVOKABLE void setProjectName(QString str) { projectName = str.toStdString(); }
 
-		Q_INVOKABLE void setProjectPath(QString str) { 
-			projectPath = str; 
+		Q_INVOKABLE void setProjectPath(QString str) {
+			projectPath = str;
 			QFile file;
 			//open LaunchBoxConfig file
 			file.setFileName(projectPath);
@@ -76,7 +76,7 @@ namespace pr {
 		void insertFileData(std::filesystem::path file);
 		bool newProject() { return newProject_; }
 		void insertData(dt::TreeItem* item, QJsonObject& object);
-		void readPacket(dt::TreeItem* item, QJsonObject& object, std::filesystem::path& fullPath);
+		void readPacket(dt::TreeItem* item, QJsonObject& object, dt::TreeItem* root);
 		void verify(dt::TreeItem* item);
 		Q_INVOKABLE void loadProject();
 	signals:

@@ -214,18 +214,35 @@ namespace pr {
 			QJsonObject& pack = it->toObject();
 			auto* newPacket = new dt::TreeModel(true); //packet
 			newPacket->setPacketName(it.key());
-			std::filesystem::path fullpath;
-			readPacket(newPacket->rootItemPtr(), pack["Files"].toObject(), fullpath);
+			dt::TreeItem* item = dt::TreeModel::getObject().rootItemPtr();
+			readPacket(newPacket->rootItemPtr(), pack["Files"].toObject(), item);
 			packets.append(newPacket);
 		}
 		numberOFPacks = packets.size();
 		nmbChanged();
 	}
 
-	void Project::readPacket(dt::TreeItem* item, QJsonObject& object, std::filesystem::path& fullPath) {
+	void Project::readPacket(dt::TreeItem* item, QJsonObject& object, dt::TreeItem* root) {
+		auto size = root->childCount();
+		for (size_t i = 0; i < size; i++) {
+			auto* child = item->child(i);
+			if (!child->checked() && !child->isDirectory()) { // item is unchecked file
+				auto fileName = child->fileName();
+				auto it = object.find(fileName);
+				if (it != object.end()) { // found object in packet
+					QJsonObject& file = it->toObject();
+					if (!file.isEmpty() && !file.begin()->isObject()) { // for sure object is file
+						auto& size = file["Size"].toString().toStdString();
+						auto& sha = file["Sha"].toString();
+						auto* appended = item->appendChildren({ it.key(),  fullPath.generic_string().c_str() }, false, , std::stoll(size));
+						verify(appended);
+					}
+					child->
+				}
+			}
+		}
 		for (auto& it = object.begin(); it != object.end(); it++) {
 			QJsonObject& file = it->toObject();
-			fullPath /= it.key().toStdString();
 			if (!file.isEmpty() && !file.begin()->isObject()) { //file
 				auto& size = file["Size"].toString().toStdString();
 				auto* appended = item->appendChildren({ it.key(),  fullPath.generic_string().c_str() }, false, file["Sha"].toString(), std::stoll(size));

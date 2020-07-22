@@ -28,10 +28,14 @@ namespace st {
 		try {
 			actual_ = 1;
 			total_ = filesInDir(dt::TreeModel::getRoot() / root_);
-			if (load)
-				loadData(root_);
-			else
-				setupModelData(root_, parent_);
+			//if (load)
+			//	loadData(root_);
+			//else
+			setupModelData(root_, parent_);
+			if (load) {
+				pr::Project::getObject().loadProject();
+				setupLoaded();
+			}
 			ended();
 		} catch (std::exception& e) {
 			std::cout << e.what();
@@ -61,25 +65,25 @@ namespace st {
 	}
 
 	void setUpModel::setupModelDataAfterLoad(dt::TreeItem* parent, const std::filesystem::path& parentPath) {
-		for (; it != order_.rend(); it++) {
-			g--;
-			auto& path = *it;
-			std::filesystem::path p = path->path.toStdString();
-			auto& par = p.parent_path();
-			if (par != parentPath && par.parent_path() != parentPath)
-				return;
-			if (path->dir) {
-				auto* appended = parent->appendChildren({ p.filename().generic_string().c_str(),  p.generic_string().c_str() }, true, "", 0);
-				appended->setState(dt::TreeItem::fileState::ADDED);
-				setupModelData(++it, appended, p);
-			} else {
-				auto* appended = parent->appendChildren({ p.filename().generic_string().c_str(),  p.generic_string().c_str() }, false, path->sha, path->size);
-				appended->setState(dt::TreeItem::fileState::ADDED);
-			}
-			if (it == order_.rend())
-				break;
-		}
-		int gg = 0;
+		//r (; it != order_.rend(); it++) {
+		//	g--;
+		//	auto& path = *it;
+		//	std::filesystem::path p = path->path.toStdString();
+		//	auto& par = p.parent_path();
+		//	if (par != parentPath && par.parent_path() != parentPath)
+		//		return;
+		//	if (path->dir) {
+		//		auto* appended = parent->appendChildren({ p.filename().generic_string().c_str(),  p.generic_string().c_str() }, true, "", 0);
+		//		appended->setState(dt::TreeItem::fileState::ADDED);
+		//		setupModelData(++it, appended, p);
+		//	} else {
+		//		auto* appended = parent->appendChildren({ p.filename().generic_string().c_str(),  p.generic_string().c_str() }, false, path->sha, path->size);
+		//		appended->setState(dt::TreeItem::fileState::ADDED);
+		//	}
+		//	if (it == order_.rend())
+		//		break;
+		//}
+		//int gg = 0;
 	}
 
 	void setUpModel::loadData(const std::filesystem::path lines) {
@@ -101,7 +105,6 @@ namespace st {
 				it->it = order_.begin();
 			}
 		}
-		pr::Project::getObject().loadProject();
-		setupLoaded();
+
 	}
 }

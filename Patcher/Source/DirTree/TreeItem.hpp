@@ -33,9 +33,12 @@ namespace dt {
 
 		qint64 fileSize() { return size; }
 		QString& fileSha() { return sha; }
+		QString fileName() { return data(0).toString(); }
 		QString path() { return data(1).toString(); }
 		bool isDirectory() { return isDir; }
-
+		void markRemove() { toRemove = true; }
+		void check() { checked_ = true; }
+		bool checked() { return checked_; }
 	private:
 		fileState state;
 		qint64 size = 0;
@@ -44,5 +47,7 @@ namespace dt {
 		QVector<TreeItem*> childItems;
 		QVector<QVariant> itemData;
 		TreeItem* parentItem;
+		bool toRemove = false;
+		bool checked_ = false;
 	};
 }
