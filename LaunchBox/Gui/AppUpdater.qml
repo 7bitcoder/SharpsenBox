@@ -21,8 +21,7 @@ ApplicationWindow {
 
     property int status: _AppUpdaterManager.updateState
     property string statusStr: "Searching for updates"
-    property int progress: 0
-
+    property int progress: _AppUpdaterManager.progress
     onStatusChanged: {
         switch (status) {
         case -1:
@@ -69,7 +68,7 @@ ApplicationWindow {
 
     Timer {
         id: exiter
-        interval: 5000
+        interval: 1000
         onTriggered: {
             Qt.quit()
         }
@@ -79,7 +78,7 @@ ApplicationWindow {
 
     Timer {
         id: infoTim
-        interval: 1000
+        interval: 500
         onTriggered: {
             _AppUpdaterManager.checkForUpdates()
         }
@@ -87,12 +86,6 @@ ApplicationWindow {
         running: true
     }
 
-    Timer {
-        id: barUpdater
-        interval: 50
-        repeat: true
-        running: true
-    }
     property point startMousePos
     property point startWindowPos
 

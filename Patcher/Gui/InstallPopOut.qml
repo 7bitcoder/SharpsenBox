@@ -13,8 +13,8 @@ Rectangle {
     property string gameDir: gamefolderDialog.folder.toString(
                                           ).substring(8)
 
-    property string projectNameStr: "SylioProj"
-    property string gameNameStr: "Sylio"
+    property string projectNameStr: ""
+    property string gameNameStr: ""
 
     Rectangle {
         anchors.fill: parent
@@ -68,7 +68,7 @@ Rectangle {
             FolderDialog {
                 id: folderDialog
                 title: "Chose installation folder"
-                folder: "folder:/C:/Users/Sylwester/Desktop"
+                folder: ""
                 options: FolderDialog.ShowDirsOnly
                 onAccepted: {
                     projectDir = folderDialog.folder.toString(
@@ -152,7 +152,7 @@ Rectangle {
             FolderDialog {
                 id: gamefolderDialog
                 title: "Chose installation folder"
-                folder: "folder:/C:/Users/Sylwester/Desktop/Sylio"
+                folder: ""
                 options: FolderDialog.ShowDirsOnly
                 onAccepted: {
                     gameDir = gamefolderDialog.folder.toString(

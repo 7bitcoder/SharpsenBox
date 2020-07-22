@@ -210,7 +210,7 @@ namespace pr {
 
 		auto& packets = dt::TreeModel::getObject().getPackets();
 		QJsonObject AppComponents = d["AppComponents"].toObject();
-		for (auto & it = AppComponents.begin(); it != AppComponents.end(); it++){
+		for (auto& it = AppComponents.begin(); it != AppComponents.end(); it++) {
 			QJsonObject& pack = it->toObject();
 			auto* newPacket = new dt::TreeModel(true); //packet
 			newPacket->setPacketName(it.key());
@@ -245,9 +245,15 @@ namespace pr {
 		auto& path = item->path();
 		auto it = map.find(path);
 		if (it == map.end()) { // new element
-			item->setState(dt::TreeItem::fileState::DELETED);
+			if (item->isDirectory()) {
+				auto full = AppDir_ / item->path().toStdString();
+				if (!std::filesystem::exists(full))
+					item->setState(dt::TreeItem::fileState::DELETED);
+			} else { // file so muse be deleted
+				item->setState(dt::TreeItem::fileState::DELETED);
+			}
 		} else {
-			if ( !it->dir && !item->isDirectory() ) {
+			if (!it->dir && !item->isDirectory()) {
 				bool sizeCmp = it->size == item->fileSize(), shaCmp = it->sha == item->fileSha();
 				if (!sizeCmp || !shaCmp) {
 					item->setState(dt::TreeItem::fileState::CHANGED);

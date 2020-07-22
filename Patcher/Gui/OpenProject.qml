@@ -7,10 +7,9 @@ Rectangle {
     implicitHeight: 800
     implicitWidth: 800
     property int normalTextSize: 15
-    property string projectDir: folderDialog.folder.toString(
-                                          ).substring(8)
+    property string projectDir: ""
 
-    property string projectNameStr: "SylioProj"
+    property string projectNameStr: ""
 
     Rectangle {
         anchors.fill: parent
@@ -64,7 +63,7 @@ Rectangle {
             FileDialog {
                 id: folderDialog
                 title: "Chose installation folder"
-                folder: "folder:/C:/Users/Sylwester/Desktop"
+                folder: ""
                 nameFilters: [ "Project files (*.json)" ]
                 onAccepted: {
                     console.log(folderDialog.fileUrl)
@@ -216,7 +215,7 @@ Rectangle {
             Text {
                 anchors{
                     left: parent.left
-                    top: projectName.bottom
+                    top: folder.bottom
                     topMargin: 30
                 }
                 color: "red"

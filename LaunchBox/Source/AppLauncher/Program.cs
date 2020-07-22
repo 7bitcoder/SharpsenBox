@@ -11,7 +11,7 @@ namespace ChildProcessInTheSameConsole
             Directory.SetCurrentDirectory("./Updater");
             var updater = new ProcessStartInfo
             {
-                FileName = "AppUpdater.exe",
+                FileName = "Updater.exe",
                 Arguments = ""
             };
 

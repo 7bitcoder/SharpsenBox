@@ -464,7 +464,7 @@ Rectangle {
             topMargin: 9
         }
         font.family: latoFont.name
-        font.pixelSize: 12
+        font.pixelSize: 17
         color: "white"
         text: bottomBar.statusInfo
     }
@@ -476,7 +476,7 @@ Rectangle {
             topMargin: 9
         }
         font.family: latoFont.name
-        font.pixelSize: 12
+        font.pixelSize: 17
         color: "white"
         text: percenStr
         visible: bottomBar.state !== bottomBar.none && bottomBar.state !== bottomBar.checking

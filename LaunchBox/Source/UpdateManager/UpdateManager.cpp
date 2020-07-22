@@ -300,12 +300,13 @@ namespace im {
 
 	void UpdateManager::cleanUp(im::IUpdateManager::State finalState, const QString& errorWhat) {
 		cleanUpper_->run();
-		emitState(finalState);
 		if (finalState == im::IUpdateManager::State::ERRORD && !errorWhat.isEmpty())
 			errorEmit(errorWhat);
+		else {
+			emitState(finalState);
+			updateEnded(updateInfo_->getUpdateVersion());
+		}
 		emitVisibleState(im::IUpdateManager::VisibleState::HIDDEN);
-		updateEnded(updateInfo_->getUpdateVersion());
-		//bc::Component<gm::IGameManager>::get().unLock();
 	}
 
 	void UpdateManager::setTotal(qint64 tot) {

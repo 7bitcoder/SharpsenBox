@@ -46,8 +46,10 @@ namespace upd {
 	}
 
 	void AppUpdaterManager::updateInstalled(const QString& version) {
-		updateStatus(im::IUpdateManager::State::COMPLEET);
-		cf_.setVer(version);
+		if (!version.isEmpty()) {
+			updateStatus(im::IUpdateManager::State::COMPLEET);
+			cf_.setVer(version);
+		}
 	}
 
 	void AppUpdaterManager::errorCatched(const QString& what) {

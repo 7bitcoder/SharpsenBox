@@ -1,4 +1,4 @@
-#include "IConfig.hpp"
+﻿#include "IConfig.hpp"
 #include "Game.hpp"
 #include "GameParser.hpp"
 #include <QFile>
@@ -42,6 +42,8 @@ namespace im {
 				auto& hadGame = config.getGame(id);
 				auto& presetationVer = gameObject["PresentationVer"].toString();
 				hadGame.presentationUrl = gameObject["PresentationUrl"].toString();
+				auto& ff = hadGame.PresentationVer.toStdString();
+				auto& ss = presetationVer.toStdString();
 				if (hadGame.presentationUrl.isEmpty() && hadGame.PresentationVer != presetationVer) {
 					auto& url = gameObject["PresentationPackUrl"].toString().toStdString();
 					auto& fileName = hadGame.name.toStdString() + ".zip";

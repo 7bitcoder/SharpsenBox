@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Sylwester\\Desktop\\LaunchBox\\DesktopAplication\\Source\\Framework\\Launcher.csproj": {}
+    "C:\\Users\\Sylwester\\Desktop\\LaunchBox\\LaunchBox\\Source\\AppLauncher\\Launcher.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Sylwester\\Desktop\\LaunchBox\\DesktopAplication\\Source\\Framework\\Launcher.csproj": {
+    "C:\\Users\\Sylwester\\Desktop\\LaunchBox\\LaunchBox\\Source\\AppLauncher\\Launcher.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Sylwester\\Desktop\\LaunchBox\\DesktopAplication\\Source\\Framework\\Launcher.csproj",
+        "projectUniqueName": "C:\\Users\\Sylwester\\Desktop\\LaunchBox\\LaunchBox\\Source\\AppLauncher\\Launcher.csproj",
         "projectName": "Launcher",
-        "projectPath": "C:\\Users\\Sylwester\\Desktop\\LaunchBox\\DesktopAplication\\Source\\Framework\\Launcher.csproj",
+        "projectPath": "C:\\Users\\Sylwester\\Desktop\\LaunchBox\\LaunchBox\\Source\\AppLauncher\\Launcher.csproj",
         "packagesPath": "C:\\Users\\Sylwester\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Sylwester\\Desktop\\LaunchBox\\DesktopAplication\\Source\\Framework\\obj\\",
+        "outputPath": "C:\\Users\\Sylwester\\Desktop\\LaunchBox\\LaunchBox\\Source\\AppLauncher\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Microsoft\\Xamarin\\NuGet\\"
@@ -51,18 +51,12 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "downloadDependencies": [
-            {
-              "name": "Microsoft.AspNetCore.App.Ref",
-              "version": "[3.1.2, 3.1.2]"
-            }
-          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.300\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.302\\RuntimeIdentifierGraph.json"
         }
       }
     }

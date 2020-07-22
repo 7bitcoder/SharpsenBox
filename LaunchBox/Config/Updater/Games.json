@@ -1,32 +1,47 @@
 ﻿{
-  "Sylio": {
-    "Id": "1",
-    "Ver": "1.0",
-    "GameExecPath": "./Release/Sylio.exe",
-    "PresentationUrl": "https://youtube.pl",
-    "PresentationQml": "",
-    "PresentationPackUrl": "",
-    "PresentationVer": "1.0",
-    "AppInfoUrl": "https://onedrive.live.com/download?cid=607F7FD0AF3C1C7E&resid=607F7FD0AF3C1C7E%211893&authkey=AL4amoGidXqM504"
-  },
   "Rest": {
-    "Id": "2",
-    "Ver": "1.0",
+    "AppInfoUrl": "https://onedrive.live.com/download?cid=607F7FD0AF3C1C7E&resid=607F7FD0AF3C1C7E%211893&authkey=AL4amoGidXqM504",
+    "AutoUpdate": "0",
+    "GameDir": "",
     "GameExecPath": "./Release/Sylio.exe",
-    "PresentationUrl": "",
+    "Id": "2",
+    "Installed": "0",
+    "PresentationPackUrl": "https://onedrive.live.com/download?cid=607F7FD0AF3C1C7E&resid=607F7FD0AF3C1C7E%211946&authkey=AN734DpS69HcjA8",
     "PresentationQml": "ExampleOne.qml",
-    "PresentationPackUrl": "https://onedrive.live.com/download?cid=607F7FD0AF3C1C7E&resid=607F7FD0AF3C1C7E%211884&authkey=ANDR-ZRgV4fY078",
-    "PresentationVer": "2.0",
-    "AppInfoUrl": "https://onedrive.live.com/download?cid=607F7FD0AF3C1C7E&resid=607F7FD0AF3C1C7E%211893&authkey=AL4amoGidXqM504"
+    "PresentationUrl": "",
+    "PresentationVer": "0",
+    "Shortcut": "0",
+    "ShortcutPath": "",
+    "Ver": "0"
   },
   "Rest2": {
-    "Id": "3",
-    "Ver": "1.0",
+    "AppInfoUrl": "https://onedrive.live.com/download?cid=607F7FD0AF3C1C7E&resid=607F7FD0AF3C1C7E%211893&authkey=AL4amoGidXqM504",
+    "AutoUpdate": "0",
+    "GameDir": "",
     "GameExecPath": "./Release/Sylio.exe",
-    "PresentationUrl": "",
+    "Id": "3",
+    "Installed": "0",
+    "PresentationPackUrl": "https://onedrive.live.com/download?cid=607F7FD0AF3C1C7E&resid=607F7FD0AF3C1C7E%211946&authkey=AN734DpS69HcjA8",
     "PresentationQml": "ExampleOne.qml",
-    "PresentationPackUrl": "https://onedrive.live.com/download?cid=607F7FD0AF3C1C7E&resid=607F7FD0AF3C1C7E%211884&authkey=ANDR-ZRgV4fY078",
-    "PresentationVer": "1.0",
-    "AppInfoUrl": "https://onedrive.live.com/download?cid=607F7FD0AF3C1C7E&resid=607F7FD0AF3C1C7E%211893&authkey=AL4amoGidXqM504"
+    "PresentationUrl": "",
+    "PresentationVer": "0",
+    "Shortcut": "0",
+    "ShortcutPath": "",
+    "Ver": "0"
+  },
+  "Sylio": {
+    "AppInfoUrl": "https://onedrive.live.com/download?cid=607F7FD0AF3C1C7E&resid=607F7FD0AF3C1C7E%211893&authkey=AL4amoGidXqM504",
+    "AutoUpdate": "0",
+    "GameDir": "",
+    "GameExecPath": "./Release/Sylio.exe",
+    "Id": "1",
+    "Installed": "0",
+    "PresentationPackUrl": "",
+    "PresentationQml": "",
+    "PresentationUrl": "https://youtube.pl",
+    "PresentationVer": "0",
+    "Shortcut": "0",
+    "ShortcutPath": "",
+    "Ver": "0"
   }
-}
+} <iframe src="https://onedrive.live.com/download?cid=607F7FD0AF3C1C7E&resid=607F7FD0AF3C1C7E%211946&authkey=AN734DpS69HcjA8" width="98" height="120" frameborder="0" scrolling="no"></iframe>
