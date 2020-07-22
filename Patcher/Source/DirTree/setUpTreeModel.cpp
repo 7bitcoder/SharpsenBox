@@ -60,9 +60,9 @@ namespace st {
 		}
 	}
 
-	void setUpModel::setupModelData(QLinkedList<File*>::reverse_iterator& it, dt::TreeItem* parent, const std::filesystem::path& parentPath) {
-
+	void setUpModel::setupModelDataAfterLoad(dt::TreeItem* parent, const std::filesystem::path& parentPath) {
 		for (; it != order_.rend(); it++) {
+			g--;
 			auto& path = *it;
 			std::filesystem::path p = path->path.toStdString();
 			auto& par = p.parent_path();
@@ -79,6 +79,7 @@ namespace st {
 			if (it == order_.rend())
 				break;
 		}
+		int gg = 0;
 	}
 
 	void setUpModel::loadData(const std::filesystem::path lines) {

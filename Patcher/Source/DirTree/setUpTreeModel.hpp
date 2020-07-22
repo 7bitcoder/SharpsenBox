@@ -19,9 +19,10 @@ namespace st {
 		void run() override;
 		void setupModelData(const std::filesystem::path, dt::TreeItem* parent);
 		void setupLoaded() {
-			setupModelData(order_.rbegin(), parent_, "");
+			g = order_.size();
+			setupModelDataAfterLoad(parent_, "");
 		}
-		void setupModelData(QLinkedList<File*>::reverse_iterator& it, dt::TreeItem* parent, const  std::filesystem::path& parentPath);
+		void setupModelDataAfterLoad(dt::TreeItem* parent, const  std::filesystem::path& parentPath);
 		void setRoot(std::filesystem::path root) { root_ = root; }
 		void setParent(dt::TreeItem* parent) { parent_ = parent; }
 		void loadData(const std::filesystem::path lines);
@@ -34,6 +35,7 @@ namespace st {
 		void error(QString err);
 
 	private:
+		int g = 0;
 		size_t total_;
 		size_t actual_;
 		std::filesystem::path root_;
