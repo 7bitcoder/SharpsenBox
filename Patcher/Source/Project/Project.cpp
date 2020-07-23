@@ -230,10 +230,10 @@ namespace pr {
 				if (!pack.isEmpty() && !pack.begin()->isObject()) { // for sure object is file
 					auto size = std::stoll(pack["Size"].toString().toStdString());
 					auto& sha = pack["Sha"].toString();
-					auto* appended = root->appendChildren({ it.key(),  (path / it.key().toStdString()).c_str() }, false, sha, size);
+					auto* appended = root->appendChildren({ it.key(),  (path / it.key().toStdString()).generic_string().c_str() }, false, sha, size);
 					appended->setState(dt::TreeItem::fileState::DELETED);
 				} else {
-					auto* appended = root->appendChildren({ it.key(),  (path / it.key().toStdString()).c_str() }, true, "", 0);
+					auto* appended = root->appendChildren({ it.key(),  (path / it.key().toStdString()).generic_string().c_str() }, true, "", 0);
 					appended->setState(dt::TreeItem::fileState::DELETED);
 					addDeleted(pack, appended, path / it.key().toStdString());
 				}
@@ -247,6 +247,7 @@ namespace pr {
 			auto* child = root->child(i);
 			if (!child->checked() && !child->isDirectory()) { // item is unchecked file
 				auto fileName = child->fileName();
+				auto& f = fileName.toStdString();
 				auto it = object.find(fileName);
 				if (it != object.end()) { // found object in packet
 					QJsonObject& file = it->toObject();
@@ -275,13 +276,14 @@ namespace pr {
 
 			} else if (child->isDirectory()) {
 				auto fileName = child->fileName();
+				auto& f = fileName.toStdString();
 				auto it = object.find(fileName);
 				if (it != object.end()) { // found object in packet					
 					QJsonObject& file = it->toObject();
 					if (!file.isEmpty()) {
 						auto* appended = item->appendChildren({ it.key(),  child->path() }, true, "", 0);
 						appended->setState(dt::TreeItem::fileState::SAME);
-						readPacket(child, file, appended, path / fileName.toStdString());
+						readPacket(appended, file, child, path / fileName.toStdString());
 					}
 					object.erase(it);
 					child->markRemove();

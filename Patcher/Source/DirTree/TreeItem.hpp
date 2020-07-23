@@ -37,6 +37,7 @@ namespace dt {
 		QString path() { return data(1).toString(); }
 		bool isDirectory() { return isDir; }
 		void markRemove() { toRemove = true; }
+		bool isMarkRemove() { return toRemove; }
 		void check() { checked_ = true; }
 		bool checked() { return checked_; }
 	private:

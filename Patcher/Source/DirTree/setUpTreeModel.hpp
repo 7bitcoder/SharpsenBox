@@ -18,11 +18,7 @@ namespace st {
 	public:
 		void run() override;
 		void setupModelData(const std::filesystem::path, dt::TreeItem* parent);
-		void setupLoaded() {
-			g = order_.size();
-			setupModelDataAfterLoad(parent_, "");
-		}
-		void setupModelDataAfterLoad(dt::TreeItem* parent, const  std::filesystem::path& parentPath);
+		bool setupModelDataAfterLoad(dt::TreeItem* parent);
 		void setRoot(std::filesystem::path root) { root_ = root; }
 		void setParent(dt::TreeItem* parent) { parent_ = parent; }
 		void loadData(const std::filesystem::path lines);

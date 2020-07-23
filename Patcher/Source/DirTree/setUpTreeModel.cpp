@@ -34,7 +34,7 @@ namespace st {
 			setupModelData(root_, parent_);
 			if (load) {
 				pr::Project::getObject().loadProject();
-				setupLoaded();
+				setupModelDataAfterLoad(parent_);
 			}
 			ended();
 		} catch (std::exception& e) {
@@ -64,26 +64,26 @@ namespace st {
 		}
 	}
 
-	void setUpModel::setupModelDataAfterLoad(dt::TreeItem* parent, const std::filesystem::path& parentPath) {
-		//r (; it != order_.rend(); it++) {
-		//	g--;
-		//	auto& path = *it;
-		//	std::filesystem::path p = path->path.toStdString();
-		//	auto& par = p.parent_path();
-		//	if (par != parentPath && par.parent_path() != parentPath)
-		//		return;
-		//	if (path->dir) {
-		//		auto* appended = parent->appendChildren({ p.filename().generic_string().c_str(),  p.generic_string().c_str() }, true, "", 0);
-		//		appended->setState(dt::TreeItem::fileState::ADDED);
-		//		setupModelData(++it, appended, p);
-		//	} else {
-		//		auto* appended = parent->appendChildren({ p.filename().generic_string().c_str(),  p.generic_string().c_str() }, false, path->sha, path->size);
-		//		appended->setState(dt::TreeItem::fileState::ADDED);
-		//	}
-		//	if (it == order_.rend())
-		//		break;
-		//}
-		//int gg = 0;
+	bool setUpModel::setupModelDataAfterLoad(dt::TreeItem* parent) {
+		auto ff = parent->fileName().toStdString();
+		auto size = parent->childCount();
+		for (long long i = 0; i < size; i++) {
+			auto* child = parent->child(i);
+			if (child->childCount() == 0 && child->isMarkRemove()) {
+				parent->removeChildren(i,1);
+				size--;
+				i--;
+			} else if (child->childCount()) {
+				if (setupModelDataAfterLoad(child)) {
+					parent->removeChildren(i, 1);
+					size--;
+					i--;
+				}
+			}
+		}
+		if (parent->childCount() == 0 && parent->isMarkRemove())
+			return true;
+		return false;
 	}
 
 	void setUpModel::loadData(const std::filesystem::path lines) {
