@@ -47,5 +47,6 @@ target_include_directories(LaunchBox PUBLIC
     "../QLoadingBar"
     "../QLoadingBar/h")
 
+file( COPY  ${CMAKE_SOURCE_DIR}/orbit2.ico DESTINATION  ${CMAKE_BINARY_DIR} )
 
 install(TARGETS LaunchBox DESTINATION ${LaunchBoxPath}/bin)

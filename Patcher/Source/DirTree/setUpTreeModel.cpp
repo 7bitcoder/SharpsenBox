@@ -56,10 +56,12 @@ namespace st {
 			actual_++;
 			if (path.is_directory()) {
 				auto* appended = parent->appendChildren({ p.filename().generic_string().c_str(),  p.generic_string().c_str() }, true, "", 0);
+				appended->setState(dt::TreeItem::fileState::ADDED);
 				setupModelData(p, appended);
 			} else {
 				auto data = fileChecksum(path.path().generic_string().c_str(), QCryptographicHash::Algorithm::RealSha3_256);
 				auto* appended = parent->appendChildren({ p.filename().generic_string().c_str(),  p.generic_string().c_str() }, false, data.first, data.second);
+				appended->setState(dt::TreeItem::fileState::ADDED);
 			}
 		}
 	}

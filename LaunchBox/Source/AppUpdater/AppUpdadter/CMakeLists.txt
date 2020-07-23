@@ -39,6 +39,7 @@ target_include_directories(Updater PUBLIC
     "../../Component/h")
 
 set_target_properties(Updater PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Updater")
+file( COPY  ${CMAKE_SOURCE_DIR}/orbit2.ico DESTINATION  "${CMAKE_BINARY_DIR}/Updater" )
 
 
 install(TARGETS Updater DESTINATION ${UpdaterPath}/Updater)

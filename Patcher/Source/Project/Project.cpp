@@ -181,6 +181,8 @@ namespace pr {
 				object.insert(fullPath.filename().c_str(), file);
 				packer_.write(fullPath.generic_string(), child->path().toStdString(), child->isDirectory());
 				rootObject_->insert(child->path(), fileList);
+			} else {
+				int ff = 0;
 			}
 			switch (child->getState()) {
 			case dt::TreeItem::fileState::ADDED:

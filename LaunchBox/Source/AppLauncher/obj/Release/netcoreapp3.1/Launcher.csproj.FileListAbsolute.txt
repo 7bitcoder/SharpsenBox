@@ -23,3 +23,4 @@ C:\Users\Sylwester\Desktop\LaunchBox\LaunchBox\Source\AppLauncher\obj\Release\ne
 C:\Users\Sylwester\Desktop\LaunchBox\LaunchBox\Source\AppLauncher\obj\Release\netcoreapp3.1\Launcher.dll
 C:\Users\Sylwester\Desktop\LaunchBox\LaunchBox\Source\AppLauncher\obj\Release\netcoreapp3.1\Launcher.pdb
 C:\Users\Sylwester\Desktop\LaunchBox\LaunchBox\Source\AppLauncher\obj\Release\netcoreapp3.1\Launcher.genruntimeconfig.cache
+C:\Users\Sylwester\Desktop\LaunchBox\LaunchBox\Source\AppLauncher\obj\Release\netcoreapp3.1\Launcher.csprojAssemblyReference.cache
