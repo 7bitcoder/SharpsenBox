@@ -3,7 +3,7 @@ LaunchBox is free game launcher, you can use this program, publish many games in
 
 System is complicated i tried to desctibe it in next chapters but as always practise presentation is best so here is youtube link with full explanation/tutorial 101, how to use this system to deploy game.
 
---------ytlink---------
+https://www.youtube.com/watch?v=vECiQiPY74w
 ## Downloads 
 ### Windows 64 bit
 * Patcher
