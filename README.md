@@ -2,6 +2,8 @@
 LaunchBox is free game launcher, you can use this program, publish many games in one place, write your own presentation game pages or use website for this purpose (LaunchBox will load website as webBrowser). Main problems are solved such as version checking and updating, installing/uninstalling, this program is also self updating, when i will make new release LaunchBox will notice that and self update. LaunchBox is written in qt-qml/c++. Currenty system works only on windows i will port it on Linux asap
 
 System is complicated i tried to desctibe it in next chapters but as always practise presentation is best so here is youtube link with full explanation/tutorial 101, how to use this system to deploy game.
+
+![Alt Text](https://media.giphy.com/media/XDoXCIOm2zEtiuyNzo/giphy.gif)
 ### Youtube tutorial
 https://www.youtube.com/watch?v=vECiQiPY74w
 ## Downloads 
