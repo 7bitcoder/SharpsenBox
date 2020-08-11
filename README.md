@@ -221,13 +221,13 @@ Now updater downloads Appinfo.json, and Games.json, Updater parses Appinfo and i
 When LaunchBox is up to date and game pages are updated, Launcher executes LaunchBox, user can intstall or update game (when installing LaunchBox just downloads all packets without parsing patch files). When Update process starts, LaunchBox downloads AppInfo.json by url specified in Games.json, it parses AppInfo to get version if it differs from actual than update process relly starts, fileList.json is beeing downloaded next, with patch files (links are specified in AppInfo.json). Now Aplication parses information to get which packets must be downloaded to udate game. Next these packets are downloaded and unpacked to game directory, removed files (specified in patch files) are removed from game directory, and update is done. LaunchBox also can pause update process and abort, uninstallation is supported. 
 
 # Frameworks/Libaries/Tools
-* [Qt](https://www.qt.io/) Gui framework
-* [Curl](https://curl.haxx.se/libcurl/c/libcurl.html) Library used to download files
-* [LibArchieve](https://www.libarchive.org/) Library used to zip/unzip packets
-* [LibZip](https://libzip.org/) Library used to zip/unzip packets
-* [Conan](https://conan.io/) C++ library repository
-* [Cmake](https://cmake.org/) C++ build tool
-* [VisualStudio](https://visualstudio.microsoft.com/pl/free-developer-offers/) IDE
+* [Qt/Qml](https://www.qt.io/) - Gui framework
+* [Curl](https://curl.haxx.se/libcurl/c/libcurl.html) - Library used to download files
+* [LibArchieve](https://www.libarchive.org/) - Library used to zip/unzip packets
+* [LibZip](https://libzip.org/) - Library used to zip/unzip packets
+* [Conan](https://conan.io/) - C++ library repository
+* [Cmake](https://cmake.org/) - C++ build tool
+* [VisualStudio](https://visualstudio.microsoft.com/pl/free-developer-offers/) - IDE
 
 # License
 
