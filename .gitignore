@@ -1,14 +1,14 @@
 ﻿
-LaunchBox/out/
-LaunchBox/deployLauncher.bat
-LaunchBox/gitGui.bat
-LaunchBox/.vs
-LaunchBox/QtPaths.json
+SharpsenBox/out/
+SharpsenBox/deployLauncher.bat
+SharpsenBox/gitGui.bat
+SharpsenBox/.vs
+SharpsenBox/QtPaths.json
 
-LaunchBox/conan.lock
-LaunchBox/conanbuildinfo.cmake
-LaunchBox/conaninfo.txt
-LaunchBox/conanbuildinfo.txt
+SharpsenBox/conan.lock
+SharpsenBox/conanbuildinfo.cmake
+SharpsenBox/conaninfo.txt
+SharpsenBox/conanbuildinfo.txt
 
 Patcher/out/
 Patcher/deployLauncher.bat
