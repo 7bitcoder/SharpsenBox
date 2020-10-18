@@ -4,7 +4,7 @@ SharpsenBox is free game launcher, you can use this program, publish many games 
 System is complicated i tried to desctibe it in next chapters but as always practise presentation is best so here is youtube link with full explanation/tutorial 101, how to use this system to deploy game.
 
 ![Alt Text](https://media.giphy.com/media/XDoXCIOm2zEtiuyNzo/giphy.gif)
-### Pesentation
+### Prsentation
 https://www.youtube.com/watch?v=IHhCmWrRuaU&
 ### Youtube tutorial
 https://www.youtube.com/watch?v=vECiQiPY74w
