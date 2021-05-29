@@ -16,15 +16,15 @@ namespace im {
 			file.setFileName(path.generic_string().c_str());
 			file.open(QIODevice::ReadOnly | QIODevice::Text);
 			val = file.readAll();
-			auto& ghj = val.toStdString();
+			auto ghj = val.toStdString();
 			file.close();
 			QJsonDocument d = QJsonDocument::fromJson(val.toUtf8());
 
 			versionToUpdate_ = d["Ver"].toString();
 			auto& actualVersion = updateInfo_->getActualVersion();
 
-			auto& tt = actualVersion.toStdString();
-			auto& gg = versionToUpdate_.toStdString();
+			auto tt = actualVersion.toStdString();
+			auto gg = versionToUpdate_.toStdString();
 
 			auto fileListUrl = d["FileList"].toString();
 			pathFiles_.push_back({ fileListUrl.toStdString(), "FileList.json" });
@@ -42,9 +42,9 @@ namespace im {
 			error("Unexpected error ocured while reading update file");
 		}
 	}
-	void AppInfoParser::getPathUrls(QJsonObject& pathList) {
+	void AppInfoParser::getPathUrls(const QJsonObject& pathList) {
 		for (auto it = pathList.begin(); it != pathList.end(); it++) {
-			auto& ff = it.key().toStdString();
+			auto ff = it.key().toStdString();
 			auto& actualVer = updateInfo_->getActualVersion();
 			if (it.key() <= actualVer)
 				continue;

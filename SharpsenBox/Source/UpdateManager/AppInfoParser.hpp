@@ -24,7 +24,7 @@ namespace im {
 		void run() override;
 		void reset() override;
 	private:
-		void getPathUrls(QJsonObject& pathList);
+		void getPathUrls(const QJsonObject& pathList);
 
 		QString versionToUpdate_;
 		std::filesystem::path parseInfoFileName = "AppInfo.json";

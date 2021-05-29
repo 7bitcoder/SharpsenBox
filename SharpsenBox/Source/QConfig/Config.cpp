@@ -33,7 +33,7 @@ namespace cf {
 			if (!std::filesystem::exists(getConfigJson()))
 				;//problem
 			QString val = readJsonFile(getConfigJson().generic_string().c_str());
-			auto& ff = val.toStdString();
+			auto ff = val.toStdString();
 			QJsonDocument d = QJsonDocument::fromJson(val.toUtf8());
 
 			// Read settings
@@ -160,9 +160,9 @@ namespace cf {
 			std::filesystem::path path = getenv("PROGRAMFILES");
 			return QUrl::fromLocalFile(path.generic_string().c_str());
 		} else { //mac /linux
-			return "";
+			return QString();
 		}
-		return "";
+		return QString();
 	}
 
 

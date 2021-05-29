@@ -36,8 +36,8 @@ namespace im {
 		std::string getErrorStr(int code);
 		void emitStatus();
 
-		static int64_t readFile(archive* a, void* client_data, const void** buff);
-		static int ArchieveInstaller::closeFile(archive* a, void* client_data);
+		static SSIZE_T readFile(archive* a, void* client_data, const void** buff);
+		static int closeFile(archive* a, void* client_data);
 
 		std::filesystem::path destinationDir_;
 		std::ifstream file;

@@ -1,8 +1,8 @@
 [requires]
-libcurl/7.52.1@bincrafters/stable
+libcurl/7.76.0
 zlib/1.2.11@conan/stable
 libarchive/3.4.0
-gtest/1.8.0@bincrafters/stable
+gtest/1.10.0
 
 [generators]
 cmake

@@ -4,6 +4,8 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin )
 set( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin )
 set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib )
+set( CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+set( CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
 option(AUTO_QT_LIBS "Runs Qt ulility program to automaticly add qt/qml libraries to bin folder" OFF)
 option(BUILD_TESTS "Build tests" OFF)
@@ -76,10 +78,8 @@ set(pages ${CMAKE_SOURCE_DIR}/Gui)
 file( COPY  ${totalPath}/SharpsenBoxInfo.json ${totalPath}/Games.json DESTINATION  ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/../Config )
 file( COPY  ${pages}/ExampleOne.qml ${pages}/ExampleTwo.qml DESTINATION  ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/../Pages )
 
-set(UpdaterPath Updater)
+set(SharpsenBoxPath ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/../SharpsenBox)
 
-set(SharpsenBoxPath SharpsenBox)
+set(PatherPath ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/../Pather)
 
-set(PatherPath Pather)
-
-set(TestPath Tests)
+set(TestPath ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/../Tests)

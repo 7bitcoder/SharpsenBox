@@ -105,7 +105,7 @@ namespace im {
 				auto& files = updateInfo_->getFiles();
 				auto size = files.size();
 				for (size_t i = 0; !cancelled && i < size; i++) {
-					auto& url = files.at(i).url.generic_string();
+					auto url = files.at(i).url.generic_string();
 					auto& filename = files.at(i).fileName;
 					lastDownload_ = 0;
 					outfile_ = (downloadDir / filename).generic_string();

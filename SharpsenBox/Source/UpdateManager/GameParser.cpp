@@ -14,15 +14,15 @@ namespace im {
 			QFile file;
 			//open SharpsenBoxConfig file
 			auto& config = bc::Component<cf::IConfig>::get();
-			auto& path = config.getDownloadDir() / "Games.json";
+			auto path = config.getDownloadDir() / "Games.json";
 			file.setFileName(path.generic_string().c_str());
 			file.open(QIODevice::ReadOnly | QIODevice::Text);
 			val = file.readAll();
-			auto& ghj = val.toStdString();
+			auto ghj = val.toStdString();
 			file.close();
 			QJsonDocument d = QJsonDocument::fromJson(val.toUtf8());
-			for (auto& game : d.object()) {
-				auto& gameObject = game.toObject();
+			for (auto game : d.object()) {
+				auto gameObject = game.toObject();
 				auto id = std::stoi(gameObject["Id"].toString().toStdString());
 				if (!config.gameExists(id)) {
 					//create new
@@ -40,13 +40,13 @@ namespace im {
 					config.insertGame(game);
 				}
 				auto& hadGame = config.getGame(id);
-				auto& presetationVer = gameObject["PresentationVer"].toString();
+				auto presetationVer = gameObject["PresentationVer"].toString();
 				hadGame.presentationUrl = gameObject["PresentationUrl"].toString();
-				auto& ff = hadGame.PresentationVer.toStdString();
-				auto& ss = presetationVer.toStdString();
+				auto ff = hadGame.PresentationVer.toStdString();
+				auto ss = presetationVer.toStdString();
 				if (hadGame.presentationUrl.isEmpty() && hadGame.PresentationVer != presetationVer) {
-					auto& url = gameObject["PresentationPackUrl"].toString().toStdString();
-					auto& fileName = hadGame.name.toStdString() + ".zip";
+					auto url = gameObject["PresentationPackUrl"].toString().toStdString();
+					auto fileName = hadGame.name.toStdString() + ".zip";
 					std::filesystem::path destination = config.gamePageDir(id);
 					files_.push_back({ url, fileName , destination });
 					toUpdate_.push_back({ id, presetationVer });

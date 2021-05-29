@@ -162,7 +162,7 @@ namespace im {
 		setTotal(0);
 		updateInfo_->setUpdateMode(UpdateInfo::UpdateMode::GAME);
 		updateInfo_->setActualGame(game);
-		auto& gg = game.appInfoUrl.toStdString();
+		auto gg = game.appInfoUrl.toStdString();
 		auto& actualGame = updateInfo_->getActualGame();
 		actualGame.gameDir = gamePath;
 		actualGame.shortcut = shortcut;

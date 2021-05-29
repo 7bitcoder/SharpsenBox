@@ -8,6 +8,11 @@ namespace ChildProcessInTheSameConsole
     {
         public static void Main(string[] args)
         {
+            var processName = System.IO.Path.GetFileNameWithoutExtension(System.Reflection.Assembly.GetEntryAssembly().Location);
+            // if instance of program is already running return;
+            if (System.Diagnostics.Process.GetProcessesByName(processName).Count() > 1) 
+                return;
+                
             Directory.SetCurrentDirectory("./Updater");
             var updater = new ProcessStartInfo
             {

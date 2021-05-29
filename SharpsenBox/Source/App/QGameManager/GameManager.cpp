@@ -119,12 +119,12 @@ namespace gm {
 	}
 
 	Q_INVOKABLE void GameManager::checkAutoUpdate(int id) {
-		auto& game = bc::Component <cf::IConfig>::get().getGame(id);
+		auto& game = bc::Component<cf::IConfig>::get().getGame(id);
 		if (game.autoCheck && game.installed) {
 			if (lock_) {
 				auto& dialog = bc::Component<dl::IDialog>::get();
 				dialog.setType(dl::IDialog::INFO);
-				dialog.setInfo(QString("Cannot auto update game ") + game.name + "another process is running");
+				dialog.setInfo(QString("Cannot auto update game ") + game.name + " another process is running");
 				dialog.show();
 			} else {
 				lock();
