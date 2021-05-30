@@ -16,8 +16,8 @@ namespace sb {
 		GameFileRemover() = default;
 
 		// ImElement implementation
-		void run() override;
-		void reset() override;
+		void Run() override;
+		void Reset() override;
 	private:
 		Game* game_;
 		std::unordered_set<QString>* toRemove_;

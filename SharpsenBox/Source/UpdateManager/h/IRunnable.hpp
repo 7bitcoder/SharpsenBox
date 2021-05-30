@@ -7,17 +7,17 @@ namespace sb {
 	struct IRunnable {
 		virtual ~IRunnable() {};
 
-		virtual void run() = 0;
-		virtual void reset() = 0;
+		virtual void Run() = 0;
+		virtual void Reset() = 0;
 
-		void init(IUpdateManager& im) {
-			im_ = &im;
-			updateInfo_ = &im.getUpdateInfo();
+		void Init(IUpdateManager& im) {
+			UpdateManager = &im;
+			UpdateInfo = &im.getUpdateInfo();
 		}
 
-		void error(const std::string& what) { throw std::exception(what.c_str()); }
+		void Error(const std::string& what) { throw std::exception(what.c_str()); }
 
-		IUpdateManager* im_ = nullptr;
-		UpdateInfo* updateInfo_ = nullptr;
+		IUpdateManager* UpdateManager = nullptr;
+		UpdateInfo* UpdateInfo = nullptr;
 	};
 }

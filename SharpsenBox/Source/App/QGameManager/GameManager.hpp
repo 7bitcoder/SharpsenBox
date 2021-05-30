@@ -17,9 +17,9 @@ namespace sb {
 		GameManager();
 
 		// implementation IQmlComponent
-		void update() final {};
-		std::string getName() final;
-		void init() final;
+		void Update() final {};
+		std::string GetName() final;
+		void Init() final;
 
 		// inferface
 		void lock() final { lock_ = true; lockChanged(); }
@@ -40,7 +40,7 @@ namespace sb {
 		Q_INVOKABLE bool getLock() { return lock_; }
 		Q_INVOKABLE void unistallRequest(int id);
 		Q_INVOKABLE void checkAutoUpdate(int id);
-		Q_INVOKABLE void update(int id);
+		Q_INVOKABLE void Update(int id);
 		Q_INVOKABLE void runGame(int id);
 
 	public slots:
@@ -68,7 +68,7 @@ namespace sb {
 		QString path_;
 		bool shortcut_;
 		GameUninstaller* uninstaller_;
-		UpdateManager im_;
+		UpdateManager UpdateManager;
 		ILoadingBar* lb_;
 	};
 }

@@ -20,8 +20,8 @@ namespace sb {
 		~Downloader() {}
 
 		// ImElement implementation
-		void run() override;
-		void reset() override;
+		void Run() override;
+		void Reset() override;
 
 
 	private:
@@ -37,7 +37,7 @@ namespace sb {
 
 		std::string getErrorStr(int code);
 	private:
-		std::filesystem::path outfile_ = "";
+		QString outfile_ = "";
 		qint64 total_ = 0;
 		qint64 now_ = 0;
 		qint64 lastDownload_ = 0;

@@ -22,7 +22,7 @@ namespace sb {
 		virtual void setVisibleState(IUpdateManager::VisibleState st) = 0;
 		virtual void setUninstallMode(bool un) = 0;
 
-		virtual void reset() = 0;
+		virtual void Reset() = 0;
 		virtual void paused() = 0;
 		virtual void resumed() = 0;
 	};

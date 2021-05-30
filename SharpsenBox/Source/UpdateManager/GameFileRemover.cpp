@@ -3,16 +3,16 @@
 #include "Game.hpp"
 
 namespace sb {
-	void GameFileRemover::run() {
+	void GameFileRemover::Run() {
 		try {
-			std::filesystem::path gamePath = game_->gameDir.toStdString();
+			std::filesystem::path gamePath = game_->GameDir.toStdString();
 			for (auto& path : *toRemove_) {
 				auto filePath = gamePath / path.toStdString();
 				if (std::filesystem::exists(filePath))
 					std::filesystem::remove(filePath);
 			}
 		} catch (...) {
-			error("Error ocured while removing Game files");
+			Error("Error ocured while removing Game files");
 		}
 	}
 

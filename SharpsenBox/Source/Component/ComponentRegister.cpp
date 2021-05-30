@@ -8,26 +8,30 @@
 #include <QVariant>
 #include "ComponentRegister.hpp"
 
-namespace sb {
+namespace sb
+{
 
-	void ComponentRegister::init() {
-		initializeObjects();
+	void ComponentRegister::Init()
+	{
+		InitializeObjects();
 	}
 
-	void ComponentRegister::initializeObjects() {
-		for (IComponent* object : objects_)
-			object->init();
+	void ComponentRegister::InitializeObjects()
+	{
+		for (IComponent *object : _Objects)
+			object->Init();
 	}
 
-	void ComponentRegister::registerObject(IComponent& component) {
-		objects_.push_back(&component);
-		auto name = component.getName();
+	void ComponentRegister::RegisterObject(IComponent &component)
+	{
+		_Objects.push_back(&component);
+		auto name = component.GetName();
 		name.insert(0, "_");
 		auto cStr = name.c_str();
-		engine->rootContext()->setContextProperty(cStr, &component);
+		_Engine->rootContext()->setContextProperty(cStr, &component);
 	}
 
 	ComponentRegister::~ComponentRegister() {}
 
-	ComponentRegister::ComponentRegister(QQmlApplicationEngine* eng) { engine = eng; }
+	ComponentRegister::ComponentRegister(QQmlApplicationEngine *eng) { _Engine = eng; }
 }

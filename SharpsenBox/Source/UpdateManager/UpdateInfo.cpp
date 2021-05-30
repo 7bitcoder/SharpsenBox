@@ -1,7 +1,7 @@
 #include "UpdateInfo.hpp"
 
 namespace sb {
-	void UpdateInfo::reset() {
+	void UpdateInfo::Reset() {
 		cancel_ = false;
 		fullInstall_ = false;
 		files_.clear();

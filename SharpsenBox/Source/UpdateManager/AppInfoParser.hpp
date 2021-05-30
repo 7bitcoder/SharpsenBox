@@ -21,13 +21,13 @@ namespace sb {
 		QString& getVersionToUpdate() { return versionToUpdate_; }
 
 		// IRunnable implementation
-		void run() override;
-		void reset() override;
+		void Run() override;
+		void Reset() override;
 	private:
 		void getPathUrls(const QJsonObject& pathList);
 
 		QString versionToUpdate_;
-		std::filesystem::path parseInfoFileName = "AppInfo.json";
+		QString parseInfoFileName = "AppInfo.json";
 
 		bool needUpdate_ = false;
 		// fileName -> <fileUrl, size>

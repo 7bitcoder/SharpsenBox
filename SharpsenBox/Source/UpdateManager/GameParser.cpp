@@ -7,15 +7,15 @@
 #include <QJsonArray>
 
 namespace sb {
-	void GameParser::run() {
-		reset();
+	void GameParser::Run() {
+		Reset();
 		try {
 			QString val;
 			QFile file;
 			//open SharpsenBoxConfig file
-			auto& config = Component<IConfig>::get();
-			auto path = config.getDownloadDir() / "Games.json";
-			file.setFileName(path.generic_string().c_str());
+			auto& config = Component<IConfig>::Get();
+			auto path = config.CombinePath({config.GetDownloadDir(), "Games.json"});
+			file.setFileName(path);
 			file.open(QIODevice::ReadOnly | QIODevice::Text);
 			val = file.readAll();
 			auto ghj = val.toStdString();
@@ -24,46 +24,45 @@ namespace sb {
 			for (auto game : d.object()) {
 				auto gameObject = game.toObject();
 				auto id = std::stoi(gameObject["Id"].toString().toStdString());
-				if (!config.gameExists(id)) {
+				if (!config.GameExists(id)) {
 					//create new
 					Game game;
-					game.id = id;
-					game.version = gameObject["Ver"].toString();
-					game.autoCheck = game.installed = game.shortcut = false;
-					game.execPath = gameObject["GameExecPath"].toString();
-					game.presentationUrl = gameObject["PresentationUrl"].toString();
+					game.Id = id;
+					game.Version = gameObject["Ver"].toString();
+					game.UpdateAutoCheck = game.IsInstalled = game.HasShortcut = false;
+					game.ExecutablePath = gameObject["GameExecPath"].toString();
+					game.PresentationUrl = gameObject["PresentationUrl"].toString();
 					//game.PresentationVer = gameObject["PresentationVer"].toString();
-					game.appInfoUrl = gameObject["AppInfoUrl"].toString();
+					game.GameInfoUrl = gameObject["AppInfoUrl"].toString();
 					game.PresentationPackUrl = gameObject["PresentationPackUrl"].toString();
 					game.PresentationQml = gameObject["PresentationQml"].toString();
 
-					config.insertGame(game);
+					config.AddNewGame(game);
 				}
-				auto& hadGame = config.getGame(id);
+				auto& hadGame = config.GetGame(id);
 				auto presetationVer = gameObject["PresentationVer"].toString();
-				hadGame.presentationUrl = gameObject["PresentationUrl"].toString();
-				auto ff = hadGame.PresentationVer.toStdString();
-				auto ss = presetationVer.toStdString();
-				if (hadGame.presentationUrl.isEmpty() && hadGame.PresentationVer != presetationVer) {
-					auto url = gameObject["PresentationPackUrl"].toString().toStdString();
-					auto fileName = hadGame.name.toStdString() + ".zip";
-					std::filesystem::path destination = config.gamePageDir(id);
+				hadGame.PresentationUrl = gameObject["PresentationUrl"].toString();
+				
+				if (hadGame.PresentationUrl.isEmpty() && hadGame.PresentationVer != presetationVer) {
+					auto url = gameObject["PresentationPackUrl"].toString();
+					auto fileName = hadGame.Title + ".zip";
+					auto destination = config.GamePageDir(id);
 					files_.push_back({ url, fileName , destination });
 					toUpdate_.push_back({ id, presetationVer });
 				}
 			}
 		} catch (...) {
-			error("Unexpected error ocured while processing gamePages update");
+			Error("Unexpected error ocured while processing gamePages Update");
 		}
 	}
 
 	void GameParser::updateGamesInfo() {
 		for (auto& data : toUpdate_) {
-			Component<IConfig>::get().getGame(data.first).PresentationVer = data.second;
+			Component<IConfig>::Get().GetGame(data.first).PresentationVer = data.second;
 		}
 	}
 
-	void GameParser::reset() {
+	void GameParser::Reset() {
 		files_.clear();
 		toUpdate_.clear();
 	}

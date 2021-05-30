@@ -6,34 +6,35 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QFile>
+#include <QDir>
 #include <string>
 
 
 namespace sb {
 
-	AppUpdaterManager::AppUpdaterManager() : cf_(Component<IConfig>::get()) {
-		cf_.init();
-		im_.init();
-		auto& downloadDir = cf_.getDownloadDir();
-		if (!std::filesystem::exists(downloadDir))
-			std::filesystem::create_directory(downloadDir);
+	AppUpdaterManager::AppUpdaterManager() : cf_(Component<IConfig>::Get()) {
+		cf_.Init();
+		UpdateManager.Init();
+		auto& downloadDir = cf_.GetDownloadDir();
+		if (!QDir().exists(downloadDir))
+			QDir().mkdir(downloadDir);
 	}
 
 	AppUpdaterManager:: ~AppUpdaterManager() {
-		im_.terminate();
-		im_.wait();
+		UpdateManager.terminate();
+		UpdateManager.wait();
 	}
 
 	void AppUpdaterManager::checkForUpdates() {
-		connect(&im_, &UpdateManager::setStateLb, this, &AppUpdaterManager::updateSt);
-		connect(&im_, &UpdateManager::errorEmit, this, &AppUpdaterManager::errorCatched);
-		connect(&im_, &UpdateManager::updateEnded, this, &AppUpdaterManager::updateInstalled);
-		connect(&im_, &UpdateManager::updateProgress, this, &AppUpdaterManager::updateProgress);
+		connect(&UpdateManager, &UpdateManager::setStateLb, this, &AppUpdaterManager::updateSt);
+		connect(&UpdateManager, &UpdateManager::errorEmit, this, &AppUpdaterManager::errorCatched);
+		connect(&UpdateManager, &UpdateManager::updateEnded, this, &AppUpdaterManager::updateInstalled);
+		connect(&UpdateManager, &UpdateManager::updateProgress, this, &AppUpdaterManager::updateProgress);
 		updateStatus(IUpdateManager::State::DOWNLOADING);
-		if (cf_.getVer() == "0") // needInstallation
-			im_.installMainApp(cf_.getVer(), cf_.getLauncherAppInfoUrl(), cf_.getGameInfoRepository());
-		else //just update
-			im_.updateMainApp(cf_.getVer(), cf_.getLauncherAppInfoUrl(), cf_.getGameInfoRepository());
+		if (cf_.GetVersion() == "0") // needInstallation
+			UpdateManager.installMainApp(cf_.GetVersion(), cf_.GetLauncherAppInfoUrl(), cf_.GetGameInfoRepository());
+		else //just Update
+			UpdateManager.updateMainApp(cf_.GetVersion(), cf_.GetLauncherAppInfoUrl(), cf_.GetGameInfoRepository());
 	}
 
 	void AppUpdaterManager::updateSt(int state) {
@@ -48,7 +49,7 @@ namespace sb {
 	void AppUpdaterManager::updateInstalled(const QString& version) {
 		if (!version.isEmpty()) {
 			updateStatus(IUpdateManager::State::COMPLEET);
-			cf_.setVer(version);
+			cf_.SetVersion(version);
 		}
 	}
 

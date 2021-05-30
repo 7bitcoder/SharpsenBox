@@ -44,17 +44,17 @@ namespace sb {
 		void setActualGame(Game& game) { actualGame_ = game; }
 		void setActualGame(Game* game) { actualGame_ = *game; }
 
-		std::filesystem::path& getDownloadDir() { return downloadDir_; }
-		void setDownloadDir(const std::filesystem::path& dir) { downloadDir_ = dir; }
+		QString& getDownloadDir() { return downloadDir_; }
+		void setDownloadDir(const QString& dir) { downloadDir_ = dir; }
 
-		std::filesystem::path& getInstallDir() { return installDir_; }
-		void setInstallDir(const std::filesystem::path& dir) { installDir_ = dir; }
+		QString& getInstallDir() { return installDir_; }
+		void setInstallDir(const QString& dir) { installDir_ = dir; }
 
 		bool isGameUppdating() { return getUpdateMode() == UpdateMode::GAME; }
 		bool isLBUpdating() { return getUpdateMode() == UpdateMode::SHARPSENBOX; }
 
-		void reset() override;
-		void run() override {}
+		void Reset() override;
+		void Run() override {}
 
 		//controlls 
 		std::atomic_flag pause;
@@ -71,7 +71,7 @@ namespace sb {
 
 		Game actualGame_;
 
-		std::filesystem::path downloadDir_;
-		std::filesystem::path installDir_;
+		QString downloadDir_;
+		QString installDir_;
 	};
 }

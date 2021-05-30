@@ -5,24 +5,24 @@
 #include <unordered_map>
 #include "IComponent.hpp"
 
-#define CREATE_PTR(ICOMPONENT) ICOMPONENT* Component< ICOMPONENT >::iComponent_ = nullptr;
-
-namespace sb {
-	class ComponentRegister {
+namespace sb
+{
+	class ComponentRegister
+	{
 	public:
-		ComponentRegister(QQmlApplicationEngine* eng);
+		ComponentRegister(QQmlApplicationEngine *eng);
 		~ComponentRegister();
 
-		void init();
+		void Init();
 
-		template<class I, class O>
-		void createAndRegister() { registerObject(ComponentCreator<I, O>::create()); };
+		template <class I, class O>
+		void CreateAndRegister() { RegisterObject(ComponentCreator<I, O>::Create()); };
 
 	private:
-		void registerObject(IComponent& component);
-		void initializeObjects();
+		void RegisterObject(IComponent &component);
+		void InitializeObjects();
 
-		QQmlApplicationEngine* engine = nullptr;
-		std::vector<IComponent*> objects_;
+		QQmlApplicationEngine *_Engine = nullptr;
+		std::vector<IComponent *> _Objects;
 	};
 }

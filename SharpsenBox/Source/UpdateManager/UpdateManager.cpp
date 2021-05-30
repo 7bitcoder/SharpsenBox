@@ -1,6 +1,7 @@
 ﻿#include <iostream>
 #include <string>
-#include "UpdateManager.hpp"
+#include <QStandardPaths>
+#include <QDir>
 #include <curl/curl.h>
 #include "windows.h"
 #include "winnls.h"
@@ -8,11 +9,11 @@
 #include "objbase.h"
 #include "objidl.h"
 #include "shlguid.h"
-#include <QStandardPaths>
 #include "archive.h"
 #include "IRunnable.hpp"
 #include "IConfig.hpp"
 #include "AppInfoParser.hpp"
+#include "UpdateManager.hpp"
 #include "FileListParser.hpp"
 #include "Cleanup.hpp"
 #include "Downloader.hpp"
@@ -71,7 +72,7 @@ namespace sb {
 	}
 
 	UpdateManager::UpdateManager() {
-		updateInfo_.reset(new UpdateInfo);
+		_UpdateInfo.reset(new UpdateInfo);
 		downloader_.reset(new Downloader);
 		installer_.reset(new ArchieveInstaller);
 		cleanUpper_.reset(new Cleanup);
@@ -82,19 +83,19 @@ namespace sb {
 
 	UpdateManager::~UpdateManager() {}
 
-	void UpdateManager::init() {
-		updateInfo_->init(*this);
-		downloader_->init(*this);
-		installer_->init(*this);
-		cleanUpper_->init(*this);
-		appInfoParser_->init(*this);
-		fileListParser_->init(*this);
-		gameParser_->init(*this);
+	void UpdateManager::Init() {
+		_UpdateInfo->Init(*this);
+		downloader_->Init(*this);
+		installer_->Init(*this);
+		cleanUpper_->Init(*this);
+		appInfoParser_->Init(*this);
+		fileListParser_->Init(*this);
+		gameParser_->Init(*this);
 
-		auto& downloadDir = Component<IConfig>::get().getDownloadDir();
-		if (!std::filesystem::exists(downloadDir)) {
+		auto& downloadDir = Component<IConfig>::Get().GetDownloadDir();
+		if (!QDir().exists(downloadDir)) {
 			try {
-				std::filesystem::create_directory(downloadDir);
+				QDir().mkdir(downloadDir);
 			} catch (...) {
 				//todo
 			}
@@ -105,7 +106,7 @@ namespace sb {
 		IUpdateManager::State finalState = IUpdateManager::State::NONE;
 		QString what;
 		try {
-			switch (updateInfo_->getUpdateMode()) {
+			switch (_UpdateInfo->getUpdateMode()) {
 			case UpdateInfo::UpdateMode::SHARPSENBOX:
 				updateMainApp();
 			default:
@@ -115,42 +116,42 @@ namespace sb {
 				break;
 			}
 			finalState = IUpdateManager::State::COMPLEET;
-		} catch (AbortException& e) {
+		} catch (AbortException&) {
 			finalState = IUpdateManager::State::STOPPED;
 		} catch (std::exception& e) {
 			finalState = IUpdateManager::State::ERRORD;
 			what = e.what();
 		} catch (...) {
 			finalState = IUpdateManager::State::ERRORD;
-			what = "Unexpected error ocured while processing";
+			what = "Unexpected Error ocured while processing";
 		}
 		try {
 			cleanUp(finalState, what);
 		} catch (...) {}// if cleanup fail its fine
 	}
 
-	bool UpdateManager::installMainApp(QString version, std::filesystem::path appInfoUrl, std::filesystem::path gamesRepoUrl) {
+	bool UpdateManager::installMainApp(QString version, QString appInfoUrl, QString gamesRepoUrl) {
 		if (isRunning())
 			return false;
 		reset();
 		setTotal(0);
-		updateInfo_->setUpdateMode(UpdateInfo::UpdateMode::SHARPSENBOX);
-		updateInfo_->setActualVersion(version);
-		updateInfo_->setFullInstall(true);
-		updateInfo_->setFiles({ {appInfoUrl, "AppInfo.json" }, {gamesRepoUrl, "Games.json"} });
+		_UpdateInfo->setUpdateMode(UpdateInfo::UpdateMode::SHARPSENBOX);
+		_UpdateInfo->setActualVersion(version);
+		_UpdateInfo->setFullInstall(true);
+		_UpdateInfo->setFiles({ {appInfoUrl, "AppInfo.json" }, {gamesRepoUrl, "Games.json"} });
 		start();
 		return true;
 	}
 
-	bool UpdateManager::updateMainApp(QString version, std::filesystem::path appInfoUrl, std::filesystem::path gamesRepoUrl) {
+	bool UpdateManager::updateMainApp(QString version, QString appInfoUrl, QString gamesRepoUrl) {
 		if (isRunning())
 			return false;
 		reset();
 		setTotal(0);
-		updateInfo_->setUpdateMode(UpdateInfo::UpdateMode::SHARPSENBOX);
-		updateInfo_->setActualVersion(version);
-		updateInfo_->setFullInstall(false);
-		updateInfo_->setFiles({ {appInfoUrl, "AppInfo.json" }, {gamesRepoUrl, "Games.json"} });
+		_UpdateInfo->setUpdateMode(UpdateInfo::UpdateMode::SHARPSENBOX);
+		_UpdateInfo->setActualVersion(version);
+		_UpdateInfo->setFullInstall(false);
+		_UpdateInfo->setFiles({ {appInfoUrl, "AppInfo.json" }, {gamesRepoUrl, "Games.json"} });
 		start();
 		return true;
 	}
@@ -160,16 +161,16 @@ namespace sb {
 			return false;
 		reset();
 		setTotal(0);
-		updateInfo_->setUpdateMode(UpdateInfo::UpdateMode::GAME);
-		updateInfo_->setActualGame(game);
-		auto gg = game.appInfoUrl.toStdString();
-		auto& actualGame = updateInfo_->getActualGame();
-		actualGame.gameDir = gamePath;
-		actualGame.shortcut = shortcut;
-		updateInfo_->setActualVersion(game.version);
-		updateInfo_->setFullInstall(!game.installed);
-		updateInfo_->setFiles({ {game.appInfoUrl.toStdString(), "AppInfo.json" } });
-		auto& hh = updateInfo_->getFiles().at(0);
+		_UpdateInfo->setUpdateMode(UpdateInfo::UpdateMode::GAME);
+		_UpdateInfo->setActualGame(game);
+		auto gg = game.GameInfoUrl.toStdString();
+		auto& actualGame = _UpdateInfo->getActualGame();
+		actualGame.GameDir = gamePath;
+		actualGame.HasShortcut = shortcut;
+		_UpdateInfo->setActualVersion(game.Version);
+		_UpdateInfo->setFullInstall(!game.IsInstalled);
+		_UpdateInfo->setFiles({ {game.GameInfoUrl, "AppInfo.json" } });
+		auto& hh = _UpdateInfo->getFiles().at(0);
 		//progress_ = 100;
 		//emit emitState(State::CHECKING);
 		//emit emitVisibleState(VisibleState::SHOWED);
@@ -182,12 +183,12 @@ namespace sb {
 			return false;
 		reset();
 		setTotal(0);
-		updateInfo_->setUpdateMode(UpdateInfo::UpdateMode::GAME);
-		updateInfo_->setActualGame(game);
-		updateInfo_->setActualVersion(game.version);
-		updateInfo_->setFullInstall(!game.installed);
+		_UpdateInfo->setUpdateMode(UpdateInfo::UpdateMode::GAME);
+		_UpdateInfo->setActualGame(game);
+		_UpdateInfo->setActualVersion(game.Version);
+		_UpdateInfo->setFullInstall(!game.IsInstalled);
 
-		updateInfo_->setFiles({ {game.appInfoUrl.toStdString(), "AppInfo.json" } });
+		_UpdateInfo->setFiles({ {game.GameInfoUrl, "AppInfo.json" } });
 		//progress_ = 100;
 		//emit emitState(State::CHECKING);
 		//emit emitVisibleState(VisibleState::SHOWED);
@@ -198,15 +199,15 @@ namespace sb {
 	void UpdateManager::updateMainApp() {
 		// download appInfo.json and Games.json
 		emitState(IUpdateManager::State::CHECKING);
-		downloader_->run();
-		// check if appInfo.json contains newer version = need update
-		appInfoParser_->run();
+		downloader_->Run();
+		// check if appInfo.json contains newer version = need Update
+		appInfoParser_->Run();
 		if (appInfoParser_->needUpdate()) {
 			updateApp();
 		}
-		gameParser_->run();
+		gameParser_->Run();
 		if (gameParser_->needUpdate()) {
-			updateGamePages(); // update Game pages metadata
+			updateGamePages(); // Update Game pages metadata
 		}
 	}
 
@@ -216,95 +217,95 @@ namespace sb {
 		emitVisibleState(IUpdateManager::VisibleState::SHOWED);
 		sendDataToBar();
 		// download game appInfo.json
-		auto& hh = updateInfo_->getFiles().at(0);
-		downloader_->run();
-		// check if appInfo.json contains newer version = need update
-		appInfoParser_->run();
+		auto& hh = _UpdateInfo->getFiles().at(0);
+		downloader_->Run();
+		// check if appInfo.json contains newer version = need Update
+		appInfoParser_->Run();
 		if (appInfoParser_->needUpdate()) {
 			updateApp();
-			updateGameInfo(); // update Game info 
+			updateGameInfo(); // Update Game info 
 		}
-		auto& actual = updateInfo_->getActualGame();
-		actual.updateChecked = true;
+		auto& actual = _UpdateInfo->getActualGame();
+		actual.UpdateChecked = true;
 	}
 
 	void UpdateManager::updateApp() {
 		setTotal(0);
-		updateInfo_->setUpdateVersion(appInfoParser_->getVersionToUpdate());
-		updateInfo_->setFiles(appInfoParser_->getFiles());
+		_UpdateInfo->setUpdateVersion(appInfoParser_->getVersionToUpdate());
+		_UpdateInfo->setFiles(appInfoParser_->getFiles());
 		progress_ = 100;
 		emitState(IUpdateManager::State::CHECKING);
 		emitVisibleState(IUpdateManager::VisibleState::SHOWED);
 		// download Filelist.json and Patch.json Files
-		downloader_->run();
-		// Process fileList.json and patch files to get update packets (zip files)
-		fileListParser_->run();
+		downloader_->Run();
+		// Process fileList.json and patch files to get Update packets (zip files)
+		fileListParser_->Run();
 
 		downloadUpdate();
 		installUpdate();
 	}
 
 	void UpdateManager::downloadUpdate() {
-		// setUp updateInfo
+		// setUp UpdateInfo
 		progress_ = 0;
-		updateInfo_->setFiles(fileListParser_->getNeededFiles());
+		_UpdateInfo->setFiles(fileListParser_->getNeededFiles());
 		setTotal(fileListParser_->getBytesToDownload());
 		sendDataToBar();
 
 		emitState(IUpdateManager::State::DOWNLOADING);
 		emitVisibleState(IUpdateManager::VisibleState::SHOWED);
 		// download zip packets
-		downloader_->run();
+		downloader_->Run();
 	}
 
 	void UpdateManager::installUpdate() {
 		// set InstallDirectory
-		std::filesystem::path destination = updateInfo_->isGameUppdating() ? updateInfo_->getActualGame().gameDir.toStdString() : std::string("../");
-		updateInfo_->setInstallDir(destination);
+		QString destination = _UpdateInfo->isGameUppdating() ? _UpdateInfo->getActualGame().GameDir : "../";
+		_UpdateInfo->setInstallDir(destination);
 
 		emitState(IUpdateManager::State::INSTALLING);
 		// install downloaded packets
-		installer_->run();
+		installer_->Run();
 	}
 
 	void UpdateManager::updateGameInfo() {
-		auto& actualGame = updateInfo_->getActualGame();
-		actualGame.installed = true;
-		actualGame.updateChecked = true;
-		actualGame.version = updateInfo_->getUpdateVersion();
-		if (actualGame.shortcut) {
+		auto& actualGame = _UpdateInfo->getActualGame();
+		actualGame.IsInstalled = true;
+		actualGame.UpdateChecked = true;
+		actualGame.Version = _UpdateInfo->getUpdateVersion();
+		if (actualGame.HasShortcut) {
 			QString desktopPath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
 			std::filesystem::path link = desktopPath.toUtf8().constData();
-			link /= actualGame.name.toUtf8().constData();
+			link /= actualGame.Title.toUtf8().constData();
 			link += ".lnk";
-			std::filesystem::path path = actualGame.gameDir.toUtf8().constData();
-			path /= actualGame.execPath.toUtf8().constData();
+			std::filesystem::path path = actualGame.GameDir.toUtf8().constData();
+			path /= actualGame.ExecutablePath.toUtf8().constData();
 			std::string ff(path.generic_string().c_str());
 			auto res = CreateLink(path.generic_string().c_str(), path.parent_path().generic_string().c_str(), link.generic_string().c_str(), "Sylio shortcut");
-			actualGame.shortcutPath = link.generic_string().c_str();
+			actualGame.ShortcutPath = link.generic_string().c_str();
 		}
 		//Component<IGameManager>::get().unLock();
 	}
 
 	void UpdateManager::updateGamePages() {
 		emitState(IUpdateManager::State::UPDATING_GAME_PAGES);
-		// setUp updateInfo
-		updateInfo_->setFiles(gameParser_->getFiles());
+		// setUp UpdateInfo
+		_UpdateInfo->setFiles(gameParser_->getFiles());
 		setTotal(0);
 		// download zip packets containing game pages files
-		downloader_->run();
-		updateInfo_->setInstallDir(""); // when empty installer uses destination from file vector
-		installer_->run();
+		downloader_->Run();
+		_UpdateInfo->setInstallDir(""); // when empty installer uses destination from file vector
+		installer_->Run();
 		gameParser_->updateGamesInfo();
 	}
 
 	void UpdateManager::cleanUp(IUpdateManager::State finalState, const QString& errorWhat) {
-		cleanUpper_->run();
+		cleanUpper_->Run();
 		if (finalState == IUpdateManager::State::ERRORD && !errorWhat.isEmpty())
 			errorEmit(errorWhat);
 		else {
 			emitState(finalState);
-			updateEnded(updateInfo_->getUpdateVersion());
+			updateEnded(_UpdateInfo->getUpdateVersion());
 		}
 		emitVisibleState(IUpdateManager::VisibleState::HIDDEN);
 	}
@@ -345,25 +346,25 @@ namespace sb {
 	}
 
 	void UpdateManager::pause() {
-		updateInfo_->pause.clear();
+		_UpdateInfo->pause.clear();
 	}
 
 	void UpdateManager::resume() {
-		updateInfo_->resume.clear();
+		_UpdateInfo->resume.clear();
 	}
 
 	void UpdateManager::stop() {
-		updateInfo_->stop.clear();
+		_UpdateInfo->stop.clear();
 	}
 
 	void UpdateManager::reset() {
-		updateInfo_->reset();
-		downloader_->reset();
-		installer_->reset();
-		cleanUpper_->reset();
-		appInfoParser_->reset();
-		fileListParser_->reset();
-		gameParser_->reset();
+		_UpdateInfo->Reset();
+		downloader_->Reset();
+		installer_->Reset();
+		cleanUpper_->Reset();
+		appInfoParser_->Reset();
+		fileListParser_->Reset();
+		gameParser_->Reset();
 
 
 		totalBytes_ = 0; //total Bytes to download unpack all files together

@@ -19,7 +19,7 @@ namespace sb {
 	class FileListParser;
 	class GameParser;
 
-	class UpdateManager : public QThread, public IUpdateManager {
+	class UpdateManager final : public QThread, public IUpdateManager {
 		Q_OBJECT
 	public:
 		using files = std::vector<AppPack>;
@@ -27,19 +27,19 @@ namespace sb {
 		virtual ~UpdateManager();
 		UpdateManager();
 
-		void update(){};
-		std::string getName() { return TYPENAME(UpdateManager); }
-		void init();
+		void Update(){};
+		std::string GetName() { return TYPENAME(UpdateManager); }
+		void Init();
 
 		// implementation IInstalationManager 
 		void downloadStatus(qint64 progress, qint64 total, double speed);
 		void installStatus(qint64 progress);
-		UpdateInfo& getUpdateInfo() { return *updateInfo_; }
+		UpdateInfo& getUpdateInfo() { return *_UpdateInfo; }
 
 		void setTotal(qint64 tot);
 
-		bool installMainApp(QString version, std::filesystem::path appInfoUrl, std::filesystem::path gamesRepoUrl);
-		bool updateMainApp(QString version, std::filesystem::path appInfoUrl, std::filesystem::path gamesRepoUrl);
+		bool installMainApp(QString version, QString appInfoUrl, QString gamesRepoUrl);
+		bool updateMainApp(QString version, QString appInfoUrl, QString gamesRepoUrl);
 		bool installGame(Game& game, const QString& gamePath, bool shortcut);
 		bool updateGame(Game& game);
 
@@ -94,7 +94,7 @@ namespace sb {
 		void cleanUp(IUpdateManager::State finalState, const QString& errorWhat);
 
 	private:
-		std::unique_ptr<UpdateInfo> updateInfo_;
+		std::unique_ptr<UpdateInfo> _UpdateInfo;
 		std::unique_ptr<Downloader> downloader_;
 		std::unique_ptr<ArchieveInstaller> installer_;
 		std::unique_ptr<Cleanup> cleanUpper_;

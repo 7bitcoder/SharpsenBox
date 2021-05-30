@@ -11,8 +11,8 @@ namespace sb {
 	LoadingBar::LoadingBar() {}
 	LoadingBar::~LoadingBar() {}
 
-	void LoadingBar::update() {}
-	Q_INVOKABLE std::string LoadingBar::getName() {
+	void LoadingBar::Update() {}
+	Q_INVOKABLE std::string LoadingBar::GetName() {
 		return TYPENAME(LoadingBar);
 	}
 
@@ -41,9 +41,9 @@ namespace sb {
 		return progress_;
 	}
 
-	Q_INVOKABLE void LoadingBar::pause()  { Component<IGameManager>::get().pause(); };
-	Q_INVOKABLE void LoadingBar::resume()  { Component<IGameManager>::get().resume(); }
-	Q_INVOKABLE void LoadingBar::stop()  { Component<IGameManager>::get().stop(); }
+	Q_INVOKABLE void LoadingBar::pause()  { Component<IGameManager>::Get().pause(); };
+	Q_INVOKABLE void LoadingBar::resume()  { Component<IGameManager>::Get().resume(); }
+	Q_INVOKABLE void LoadingBar::stop()  { Component<IGameManager>::Get().stop(); }
 
 	Q_INVOKABLE bool LoadingBar::getUninstall()  {
 		return uninstall_;
@@ -66,7 +66,7 @@ namespace sb {
 	}
 
 	void LoadingBar::setError(const QString& str) {
-		auto& dialog = Component<IDialog>::get();
+		auto& dialog = Component<IDialog>::Get();
 		dialog.setType(IDialog::Type::INFO);
 		dialog.setInfo(str);
 		dialog.show();
@@ -100,9 +100,9 @@ namespace sb {
 		pauseResumeChanged();
 	}
 	
-	void LoadingBar::init() {}
+	void LoadingBar::Init() {}
 
-	void LoadingBar::reset() {
+	void LoadingBar::Reset() {
 
 		progress_ = 0;
 		total_ = 0;
@@ -113,7 +113,7 @@ namespace sb {
 	
 		setState(IUpdateManager::State::NONE);
 		lastState_ = IUpdateManager::State::NONE;
-		resumed(); // to reset pause resume button to pause state
+		resumed(); // to Reset pause resume button to pause state
 		visibleState_ = IUpdateManager::VisibleState::HIDDEN;
 	}
 }

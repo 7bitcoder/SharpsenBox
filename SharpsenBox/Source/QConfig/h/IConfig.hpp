@@ -8,42 +8,46 @@
 #include <filesystem>
 #include <vector>
 
-namespace sb {
+namespace sb
+{
 	class Config;
-	class Game;
+	struct Game;
 
-	struct IConfig : public  IComponent {
+	struct IConfig : public IComponent
+	{
 	public:
-		virtual ~IConfig() {};
+		virtual ~IConfig(){};
 
-		// interface 
-		virtual void insertGame(Game& game) = 0;
-		virtual bool gameExists(int id) = 0;
-		virtual Game& getGame(int id) = 0;
-		virtual std::string gamePageDir(int id) = 0;
+		// interface
+		virtual QString CombinePath(const QList<QString> paths) = 0;
 
-		virtual QString& getVer() = 0;
-		virtual void setVer(QString ver) = 0;
+		virtual void AddNewGame(Game &game) = 0;
+		virtual bool GameExists(int id) = 0;
+		virtual Game &GetGame(int id) = 0;
+		virtual QString GamePageDir(int id) = 0;
 
-		virtual std::filesystem::path& getDownloadDir() = 0;
-		virtual std::filesystem::path getConfigJson() = 0;
-		virtual std::filesystem::path getConfigJsonFileName() = 0;
-		virtual std::filesystem::path getLauncherAppInfoUrl() = 0;
-		virtual std::filesystem::path getGameInfoRepository() = 0;
+		virtual QString &GetVersion() = 0;
+		virtual void SetVersion(QString ver) = 0;
 
-		virtual  Q_INVOKABLE bool installed(int id) = 0;
-		virtual  Q_INVOKABLE QString gameInfoDir(int id) = 0;
-		virtual  Q_INVOKABLE QUrl defaultInstallDir() = 0;
-		virtual  Q_INVOKABLE void setDownloadSpeed(qint32 dp) = 0;
-		virtual  Q_INVOKABLE qint32 getDownloadSpeed() = 0;
-		virtual  Q_INVOKABLE void setGameAutoCheck(int id, bool val) = 0;
-		virtual  Q_INVOKABLE bool getGameAutoCheck(int id) = 0;
-		virtual  Q_INVOKABLE QString getGameName(int id) = 0;
-		virtual  Q_INVOKABLE QString  getConfigJsonUrl() = 0;
-		virtual  Q_INVOKABLE int getGameId() = 0;
-		virtual  Q_INVOKABLE QString getGamePresentationUrl(int id) = 0;
-		virtual  Q_INVOKABLE QString getPresentationFile(int id) = 0;
-		virtual  Q_INVOKABLE int getDefaultGameId() = 0;
-		virtual  Q_INVOKABLE QString getCurrentDirectory() = 0;
+		virtual QString &GetDownloadDir() = 0;
+		virtual QString GetConfigJsonFilePath() = 0;
+		virtual QString GetConfigJsonFileName() = 0;
+		virtual QString GetLauncherAppInfoUrl() = 0;
+		virtual QString GetGameInfoRepository() = 0;
+
+		virtual Q_INVOKABLE bool IsGameInstalled(int id) = 0;
+		virtual Q_INVOKABLE QString GameInfoDir(int id) = 0;
+		virtual Q_INVOKABLE QUrl DefaultInstallDir() = 0;
+		virtual Q_INVOKABLE void SetDownloadSpeed(qint32 dp) = 0;
+		virtual Q_INVOKABLE qint32 GetDownloadSpeed() = 0;
+		virtual Q_INVOKABLE void SetGameUpdateAutoCheck(int id, bool val) = 0;
+		virtual Q_INVOKABLE bool GetGameUpdateAutoCheck(int id) = 0;
+		virtual Q_INVOKABLE QString GetGameTitle(int id) = 0;
+		virtual Q_INVOKABLE QString GetConfigJsonUrl() = 0;
+		virtual Q_INVOKABLE int GetGameId() = 0;
+		virtual Q_INVOKABLE QString GetGamePresentationUrl(int id) = 0;
+		virtual Q_INVOKABLE QString GetPresentationFile(int id) = 0;
+		virtual Q_INVOKABLE int GetDefaultGameId() = 0;
+		virtual Q_INVOKABLE QString GetCurrentDirectory() = 0;
 	};
 }

@@ -6,7 +6,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <filesystem>
+#include <QDir>
 #include <archive.h>
 #include <archive_entry.h>
 #include "ArchieveInstaller.hpp"
@@ -29,18 +29,18 @@ namespace sb {
 	}
 
 	bool ArchieveInstaller::checkState() {
-		if (!updateInfo_->pause.test_and_set()) {
-			im_->paused();
+		if (!UpdateInfo->pause.test_and_set()) {
+			UpdateManager->paused();
 			while(1) {// wait for
 				QThread::currentThread()->usleep(1000);
-				if (!updateInfo_->resume.test_and_set()) {
-					im_->resumed();
+				if (!UpdateInfo->resume.test_and_set()) {
+					UpdateManager->resumed();
 					break;
-				} else if (!updateInfo_->stop.test_and_set() || cancelled_) {
+				} else if (!UpdateInfo->stop.test_and_set() || cancelled_) {
 					return false;
 				}
 			}
-		} else if (!updateInfo_->stop.test_and_set() || cancelled_) {
+		} else if (!UpdateInfo->stop.test_and_set() || cancelled_) {
 			std::cout << "cancel\n";
 			cancelled_ = true;
 			return false;
@@ -55,7 +55,7 @@ namespace sb {
 		return (ARCHIVE_OK);
 	}
 
-	void ArchieveInstaller::run() {
+	void ArchieveInstaller::Run() {
 		::archive* a;
 		::archive_entry* entry;
 		int flags;
@@ -64,18 +64,19 @@ namespace sb {
 		flags |= ARCHIVE_EXTRACT_ACL;
 		flags |= ARCHIVE_EXTRACT_FFLAGS;
 		try {
-			destinationDir_ = updateInfo_->getInstallDir();
-			auto& downloadDir = Component<IConfig>::get().getDownloadDir();
-			auto& filesToUnpack = updateInfo_->getFiles();
+			destinationDir_ = UpdateInfo->getInstallDir().toUtf8().constData();
+			auto& config = Component<IConfig>::Get();
+			auto& downloadDir = config.GetDownloadDir();
+			auto& filesToUnpack = UpdateInfo->getFiles();
 			for (auto& arch : filesToUnpack) {
 				a = archive_read_new();
-				auto actualUnpacking = (downloadDir / arch.fileName).generic_string();
+				auto actualUnpacking = config.CombinePath({downloadDir, arch.FileName});
 
-				file.open(actualUnpacking, std::ios::binary);
+				file.open(actualUnpacking.toStdString(), std::ios::binary);
 				if (!file.is_open())
 					throw std::exception("Could not open file");
 				if (!destinationDir_.empty() && !std::filesystem::exists(destinationDir_.generic_string()))
-					std::filesystem::create_directories(destinationDir_.generic_string());
+					std::filesystem::create_directories(destinationDir_);
 
 				res = archive_read_support_compression_all(a);
 				res = archive_read_support_format_all(a);
@@ -85,8 +86,8 @@ namespace sb {
 					const char* currentFile = archive_entry_pathname(entry);
 					std::filesystem::path fullOutputPath;
 					// if global destination is not set = games info so grab destination from config
-					if (destinationDir_.empty() && !arch.destination.empty()) {
-						fullOutputPath = arch.destination;
+					if (destinationDir_.empty() && !arch.Destination.isEmpty()) {
+						fullOutputPath = arch.Destination.toStdString();
 						if (!fullOutputPath.empty() && !std::filesystem::exists(fullOutputPath.generic_string()))
 							std::filesystem::create_directories(fullOutputPath.generic_string());
 					} else
@@ -107,7 +108,7 @@ namespace sb {
 				}
 				res = archive_read_finish(a);
 			}
-		} catch (std::filesystem::filesystem_error& e) {
+		} catch (std::filesystem::filesystem_error&) {
 			res = -1;
 		} catch (...) {
 			res = ARCHIVE_FAILED;
@@ -115,15 +116,15 @@ namespace sb {
 		if (cancelled_)
 			throw AbortException();
 		if (res != ARCHIVE_OK) {
-			error(getErrorStr(res));
+			Error(getErrorStr(res));
 		}
 	}
 
 	void ArchieveInstaller::emitStatus() {
-		im_->installStatus(alreadyRead_);
+		UpdateManager->installStatus(alreadyRead_);
 	}
 
-	void ArchieveInstaller::reset() {
+	void ArchieveInstaller::Reset() {
 		destinationDir_ = "";
 		actualUnpacking = "";
 

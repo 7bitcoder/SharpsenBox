@@ -24,12 +24,12 @@ TEST(versionChecking, versionChecking) {
 	auto& cf = Component<IConfig>::get();
 	auto& downloadDir = cf.getDownloadDir();
 	ap_.init(um_);
-	auto& updateInfo = um_.getUpdateInfo();
-	updateInfo.setActualVersion("0");
+	auto& UpdateInfo = um_.getUpdateInfo();
+	UpdateInfo.setActualVersion("0");
 	downloadDir = "./Jsons/1"; // first scenario with ver = 0
-	ap_.reset();
-	ap_.run();
-	// when ver = 0 application is not installed = need update/installation
+	ap_.Reset();
+	ap_.Run();
+	// when ver = 0 application is not installed = need Update/installation
 	EXPECT_EQ(ap_.needUpdate(), true);
 }
 

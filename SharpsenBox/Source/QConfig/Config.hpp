@@ -6,73 +6,77 @@
 #include "IComponent.hpp"
 #include "Game.hpp"
 #include "IConfig.hpp"
-#include <filesystem>
-#include <vector>
 
-
-namespace sb {
-	class Config final : public IConfig {
+namespace sb
+{
+	class Config final : public IConfig
+	{
 		Q_OBJECT
 	public:
 		Config();
 		virtual ~Config();
 
+		QString CombinePath(const QList<QString> paths) final;
 		// implementation IQmlObject
-		void update() final {};
-		void init() final {};
-		std::string getName() final { return TYPENAME(Config); }
+		void Update() final;
+		void Init() final;
+		std::string GetName() final;
 
-		// interface 
-		void insertGame(Game& game) final { games_.insert({ game.id,  game }); };
-		bool gameExists(int id) final;
-		Game& getGame(int id) final;
-		std::string gamePageDir(int id) final;
-		QString& getVer()final { return version_; }
-		void setVer(QString ver) final { version_ = ver; }
+		QString GamePageDir(int id);
 
-		std::filesystem::path& getDownloadDir() final { return downloadDir_; }
-		std::filesystem::path getConfigJson() final { return config_ / configJson_; }
-		std::filesystem::path getConfigJsonFileName() final { return configJson_; }
-		std::filesystem::path getLauncherAppInfoUrl() final { return LauncherAppInfo; }
-		std::filesystem::path getGameInfoRepository() final { return gameInfoRepo_; }
+		// interface
+		void AddNewGame(Game &game) final;
+		bool GameExists(int id) final;
+		Game &GetGame(int id) final;
 
+		QString &GetVersion() final;
+		void SetVersion(QString ver) final;
 
-		Q_INVOKABLE bool installed(int id);
-		Q_INVOKABLE QString gameInfoDir(int id);
-		Q_INVOKABLE QUrl defaultInstallDir();
-		Q_INVOKABLE void setDownloadSpeed(qint32 dp) { downloadSpeed_ = dp; }
-		Q_INVOKABLE qint32 getDownloadSpeed() { return downloadSpeed_; }
-		Q_INVOKABLE void setGameAutoCheck(int id, bool val) { getGame(id).autoCheck = val; }
-		Q_INVOKABLE bool getGameAutoCheck(int id) { bool v = getGame(id).autoCheck;	return v; }
-		Q_INVOKABLE QString getGameName(int id) { return getGame(id).name; }
-		Q_INVOKABLE QString  getConfigJsonUrl() { return ""; } //!!!!!!!!!
-		Q_INVOKABLE int getGameId(); // get game id for game choser
-		Q_INVOKABLE QString getGamePresentationUrl(int id); // get game id for game choser
-		Q_INVOKABLE QString getPresentationFile(int id);
-		Q_INVOKABLE int getDefaultGameId();
-		Q_INVOKABLE QString getCurrentDirectory();
+		QString &GetDownloadDir() final;
+		QString GetConfigJsonFilePath() final;
+		QString GetConfigJsonFileName() final;
+		QString GetLauncherAppInfoUrl() final;
+		QString GetGameInfoRepository() final;
 
+		Q_INVOKABLE QUrl DefaultInstallDir();
+
+		Q_INVOKABLE void SetDownloadSpeed(qint32 dp);
+		Q_INVOKABLE qint32 GetDownloadSpeed();
+
+		Q_INVOKABLE void SetGameUpdateAutoCheck(int id, bool val);
+		Q_INVOKABLE bool GetGameUpdateAutoCheck(int id);
+
+		Q_INVOKABLE bool IsGameInstalled(int id);
+		Q_INVOKABLE QString GameInfoDir(int id);
+		Q_INVOKABLE QString GetGameTitle(int id);
+		Q_INVOKABLE QString GetConfigJsonUrl();
+		Q_INVOKABLE int GetGameId();						// get game id for game choser
+		Q_INVOKABLE QString GetGamePresentationUrl(int id); // get game id for game choser
+		Q_INVOKABLE QString GetPresentationFile(int id);
+		Q_INVOKABLE int GetDefaultGameId();
+		Q_INVOKABLE QString GetCurrentDirectory();
 
 	private:
-		void readGames();
-		Game readGameInfo(const QJsonObject& value);
-		void writeGames();
-		QJsonObject parseGameInfo(const Game& game);
+		void ReadGames();
+		Game ReadGameInfo(const QJsonObject &value);
+		void WriteGames();
+		QJsonObject ParseGameInfo(const Game &game);
+
 	private:
-		std::filesystem::path config_ = "../Config";
-		std::filesystem::path downloadDir_ = "../Download";
-		std::filesystem::path configJson_ = "SharpsenBoxInfo.json";
-		std::filesystem::path gamesFileName_ = "Games.json";
+		QString _Config = "../Config";
+		QString _DownloadDir = "../Download";
+		QString _ConfigJson = "SharpsenBoxInfo.json";
+		QString _GamesFileName = "Games.json";
 
-		std::unordered_map<int, Game> games_;
+		QMap<int, Game> _Games;
 
-		QString version_;
-		qint32 downloadSpeed_;
-		std::filesystem::path gameInfoRepo_;
-		std::filesystem::path LauncherAppInfo;
+		QString _Version;
+		qint32 _DownloadSpeed;
+		QString _GameInfoRepo;
+		QString _LauncherAppInfo;
 
 		//for gamebar
-		int maxGameBarLen_ = 10;
-		std::vector<int> sortedId_;
+		int _MaxGameBarLen = 10;
+		QVector<int> _SortedId;
 	};
 }

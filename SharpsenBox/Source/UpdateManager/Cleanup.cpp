@@ -1,18 +1,23 @@
+#include <QDir>
 #include "Cleanup.hpp"
-#include <filesystem>
 #include "IConfig.hpp"
 
-
-namespace sb {
-	void Cleanup::run() {
-		try {
-			auto& downloadDir = Component<IConfig>::get().getDownloadDir();
-			for (auto& p : std::filesystem::recursive_directory_iterator(downloadDir)) {
-				auto& path = p.path();
-				std::filesystem::remove_all(path);
+namespace sb
+{
+	void Cleanup::Run()
+	{
+		try
+		{
+			auto &downloadDir = Component<IConfig>::Get().GetDownloadDir();
+			QDir dir(downloadDir);
+			for(QString dirFile: dir.entryList())
+			{
+				dir.remove(dirFile);
 			}
-		} catch (...) {
-			error("Error ocured while removing temporary files");
+		}
+		catch (...)
+		{
+			Error("Error ocured while removing temporary files");
 		}
 	}
 }

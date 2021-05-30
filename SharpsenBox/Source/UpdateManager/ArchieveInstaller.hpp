@@ -28,8 +28,8 @@ namespace sb {
 		void resetInstalationDir() { destinationDir_.clear(); }
 
 		// ImElement implementation
-		void run() override;
-		void reset() override;
+		void Run() override;
+		void Reset() override;
 
 	private:
 		bool checkState();

@@ -6,10 +6,10 @@
 namespace sb {
 	Backend::Backend(QQmlApplicationEngine* eng) : register_(eng) {}
 
-	void Backend::init() { register_.init(); }
+	void Backend::Init() { register_.Init(); }
 
 	void Backend::registerComponents() {
-		register_.createAndRegister<IConfig, Config>();
-		register_.createAndRegister<IAppUpdaterManager, AppUpdaterManager>();
+		register_.CreateAndRegister<IConfig, Config>();
+		register_.CreateAndRegister<IAppUpdaterManager, AppUpdaterManager>();
 	}
 }

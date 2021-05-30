@@ -19,9 +19,9 @@ namespace sb {
 		LoadingBar();
 
 		// IQmlObject implementation
-		void update() final;
-		std::string getName() final;
-		void init() final;
+		void Update() final;
+		std::string GetName() final;
+		void Init() final;
 
 		void setTotal(double tot) final;
 		void setActual(double act) final;
@@ -31,7 +31,7 @@ namespace sb {
 		void setState(IUpdateManager::State st) final;
 		void setVisibleState(IUpdateManager::VisibleState st) final;
 		void setUninstallMode(bool un) final;
-		void reset() final;
+		void Reset() final;
 		void paused() final;
 		void resumed() final;
 		//QML Propetries

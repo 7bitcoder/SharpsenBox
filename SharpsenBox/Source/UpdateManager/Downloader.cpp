@@ -1,10 +1,11 @@
-﻿#include "Downloader.hpp"
-#include "IConfig.hpp"
-#include "IComponent.hpp"
-#include <stdio.h>
+﻿#include <stdio.h>
 #include <iostream>
 #include <curl/curl.h>
 #include <QElapsedTimer>
+#include <QFileInfo>
+#include "Downloader.hpp"
+#include "IConfig.hpp"
+#include "IComponent.hpp"
 #include "IUpdateManager.hpp"
 #include "UpdateInfo.hpp"
 
@@ -16,7 +17,7 @@ namespace sb {
 		Downloader* out = (Downloader*)userdata;
 		if (!out->stream_) {
 			/* open file for writing */
-			out->stream_ = fopen(out->outfile_.string().c_str(), "wb");
+			out->stream_ = fopen(out->outfile_.toStdString().c_str(), "wb");
 			if (!out->stream_)
 				return -1; /* failure, can't open file to write */
 		}  if (out->cancelled)
@@ -36,7 +37,7 @@ namespace sb {
 	}
 
 	void Downloader::checkSpeed() {
-		auto sp = Component<IConfig>::get().getDownloadSpeed();
+		auto sp = Component<IConfig>::Get().GetDownloadSpeed();
 		if (downloadSpeed_ != sp) {
 			downloadSpeed_ = sp;
 			curl_easy_setopt(curl, CURLOPT_MAX_RECV_SPEED_LARGE, downloadSpeed_ * 1024); //KB/s -> B/s
@@ -45,18 +46,18 @@ namespace sb {
 
 	int Downloader::checkState() {
 		checkSpeed();
-		if (!updateInfo_->pause.test_and_set()) {
+		if (!UpdateInfo->pause.test_and_set()) {
 			res = curl_easy_pause(curl, CURLPAUSE_ALL);
 			if (res == CURLE_OK)
 				;//emit ok 
 			std::cout << "pause2\n";
-			im_->paused();
-		} else if (!updateInfo_->resume.test_and_set()) {
+			UpdateManager->paused();
+		} else if (!UpdateInfo->resume.test_and_set()) {
 			res = curl_easy_pause(curl, CURLPAUSE_CONT);
 			if (res == CURLE_OK)
 				;//emit ok 
-			im_->resumed();
-		} else if (!updateInfo_->stop.test_and_set() || cancelled) {
+			UpdateManager->resumed();
+		} else if (!UpdateInfo->stop.test_and_set() || cancelled) {
 			std::cout << "cancel\n";
 			cancelled = true;
 			curl_easy_setopt(curl, CURLOPT_TIMEOUT_MS, 1L);
@@ -67,10 +68,10 @@ namespace sb {
 
 	void Downloader::emitStatus() {
 		auto x = curl_easy_getinfo(curl, CURLINFO_SPEED_DOWNLOAD, &speed_);
-		im_->downloadStatus(now_, total_, speed_);
+		UpdateManager->downloadStatus(now_, total_, speed_);
 	}
 
-	void Downloader::run() {
+	void Downloader::Run() {
 		try {
 			// clear flags etc 
 			::curl_global_init(CURL_GLOBAL_DEFAULT);
@@ -94,7 +95,8 @@ namespace sb {
 				//curl_easy_setopt(curl, CURLOPT_TIMEOUT_MS, 20'000L);
 				//res = curl_easy_setopt(curl, CURLOPT_USERNAME, "public");
 				//res = curl_easy_setopt(curl, CURLOPT_PASSWORD, "1234");
-				auto& downloadDir = Component<IConfig>::get().getDownloadDir();
+				auto& config =  Component<IConfig>::Get();
+				auto& downloadDir = config.GetDownloadDir();
 
 
 				curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
@@ -102,14 +104,14 @@ namespace sb {
 				curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
 
 				//curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
-				auto& files = updateInfo_->getFiles();
+				auto& files = UpdateInfo->getFiles();
 				auto size = files.size();
 				for (size_t i = 0; !cancelled && i < size; i++) {
-					auto url = files.at(i).url.generic_string();
-					auto& filename = files.at(i).fileName;
+					auto url = files.at(i).Url;
+					auto& filename = files.at(i).FileName;
 					lastDownload_ = 0;
-					outfile_ = (downloadDir / filename).generic_string();
-					res = curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+					outfile_ = config.CombinePath({downloadDir, filename});
+					res = curl_easy_setopt(curl, CURLOPT_URL, url.toStdString().c_str());
 					res = curl_easy_perform(curl);
 					if (CURLE_OK != res) {
 						break;
@@ -118,7 +120,7 @@ namespace sb {
 				}
 			}
 
-		} catch (std::filesystem::filesystem_error& e) {
+		} catch (std::filesystem::filesystem_error&) {
 			res = -2;
 		} catch (...) {
 			res = -1;
@@ -131,22 +133,24 @@ namespace sb {
 			throw AbortException();
 		if (res != CURLE_OK) {
 			if (res != CURLE_OPERATION_TIMEDOUT || !cancelled) { // cancel request
-				error(getErrorStr(res));
+				Error(getErrorStr(res));
 			}
 		}
 
 		cancelled = false;
 		if (!checkDownloaded()) {
 			res = -3;
-			error(getErrorStr(res));
+			Error(getErrorStr(res));
 		}
 	}
 
 	bool Downloader::checkDownloaded() {
-		auto& downloadDir = Component<IConfig>::get().getDownloadDir();
-		auto& files = updateInfo_->getFiles();
+		auto& config = Component<IConfig>::Get();
+		auto& downloadDir = config.GetDownloadDir();
+		auto& files = UpdateInfo->getFiles();
 		for (auto& file : files) {
-			if (!std::filesystem::exists(downloadDir / file.fileName))
+			auto finalPath = config.CombinePath({downloadDir, file.FileName});
+			if (!QFileInfo::exists(finalPath))
 				return false;
 		}
 		return true;
@@ -158,7 +162,7 @@ namespace sb {
 		stream_ = nullptr;
 	}
 
-	void Downloader::reset() {
+	void Downloader::Reset() {
 		outfile_ = "";
 		total_ = 0;
 		now_ = 0;

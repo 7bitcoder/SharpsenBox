@@ -7,10 +7,8 @@
 #include "IComponent.hpp"
 
 namespace sb {
-	class Game;
-}
-namespace sb {
 	class UpdateInfo;
+	struct Game;
 
 	struct IUpdateManager {
 		enum class State : int {
@@ -22,8 +20,8 @@ namespace sb {
 
 		virtual ~IUpdateManager() {};
 
-		virtual bool installMainApp(QString version, std::filesystem::path appInfoUrl, std::filesystem::path gamesRepoUrl) = 0;
-		virtual bool updateMainApp(QString version, std::filesystem::path appInfoUrl, std::filesystem::path gamesRepoUrl) = 0;
+		virtual bool installMainApp(QString version, QString appInfoUrl, QString gamesRepoUrl) = 0;
+		virtual bool updateMainApp(QString version, QString appInfoUrl, QString gamesRepoUrl) = 0;
 		virtual bool installGame(Game& game, const QString& gamePath, bool shortcut) = 0;
 		virtual bool updateGame(Game& game) = 0;
 

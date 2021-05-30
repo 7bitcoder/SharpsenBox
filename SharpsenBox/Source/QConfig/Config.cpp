@@ -8,13 +8,16 @@
 #include <algorithm>
 #include <QDir>
 
-namespace sb {
+namespace sb
+{
 
-	namespace {
-		bool readBool(const QJsonValue& val) { return val.toString() == "1"; }
+	namespace
+	{
+		bool readBool(const QJsonValue &val) { return val.toString() == "1"; }
 		QString writeBool(bool f) { return f ? "1" : "0"; }
 
-		QString readJsonFile(const QString& filePath) {
+		QString readJsonFile(const QString &filePath)
+		{
 			QString val;
 			QFile file;
 			//open SharpsenBoxConfig file
@@ -26,196 +29,316 @@ namespace sb {
 		}
 	}
 
-	Config::Config() {
-		try {
-			if (!std::filesystem::exists(config_))
-				std::filesystem::create_directories(config_);
-			if (!std::filesystem::exists(getConfigJson()))
-				;//problem
-			QString val = readJsonFile(getConfigJson().generic_string().c_str());
+	QString Config::CombinePath(const QList<QString> paths)
+	{
+		if (paths.isEmpty())
+			return "";
+		QString outputPath = paths.at(0);
+		for (int i = 1; i < paths.size(); ++i)
+		{
+			outputPath + QDir::separator() + paths.at(i);
+		}
+		return outputPath;
+	}
+
+	void Config::Update(){};
+
+	void Config::Init(){};
+
+	std::string Config::GetName()
+	{
+		return TYPENAME(Config);
+	}
+
+	void Config::AddNewGame(Game &game)
+	{
+		_Games.insert(game.Id, game);
+	};
+
+	QString &Config::GetVersion()
+	{
+		return _Version;
+	}
+	void Config::SetVersion(QString ver)
+	{
+		_Version = ver;
+	}
+
+	QString &Config::GetDownloadDir()
+	{
+		return _DownloadDir;
+	}
+
+	QString Config::GetConfigJsonFilePath()
+	{
+		return CombinePath({_Config, _ConfigJson});
+	}
+
+	QString Config::GetConfigJsonFileName()
+	{
+		return _ConfigJson;
+	}
+
+	QString Config::GetLauncherAppInfoUrl()
+	{
+		return _LauncherAppInfo;
+	}
+
+	QString Config::GetGameInfoRepository()
+	{
+		return _GameInfoRepo;
+	}
+
+	Config::Config()
+	{
+		try
+		{
+			if (!QDir(_Config).exists())
+				QDir().mkdir(_Config);
+			if (!QFileInfo::exists(GetConfigJsonFilePath()))
+				; //problem
+			QString val = readJsonFile(GetConfigJsonFilePath());
 			auto ff = val.toStdString();
 			QJsonDocument d = QJsonDocument::fromJson(val.toUtf8());
 
 			// Read settings
-			version_ = d["Ver"].toString();
-			downloadSpeed_ = std::stoi(d["DownloadSpeed"].toString().toStdString());
-			gameInfoRepo_ = d["GamesInfoRepository"].toString().toStdString();
-			LauncherAppInfo = d["AppInfoUrl"].toString().toStdString();
+			_Version = d["Ver"].toString();
+			_DownloadSpeed = d["DownloadSpeed"].toString().toInt();
+			_GameInfoRepo = d["GamesInfoRepository"].toString();
+			_LauncherAppInfo = d["AppInfoUrl"].toString();
 
-			std::cout << "version: " << version_.toStdString();
-			readGames();
+			std::cout << "version: " << _Version.toStdString();
+			ReadGames();
 
-			for (auto& keys : games_) {
-				sortedId_.push_back(keys.first);
+			for (auto &key : _Games.keys())
+			{
+				_SortedId.push_back(key);
 			}
-			std::sort(sortedId_.begin(), sortedId_.end(), std::less<int>());
-		} catch (std::exception& e) {
+			std::sort(_SortedId.begin(), _SortedId.end(), std::less<int>());
+		}
+		catch (std::exception &e)
+		{
 			throw; // todo use issue logger
-		} catch (...) {
+		}
+		catch (...)
+		{
 			throw;
 		}
 	}
 
-	void Config::readGames() {
+	void Config::ReadGames()
+	{
 
-		QString val = readJsonFile((config_ / gamesFileName_).generic_string().c_str());
+		QString val = readJsonFile(CombinePath({_Config, _GamesFileName}));
 
 		QJsonDocument d = QJsonDocument::fromJson(val.toUtf8());
 		QJsonObject json = d.object();
-		for (auto& key : json.keys()) {
+		for (auto &key : json.keys())
+		{
 			QJsonObject value = json[key].toObject();
-			auto game = readGameInfo(value);
-			game.name = key;
-			games_.insert({ game.id, game });
+			auto game = ReadGameInfo(value);
+			game.Title = key;
+			_Games.insert(game.Id, game);
 		}
 	}
-	Game Config::readGameInfo(const QJsonObject& value) {
+	Game Config::ReadGameInfo(const QJsonObject &value)
+	{
 		Game g;
-		auto ss = std::string(value["Id"].toString().toUtf8().constData());
-		g.id = std::stoi(ss);
-		g.installed = readBool(value["Installed"]);
-		g.shortcut = readBool(value["Shortcut"]);
-		g.autoCheck = readBool(value["AutoUpdate"]);
-		g.version = value["Ver"].toString();
-		g.appInfoUrl = value["AppInfoUrl"].toString();
-		g.gameDir = value["GameDir"].toString();
-		g.execPath = value["GameExecPath"].toString();
-		g.shortcutPath = value["ShortcutPath"].toString();
-		g.presentationUrl = value["PresentationUrl"].toString();
+		g.Id = value["Id"].toString().toInt();
+		g.IsInstalled = readBool(value["Installed"]);
+		g.HasShortcut = readBool(value["Shortcut"]);
+		g.UpdateAutoCheck = readBool(value["AutoUpdate"]);
+		g.Version = value["Ver"].toString();
+		g.GameInfoUrl = value["AppInfoUrl"].toString();
+		g.GameDir = value["GameDir"].toString();
+		g.ExecutablePath = value["GameExecPath"].toString();
+		g.ShortcutPath = value["ShortcutPath"].toString();
+		g.PresentationUrl = value["PresentationUrl"].toString();
 		g.PresentationQml = value["PresentationQml"].toString();
 		g.PresentationPackUrl = value["PresentationPackUrl"].toString();
 		g.PresentationVer = value["PresentationVer"].toString();
-		//std::cout << g.id << g.url.toUtf8().constData() << g.version.toUtf8().constData() << g.installed;
+		//std::cout << g.id << g.url.toUtf8().constData() << g.version.toUtf8().constData() << g.IsInstalled;
 		return g;
 	}
 
-	void Config::writeGames() {
+	void Config::WriteGames()
+	{
 		QJsonObject RootObject;
-		for (auto& game : games_) {
-			auto jsonParsed = parseGameInfo(game.second);
-			RootObject.insert(game.second.name, jsonParsed);
+		for (auto &game : _Games)
+		{
+			auto jsonParsed = ParseGameInfo(game);
+			RootObject.insert(game.Title, jsonParsed);
 		}
 		QFile file;
 		QJsonDocument d;
 		d.setObject(RootObject);
-		file.setFileName((config_ / gamesFileName_).generic_string().c_str());
+		file.setFileName(CombinePath({_Config, _GamesFileName}));
 		file.open(QIODevice::WriteOnly | QIODevice::Text);
 		file.write(d.toJson());
 		file.close();
 	}
 
-	QJsonObject Config::parseGameInfo(const Game& game) {
+	QJsonObject Config::ParseGameInfo(const Game &game)
+	{
 		QJsonObject RootObject;
-		RootObject.insert("Id", QString::number(game.id));
-		RootObject.insert("Ver", game.version);
-		RootObject.insert("AutoUpdate", writeBool(game.autoCheck));
-		RootObject.insert("Installed", writeBool(game.installed));
-		RootObject.insert("Shortcut", writeBool(game.shortcut));
-		RootObject.insert("GameDir", game.gameDir);
-		RootObject.insert("GameExecPath", game.execPath);
-		RootObject.insert("ShortcutPath", game.shortcutPath);
-		RootObject.insert("PresentationUrl", game.presentationUrl);
+		RootObject.insert("Id", QString::number(game.Id));
+		RootObject.insert("Ver", game.Version);
+		RootObject.insert("AutoUpdate", writeBool(game.UpdateAutoCheck));
+		RootObject.insert("IsInstalled", writeBool(game.IsInstalled));
+		RootObject.insert("Shortcut", writeBool(game.HasShortcut));
+		RootObject.insert("GameDir", game.GameDir);
+		RootObject.insert("GameExecPath", game.ExecutablePath);
+		RootObject.insert("ShortcutPath", game.ShortcutPath);
+		RootObject.insert("PresentationUrl", game.PresentationUrl);
 
 		RootObject.insert("PresentationQml", game.PresentationQml);
 		RootObject.insert("PresentationPackUrl", game.PresentationPackUrl);
 		RootObject.insert("PresentationVer", game.PresentationVer);
-		RootObject.insert("AppInfoUrl", game.appInfoUrl);
+		RootObject.insert("AppInfoUrl", game.GameInfoUrl);
 		return RootObject;
 	}
 
-	Config::~Config() {
+	Config::~Config()
+	{
 		QFile file;
 
 		QJsonDocument d;
 		QJsonObject RootObject = d.object();
 
-
-		RootObject.insert("Ver", version_);
-		RootObject.insert("DownloadSpeed", QString::number(downloadSpeed_));
-		RootObject.insert("GamesInfoRepository", gameInfoRepo_.string().c_str());
-		RootObject.insert("AppInfoUrl", LauncherAppInfo.string().c_str());
+		RootObject.insert("Ver", _Version);
+		RootObject.insert("DownloadSpeed", QString::number(_DownloadSpeed));
+		RootObject.insert("GamesInfoRepository", _GameInfoRepo);
+		RootObject.insert("AppInfoUrl", _LauncherAppInfo);
 
 		d.setObject(RootObject);
-		file.setFileName(getConfigJson().generic_string().c_str());
+		file.setFileName(GetConfigJsonFilePath());
 		file.open(QIODevice::WriteOnly | QIODevice::Text);
 		file.write(d.toJson());
 		file.close();
 
-		writeGames();
+		WriteGames();
 	}
 	//
 	//qint64 AppUpdateChecker::getProgress() const {
 	//	return progress_;
 	//}
 
-	Q_INVOKABLE bool Config::installed(int id) {
-		auto it = games_.find(id);
-		if (it != games_.end())
-			return it->second.installed;
+	Q_INVOKABLE bool Config::IsGameInstalled(int id)
+	{
+		auto it = _Games.find(id);
+		if (it != _Games.end())
+			return it->IsInstalled;
 		return false;
 	}
 
-	Q_INVOKABLE QUrl Config::defaultInstallDir() {
-		if (getenv("PROGRAMFILES")) { //windows
+	Q_INVOKABLE QUrl Config::DefaultInstallDir()
+	{
+		if (getenv("PROGRAMFILES"))
+		{ //windows
 			std::filesystem::path path = getenv("PROGRAMFILES");
 			return QUrl::fromLocalFile(path.generic_string().c_str());
-		} else { //mac /linux
+		}
+		else
+		{ //mac /linux
 			return QString();
 		}
 		return QString();
 	}
 
+	Q_INVOKABLE void Config::SetDownloadSpeed(qint32 dp)
+	{
+		_DownloadSpeed = dp;
+	}
 
-	Game& Config::getGame(int id) {
-		if (games_.contains(id)) {
-			return games_[id];
+	Q_INVOKABLE qint32 Config::GetDownloadSpeed()
+	{
+		return _DownloadSpeed;
+	}
+
+	Q_INVOKABLE void Config::SetGameUpdateAutoCheck(int id, bool val)
+	{
+		GetGame(id).UpdateAutoCheck = val;
+	}
+
+	Q_INVOKABLE bool Config::GetGameUpdateAutoCheck(int id)
+	{
+		bool v = GetGame(id).UpdateAutoCheck;
+		return v;
+	}
+
+	Game &Config::GetGame(int id)
+	{
+		if (_Games.contains(id))
+		{
+			return _Games[id];
 		}
 		throw std::exception("Bad game Id");
 	}
 
-	bool Config::gameExists(int id) {
-		return games_.contains(id);
+	bool Config::GameExists(int id)
+	{
+		return _Games.contains(id);
 	}
 
-	Q_INVOKABLE QString Config::gameInfoDir(int id) {
-		return getCurrentDirectory() + "/Games/" + getGame(id).name + "/";
+	Q_INVOKABLE QString Config::GameInfoDir(int id)
+	{
+		return CombinePath({GetCurrentDirectory(), "Games", GetGame(id).Title, ""});
 	}
 
-	std::string Config::gamePageDir(int id) {
-		return std::string("../Games/") + getGame(id).name.toStdString();
+	QString Config::GamePageDir(int id)
+	{
+		return CombinePath({"../Games/", GetGame(id).Title});
 	}
 
-	Q_INVOKABLE int Config::getGameId() {
+	Q_INVOKABLE int Config::GetGameId()
+	{
 		static int i = 0;
-		if (i < maxGameBarLen_ && i < sortedId_.size()) {
-			int id = sortedId_.at(i++);
+		if (i < _MaxGameBarLen && i < _SortedId.size())
+		{
+			int id = _SortedId.at(i++);
 			return id;
 		}
 		i = 0;
 		return 0; // end
 	}
 
-	Q_INVOKABLE QString Config::getCurrentDirectory() { return "file:///" + QDir::currentPath() + "/.."; }
-
-	Q_INVOKABLE QString Config::getGamePresentationUrl(int id) {
-		auto& game = getGame(id);
-		return game.presentationUrl;
+	Q_INVOKABLE QString Config::GetGameTitle(int id)
+	{
+		return GetGame(id).Title;
 	}
 
-	Q_INVOKABLE QString Config::getPresentationFile(int id) {
-		auto& game = getGame(id);
-		auto& url = game.presentationUrl;
-		if (!url.isEmpty()) { // its http link or locak html file
+	Q_INVOKABLE QString Config::GetConfigJsonUrl()
+	{
+		return "";
+	}
+
+	Q_INVOKABLE QString Config::GetCurrentDirectory() { return "file:///" + QDir::currentPath() + "/.."; }
+
+	Q_INVOKABLE QString Config::GetGamePresentationUrl(int id)
+	{
+		auto &game = GetGame(id);
+		return game.PresentationUrl;
+	}
+
+	Q_INVOKABLE QString Config::GetPresentationFile(int id)
+	{
+		auto &game = GetGame(id);
+		auto &url = game.PresentationUrl;
+		if (!url.isEmpty())
+		{ // its http link or locak html file
 			return "WebGamePage.qml";
-		} else { // local qml file 
-			auto full = gameInfoDir(game.id) + game.PresentationQml;
+		}
+		else
+		{ // local qml file
+			auto full = GameInfoDir(game.Id) + game.PresentationQml;
 			return full;
 		}
 	}
 
-	Q_INVOKABLE int Config::getDefaultGameId() {
-		if (sortedId_.size())
-			return sortedId_.at(0);
+	Q_INVOKABLE int Config::GetDefaultGameId()
+	{
+		if (_SortedId.size())
+			return _SortedId.at(0);
 		throw std::exception("None games provided");
 	}
 }

@@ -14,7 +14,7 @@ int main(int argc, char** argv) {
 
 	sb::Backend backend(&engine);
 	backend.registerComponents();
-	backend.init();
+	backend.Init();
 
 	engine.load("qrc:/SharpsenBox.qml");
 	return app.exec();

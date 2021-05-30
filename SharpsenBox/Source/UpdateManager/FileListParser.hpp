@@ -22,8 +22,8 @@ namespace sb {
 		qint64 getBytesToDownload() { return totalBytesTo_; }
 
 		// ImElement implementation
-		void run() override;
-		void reset() override;
+		void Run() override;
+		void Reset() override;
 
 	private:
 		void readPackets();
@@ -33,7 +33,7 @@ namespace sb {
 		files pathFiles_;
 		qint64 totalBytesTo_ = 0;
 
-		std::filesystem::path parseInfoFileName = "FileList.json";
+		QString parseInfoFileName = "FileList.json";
 
 		QJsonDocument fileList_;
 

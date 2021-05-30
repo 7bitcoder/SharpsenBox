@@ -17,8 +17,8 @@ namespace sb {
 		virtual ~Cleanup() {}
 
 		// ImElement implementation
-		void run() override;
-		void reset() override {};
+		void Run() override;
+		void Reset() override {};
 	private:
 	};
 }

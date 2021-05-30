@@ -17,9 +17,9 @@ namespace sb {
 		Q_OBJECT
 	public:
 
-		std::string getName() override { return TYPENAME(AppUpdaterManager); }
-		void init() override {}
-		void update() override {}
+		std::string GetName() override { return TYPENAME(AppUpdaterManager); }
+		void Init() override {}
+		void Update() override {}
 
 		Q_PROPERTY(QString statusStr READ getStateStr);
 		Q_PROPERTY(int progress READ getProgress NOTIFY progressChanged);
@@ -45,7 +45,7 @@ namespace sb {
 	private:
 		void updateStatus(IUpdateManager::State state);
 		IConfig& cf_;
-		UpdateManager im_;
+		UpdateManager UpdateManager;
 		QString statusStr_;
 		IUpdateManager::State state_ = IUpdateManager::State::NONE;
 

@@ -14,9 +14,9 @@ namespace sb {
 		virtual ~Dialog() {};
 
 		// IQmlObject intefrace
-		std::string getName() final { return TYPENAME(Dialog); }
-		void update() final {}
-		void init() final {}
+		std::string GetName() final { return TYPENAME(Dialog); }
+		void Update() final {}
+		void Init() final {}
 
 		// interface
 		void setType(Type t) { type_ = t; }

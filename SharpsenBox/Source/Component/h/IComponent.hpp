@@ -5,40 +5,47 @@
 
 #define TYPENAME(TYPE) #TYPE
 
+namespace sb
+{
 
-namespace sb {
-
-	template<class I>
-	class Component {
+	template <class I>
+	class Component
+	{
 	public:
-		static I& get() {
-			if (!iComponent_)
+		static I &Get()
+		{
+			if (!_IComponent)
 				throw std::exception("Component is not set");
-			return *iComponent_;
+			return *_IComponent;
 		}
+
 	protected:
 		Component() {}
 		virtual ~Component() {}
-		inline static I* iComponent_ = nullptr;
+		inline static I *_IComponent = nullptr;
 	};
 
-	template<class I, class O>
-	class ComponentCreator : public Component<I> {
+	template <class I, class O>
+	class ComponentCreator : public Component<I>
+	{
 	public:
-		static O& create() {
+		static O &Create()
+		{
 			static O component;
-			Component<I>::iComponent_ = static_cast<I*>(&component);
+			Component<I>::_IComponent = static_cast<I *>(&component);
 			return component;
 		}
+
 	private:
 		ComponentCreator() {}
 		~ComponentCreator() {}
 	};
 
-	struct IComponent : public QObject {
-		virtual void init() = 0;
-		virtual std::string getName() = 0;
-		virtual void update() = 0;
-		virtual ~IComponent() {};
+	struct IComponent : public QObject
+	{
+		virtual void Init() = 0;
+		virtual std::string GetName() = 0;
+		virtual void Update() = 0;
+		virtual ~IComponent(){};
 	};
 }

@@ -11,7 +11,7 @@ namespace sb {
 		Backend(QQmlApplicationEngine* eng);
 		~Backend() {}
 		
-		void init();
+		void Init();
 		void registerComponents();
 	private:
 		ComponentRegister register_;

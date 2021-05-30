@@ -18,8 +18,8 @@ namespace sb {
 		void updateGamesInfo();
 
 		// ImElement implementation
-		void run() override;
-		void reset() override;
+		void Run() override;
+		void Reset() override;
 	private:
 		// fileName -> <fileUrl, size>
 		// first element is filelist

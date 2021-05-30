@@ -10,13 +10,14 @@
 #include "UpdateInfo.hpp"
 
 namespace sb {
-	void FileListParser::run() {
+	void FileListParser::Run() {
 		try {
 			QString val;
 			QFile file;
 			//open SharpsenBoxConfig file
-			auto path = Component<IConfig>::get().getDownloadDir() / parseInfoFileName;
-			file.setFileName(path.generic_string().c_str());
+			auto & config = Component<IConfig>::Get();
+			auto path = config.CombinePath({config.GetDownloadDir(), parseInfoFileName});
+			file.setFileName(path);
 			file.open(QIODevice::ReadOnly | QIODevice::Text);
 			val = file.readAll();
 			auto ghj = val.toStdString();
@@ -25,28 +26,29 @@ namespace sb {
 			QString ver = fileList_["Ver"].toString();
 
 			auto ss = ver.toStdString();
-			if (false /*ver != toUpdateVersion_ */) { //need update
+			if (false /*ver != toUpdateVersion_ */) { //need Update
 				//todo error
-			} else if (updateInfo_->getFullInstall()) {
+			} else if (UpdateInfo->getFullInstall()) {
 				readAllPackets();
 			} else { //app is up to date
 				readPackets();
 			}
 		} catch (...) {
-			error("Error ocured while processing update fileList");
+			Error("Error ocured while processing Update fileList");
 		}
 	}
 
 	void FileListParser::readPackets() {
-		auto& pathFiles = updateInfo_->getFiles(); // path files 1st is file list so skip it
+		auto& pathFiles = UpdateInfo->getFiles(); // path files 1st is file list so skip it
 		auto it = pathFiles.begin();
 		auto fileList = fileList_["Files"].toObject();
 		for (++it; it != pathFiles.end(); it++) {
 			QString val;
 			QFile file;
 			//open SharpsenBoxConfig file
-			auto path = Component<IConfig>::get().getDownloadDir() / it->fileName;
-			file.setFileName(path.generic_string().c_str());
+			auto & config = Component<IConfig>::Get();
+			auto path = config.CombinePath({config.GetDownloadDir(), it->FileName});
+			file.setFileName(path);
 			file.open(QIODevice::ReadOnly | QIODevice::Text);
 			val = file.readAll();
 			auto ghj = val.toStdString();
@@ -79,13 +81,13 @@ namespace sb {
 		}
 		auto packets = fileList_["Packets"].toObject();
 
-		std::unordered_map<std::string, std::string> neededPackets;
+		std::unordered_map<QString, QString> neededPackets;
 		for (auto& file : toDownload_) {
 			auto elem = fileList[file].toObject();
 			auto pack = packets[elem["Id"].toString()].toObject();
-			if (!neededPackets.contains(pack["Url"].toString().toStdString())) {
-				totalBytesTo_ += std::stoll(pack["Size"].toString().toStdString());
-				neededPackets.insert({ pack["Url"].toString().toStdString(), pack["Name"].toString().toStdString() });
+			if (!neededPackets.contains(pack["Url"].toString())) {
+				totalBytesTo_ += pack["Size"].toString().toLongLong();
+				neededPackets.insert({ pack["Url"].toString(), pack["Name"].toString() });
 			}
 		}
 
@@ -98,14 +100,13 @@ namespace sb {
 		auto packets = fileList_["Packets"].toObject();
 		for (auto pac : packets) {
 			auto pack = pac.toObject();
-			auto tt = pack["Url"].toString().toStdString();
-			auto sizeStr = pack["Size"].toString().toStdString();
-			totalBytesTo_ += std::stoll(sizeStr);
-			files_.push_back({ pack["Url"].toString().toStdString(), pack["Name"].toString().toStdString() });
+			auto sizeStr = pack["Size"].toString();
+			totalBytesTo_ += sizeStr.toLongLong();
+			files_.push_back({ pack["Url"].toString(), pack["Name"].toString() });
 		}
 	}
 
-	void FileListParser::reset() {
+	void FileListParser::Reset() {
 		files_.clear();
 		totalBytesTo_ = 0;
 		toDownload_.clear();

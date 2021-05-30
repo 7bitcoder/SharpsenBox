@@ -6,11 +6,11 @@
 namespace sb {
 	void GameUninstaller::setId(int id) {
 		id_ = id;
-		auto& game = Component<IConfig>::get().getGame(id_);
-		gameDir_ = game.gameDir.toStdString();
-		shortcut_ = game.shortcut;
+		auto& game = Component<IConfig>::Get().GetGame(id_);
+		gameDir_ = game.GameDir.toStdString();
+		shortcut_ = game.HasShortcut;
 		if (shortcut_)
-			shortcutPath_ = game.shortcutPath.toStdString();
+			shortcutPath_ = game.ShortcutPath.toStdString();
 		start();
 	}
 	void GameUninstaller::run() {
