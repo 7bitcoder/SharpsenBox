@@ -50,17 +50,17 @@ namespace sb
 
 	Q_INVOKABLE void LoadingBar::Pause()
 	{
-		Component<IGameManager>::Get().pause();
+		Component<IGameManager>::Get().Pause();
 	};
 
 	Q_INVOKABLE void LoadingBar::Resume()
 	{
-		Component<IGameManager>::Get().resume();
+		Component<IGameManager>::Get().Resume();
 	}
 
 	Q_INVOKABLE void LoadingBar::Stop()
 	{
-		Component<IGameManager>::Get().stop();
+		Component<IGameManager>::Get().Stop();
 	}
 
 	Q_INVOKABLE bool LoadingBar::GetPauseResume()

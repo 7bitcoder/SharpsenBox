@@ -8,67 +8,81 @@
 #include "ILoadingBar.hpp"
 #include "UpdateManager.hpp"
 
-namespace sb {
+namespace sb
+{
 	class GameUninstaller;
-	class GameManager final :public IGameManager {
+	class GameManager final : public IGameManager
+	{
 		Q_OBJECT
 	public:
 		virtual ~GameManager();
 		GameManager();
 
 		// implementation IQmlComponent
-		void Update() final {};
+		void Update() final{};
 		std::string GetName() final;
 		void Init() final;
 
 		// inferface
-		void lock() final { lock_ = true; lockChanged(); }
-		void unLock() final { lock_ = false; lockChanged(); }
-		bool uninstall(bool dialogValue) final;
-		void installGame(bool value);
+		void Lock() final
+		{
+			_Lock = true;
+			LockChanged();
+		}
+		void UnLock() final
+		{
+			_Lock = false;
+			LockChanged();
+		}
+		bool Uninstall(bool dialogValue) final;
+		void InstallGame(bool value);
 
-		void pause() final;
-		void resume() final;
-		void stop() final;
+		void Pause() final;
+		void Resume() final;
+		void Stop() final;
 
 		// Qml properties
-		Q_PROPERTY(int lock READ getLock NOTIFY lockChanged);
+		Q_PROPERTY(int lock READ GetLock NOTIFY LockChanged);
 
 		// QMl invokables
-		Q_INVOKABLE void installGameRequest(int id);
-		Q_INVOKABLE void setInstallProperties(int id, QString path, bool shortcut) { gameId_ = id; shortcut_ = shortcut_; path_ = path; };
-		Q_INVOKABLE bool getLock() { return lock_; }
-		Q_INVOKABLE void unistallRequest(int id);
-		Q_INVOKABLE void checkAutoUpdate(int id);
+		Q_INVOKABLE void InstallGameRequest(int id);
+		Q_INVOKABLE void SetInstallProperties(int id, QString path, bool shortcut)
+		{
+			_GameId = id;
+			_Shortcut = _Shortcut;
+			_Path = path;
+		};
+		Q_INVOKABLE bool GetLock() { return _Lock; }
+		Q_INVOKABLE void UnistallRequest(int id);
+		Q_INVOKABLE void CheckAutoUpdate(int id);
 		Q_INVOKABLE void Update(int id);
-		Q_INVOKABLE void runGame(int id);
+		Q_INVOKABLE void RunGame(int id);
 
 	public slots:
-		void uninstallation(int id);
-		void errorEmit(const QString& errorStr);
-		void updateProgress(double prog);
+		void Uninstallation(int id);
+		void ErrorEmit(const QString &errorStr);
+		void UpdateProgress(double prog);
 
-		void setTotalLb(double tot);
-		void setActualLb(double act);
-		void setSpeedLb(double sp);
-		void setStateLb(int st);
-		void setVisibleStateLb(int st);
-		void setUninstallModeLb(bool un);
+		void SetTotalLb(double tot);
+		void SetActualLb(double act);
+		void SetSpeedLb(double sp);
+		void SetStateLb(int st);
+		void SetVisibleStateLb(int st);
+		void SetUninstallModeLb(bool un);
 
-		void paused() { lb_->Paused(); };
-		void resumed() { lb_->Resumed(); };
+		void Paused() { _LoadingBar->Paused(); };
+		void Resumed() { _LoadingBar->Resumed(); };
 	signals:
-		void lockChanged();
-
+		void LockChanged();
 
 	private:
-		bool checkProcess();
-		bool lock_ = false;
-		int gameId_;
-		QString path_;
-		bool shortcut_;
-		GameUninstaller* uninstaller_;
-		UpdateManager UpdateManager;
-		ILoadingBar* lb_;
+		bool CheckProcess();
+		bool _Lock = false;
+		int _GameId;
+		QString _Path;
+		bool _Shortcut;
+		GameUninstaller *_Uninstaller;
+		UpdateManager _UpdateManager;
+		ILoadingBar *_LoadingBar;
 	};
 }

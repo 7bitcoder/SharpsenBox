@@ -1,28 +1,35 @@
-﻿#include "GameUninstaller.hpp"
+﻿#include <QDir>
+#include "GameUninstaller.hpp"
 #include "IConfig.hpp"
 #include "IComponent.hpp"
 #include "Game.hpp"
 
-namespace sb {
-	void GameUninstaller::setId(int id) {
-		id_ = id;
-		auto& game = Component<IConfig>::Get().GetGame(id_);
-		gameDir_ = game.GameDir.toStdString();
-		shortcut_ = game.HasShortcut;
-		if (shortcut_)
-			shortcutPath_ = game.ShortcutPath.toStdString();
+namespace sb
+{
+	void GameUninstaller::SetGameId(int id)
+	{
+		_GameId = id;
+		auto &game = Component<IConfig>::Get().GetGame(_GameId);
+		_GameDir = game.GameDir;
+		_Shortcut = game.HasShortcut;
+		if (_Shortcut)
+			_ShortcutPath = game.ShortcutPath;
 		start();
 	}
-	void GameUninstaller::run() {
-		try {
-			if (std::filesystem::exists(gameDir_))
-				std::filesystem::remove_all(gameDir_);
-			if (shortcut_ && std::filesystem::exists(shortcutPath_))
-				std::filesystem::remove(shortcutPath_);
-		} catch (...) {
 
+	void GameUninstaller::run()
+	{
+		try
+		{
+			if (QDir().exists(_GameDir))
+				QDir(_GameDir).removeRecursively();
+			if (_Shortcut && QFileInfo::exists(_ShortcutPath))
+				QFile(_ShortcutPath).remove();
 		}
-		uninstalationComplete(id_);
+		catch (...)
+		{
+		}
+		UninstalationComplete(_GameId);
 	}
 
 }

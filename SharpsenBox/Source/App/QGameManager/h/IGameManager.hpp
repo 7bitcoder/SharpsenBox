@@ -6,20 +6,22 @@
 #include <QNetworkAccessManager>
 #include "IComponent.hpp"
 
-namespace sb {
-	struct IGameManager : public IComponent {
+namespace sb
+{
+	struct IGameManager : public IComponent
+	{
 	public:
-		virtual ~IGameManager() {};
+		virtual ~IGameManager(){};
 
 		// inferface
-		virtual void lock() = 0;
-		virtual void unLock() = 0;
-		virtual bool uninstall(bool dialogValue) = 0;
+		virtual void Lock() = 0;
+		virtual void UnLock() = 0;
+		virtual bool Uninstall(bool dialogValue) = 0;
 
-		virtual	void lockChanged() = 0;
+		virtual void LockChanged() = 0;
 
-		virtual void pause() = 0;
-		virtual void resume() = 0;
-		virtual void stop() = 0;
+		virtual void Pause() = 0;
+		virtual void Resume() = 0;
+		virtual void Stop() = 0;
 	};
 }

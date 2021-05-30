@@ -4,22 +4,24 @@
 #include <QDebug>
 #include <filesystem>
 
-namespace sb {
-	class GameUninstaller : public  QThread {
+namespace sb
+{
+	class GameUninstaller : public QThread
+	{
 		Q_OBJECT
 	public:
-		void setId(int id);
+		void SetGameId(int id);
 		void run() override;
-		virtual ~GameUninstaller() {};
-		GameUninstaller() {};
+		virtual ~GameUninstaller(){};
+		GameUninstaller(){};
 
 	signals:
-		void uninstalationComplete(int id);
+		void UninstalationComplete(int id);
 	public slots:
 	private:
-		int id_;
-		std::filesystem::path gameDir_;
-		bool shortcut_;
-		std::filesystem::path shortcutPath_;
+		int _GameId;
+		QString _GameDir;
+		bool _Shortcut;
+		QString _ShortcutPath;
 	};
 }
