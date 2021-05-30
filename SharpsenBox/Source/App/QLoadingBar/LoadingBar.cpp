@@ -96,9 +96,9 @@ namespace sb
 	void LoadingBar::SetError(const QString &str)
 	{
 		auto &dialog = Component<IDialog>::Get();
-		dialog.setType(IDialog::Type::INFO);
-		dialog.setInfo(str);
-		dialog.show();
+		dialog.SetType(IDialog::Type::INFO);
+		dialog.SetInfo(str);
+		dialog.Show();
 	}
 
 	void LoadingBar::SetState(IUpdateManager::State st)

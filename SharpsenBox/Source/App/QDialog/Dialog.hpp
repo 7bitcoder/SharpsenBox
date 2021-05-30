@@ -6,44 +6,48 @@
 #include "IDialog.hpp"
 #include "IComponent.hpp"
 
-namespace sb {
-	class Dialog final : public IDialog {
+namespace sb
+{
+	class Dialog final : public IDialog
+	{
 		Q_OBJECT;
+
 	public:
 		Dialog();
-		virtual ~Dialog() {};
+		virtual ~Dialog();
 
 		// IQmlObject intefrace
-		std::string GetName() final { return TYPENAME(Dialog); }
-		void Update() final {}
-		void Init() final {}
+		std::string GetName() final;
+		void Update() final;
+		void Init() final;
 
 		// interface
-		void setType(Type t) { type_ = t; }
-		void setInfo(QString str) final { info_ = str; }
-		void show() final { showDialog(); }
-		bool getValue() final { return value_; }
+		void SetType(Type t) final;
+		void SetInfo(QString str) final;
+		void Show() final;
+		bool GetValue() final;
 
-		void setCallback(const std::function<bool(bool)>& cb) final { callback_ = cb; }
+		void SetCallback(const std::function<bool(bool)> &cb) final;
 
 		// QML Propetries
-		Q_PROPERTY(int dialogType READ getDialogType NOTIFY showDialog);
+		Q_PROPERTY(int dialogType READ GetDialogType NOTIFY ShowDialog);
 
 		//QMl invoklabes
 	public slots:
-		void dialog(bool value);
-		int getDialogType() { return static_cast<int>(type_); }
-		QString getInfo() { return info_; }
+		void Resolve(bool value);
+		int GetDialogType();
+		QString GetInfo();
 	signals:
-		void dialogTriggered(bool value);
-		void showDialog();
+		void DialogTriggered(bool value);
+		void ShowDialog();
 
 	private:
-		void resetCallback();
+		void ResetCallback();
+
 	private:
-		QString info_ = "";
-		Type type_ = NONE;
-		bool value_ = false;
-		std::function<bool(bool)> callback_ = nullptr;
+		QString _Info = "";
+		Type _Type = NONE;
+		bool _Value = false;
+		std::function<bool(bool)> _Callback = nullptr;
 	};
 }
