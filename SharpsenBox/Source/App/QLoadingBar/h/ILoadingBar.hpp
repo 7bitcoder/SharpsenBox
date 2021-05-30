@@ -8,22 +8,24 @@
 #include "IUpdateManager.hpp"
 #include <filesystem>
 
-namespace sb {
-	struct ILoadingBar : public IComponent {
+namespace sb
+{
+	struct ILoadingBar : public IComponent
+	{
 	public:
-		virtual ~ILoadingBar() {};
+		virtual ~ILoadingBar(){};
 
-		virtual void setTotal(double tot) = 0;
-		virtual void setActual(double act) = 0;
-		virtual void setProgress(double prog) = 0;
-		virtual void setSpeed(double sp) = 0;
-		virtual void setError(const QString& str) = 0;
-		virtual void setState(IUpdateManager::State st) = 0;
-		virtual void setVisibleState(IUpdateManager::VisibleState st) = 0;
-		virtual void setUninstallMode(bool un) = 0;
+		virtual void SetTotal(double tot) = 0;
+		virtual void SetActual(double act) = 0;
+		virtual void SetProgress(double prog) = 0;
+		virtual void SetSpeed(double sp) = 0;
+		virtual void SetError(const QString &str) = 0;
+		virtual void SetState(IUpdateManager::State st) = 0;
+		virtual void SetVisibleState(IUpdateManager::VisibleState st) = 0;
+		virtual void SetUninstallMode(bool un) = 0;
 
 		virtual void Reset() = 0;
-		virtual void paused() = 0;
-		virtual void resumed() = 0;
+		virtual void Paused() = 0;
+		virtual void Resumed() = 0;
 	};
 }

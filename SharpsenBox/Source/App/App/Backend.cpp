@@ -6,14 +6,14 @@
 #include "Backend.hpp"
 
 namespace sb {
-	Backend::Backend(QQmlApplicationEngine* eng) : register_(eng) {}
+	Backend::Backend(QQmlApplicationEngine* eng) : _Register(eng) {}
 
-	void Backend::Init() { register_.Init(); }
+	void Backend::Init() { _Register.Init(); }
 
-	void Backend::registerComponents() {
-		register_.CreateAndRegister<IConfig, Config>();
-		register_.CreateAndRegister<IDialog, Dialog>();
-		register_.CreateAndRegister<ILoadingBar, LoadingBar>();
-		register_.CreateAndRegister<IGameManager, GameManager>();
+	void Backend::RegisterComponents() {
+		_Register.CreateAndRegister<IConfig, Config>();
+		_Register.CreateAndRegister<IDialog, Dialog>();
+		_Register.CreateAndRegister<ILoadingBar, LoadingBar>();
+		_Register.CreateAndRegister<IGameManager, GameManager>();
 	}
 }

@@ -55,8 +55,8 @@ namespace sb {
 		void setVisibleStateLb(int st);
 		void setUninstallModeLb(bool un);
 
-		void paused() { lb_->paused(); };
-		void resumed() { lb_->resumed(); };
+		void paused() { lb_->Paused(); };
+		void resumed() { lb_->Resumed(); };
 	signals:
 		void lockChanged();
 

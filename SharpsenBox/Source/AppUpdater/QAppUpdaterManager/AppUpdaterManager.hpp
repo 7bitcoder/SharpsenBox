@@ -11,44 +11,45 @@
 #include <filesystem>
 #include <string>
 
-
-namespace sb {
-	class AppUpdaterManager : public IAppUpdaterManager {
+namespace sb
+{
+	class AppUpdaterManager : public IAppUpdaterManager
+	{
 		Q_OBJECT
 	public:
-
 		std::string GetName() override { return TYPENAME(AppUpdaterManager); }
 		void Init() override {}
 		void Update() override {}
 
-		Q_PROPERTY(QString statusStr READ getStateStr);
-		Q_PROPERTY(int progress READ getProgress NOTIFY progressChanged);
-		Q_PROPERTY(int updateState READ getState NOTIFY stateChanged);
+		Q_PROPERTY(QString statusStr READ GetStateStr);
+		Q_PROPERTY(int progress READ GetProgress NOTIFY ProgressChanged);
+		Q_PROPERTY(int updateState READ GetState NOTIFY StateChanged);
 
-		Q_INVOKABLE QString getStateStr();
-		Q_INVOKABLE int getProgress();
-		Q_INVOKABLE int getState();
-		Q_INVOKABLE void checkForUpdates();
+		Q_INVOKABLE QString GetStateStr();
+		Q_INVOKABLE int GetProgress();
+		Q_INVOKABLE int GetState();
+		Q_INVOKABLE void CheckForUpdates();
 
 		AppUpdaterManager();
 		virtual ~AppUpdaterManager();
+
 	private:
 	public slots:
-		void updateInstalled(const QString& version);
-		void updateProgress(double progress);
-		void errorCatched(const QString& what);
-		void updateSt(int status);
+		void UpdateInstalled(const QString &version);
+		void UpdateProgress(double progress);
+		void ErrorCatched(const QString &what);
+		void UpdateSt(int status);
 	signals:
-		void stateChanged();
-		void progressChanged();
+		void StateChanged();
+		void ProgressChanged();
 
 	private:
-		void updateStatus(IUpdateManager::State state);
-		IConfig& cf_;
-		UpdateManager UpdateManager;
-		QString statusStr_;
-		IUpdateManager::State state_ = IUpdateManager::State::NONE;
+		void UpdateStatus(IUpdateManager::State state);
+		IConfig &_Config;
+		UpdateManager _UpdateManager;
+		QString _StatusStr;
+		IUpdateManager::State _State = IUpdateManager::State::NONE;
 
-		double progress_;
+		double _Progress;
 	};
 }

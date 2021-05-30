@@ -9,61 +9,70 @@
 #include <QDir>
 #include <string>
 
+namespace sb
+{
 
-namespace sb {
-
-	AppUpdaterManager::AppUpdaterManager() : cf_(Component<IConfig>::Get()) {
-		cf_.Init();
-		UpdateManager.Init();
-		auto& downloadDir = cf_.GetDownloadDir();
+	AppUpdaterManager::AppUpdaterManager() : _Config(Component<IConfig>::Get())
+	{
+		_Config.Init();
+		_UpdateManager.Init();
+		auto &downloadDir = _Config.GetDownloadDir();
 		if (!QDir().exists(downloadDir))
 			QDir().mkdir(downloadDir);
 	}
 
-	AppUpdaterManager:: ~AppUpdaterManager() {
-		UpdateManager.terminate();
-		UpdateManager.wait();
+	AppUpdaterManager::~AppUpdaterManager()
+	{
+		_UpdateManager.terminate();
+		_UpdateManager.wait();
 	}
 
-	void AppUpdaterManager::checkForUpdates() {
-		connect(&UpdateManager, &UpdateManager::setStateLb, this, &AppUpdaterManager::updateSt);
-		connect(&UpdateManager, &UpdateManager::errorEmit, this, &AppUpdaterManager::errorCatched);
-		connect(&UpdateManager, &UpdateManager::updateEnded, this, &AppUpdaterManager::updateInstalled);
-		connect(&UpdateManager, &UpdateManager::updateProgress, this, &AppUpdaterManager::updateProgress);
-		updateStatus(IUpdateManager::State::DOWNLOADING);
-		if (cf_.GetVersion() == "0") // needInstallation
-			UpdateManager.installMainApp(cf_.GetVersion(), cf_.GetLauncherAppInfoUrl(), cf_.GetGameInfoRepository());
+	void AppUpdaterManager::CheckForUpdates()
+	{
+		connect(&_UpdateManager, &UpdateManager::setStateLb, this, &AppUpdaterManager::UpdateSt);
+		connect(&_UpdateManager, &UpdateManager::errorEmit, this, &AppUpdaterManager::ErrorCatched);
+		connect(&_UpdateManager, &UpdateManager::updateEnded, this, &AppUpdaterManager::UpdateInstalled);
+		connect(&_UpdateManager, &UpdateManager::updateProgress, this, &AppUpdaterManager::UpdateProgress);
+		UpdateStatus(IUpdateManager::State::DOWNLOADING);
+		if (_Config.GetVersion() == "0") // needInstallation
+			_UpdateManager.installMainApp(_Config.GetVersion(), _Config.GetLauncherAppInfoUrl(), _Config.GetGameInfoRepository());
 		else //just Update
-			UpdateManager.updateMainApp(cf_.GetVersion(), cf_.GetLauncherAppInfoUrl(), cf_.GetGameInfoRepository());
+			_UpdateManager.updateMainApp(_Config.GetVersion(), _Config.GetLauncherAppInfoUrl(), _Config.GetGameInfoRepository());
 	}
 
-	void AppUpdaterManager::updateSt(int state) {
-		updateStatus(static_cast<IUpdateManager::State>(state));
+	void AppUpdaterManager::UpdateSt(int state)
+	{
+		UpdateStatus(static_cast<IUpdateManager::State>(state));
 	}
 
-	void AppUpdaterManager::updateStatus(IUpdateManager::State state) {
-		state_ = static_cast<IUpdateManager::State>(state);
-		stateChanged();
+	void AppUpdaterManager::UpdateStatus(IUpdateManager::State state)
+	{
+		_State = state;
+		StateChanged();
 	}
 
-	void AppUpdaterManager::updateInstalled(const QString& version) {
-		if (!version.isEmpty()) {
-			updateStatus(IUpdateManager::State::COMPLEET);
-			cf_.SetVersion(version);
+	void AppUpdaterManager::UpdateInstalled(const QString &version)
+	{
+		if (!version.isEmpty())
+		{
+			UpdateStatus(IUpdateManager::State::COMPLEET);
+			_Config.SetVersion(version);
 		}
 	}
 
-	void AppUpdaterManager::errorCatched(const QString& what) {
-		statusStr_ = what;
-		updateStatus(IUpdateManager::State::ERRORD);
+	void AppUpdaterManager::ErrorCatched(const QString &what)
+	{
+		_StatusStr = what;
+		UpdateStatus(IUpdateManager::State::ERRORD);
 	}
 
-	void AppUpdaterManager::updateProgress(double progress) {
-		progress_ = progress;
-		progressChanged();
+	void AppUpdaterManager::UpdateProgress(double progress)
+	{
+		_Progress = progress;
+		ProgressChanged();
 	}
 
-	Q_INVOKABLE QString AppUpdaterManager::getStateStr() { return statusStr_; }
-	Q_INVOKABLE int AppUpdaterManager::getProgress() { return progress_; }
-	Q_INVOKABLE int AppUpdaterManager::getState() { return static_cast<int>(state_); }
+	Q_INVOKABLE QString AppUpdaterManager::GetStateStr() { return _StatusStr; }
+	Q_INVOKABLE int AppUpdaterManager::GetProgress() { return _Progress; }
+	Q_INVOKABLE int AppUpdaterManager::GetState() { return static_cast<int>(_State); }
 }

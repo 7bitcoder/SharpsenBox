@@ -13,10 +13,10 @@ namespace sb
 
 	namespace
 	{
-		bool readBool(const QJsonValue &val) { return val.toString() == "1"; }
-		QString writeBool(bool f) { return f ? "1" : "0"; }
+		bool ReadBool(const QJsonValue &val) { return val.toString() == "1"; }
+		QString WriteBool(bool f) { return f ? "1" : "0"; }
 
-		QString readJsonFile(const QString &filePath)
+		QString ReadJsonFile(const QString &filePath)
 		{
 			QString val;
 			QFile file;
@@ -97,7 +97,7 @@ namespace sb
 				QDir().mkdir(_Config);
 			if (!QFileInfo::exists(GetConfigJsonFilePath()))
 				; //problem
-			QString val = readJsonFile(GetConfigJsonFilePath());
+			QString val = ReadJsonFile(GetConfigJsonFilePath());
 			auto ff = val.toStdString();
 			QJsonDocument d = QJsonDocument::fromJson(val.toUtf8());
 
@@ -129,7 +129,7 @@ namespace sb
 	void Config::ReadGames()
 	{
 
-		QString val = readJsonFile(CombinePath({_Config, _GamesFileName}));
+		QString val = ReadJsonFile(CombinePath({_Config, _GamesFileName}));
 
 		QJsonDocument d = QJsonDocument::fromJson(val.toUtf8());
 		QJsonObject json = d.object();
@@ -145,9 +145,9 @@ namespace sb
 	{
 		Game g;
 		g.Id = value["Id"].toString().toInt();
-		g.IsInstalled = readBool(value["Installed"]);
-		g.HasShortcut = readBool(value["Shortcut"]);
-		g.UpdateAutoCheck = readBool(value["AutoUpdate"]);
+		g.IsInstalled = ReadBool(value["Installed"]);
+		g.HasShortcut = ReadBool(value["Shortcut"]);
+		g.UpdateAutoCheck = ReadBool(value["AutoUpdate"]);
 		g.Version = value["Ver"].toString();
 		g.GameInfoUrl = value["AppInfoUrl"].toString();
 		g.GameDir = value["GameDir"].toString();
@@ -183,9 +183,9 @@ namespace sb
 		QJsonObject RootObject;
 		RootObject.insert("Id", QString::number(game.Id));
 		RootObject.insert("Ver", game.Version);
-		RootObject.insert("AutoUpdate", writeBool(game.UpdateAutoCheck));
-		RootObject.insert("IsInstalled", writeBool(game.IsInstalled));
-		RootObject.insert("Shortcut", writeBool(game.HasShortcut));
+		RootObject.insert("AutoUpdate", WriteBool(game.UpdateAutoCheck));
+		RootObject.insert("IsInstalled", WriteBool(game.IsInstalled));
+		RootObject.insert("Shortcut", WriteBool(game.HasShortcut));
 		RootObject.insert("GameDir", game.GameDir);
 		RootObject.insert("GameExecPath", game.ExecutablePath);
 		RootObject.insert("ShortcutPath", game.ShortcutPath);

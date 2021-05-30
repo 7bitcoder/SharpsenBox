@@ -12,8 +12,8 @@ namespace sb {
 		~Backend() {}
 		
 		void Init();
-		void registerComponents();
+		void RegisterComponents();
 	private:
-		ComponentRegister register_;
+		ComponentRegister _Register;
 	};
 }

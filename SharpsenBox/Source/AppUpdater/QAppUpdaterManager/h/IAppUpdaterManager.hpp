@@ -10,8 +10,6 @@
 
 namespace sb {
 	struct IAppUpdaterManager : public IComponent {
-	public:
 		virtual ~IAppUpdaterManager() {};
-	private:
 	};
 }

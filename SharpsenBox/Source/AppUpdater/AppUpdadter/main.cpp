@@ -15,7 +15,7 @@ int main(int argc, char** argv) {
 	QQmlApplicationEngine engine;
 
 	sb::Backend backend(&engine);
-	backend.registerComponents();
+	backend.RegisterComponents();
 	backend.Init();
 
 	engine.load("qrc:/AppUpdater.qml");

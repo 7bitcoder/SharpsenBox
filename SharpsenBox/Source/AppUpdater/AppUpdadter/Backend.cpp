@@ -4,12 +4,12 @@
 #include "Backend.hpp"
 
 namespace sb {
-	Backend::Backend(QQmlApplicationEngine* eng) : register_(eng) {}
+	Backend::Backend(QQmlApplicationEngine* eng) : _Register(eng) {}
 
-	void Backend::Init() { register_.Init(); }
+	void Backend::Init() { _Register.Init(); }
 
-	void Backend::registerComponents() {
-		register_.CreateAndRegister<IConfig, Config>();
-		register_.CreateAndRegister<IAppUpdaterManager, AppUpdaterManager>();
+	void Backend::RegisterComponents() {
+		_Register.CreateAndRegister<IConfig, Config>();
+		_Register.CreateAndRegister<IAppUpdaterManager, AppUpdaterManager>();
 	}
 }

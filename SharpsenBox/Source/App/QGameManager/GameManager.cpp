@@ -95,9 +95,9 @@ namespace sb {
 				return false;
 			lock();
 			lb_->Reset();
-			lb_->setUninstallMode(true);
-			lb_->setState(IUpdateManager::State::CHECKING);
-			lb_->setVisibleState(IUpdateManager::VisibleState::SHOWED);
+			lb_->SetUninstallMode(true);
+			lb_->SetState(IUpdateManager::State::CHECKING);
+			lb_->SetVisibleState(IUpdateManager::VisibleState::SHOWED);
 			uninstaller_->setId(gameId_);
 			uninstaller_->start();
 			return false;
@@ -114,8 +114,8 @@ namespace sb {
 	void GameManager::uninstallation(int id) {
 		Component <IConfig>::Get().GetGame(id).IsInstalled = false;
 		unLock();
-		lb_->setUninstallMode(false);
-		lb_->setVisibleState(IUpdateManager::VisibleState::HIDDEN);
+		lb_->SetUninstallMode(false);
+		lb_->SetVisibleState(IUpdateManager::VisibleState::HIDDEN);
 	}
 
 	Q_INVOKABLE void GameManager::checkAutoUpdate(int id) {
@@ -152,14 +152,14 @@ namespace sb {
 		system(total.c_str());
 	}
 
-	void GameManager::errorEmit(const QString& errorStr) { lb_->setError(errorStr); }
-	void GameManager::updateProgress(double prog) { lb_->setProgress(prog); }
+	void GameManager::errorEmit(const QString& errorStr) { lb_->SetError(errorStr); }
+	void GameManager::updateProgress(double prog) { lb_->SetProgress(prog); }
 
-	void GameManager::setTotalLb(double tot) { lb_->setTotal(tot); }
-	void GameManager::setActualLb(double act) { lb_->setActual(act); }
-	void GameManager::setSpeedLb(double sp) { lb_->setSpeed(sp); }
+	void GameManager::setTotalLb(double tot) { lb_->SetTotal(tot); }
+	void GameManager::setActualLb(double act) { lb_->SetActual(act); }
+	void GameManager::setSpeedLb(double sp) { lb_->SetSpeed(sp); }
 
-	void GameManager::setUninstallModeLb(bool un) { lb_->setUninstallMode(un); }
+	void GameManager::setUninstallModeLb(bool un) { lb_->SetUninstallMode(un); }
 
 	void GameManager::setStateLb(int state) { 
 		using State = IUpdateManager::State;
@@ -176,11 +176,11 @@ namespace sb {
 		default:
 			break;
 		}
-		lb_->setState(st);
+		lb_->SetState(st);
 	}
 
 	void GameManager::setVisibleStateLb(int st) { 
-		lb_->setVisibleState(IUpdateManager::VisibleState(st)); 
+		lb_->SetVisibleState(IUpdateManager::VisibleState(st)); 
 	}
 
 	bool GameManager::checkProcess() {
