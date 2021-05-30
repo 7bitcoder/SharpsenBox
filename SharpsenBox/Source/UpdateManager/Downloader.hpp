@@ -8,14 +8,14 @@
 #include "IRunnable.hpp"
 #include <filesystem>
 
-namespace cf {
+namespace sb {
 	struct AppPack;
 }
 
-namespace im {
+namespace sb {
 	class Downloader : public IRunnable {
 	public:
-		using files = std::vector < cf::AppPack >;
+		using files = std::vector < AppPack >;
 		Downloader();
 		~Downloader() {}
 

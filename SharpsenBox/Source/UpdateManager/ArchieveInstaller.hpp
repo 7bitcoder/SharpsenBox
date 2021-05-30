@@ -14,11 +14,11 @@
 
 struct archive;
 
-namespace cf {
+namespace sb {
 	struct AppPack;
 }
 
-namespace im {
+namespace sb {
 	class ArchieveInstaller : public IRunnable {
 	public:
 		ArchieveInstaller() {};

@@ -20,7 +20,7 @@
 #include "GameParser.hpp"
 #include "UpdateInfo.hpp"
 
-namespace im {
+namespace sb {
 	namespace {
 
 		double getMB(qint64 progress) {
@@ -91,7 +91,7 @@ namespace im {
 		fileListParser_->init(*this);
 		gameParser_->init(*this);
 
-		auto& downloadDir = bc::Component<cf::IConfig>::get().getDownloadDir();
+		auto& downloadDir = Component<IConfig>::get().getDownloadDir();
 		if (!std::filesystem::exists(downloadDir)) {
 			try {
 				std::filesystem::create_directory(downloadDir);
@@ -102,7 +102,7 @@ namespace im {
 	}
 
 	void UpdateManager::run() {
-		im::IUpdateManager::State finalState = im::IUpdateManager::State::NONE;
+		IUpdateManager::State finalState = IUpdateManager::State::NONE;
 		QString what;
 		try {
 			switch (updateInfo_->getUpdateMode()) {
@@ -114,14 +114,14 @@ namespace im {
 				updateGame();
 				break;
 			}
-			finalState = im::IUpdateManager::State::COMPLEET;
+			finalState = IUpdateManager::State::COMPLEET;
 		} catch (AbortException& e) {
-			finalState = im::IUpdateManager::State::STOPPED;
+			finalState = IUpdateManager::State::STOPPED;
 		} catch (std::exception& e) {
-			finalState = im::IUpdateManager::State::ERRORD;
+			finalState = IUpdateManager::State::ERRORD;
 			what = e.what();
 		} catch (...) {
-			finalState = im::IUpdateManager::State::ERRORD;
+			finalState = IUpdateManager::State::ERRORD;
 			what = "Unexpected error ocured while processing";
 		}
 		try {
@@ -155,7 +155,7 @@ namespace im {
 		return true;
 	}
 
-	bool UpdateManager::installGame(cf::Game& game, const QString& gamePath, bool shortcut) {
+	bool UpdateManager::installGame(Game& game, const QString& gamePath, bool shortcut) {
 		if (isRunning())
 			return false;
 		reset();
@@ -171,13 +171,13 @@ namespace im {
 		updateInfo_->setFiles({ {game.appInfoUrl.toStdString(), "AppInfo.json" } });
 		auto& hh = updateInfo_->getFiles().at(0);
 		//progress_ = 100;
-		//emit emitState(lb::State::CHECKING);
-		//emit emitVisibleState(lb::VisibleState::SHOWED);
+		//emit emitState(State::CHECKING);
+		//emit emitVisibleState(VisibleState::SHOWED);
 		start();
 		return true;
 	}
 
-	bool UpdateManager::updateGame(cf::Game& game) {
+	bool UpdateManager::updateGame(Game& game) {
 		if (isRunning())
 			return false;
 		reset();
@@ -189,15 +189,15 @@ namespace im {
 
 		updateInfo_->setFiles({ {game.appInfoUrl.toStdString(), "AppInfo.json" } });
 		//progress_ = 100;
-		//emit emitState(lb::State::CHECKING);
-		//emit emitVisibleState(lb::VisibleState::SHOWED);
+		//emit emitState(State::CHECKING);
+		//emit emitVisibleState(VisibleState::SHOWED);
 		start();
 		return true;
 	}
 
 	void UpdateManager::updateMainApp() {
 		// download appInfo.json and Games.json
-		emitState(im::IUpdateManager::State::CHECKING);
+		emitState(IUpdateManager::State::CHECKING);
 		downloader_->run();
 		// check if appInfo.json contains newer version = need update
 		appInfoParser_->run();
@@ -212,8 +212,8 @@ namespace im {
 
 	void UpdateManager::updateGame() {
 		progress_ = 100;
-		emitState(im::IUpdateManager::State::CHECKING);
-		emitVisibleState(im::IUpdateManager::VisibleState::SHOWED);
+		emitState(IUpdateManager::State::CHECKING);
+		emitVisibleState(IUpdateManager::VisibleState::SHOWED);
 		sendDataToBar();
 		// download game appInfo.json
 		auto& hh = updateInfo_->getFiles().at(0);
@@ -233,8 +233,8 @@ namespace im {
 		updateInfo_->setUpdateVersion(appInfoParser_->getVersionToUpdate());
 		updateInfo_->setFiles(appInfoParser_->getFiles());
 		progress_ = 100;
-		emitState(im::IUpdateManager::State::CHECKING);
-		emitVisibleState(im::IUpdateManager::VisibleState::SHOWED);
+		emitState(IUpdateManager::State::CHECKING);
+		emitVisibleState(IUpdateManager::VisibleState::SHOWED);
 		// download Filelist.json and Patch.json Files
 		downloader_->run();
 		// Process fileList.json and patch files to get update packets (zip files)
@@ -251,8 +251,8 @@ namespace im {
 		setTotal(fileListParser_->getBytesToDownload());
 		sendDataToBar();
 
-		emitState(im::IUpdateManager::State::DOWNLOADING);
-		emitVisibleState(im::IUpdateManager::VisibleState::SHOWED);
+		emitState(IUpdateManager::State::DOWNLOADING);
+		emitVisibleState(IUpdateManager::VisibleState::SHOWED);
 		// download zip packets
 		downloader_->run();
 	}
@@ -262,7 +262,7 @@ namespace im {
 		std::filesystem::path destination = updateInfo_->isGameUppdating() ? updateInfo_->getActualGame().gameDir.toStdString() : std::string("../");
 		updateInfo_->setInstallDir(destination);
 
-		emitState(im::IUpdateManager::State::INSTALLING);
+		emitState(IUpdateManager::State::INSTALLING);
 		// install downloaded packets
 		installer_->run();
 	}
@@ -283,11 +283,11 @@ namespace im {
 			auto res = CreateLink(path.generic_string().c_str(), path.parent_path().generic_string().c_str(), link.generic_string().c_str(), "Sylio shortcut");
 			actualGame.shortcutPath = link.generic_string().c_str();
 		}
-		//bc::Component<gm::IGameManager>::get().unLock();
+		//Component<IGameManager>::get().unLock();
 	}
 
 	void UpdateManager::updateGamePages() {
-		emitState(im::IUpdateManager::State::UPDATING_GAME_PAGES);
+		emitState(IUpdateManager::State::UPDATING_GAME_PAGES);
 		// setUp updateInfo
 		updateInfo_->setFiles(gameParser_->getFiles());
 		setTotal(0);
@@ -298,15 +298,15 @@ namespace im {
 		gameParser_->updateGamesInfo();
 	}
 
-	void UpdateManager::cleanUp(im::IUpdateManager::State finalState, const QString& errorWhat) {
+	void UpdateManager::cleanUp(IUpdateManager::State finalState, const QString& errorWhat) {
 		cleanUpper_->run();
-		if (finalState == im::IUpdateManager::State::ERRORD && !errorWhat.isEmpty())
+		if (finalState == IUpdateManager::State::ERRORD && !errorWhat.isEmpty())
 			errorEmit(errorWhat);
 		else {
 			emitState(finalState);
 			updateEnded(updateInfo_->getUpdateVersion());
 		}
-		emitVisibleState(im::IUpdateManager::VisibleState::HIDDEN);
+		emitVisibleState(IUpdateManager::VisibleState::HIDDEN);
 	}
 
 	void UpdateManager::setTotal(qint64 tot) {

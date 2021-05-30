@@ -7,10 +7,10 @@
 #include "Game.hpp"
 #include "IRunnable.hpp"
 
-namespace im {
+namespace sb {
 	class GameParser :public IRunnable {
 	public:
-		using files = std::vector<cf::AppPack>;
+		using files = std::vector<AppPack>;
 
 		files& getFiles() { return files_; }
 		bool needUpdate() { return files_.size(); }

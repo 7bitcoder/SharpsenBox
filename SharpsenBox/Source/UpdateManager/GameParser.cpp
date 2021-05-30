@@ -6,14 +6,14 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
-namespace im {
+namespace sb {
 	void GameParser::run() {
 		reset();
 		try {
 			QString val;
 			QFile file;
 			//open SharpsenBoxConfig file
-			auto& config = bc::Component<cf::IConfig>::get();
+			auto& config = Component<IConfig>::get();
 			auto path = config.getDownloadDir() / "Games.json";
 			file.setFileName(path.generic_string().c_str());
 			file.open(QIODevice::ReadOnly | QIODevice::Text);
@@ -26,7 +26,7 @@ namespace im {
 				auto id = std::stoi(gameObject["Id"].toString().toStdString());
 				if (!config.gameExists(id)) {
 					//create new
-					cf::Game game;
+					Game game;
 					game.id = id;
 					game.version = gameObject["Ver"].toString();
 					game.autoCheck = game.installed = game.shortcut = false;
@@ -59,7 +59,7 @@ namespace im {
 
 	void GameParser::updateGamesInfo() {
 		for (auto& data : toUpdate_) {
-			bc::Component<cf::IConfig>::get().getGame(data.first).PresentationVer = data.second;
+			Component<IConfig>::get().getGame(data.first).PresentationVer = data.second;
 		}
 	}
 

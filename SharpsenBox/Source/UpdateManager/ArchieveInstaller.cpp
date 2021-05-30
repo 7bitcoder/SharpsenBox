@@ -13,7 +13,7 @@
 #include "IConfig.hpp"
 #include "UpdateInfo.hpp"
 
-namespace im {
+namespace sb {
 	SSIZE_T ArchieveInstaller::readFile(::archive* a, void* client_data, const void** buff) {
 		ArchieveInstaller* data = (ArchieveInstaller*)client_data;
 		*buff = data->buff;
@@ -65,7 +65,7 @@ namespace im {
 		flags |= ARCHIVE_EXTRACT_FFLAGS;
 		try {
 			destinationDir_ = updateInfo_->getInstallDir();
-			auto& downloadDir = bc::Component<cf::IConfig>::get().getDownloadDir();
+			auto& downloadDir = Component<IConfig>::get().getDownloadDir();
 			auto& filesToUnpack = updateInfo_->getFiles();
 			for (auto& arch : filesToUnpack) {
 				a = archive_read_new();

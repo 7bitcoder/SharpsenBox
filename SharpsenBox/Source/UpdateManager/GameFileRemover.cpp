@@ -2,7 +2,7 @@
 #include "IConfig.hpp"
 #include "Game.hpp"
 
-namespace im {
+namespace sb {
 	void GameFileRemover::run() {
 		try {
 			std::filesystem::path gamePath = game_->gameDir.toStdString();

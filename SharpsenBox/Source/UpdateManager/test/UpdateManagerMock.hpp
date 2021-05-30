@@ -4,15 +4,15 @@
 #include "IComponent.hpp"
 #include "ConfigMock.hpp"
 
-namespace im {
-	class UpdateManagerMock : public im::IUpdateManager {
+namespace sb {
+	class UpdateManagerMock : public IUpdateManager {
 	public:
 		UpdateManagerMock() {}
 		~UpdateManagerMock() {};
 		bool installMainApp(QString version, std::filesystem::path appInfoUrl, std::filesystem::path gamesRepoUrl) { return true; };
 		bool updateMainApp(QString version, std::filesystem::path appInfoUrl, std::filesystem::path gamesRepoUrl) { return true; };
-		bool installGame(cf::Game& game, const QString& gamePath, bool shortcut) { return false; };
-		bool updateGame(cf::Game& game) { return false; };
+		bool installGame(Game& game, const QString& gamePath, bool shortcut) { return false; };
+		bool updateGame(Game& game) { return false; };
 
 		void downloadStatus(qint64 progress, qint64 total, double speed) {};
 

@@ -10,7 +10,7 @@
 #include <vector>
 
 
-namespace cf {
+namespace sb {
 	class Config final : public IConfig {
 		Q_OBJECT
 	public:

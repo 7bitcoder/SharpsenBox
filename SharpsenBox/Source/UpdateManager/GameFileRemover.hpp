@@ -8,10 +8,10 @@
 #include <unordered_set>
 #include "IRunnable.hpp"
 
-namespace im {
+namespace sb {
 	class GameFileRemover : public IRunnable {
 	public:
-		void removeFiles(cf::Game& game, std::unordered_set<QString>& toRemove) { game_ = &game; toRemove_ = &toRemove; };
+		void removeFiles(Game& game, std::unordered_set<QString>& toRemove) { game_ = &game; toRemove_ = &toRemove; };
 		virtual ~GameFileRemover() {};
 		GameFileRemover() = default;
 
@@ -19,7 +19,7 @@ namespace im {
 		void run() override;
 		void reset() override;
 	private:
-		cf::Game* game_;
+		Game* game_;
 		std::unordered_set<QString>* toRemove_;
 	};
 }

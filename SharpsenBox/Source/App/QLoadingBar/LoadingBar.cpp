@@ -7,7 +7,7 @@
 #include "IGameManager.hpp"
 
 
-namespace lb {
+namespace sb {
 	LoadingBar::LoadingBar() {}
 	LoadingBar::~LoadingBar() {}
 
@@ -41,9 +41,9 @@ namespace lb {
 		return progress_;
 	}
 
-	Q_INVOKABLE void LoadingBar::pause()  { bc::Component<gm::IGameManager>::get().pause(); };
-	Q_INVOKABLE void LoadingBar::resume()  { bc::Component<gm::IGameManager>::get().resume(); }
-	Q_INVOKABLE void LoadingBar::stop()  { bc::Component<gm::IGameManager>::get().stop(); }
+	Q_INVOKABLE void LoadingBar::pause()  { Component<IGameManager>::get().pause(); };
+	Q_INVOKABLE void LoadingBar::resume()  { Component<IGameManager>::get().resume(); }
+	Q_INVOKABLE void LoadingBar::stop()  { Component<IGameManager>::get().stop(); }
 
 	Q_INVOKABLE bool LoadingBar::getUninstall()  {
 		return uninstall_;
@@ -66,18 +66,18 @@ namespace lb {
 	}
 
 	void LoadingBar::setError(const QString& str) {
-		auto& dialog = bc::Component<dl::IDialog>::get();
-		dialog.setType(dl::IDialog::Type::INFO);
+		auto& dialog = Component<IDialog>::get();
+		dialog.setType(IDialog::Type::INFO);
 		dialog.setInfo(str);
 		dialog.show();
 	}
 
-	void LoadingBar::setState(im::IUpdateManager::State st) {
+	void LoadingBar::setState(IUpdateManager::State st) {
 		state_ = st;
 		stateChanged();
 	}
 
-	void LoadingBar::setVisibleState(im::IUpdateManager::VisibleState st) {
+	void LoadingBar::setVisibleState(IUpdateManager::VisibleState st) {
 		visibleState_ = st;
 		visibleStateChanged();
 	}
@@ -88,13 +88,13 @@ namespace lb {
 
 	void LoadingBar::paused() {
 		lastState_ = state_;
-		setState(im::IUpdateManager::State::PAUSE);
+		setState(IUpdateManager::State::PAUSE);
 		pauseResume_ = true;
 		pauseResumeChanged();
 	}
 
 	void LoadingBar::resumed() {
-		if(lastState_ != im::IUpdateManager::State::NONE)
+		if(lastState_ != IUpdateManager::State::NONE)
 			setState(lastState_);
 		pauseResume_ = false;
 		pauseResumeChanged();
@@ -111,9 +111,9 @@ namespace lb {
 		uninstall_ = false;
 		pauseResume_ = false;
 	
-		setState(im::IUpdateManager::State::NONE);
-		lastState_ = im::IUpdateManager::State::NONE;
+		setState(IUpdateManager::State::NONE);
+		lastState_ = IUpdateManager::State::NONE;
 		resumed(); // to reset pause resume button to pause state
-		visibleState_ = im::IUpdateManager::VisibleState::HIDDEN;
+		visibleState_ = IUpdateManager::VisibleState::HIDDEN;
 	}
 }

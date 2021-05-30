@@ -1,6 +1,6 @@
 #include "UpdateInfo.hpp"
 
-namespace im {
+namespace sb {
 	void UpdateInfo::reset() {
 		cancel_ = false;
 		fullInstall_ = false;

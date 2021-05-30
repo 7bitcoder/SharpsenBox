@@ -12,7 +12,7 @@
 #include <string>
 
 
-namespace upd {
+namespace sb {
 	class AppUpdaterManager : public IAppUpdaterManager {
 		Q_OBJECT
 	public:
@@ -43,11 +43,11 @@ namespace upd {
 		void progressChanged();
 
 	private:
-		void updateStatus(im::IUpdateManager::State state);
-		cf::IConfig& cf_;
-		im::UpdateManager im_;
+		void updateStatus(IUpdateManager::State state);
+		IConfig& cf_;
+		UpdateManager im_;
 		QString statusStr_;
-		im::IUpdateManager::State state_ = im::IUpdateManager::State::NONE;
+		IUpdateManager::State state_ = IUpdateManager::State::NONE;
 
 		double progress_;
 	};

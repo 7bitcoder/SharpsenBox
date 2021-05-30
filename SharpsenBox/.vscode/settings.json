@@ -1,5 +1,10 @@
 {
     "files.associations": {
-        "filesystem": "cpp"
+        "filesystem": "cpp",
+        "future": "cpp",
+        "memory": "cpp",
+        "sstream": "cpp",
+        "xhash": "cpp",
+        "xlocnum": "cpp"
     }
 }

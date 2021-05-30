@@ -3,10 +3,10 @@
 #include "IComponent.hpp"
 #include "Game.hpp"
 
-namespace gm {
+namespace sb {
 	void GameUninstaller::setId(int id) {
 		id_ = id;
-		auto& game = bc::Component<cf::IConfig>::get().getGame(id_);
+		auto& game = Component<IConfig>::get().getGame(id_);
 		gameDir_ = game.gameDir.toStdString();
 		shortcut_ = game.shortcut;
 		if (shortcut_)

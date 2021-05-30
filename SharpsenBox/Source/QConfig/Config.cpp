@@ -8,7 +8,7 @@
 #include <algorithm>
 #include <QDir>
 
-namespace cf {
+namespace sb {
 
 	namespace {
 		bool readBool(const QJsonValue& val) { return val.toString() == "1"; }

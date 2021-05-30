@@ -5,7 +5,7 @@
 #include "IGameManager.hpp"
 
 
-namespace dl {
+namespace sb {
 	Dialog::Dialog() {}
 	Q_INVOKABLE void Dialog::dialog(bool value) {
 		value_ = value;

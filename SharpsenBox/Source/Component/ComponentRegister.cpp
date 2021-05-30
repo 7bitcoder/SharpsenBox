@@ -8,7 +8,7 @@
 #include <QVariant>
 #include "ComponentRegister.hpp"
 
-namespace bc {
+namespace sb {
 
 	void ComponentRegister::init() {
 		initializeObjects();

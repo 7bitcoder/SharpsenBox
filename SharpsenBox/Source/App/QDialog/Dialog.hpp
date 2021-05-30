@@ -6,7 +6,7 @@
 #include "IDialog.hpp"
 #include "IComponent.hpp"
 
-namespace dl {
+namespace sb {
 	class Dialog final : public IDialog {
 		Q_OBJECT;
 	public:

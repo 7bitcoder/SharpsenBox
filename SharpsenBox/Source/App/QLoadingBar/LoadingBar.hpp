@@ -9,7 +9,7 @@
 #include "ILoadingBar.hpp"
 #include "IUpdateManager.hpp"
 
-namespace lb {
+namespace sb {
 	class LoadingBar final : public ILoadingBar {
 		Q_OBJECT
 	public:
@@ -28,8 +28,8 @@ namespace lb {
 		void setProgress(double prog) final;
 		void setSpeed(double sp) final;
 		void setError(const QString& str) final;
-		void setState(im::IUpdateManager::State st) final;
-		void setVisibleState(im::IUpdateManager::VisibleState st) final;
+		void setState(IUpdateManager::State st) final;
+		void setVisibleState(IUpdateManager::VisibleState st) final;
 		void setUninstallMode(bool un) final;
 		void reset() final;
 		void paused() final;
@@ -71,10 +71,10 @@ namespace lb {
 		void getProgress(qint64 actual);
 		void pauseResumeChanged();
 	private:
-		im::IUpdateManager::State state_ = im::IUpdateManager::State::NONE;
-		im::IUpdateManager::VisibleState visibleState_ = im::IUpdateManager::VisibleState::HIDDEN;
+		IUpdateManager::State state_ = IUpdateManager::State::NONE;
+		IUpdateManager::VisibleState visibleState_ = IUpdateManager::VisibleState::HIDDEN;
 
-		im::IUpdateManager::State lastState_ = im::IUpdateManager::State::NONE; // when pausing hold last state in this variable for resume
+		IUpdateManager::State lastState_ = IUpdateManager::State::NONE; // when pausing hold last state in this variable for resume
 
 		//qml properties
 		double progress_ = 0;

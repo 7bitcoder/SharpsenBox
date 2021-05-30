@@ -9,9 +9,9 @@
 #include <string>
 
 
-namespace upd {
+namespace sb {
 
-	AppUpdaterManager::AppUpdaterManager() : cf_(bc::Component<cf::IConfig>::get()) {
+	AppUpdaterManager::AppUpdaterManager() : cf_(Component<IConfig>::get()) {
 		cf_.init();
 		im_.init();
 		auto& downloadDir = cf_.getDownloadDir();
@@ -25,11 +25,11 @@ namespace upd {
 	}
 
 	void AppUpdaterManager::checkForUpdates() {
-		connect(&im_, &im::UpdateManager::setStateLb, this, &AppUpdaterManager::updateSt);
-		connect(&im_, &im::UpdateManager::errorEmit, this, &AppUpdaterManager::errorCatched);
-		connect(&im_, &im::UpdateManager::updateEnded, this, &AppUpdaterManager::updateInstalled);
-		connect(&im_, &im::UpdateManager::updateProgress, this, &AppUpdaterManager::updateProgress);
-		updateStatus(im::IUpdateManager::State::DOWNLOADING);
+		connect(&im_, &UpdateManager::setStateLb, this, &AppUpdaterManager::updateSt);
+		connect(&im_, &UpdateManager::errorEmit, this, &AppUpdaterManager::errorCatched);
+		connect(&im_, &UpdateManager::updateEnded, this, &AppUpdaterManager::updateInstalled);
+		connect(&im_, &UpdateManager::updateProgress, this, &AppUpdaterManager::updateProgress);
+		updateStatus(IUpdateManager::State::DOWNLOADING);
 		if (cf_.getVer() == "0") // needInstallation
 			im_.installMainApp(cf_.getVer(), cf_.getLauncherAppInfoUrl(), cf_.getGameInfoRepository());
 		else //just update
@@ -37,24 +37,24 @@ namespace upd {
 	}
 
 	void AppUpdaterManager::updateSt(int state) {
-		updateStatus(static_cast<im::IUpdateManager::State>(state));
+		updateStatus(static_cast<IUpdateManager::State>(state));
 	}
 
-	void AppUpdaterManager::updateStatus(im::IUpdateManager::State state) {
-		state_ = static_cast<im::IUpdateManager::State>(state);
+	void AppUpdaterManager::updateStatus(IUpdateManager::State state) {
+		state_ = static_cast<IUpdateManager::State>(state);
 		stateChanged();
 	}
 
 	void AppUpdaterManager::updateInstalled(const QString& version) {
 		if (!version.isEmpty()) {
-			updateStatus(im::IUpdateManager::State::COMPLEET);
+			updateStatus(IUpdateManager::State::COMPLEET);
 			cf_.setVer(version);
 		}
 	}
 
 	void AppUpdaterManager::errorCatched(const QString& what) {
 		statusStr_ = what;
-		updateStatus(im::IUpdateManager::State::ERRORD);
+		updateStatus(IUpdateManager::State::ERRORD);
 	}
 
 	void AppUpdaterManager::updateProgress(double progress) {

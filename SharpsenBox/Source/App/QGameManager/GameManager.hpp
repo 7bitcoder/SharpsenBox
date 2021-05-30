@@ -8,7 +8,7 @@
 #include "ILoadingBar.hpp"
 #include "UpdateManager.hpp"
 
-namespace gm {
+namespace sb {
 	class GameUninstaller;
 	class GameManager final :public IGameManager {
 		Q_OBJECT
@@ -68,7 +68,7 @@ namespace gm {
 		QString path_;
 		bool shortcut_;
 		GameUninstaller* uninstaller_;
-		im::UpdateManager im_;
-		lb::ILoadingBar* lb_;
+		UpdateManager im_;
+		ILoadingBar* lb_;
 	};
 }

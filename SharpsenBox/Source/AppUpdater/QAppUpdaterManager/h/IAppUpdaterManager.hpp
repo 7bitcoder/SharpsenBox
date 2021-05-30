@@ -8,8 +8,8 @@
 #include <filesystem>
 
 
-namespace upd {
-	struct IAppUpdaterManager : public bc::IComponent {
+namespace sb {
+	struct IAppUpdaterManager : public IComponent {
 	public:
 		virtual ~IAppUpdaterManager() {};
 	private:

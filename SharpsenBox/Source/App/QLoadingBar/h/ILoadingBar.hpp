@@ -8,8 +8,8 @@
 #include "IUpdateManager.hpp"
 #include <filesystem>
 
-namespace lb {
-	struct ILoadingBar : public bc::IComponent {
+namespace sb {
+	struct ILoadingBar : public IComponent {
 	public:
 		virtual ~ILoadingBar() {};
 
@@ -18,8 +18,8 @@ namespace lb {
 		virtual void setProgress(double prog) = 0;
 		virtual void setSpeed(double sp) = 0;
 		virtual void setError(const QString& str) = 0;
-		virtual void setState(im::IUpdateManager::State st) = 0;
-		virtual void setVisibleState(im::IUpdateManager::VisibleState st) = 0;
+		virtual void setState(IUpdateManager::State st) = 0;
+		virtual void setVisibleState(IUpdateManager::VisibleState st) = 0;
 		virtual void setUninstallMode(bool un) = 0;
 
 		virtual void reset() = 0;

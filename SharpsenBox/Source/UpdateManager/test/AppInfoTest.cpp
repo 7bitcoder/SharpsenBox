@@ -4,24 +4,24 @@
 #include "UpdateInfo.hpp"
 #include "UpdateManagerMock.hpp"
 
-using namespace im;
+using namespace sb;
 
 namespace {
 
 	struct ConfInit { // to create IConfig
 		ConfInit() {
 			try {
-				bc::ComponentCreator<cf::IConfig, cf::ConfigMock>::create();
+				ComponentCreator<IConfig, ConfigMock>::create();
 			} catch (...) {}
 		}
 	} confInit_;
 
-	im::UpdateManagerMock um_;
-	im::AppInfoParser ap_;
+	UpdateManagerMock um_;
+	AppInfoParser ap_;
 }
 
 TEST(versionChecking, versionChecking) {
-	auto& cf = bc::Component<cf::IConfig>::get();
+	auto& cf = Component<IConfig>::get();
 	auto& downloadDir = cf.getDownloadDir();
 	ap_.init(um_);
 	auto& updateInfo = um_.getUpdateInfo();

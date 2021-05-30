@@ -12,8 +12,8 @@
 #include <filesystem>
 
 
-namespace cf {
-	class ConfigMock : public cf::IConfig {
+namespace sb {
+	class ConfigMock : public IConfig {
 	public:
 		void update() final {};
 		void init() final {};

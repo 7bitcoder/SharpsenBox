@@ -12,7 +12,7 @@
 #include "updateInfo.hpp"
 
 
-namespace gm {
+namespace sb {
 
 	std::string GameManager::getName() {
 		return TYPENAME(GameManager);
@@ -33,7 +33,7 @@ namespace gm {
 		auto callback = [id, this](bool val) {
 			if (val) {
 				lb_->reset();
-				auto& game = bc::Component <cf::IConfig>::get().getGame(id);
+				auto& game = Component <IConfig>::get().getGame(id);
 				std::string gg = path_.toStdString();
 #ifdef _WIN32
 				if (gg.starts_with("/"))
@@ -47,8 +47,8 @@ namespace gm {
 			}
 			return false;
 		};
-		auto& dialog = bc::Component<dl::IDialog>::get();
-		dialog.setType(dl::IDialog::INSTALL);
+		auto& dialog = Component<IDialog>::get();
+		dialog.setType(IDialog::INSTALL);
 		dialog.setCallback(callback);
 		dialog.setInfo("");
 		dialog.show();
@@ -56,34 +56,34 @@ namespace gm {
 
 	void GameManager::init() {
 		im_.init();
-		lb_ = &bc::Component<lb::ILoadingBar>::get();
+		lb_ = &Component<ILoadingBar>::get();
 		connect(uninstaller_, &GameUninstaller::uninstalationComplete, this, &GameManager::uninstallation);
 
-		connect(&im_, &im::UpdateManager::errorEmit, this, &GameManager::errorEmit);
-		connect(&im_, &im::UpdateManager::updateProgress, this, &GameManager::updateProgress);
-		connect(&im_, &im::UpdateManager::setTotalLb, this, &GameManager::setTotalLb);
-		connect(&im_, &im::UpdateManager::setActualLb, this, &GameManager::setActualLb);
-		connect(&im_, &im::UpdateManager::setSpeedLb, this, &GameManager::setSpeedLb);
-		connect(&im_, &im::UpdateManager::setStateLb, this, &GameManager::setStateLb);
-		connect(&im_, &im::UpdateManager::setVisibleStateLb, this, &GameManager::setVisibleStateLb);
-		connect(&im_, &im::UpdateManager::setUninstallModeLb, this, &GameManager::setUninstallModeLb);
-		connect(&im_, &im::UpdateManager::pausedSignal, this, &GameManager::paused);
-		connect(&im_, &im::UpdateManager::resumedSignal, this, &GameManager::resumed);
+		connect(&im_, &UpdateManager::errorEmit, this, &GameManager::errorEmit);
+		connect(&im_, &UpdateManager::updateProgress, this, &GameManager::updateProgress);
+		connect(&im_, &UpdateManager::setTotalLb, this, &GameManager::setTotalLb);
+		connect(&im_, &UpdateManager::setActualLb, this, &GameManager::setActualLb);
+		connect(&im_, &UpdateManager::setSpeedLb, this, &GameManager::setSpeedLb);
+		connect(&im_, &UpdateManager::setStateLb, this, &GameManager::setStateLb);
+		connect(&im_, &UpdateManager::setVisibleStateLb, this, &GameManager::setVisibleStateLb);
+		connect(&im_, &UpdateManager::setUninstallModeLb, this, &GameManager::setUninstallModeLb);
+		connect(&im_, &UpdateManager::pausedSignal, this, &GameManager::paused);
+		connect(&im_, &UpdateManager::resumedSignal, this, &GameManager::resumed);
 	};
 
 	Q_INVOKABLE void GameManager::unistallRequest(int id) {
 		gameId_ = id;
 		if (checkProcess())
 			return;
-		auto& cf = bc::Component <cf::IConfig>::get();
-		auto& dialog = bc::Component < dl::IDialog > ::get();
+		auto& cf = Component <IConfig>::get();
+		auto& dialog = Component < IDialog > ::get();
 		if (cf.installed(id)) {
-			dialog.setType(dl::IDialog::DIALOG);
+			dialog.setType(IDialog::DIALOG);
 			dialog.setCallback([this](bool val) {return this->uninstall(val); });
 			dialog.setInfo(QString("Are you sure you want to remove ") + cf.getGameName(id));
 			dialog.show();
 		} else {
-			dialog.setType(dl::IDialog::INFO);
+			dialog.setType(IDialog::INFO);
 			dialog.setInfo("Game is not installed");
 			dialog.show();
 		}
@@ -96,8 +96,8 @@ namespace gm {
 			lock();
 			lb_->reset();
 			lb_->setUninstallMode(true);
-			lb_->setState(im::IUpdateManager::State::CHECKING);
-			lb_->setVisibleState(im::IUpdateManager::VisibleState::SHOWED);
+			lb_->setState(IUpdateManager::State::CHECKING);
+			lb_->setVisibleState(IUpdateManager::VisibleState::SHOWED);
 			uninstaller_->setId(gameId_);
 			uninstaller_->start();
 			return false;
@@ -112,18 +112,18 @@ namespace gm {
 	void GameManager::stop() { if (lock_) im_.stop(); }
 
 	void GameManager::uninstallation(int id) {
-		bc::Component <cf::IConfig>::get().getGame(id).installed = false;
+		Component <IConfig>::get().getGame(id).installed = false;
 		unLock();
 		lb_->setUninstallMode(false);
-		lb_->setVisibleState(im::IUpdateManager::VisibleState::HIDDEN);
+		lb_->setVisibleState(IUpdateManager::VisibleState::HIDDEN);
 	}
 
 	Q_INVOKABLE void GameManager::checkAutoUpdate(int id) {
-		auto& game = bc::Component<cf::IConfig>::get().getGame(id);
+		auto& game = Component<IConfig>::get().getGame(id);
 		if (game.autoCheck && game.installed) {
 			if (lock_) {
-				auto& dialog = bc::Component<dl::IDialog>::get();
-				dialog.setType(dl::IDialog::INFO);
+				auto& dialog = Component<IDialog>::get();
+				dialog.setType(IDialog::INFO);
 				dialog.setInfo(QString("Cannot auto update game ") + game.name + " another process is running");
 				dialog.show();
 			} else {
@@ -134,15 +134,15 @@ namespace gm {
 	}
 
 	Q_INVOKABLE void GameManager::update(int id) {
-		auto& game = bc::Component <cf::IConfig>::get().getGame(id);
+		auto& game = Component <IConfig>::get().getGame(id);
 		if (!game.updateChecked) {
-			bc::Component <lb::ILoadingBar>::get().reset();
+			Component <ILoadingBar>::get().reset();
 			im_.updateGame(game);
 		}
 	}
 
 	Q_INVOKABLE void GameManager::runGame(int id) {
-		auto& game = bc::Component <cf::IConfig>::get().getGame(id);
+		auto& game = Component <IConfig>::get().getGame(id);
 		std::filesystem::path path = game.gameDir.toUtf8().constData();
 		path /= game.execPath.toUtf8().constData();
 		std::string cd = "cd \"";
@@ -162,12 +162,12 @@ namespace gm {
 	void GameManager::setUninstallModeLb(bool un) { lb_->setUninstallMode(un); }
 
 	void GameManager::setStateLb(int state) { 
-		using State = im::IUpdateManager::State;
+		using State = IUpdateManager::State;
 		auto st = static_cast<State>(state);
 		switch (st) {
 		case State::COMPLEET: {
 			auto& updatedGame = im_.getUpdateInfo().getActualGame();
-			bc::Component<cf::IConfig>::get().getGame(updatedGame.id) = updatedGame; // insert new game info in cofnig
+			Component<IConfig>::get().getGame(updatedGame.id) = updatedGame; // insert new game info in cofnig
 		}
 		case State::ERRORD:
 		case State::STOPPED:
@@ -180,13 +180,13 @@ namespace gm {
 	}
 
 	void GameManager::setVisibleStateLb(int st) { 
-		lb_->setVisibleState(im::IUpdateManager::VisibleState(st)); 
+		lb_->setVisibleState(IUpdateManager::VisibleState(st)); 
 	}
 
 	bool GameManager::checkProcess() {
 		if (lock_) {
-			auto& dialog = bc::Component<dl::IDialog>::get();
-			dialog.setType(dl::IDialog::INFO);
+			auto& dialog = Component<IDialog>::get();
+			dialog.setType(IDialog::INFO);
 			dialog.setInfo("Wait for other process to finish");
 			dialog.show();
 			return true;

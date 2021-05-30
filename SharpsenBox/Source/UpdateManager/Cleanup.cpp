@@ -3,10 +3,10 @@
 #include "IConfig.hpp"
 
 
-namespace im {
+namespace sb {
 	void Cleanup::run() {
 		try {
-			auto& downloadDir = bc::Component<cf::IConfig>::get().getDownloadDir();
+			auto& downloadDir = Component<IConfig>::get().getDownloadDir();
 			for (auto& p : std::filesystem::recursive_directory_iterator(downloadDir)) {
 				auto& path = p.path();
 				std::filesystem::remove_all(path);

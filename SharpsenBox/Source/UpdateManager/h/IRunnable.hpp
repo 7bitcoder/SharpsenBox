@@ -2,7 +2,7 @@
 #include <QString>
 #include "IUpdateManager.hpp"
 
-namespace im {
+namespace sb {
 	class UpdateInfo;
 	struct IRunnable {
 		virtual ~IRunnable() {};

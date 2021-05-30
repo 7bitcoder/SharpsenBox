@@ -6,7 +6,7 @@
 #define TYPENAME(TYPE) #TYPE
 
 
-namespace bc {
+namespace sb {
 
 	template<class I>
 	class Component {

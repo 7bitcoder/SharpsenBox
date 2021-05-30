@@ -4,8 +4,8 @@
 #include <QDebug>
 #include "IComponent.hpp"
 
-namespace dl {
-	struct IDialog : public  bc::IComponent {
+namespace sb {
+	struct IDialog : public  IComponent {
 	public:
 		enum Type {NONE=0, INFO, INSTALL, DIALOG};
 		IDialog() {};

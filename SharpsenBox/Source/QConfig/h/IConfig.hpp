@@ -8,11 +8,11 @@
 #include <filesystem>
 #include <vector>
 
-namespace cf {
+namespace sb {
 	class Config;
 	class Game;
 
-	struct IConfig : public  bc::IComponent {
+	struct IConfig : public  IComponent {
 	public:
 		virtual ~IConfig() {};
 
@@ -21,6 +21,7 @@ namespace cf {
 		virtual bool gameExists(int id) = 0;
 		virtual Game& getGame(int id) = 0;
 		virtual std::string gamePageDir(int id) = 0;
+
 		virtual QString& getVer() = 0;
 		virtual void setVer(QString ver) = 0;
 

@@ -6,10 +6,10 @@
 #include <filesystem>
 #include "IComponent.hpp"
 
-namespace cf {
+namespace sb {
 	class Game;
 }
-namespace im {
+namespace sb {
 	class UpdateInfo;
 
 	struct IUpdateManager {
@@ -24,8 +24,8 @@ namespace im {
 
 		virtual bool installMainApp(QString version, std::filesystem::path appInfoUrl, std::filesystem::path gamesRepoUrl) = 0;
 		virtual bool updateMainApp(QString version, std::filesystem::path appInfoUrl, std::filesystem::path gamesRepoUrl) = 0;
-		virtual bool installGame(cf::Game& game, const QString& gamePath, bool shortcut) = 0;
-		virtual bool updateGame(cf::Game& game) = 0;
+		virtual bool installGame(Game& game, const QString& gamePath, bool shortcut) = 0;
+		virtual bool updateGame(Game& game) = 0;
 
 		virtual void downloadStatus(qint64 progress, qint64 total, double speed) = 0;
 

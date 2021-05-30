@@ -9,13 +9,13 @@
 #include <unordered_map>
 #include "UpdateInfo.hpp"
 
-namespace im {
+namespace sb {
 	void FileListParser::run() {
 		try {
 			QString val;
 			QFile file;
 			//open SharpsenBoxConfig file
-			auto path = bc::Component<cf::IConfig>::get().getDownloadDir() / parseInfoFileName;
+			auto path = Component<IConfig>::get().getDownloadDir() / parseInfoFileName;
 			file.setFileName(path.generic_string().c_str());
 			file.open(QIODevice::ReadOnly | QIODevice::Text);
 			val = file.readAll();
@@ -45,7 +45,7 @@ namespace im {
 			QString val;
 			QFile file;
 			//open SharpsenBoxConfig file
-			auto path = bc::Component<cf::IConfig>::get().getDownloadDir() / it->fileName;
+			auto path = Component<IConfig>::get().getDownloadDir() / it->fileName;
 			file.setFileName(path.generic_string().c_str());
 			file.open(QIODevice::ReadOnly | QIODevice::Text);
 			val = file.readAll();

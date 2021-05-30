@@ -7,14 +7,14 @@
 #include "IRunnable.hpp"
 #include <QJsonDocument>
 
-namespace cf {
+namespace sb {
 	struct AppPack;
 }
 
-namespace im {
+namespace sb {
 	class FileListParser :public IRunnable {
 	public:
-		using files = std::vector<cf::AppPack>;
+		using files = std::vector<AppPack>;
 
 		// interface
 		files& getNeededFiles() { return files_; }

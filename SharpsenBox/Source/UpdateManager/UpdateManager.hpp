@@ -10,7 +10,7 @@
 #include "IUpdateManager.hpp"
 #include <memory>
 
-namespace im {
+namespace sb {
 	class UpdateInfo;
 	class Downloader;
 	class ArchieveInstaller;
@@ -22,7 +22,7 @@ namespace im {
 	class UpdateManager : public QThread, public IUpdateManager {
 		Q_OBJECT
 	public:
-		using files = std::vector<cf::AppPack>;
+		using files = std::vector<AppPack>;
 
 		virtual ~UpdateManager();
 		UpdateManager();
@@ -40,8 +40,8 @@ namespace im {
 
 		bool installMainApp(QString version, std::filesystem::path appInfoUrl, std::filesystem::path gamesRepoUrl);
 		bool updateMainApp(QString version, std::filesystem::path appInfoUrl, std::filesystem::path gamesRepoUrl);
-		bool installGame(cf::Game& game, const QString& gamePath, bool shortcut);
-		bool updateGame(cf::Game& game);
+		bool installGame(Game& game, const QString& gamePath, bool shortcut);
+		bool updateGame(Game& game);
 
 
 		double getProgress() { return progress_; }
@@ -77,8 +77,8 @@ namespace im {
 
 	private:
 		// becouse connection signal -> sot doesnt work for direct enum, idk why
-		void emitState(im::IUpdateManager::State st) { setStateLb(static_cast<int>(st)); }
-		void emitVisibleState(im::IUpdateManager::VisibleState st) { setVisibleStateLb(static_cast<int>(st)); }
+		void emitState(IUpdateManager::State st) { setStateLb(static_cast<int>(st)); }
+		void emitVisibleState(IUpdateManager::VisibleState st) { setVisibleStateLb(static_cast<int>(st)); }
 		void run() override;
 
 		void updateMainApp();
@@ -91,7 +91,7 @@ namespace im {
 		void reset();
 		void setProgress();
 		void sendDataToBar();
-		void cleanUp(im::IUpdateManager::State finalState, const QString& errorWhat);
+		void cleanUp(IUpdateManager::State finalState, const QString& errorWhat);
 
 	private:
 		std::unique_ptr<UpdateInfo> updateInfo_;

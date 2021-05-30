@@ -8,17 +8,17 @@
 #include "IRunnable.hpp"
 #include "Game.hpp"
 
-namespace cf {
+namespace sb {
 	struct AppPack;
 }
 
-namespace im {
+namespace sb {
 	class AbortException : public std::exception {};
 
 	class UpdateInfo : public IRunnable {
 	public:
 		//class holind infomration about updating process
-		using files = std::vector< cf::AppPack >;
+		using files = std::vector< AppPack >;
 		enum UpdateMode : int { GAME = 0, SHARPSENBOX };
 
 		UpdateInfo();
@@ -40,9 +40,9 @@ namespace im {
 		QString& getUpdateVersion() { return toUpdateVersion_; }
 		void setUpdateVersion(const QString& ver) { toUpdateVersion_ = ver; }
 
-		cf::Game& getActualGame() { return actualGame_; }
-		void setActualGame(cf::Game& game) { actualGame_ = game; }
-		void setActualGame(cf::Game* game) { actualGame_ = *game; }
+		Game& getActualGame() { return actualGame_; }
+		void setActualGame(Game& game) { actualGame_ = game; }
+		void setActualGame(Game* game) { actualGame_ = *game; }
 
 		std::filesystem::path& getDownloadDir() { return downloadDir_; }
 		void setDownloadDir(const std::filesystem::path& dir) { downloadDir_ = dir; }
@@ -69,7 +69,7 @@ namespace im {
 		QString actualVersion_;
 		QString toUpdateVersion_;
 
-		cf::Game actualGame_;
+		Game actualGame_;
 
 		std::filesystem::path downloadDir_;
 		std::filesystem::path installDir_;

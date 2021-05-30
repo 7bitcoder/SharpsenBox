@@ -6,14 +6,14 @@
 #include <unordered_map>
 #include "IRunnable.hpp"
 
-namespace cf {
+namespace sb {
 	struct AppPack;
 }
 
-namespace im {
+namespace sb {
 	class AppInfoParser :public IRunnable {
 	public:
-		using files = std::vector< cf::AppPack >;
+		using files = std::vector< AppPack >;
 
 		bool needUpdate() { return needUpdate_; };
 

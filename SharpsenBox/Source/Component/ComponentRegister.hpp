@@ -5,9 +5,9 @@
 #include <unordered_map>
 #include "IComponent.hpp"
 
-#define CREATE_PTR(ICOMPONENT) ICOMPONENT* bc::Component< ICOMPONENT >::iComponent_ = nullptr;
+#define CREATE_PTR(ICOMPONENT) ICOMPONENT* Component< ICOMPONENT >::iComponent_ = nullptr;
 
-namespace bc {
+namespace sb {
 	class ComponentRegister {
 	public:
 		ComponentRegister(QQmlApplicationEngine* eng);

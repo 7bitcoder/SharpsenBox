@@ -6,8 +6,8 @@
 #include <QNetworkAccessManager>
 #include "IComponent.hpp"
 
-namespace gm {
-	struct IGameManager : bc::IComponent {
+namespace sb {
+	struct IGameManager : public IComponent {
 	public:
 		virtual ~IGameManager() {};
 

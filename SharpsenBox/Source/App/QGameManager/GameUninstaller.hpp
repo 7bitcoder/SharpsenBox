@@ -4,7 +4,7 @@
 #include <QDebug>
 #include <filesystem>
 
-namespace gm {
+namespace sb {
 	class GameUninstaller : public  QThread {
 		Q_OBJECT
 	public:

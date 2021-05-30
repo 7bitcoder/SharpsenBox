@@ -12,7 +12,7 @@ int main(int argc, char** argv) {
 	app.setWindowIcon(QIcon("orbit2.ico"));
 	QQmlApplicationEngine engine;
 
-	bc::Backend backend(&engine);
+	sb::Backend backend(&engine);
 	backend.registerComponents();
 	backend.init();
 

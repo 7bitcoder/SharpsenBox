@@ -3,7 +3,7 @@
 #include <string>
 #include <QString>
 #include <unordered_map>
-namespace cf {
+namespace sb {
 
 	struct AppPack {
 		std::filesystem::path url;

@@ -8,7 +8,7 @@
 #include "IUpdateManager.hpp"
 #include "UpdateInfo.hpp"
 
-namespace im {
+namespace sb {
 
 	Downloader::Downloader() {}
 
@@ -36,7 +36,7 @@ namespace im {
 	}
 
 	void Downloader::checkSpeed() {
-		auto sp = bc::Component<cf::IConfig>::get().getDownloadSpeed();
+		auto sp = Component<IConfig>::get().getDownloadSpeed();
 		if (downloadSpeed_ != sp) {
 			downloadSpeed_ = sp;
 			curl_easy_setopt(curl, CURLOPT_MAX_RECV_SPEED_LARGE, downloadSpeed_ * 1024); //KB/s -> B/s
@@ -94,7 +94,7 @@ namespace im {
 				//curl_easy_setopt(curl, CURLOPT_TIMEOUT_MS, 20'000L);
 				//res = curl_easy_setopt(curl, CURLOPT_USERNAME, "public");
 				//res = curl_easy_setopt(curl, CURLOPT_PASSWORD, "1234");
-				auto& downloadDir = bc::Component<cf::IConfig>::get().getDownloadDir();
+				auto& downloadDir = Component<IConfig>::get().getDownloadDir();
 
 
 				curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
@@ -143,7 +143,7 @@ namespace im {
 	}
 
 	bool Downloader::checkDownloaded() {
-		auto& downloadDir = bc::Component<cf::IConfig>::get().getDownloadDir();
+		auto& downloadDir = Component<IConfig>::get().getDownloadDir();
 		auto& files = updateInfo_->getFiles();
 		for (auto& file : files) {
 			if (!std::filesystem::exists(downloadDir / file.fileName))

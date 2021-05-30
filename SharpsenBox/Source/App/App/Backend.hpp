@@ -5,7 +5,7 @@
 #include <unordered_map>
 #include "ComponentRegister.hpp"
 
-namespace bc {
+namespace sb {
 	class Backend {
 	public:
 		Backend(QQmlApplicationEngine* eng);
