@@ -1,9 +1,9 @@
 ﻿    
-qt5_add_resources(
+qt6_add_resources(
     RESOURCES 
     "../../../Gui/AppUpdater.qrc")
 
-add_executable(Updater
+qt_add_executable(Updater
     main.cpp
     Backend.cpp
     ${RESOURCES})
@@ -12,21 +12,16 @@ if(WIN AND RELEASE)
     set_target_properties(Updater PROPERTIES WIN32_EXECUTABLE TRUE)
 endif()
 
-qt5_use_modules(Updater 
-    Quick 
-    Core 
-    Network)
-
-target_link_libraries(Updater
+target_link_libraries(Updater PUBLIC
     ComponentRegister
     AppUpdaterManager
     Config
-    Qt5::Widgets
-    Qt5::Gui
-    Qt5::Core
-    Qt5::Quick
-    Qt5::Qml
-    Qt5::QuickControls2)
+    Qt6::Widgets
+    Qt6::Gui
+    Qt6::Core
+    Qt6::Quick
+    Qt6::Qml
+    Qt6::QuickControls2)
 
 target_include_directories(Updater PUBLIC 
     "../QAppUpdaterManager"

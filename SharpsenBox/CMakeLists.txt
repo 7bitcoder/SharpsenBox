@@ -1,27 +1,35 @@
-﻿# CMakeList.txt: plik projektu CMake najwyższego poziomu, wykonaj konfigurację globalną
-# i uwzględnij podprojekty w tym miejscu.
-#
+﻿cmake_minimum_required(VERSION 3.15.0)
 
-cmake_minimum_required (VERSION 3.8)
+set(SHARPSEN_BOX_LIBRARY SharpsenBox)
+
+set(SHARPSEN_BOX_VERSION_MAJOR 1)
+set(SHARPSEN_BOX_VERSION_MINOR 1)
+set(SHARPSEN_BOX_VERSION_PATCH 0)
+
+set(SHARPSEN_BOX_VERSION ${SHARPSEN_BOX_VERSION_MAJOR}.${SHARPSEN_BOX_VERSION_MINOR}.${SHARPSEN_BOX_VERSION_PATCH})
+
+project(${SHARPSEN_BOX_LIBRARY} LANGUAGES CXX VERSION ${SHARPSEN_BOX_VERSION})
+
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CmakeModules")
+
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-project ("SharpsenBox")
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/CmakeModules")
 include(Config)
+include(CMakeDependentOption)
+include(GNUInstallDirs)
 
 
-include(${CMAKE_SOURCE_DIR}/conanbuildinfo.cmake)
-
-find_package(Qt5 REQUIRED COMPONENTS 
-	Core 
-	Widgets 
-	Gui 
-	Quick 
+find_package(Qt6 REQUIRED COMPONENTS
+	Core
+	Widgets
+	Gui
+	Quick
 	Qml
 	Test
-	QuickControls2 
+	QuickControls2
 	Network)
+qt_standard_project_setup()
 
 add_subdirectory(Source)
 

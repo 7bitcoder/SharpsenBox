@@ -1,4 +1,4 @@
-﻿add_library( AppUpdaterManager STATIC
+﻿qt_add_library( AppUpdaterManager STATIC
     "AppUpdaterManager.cpp" "h/IAppUpdaterManager.hpp")
 
 target_include_directories(AppUpdaterManager PUBLIC
@@ -9,11 +9,7 @@ target_include_directories(AppUpdaterManager PUBLIC
     "../../Component/h"
     "h")
 
-qt5_use_modules(AppUpdaterManager 
-    Quick 
-    Core)
-
 target_link_libraries(AppUpdaterManager
     UpdateManager
-    Qt5::Gui
-    Qt5::Core)
+    Qt6::Gui
+    Qt6::Core)

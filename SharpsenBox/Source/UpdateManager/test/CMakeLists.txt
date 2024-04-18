@@ -9,7 +9,7 @@ add_executable(UpdateManagerTest
 
 add_test(AppInfoTest AppInfoTest)
 
-qt5_use_modules(UpdateManagerTest 
+qt6_use_modules(UpdateManagerTest
     Quick 
     Core 
     Network)
@@ -17,9 +17,9 @@ qt5_use_modules(UpdateManagerTest
 target_link_libraries(UpdateManagerTest
     UpdateManager
     Config
-    Qt5::Widgets
-    Qt5::Gui
-    Qt5::Core
+    Qt6::Widgets
+    Qt6::Gui
+    Qt6::Core
     CONAN_PKG::gtest)
 
 target_include_directories(UpdateManagerTest PUBLIC

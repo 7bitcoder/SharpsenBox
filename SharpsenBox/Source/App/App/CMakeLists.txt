@@ -1,9 +1,9 @@
 ﻿
-qt5_add_resources(
+qt6_add_resources(
     RESOURCES 
     "../../../Gui/SharpsenBox.qrc")
 
-add_executable(SharpsenBox
+qt_add_executable(SharpsenBox
     main.cpp
     Backend.cpp
     ${RESOURCES})
@@ -14,23 +14,18 @@ if(WIN AND RELEASE)
     set_target_properties(SharpsenBox PROPERTIES WIN32_EXECUTABLE TRUE)
 endif()
 
-qt5_use_modules(SharpsenBox 
-    Quick 
-    Core 
-    Network)
-
-target_link_libraries(SharpsenBox
+target_link_libraries(SharpsenBox PUBLIC
     ComponentRegister
     Dialog
     GameManager
     LoadingBar
     Config
-    Qt5::Widgets
-    Qt5::Gui
-    Qt5::Core
-    Qt5::Quick
-    Qt5::Qml
-    Qt5::QuickControls2
+    Qt6::Widgets
+    Qt6::Gui
+    Qt6::Core
+    Qt6::Quick
+    Qt6::Qml
+    Qt6::QuickControls2
     ${CURL_LIBRARY})
 
 target_include_directories(SharpsenBox PUBLIC 

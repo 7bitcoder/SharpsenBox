@@ -1,5 +1,5 @@
 ﻿
-add_library(GameManager STATIC
+qt_add_library(GameManager STATIC
     GameManager.cpp
     GameUninstaller.cpp)
 
@@ -12,14 +12,8 @@ target_include_directories(GameManager PUBLIC
     "../../Component/h"
     "h")
 
-qt5_use_modules(GameManager 
-    Quick 
-    Core 
-    Network
-    Widgets)
-
 target_link_libraries(GameManager
     UpdateManager
-    Qt5::Widgets
-    Qt5::Gui
-    Qt5::Core)
+    Qt6::Widgets
+    Qt6::Gui
+    Qt6::Core)
