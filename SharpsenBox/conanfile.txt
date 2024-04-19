@@ -18,3 +18,5 @@ cmake_layout
 libcurl/*:with_openssl=True
 qt/*:with_harfbuzz=False
 qt/*:qtshadertools=True
+qt/*:qtdeclarative=True
+qt/*:shared=True

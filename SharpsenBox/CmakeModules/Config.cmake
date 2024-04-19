@@ -65,10 +65,10 @@ endif()
 
 if(AUTO_QT_LIBS)
 	add_custom_target(deploy ALL
-		WORKING_DIRECTORY ${QtLib}/bin 
+		WORKING_DIRECTORY ${QtLib}/bin
 		COMMAND ${platform}deployqt --qmldir ${CMAKE_SOURCE_DIR}/Gui --${type} --quick ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
 		COMMAND ${platform}deployqt --qmldir ${CMAKE_SOURCE_DIR}/Gui --${type} --quick ${UpdaterPath}
-		COMMENT "========= Deploying Aplication =========" 
+		COMMENT "========= Deploying Aplication ========="
 		USES_TERMINAL)
 		add_dependencies(deploy SharpsenBox)
 endif()

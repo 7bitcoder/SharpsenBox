@@ -5,12 +5,15 @@
 #include <QIcon>
 #include "Backend.hpp"
 
-int main(int argc, char** argv) {
+int main(int argc, char** argv)
+{
 	//responsible is more efficient but animations are too fast
 	//QCoreApplication::setAttribute(Qt::AA_UseSoftwareOpenGL);
 	QGuiApplication app(argc, argv);
 	app.setWindowIcon(QIcon("orbit2.ico"));
 	QQmlApplicationEngine engine;
+	engine.addImportPath(".");
+	engine.addImportPath("qrc:/");
 
 	sb::Backend backend(&engine);
 	backend.RegisterComponents();

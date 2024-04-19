@@ -15,20 +15,23 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CmakeModules")
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+
+set(CMAKE_AUTOMOC ON)
 include(Config)
 include(CMakeDependentOption)
 include(GNUInstallDirs)
 
 
 find_package(Qt6 REQUIRED COMPONENTS
-	Core
-	Widgets
-	Gui
-	Quick
-	Qml
-	Test
-	QuickControls2
-	Network)
+        Core
+        Widgets
+        Gui
+        Quick
+        Qml
+        Test
+        QtWebEngine
+        QuickControls2
+        Network)
 qt_standard_project_setup()
 
 add_subdirectory(Source)

@@ -10,13 +10,12 @@
 
 namespace sb
 {
-
 	namespace
 	{
-		bool ReadBool(const QJsonValue &val) { return val.toString() == "1"; }
+		bool ReadBool(const QJsonValue& val) { return val.toString() == "1"; }
 		QString WriteBool(bool f) { return f ? "1" : "0"; }
 
-		QString ReadJsonFile(const QString &filePath)
+		QString ReadJsonFile(const QString& filePath)
 		{
 			QString val;
 			QFile file;
@@ -36,35 +35,40 @@ namespace sb
 		QString outputPath = paths.at(0);
 		for (int i = 1; i < paths.size(); ++i)
 		{
-			outputPath + QDir::separator() + paths.at(i);
+			outputPath += QDir::separator() + paths.at(i);
 		}
 		return outputPath;
 	}
 
-	void Config::Update(){};
+	void Config::Update()
+	{
+	};
 
-	void Config::Init(){};
+	void Config::Init()
+	{
+	};
 
 	std::string Config::GetName()
 	{
 		return TYPENAME(Config);
 	}
 
-	void Config::AddNewGame(Game &game)
+	void Config::AddNewGame(Game& game)
 	{
 		_Games.insert(game.Id, game);
 	};
 
-	QString &Config::GetVersion()
+	QString& Config::GetVersion()
 	{
 		return _Version;
 	}
+
 	void Config::SetVersion(QString ver)
 	{
 		_Version = ver;
 	}
 
-	QString &Config::GetDownloadDir()
+	QString& Config::GetDownloadDir()
 	{
 		return _DownloadDir;
 	}
@@ -95,8 +99,7 @@ namespace sb
 		{
 			if (!QDir(_Config).exists())
 				QDir().mkdir(_Config);
-			if (!QFileInfo::exists(GetConfigJsonFilePath()))
-				; //problem
+			if (!QFileInfo::exists(GetConfigJsonFilePath())); //problem
 			QString val = ReadJsonFile(GetConfigJsonFilePath());
 			auto ff = val.toStdString();
 			QJsonDocument d = QJsonDocument::fromJson(val.toUtf8());
@@ -110,13 +113,13 @@ namespace sb
 			std::cout << "version: " << _Version.toStdString();
 			ReadGames();
 
-			for (auto &key : _Games.keys())
+			for (auto& key : _Games.keys())
 			{
 				_SortedId.push_back(key);
 			}
 			std::sort(_SortedId.begin(), _SortedId.end(), std::less<int>());
 		}
-		catch (std::exception &e)
+		catch (std::exception& e)
 		{
 			throw; // todo use issue logger
 		}
@@ -128,12 +131,11 @@ namespace sb
 
 	void Config::ReadGames()
 	{
-
 		QString val = ReadJsonFile(CombinePath({_Config, _GamesFileName}));
 
 		QJsonDocument d = QJsonDocument::fromJson(val.toUtf8());
 		QJsonObject json = d.object();
-		for (auto &key : json.keys())
+		for (auto& key : json.keys())
 		{
 			QJsonObject value = json[key].toObject();
 			auto game = ReadGameInfo(value);
@@ -141,7 +143,8 @@ namespace sb
 			_Games.insert(game.Id, game);
 		}
 	}
-	Game Config::ReadGameInfo(const QJsonObject &value)
+
+	Game Config::ReadGameInfo(const QJsonObject& value)
 	{
 		Game g;
 		g.Id = value["Id"].toString().toInt();
@@ -164,7 +167,7 @@ namespace sb
 	void Config::WriteGames()
 	{
 		QJsonObject RootObject;
-		for (auto &game : _Games)
+		for (auto& game : _Games)
 		{
 			auto jsonParsed = ParseGameInfo(game);
 			RootObject.insert(game.Title, jsonParsed);
@@ -178,7 +181,7 @@ namespace sb
 		file.close();
 	}
 
-	QJsonObject Config::ParseGameInfo(const Game &game)
+	QJsonObject Config::ParseGameInfo(const Game& game)
 	{
 		QJsonObject RootObject;
 		RootObject.insert("Id", QString::number(game.Id));
@@ -218,6 +221,7 @@ namespace sb
 
 		WriteGames();
 	}
+
 	//
 	//qint64 AppUpdateChecker::getProgress() const {
 	//	return progress_;
@@ -234,12 +238,14 @@ namespace sb
 	Q_INVOKABLE QUrl Config::DefaultInstallDir()
 	{
 		if (getenv("PROGRAMFILES"))
-		{ //windows
+		{
+			//windows
 			std::filesystem::path path = getenv("PROGRAMFILES");
 			return QUrl::fromLocalFile(path.generic_string().c_str());
 		}
 		else
-		{ //mac /linux
+		{
+			//mac /linux
 			return QString();
 		}
 		return QString();
@@ -266,7 +272,7 @@ namespace sb
 		return v;
 	}
 
-	Game &Config::GetGame(int id)
+	Game& Config::GetGame(int id)
 	{
 		if (_Games.contains(id))
 		{
@@ -316,20 +322,22 @@ namespace sb
 
 	Q_INVOKABLE QString Config::GetGamePresentationUrl(int id)
 	{
-		auto &game = GetGame(id);
+		auto& game = GetGame(id);
 		return game.PresentationUrl;
 	}
 
 	Q_INVOKABLE QString Config::GetPresentationFile(int id)
 	{
-		auto &game = GetGame(id);
-		auto &url = game.PresentationUrl;
+		auto& game = GetGame(id);
+		auto& url = game.PresentationUrl;
 		if (!url.isEmpty())
-		{ // its http link or locak html file
+		{
+			// its http link or locak html file
 			return "WebGamePage.qml";
 		}
 		else
-		{ // local qml file
+		{
+			// local qml file
 			auto full = GameInfoDir(game.Id) + game.PresentationQml;
 			return full;
 		}

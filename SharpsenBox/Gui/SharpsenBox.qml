@@ -1,7 +1,6 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.14
 import QtQuick.Window 2.12
-import QtWebEngine 1.8
 
 ApplicationWindow {
     id: window
@@ -10,7 +9,7 @@ ApplicationWindow {
     height: 500
     color: "#202020"
     flags: Qt.Window | Qt.FramelessWindowHint | Qt.WindowMinimizeButtonHint
-           | Qt.WindowMaximizeButtonHint
+        | Qt.WindowMaximizeButtonHint
     minimumWidth: 1000
     minimumHeight: 600
     // for window movement
@@ -25,11 +24,13 @@ ApplicationWindow {
 
     function absoluteMousePos(mouseArea) {
         var windowAbs = mouseArea.mapToItem(null, mouseArea.mouseX,
-                                            mouseArea.mouseY)
+            mouseArea.mouseY)
         return Qt.point(windowAbs.x + window.x, windowAbs.y + window.y)
     }
 
-    FontLoader { id: latoFont; source: "Font/Lato-Regular.ttf" }
+    FontLoader {
+        id: latoFont; source: "Font/Lato-Regular.ttf"
+    }
 
     TopBar {
         id: topBar
@@ -68,38 +69,40 @@ ApplicationWindow {
 
         onStageChanged: {
             switch (stage) {
-            case 0:
-                if(source != ""){
-                    hide()
-                } else {
-                    active = false
-                    source = ""
-                }
-                break
-            case 1:
-                active = true
-                source = "PopOutInfo.qml"
-                show()
-                break
-            case 2:
-                active = true
-                source = "InstallPopOut.qml"
-                show()
-                break
-            case 3:
-                active = true
-                source = "PopOutDialog.qml"
-                show()
-                break
+                case 0:
+                    if (source != "") {
+                        hide()
+                    } else {
+                        active = false
+                        source = ""
+                    }
+                    break
+                case 1:
+                    active = true
+                    source = "PopOutInfo.qml"
+                    show()
+                    break
+                case 2:
+                    active = true
+                    source = "InstallPopOut.qml"
+                    show()
+                    break
+                case 3:
+                    active = true
+                    source = "PopOutDialog.qml"
+                    show()
+                    break
             }
         }
         active: false
         source: ""
-        function show(){
+
+        function show() {
             showAnim.stop()
             showAnim.start()
         }
-        function hide(){
+
+        function hide() {
             hideAnim.stop()
             hideAnim.start()
         }
