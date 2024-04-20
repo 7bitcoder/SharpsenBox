@@ -29,9 +29,9 @@ find_package(Qt6 REQUIRED COMPONENTS
         Quick
         Qml
         Test
-        QtWebEngine
         QuickControls2
         Network)
+qt_policy(SET QTP0001 NEW)
 qt_standard_project_setup()
 
 add_subdirectory(Source)
